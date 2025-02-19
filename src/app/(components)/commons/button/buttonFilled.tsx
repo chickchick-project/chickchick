@@ -1,19 +1,18 @@
 import { ReactNode } from "react";
-import ButtonBase from "./buttonBase";
+import ButtonBase, { IButtonBaseProps } from "./buttonBase";
 
-interface IButtonFilledProps extends React.ComponentProps<"button"> {
-  children: ReactNode;
-  colorNum?: string;
-}
+export interface IButtonFilledProps extends Omit<IButtonBaseProps, "bgColor"> {}
 
-const buttonFilledBase = `h-auto text-center rounded-full `;
+export const buttonLargeHeight = "h-[43px]";
+export const buttonSmallHeight = "h-[33px]";
+const buttonFilledBase = `text-center rounded-full leading-none flex justify-center items-center `;
 
 export function ButtonFilledPrimaryLFull({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="primary"
+      bgColor="primary"
       colorNum={colorNum}
-      className={`${buttonFilledBase} w-full text-white py-3 font-semibold text-body-1`}
+      className={`${buttonFilledBase} ${buttonLargeHeight} w-full text-white py-3 font-semibold text-body-1`}
       {...rest}
     >
       {children}
@@ -24,9 +23,9 @@ export function ButtonFilledPrimaryLFull({ children, colorNum = "100", ...rest }
 export function ButtonFilledPrimaryLFit({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="primary"
+      bgColor="primary"
       colorNum={colorNum}
-      className={`${buttonFilledBase} w-fit text-white py-3 px-4 font-semibold text-body-1 `}
+      className={`${buttonFilledBase} ${buttonLargeHeight} w-fit text-white py-3 px-4 font-semibold text-body-1 `}
       {...rest}
     >
       {children}
@@ -37,9 +36,9 @@ export function ButtonFilledPrimaryLFit({ children, colorNum = "100", ...rest }:
 export function ButtonFilledPrimarySFit({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="primary"
+      bgColor="primary"
       colorNum={colorNum}
-      className={`${buttonFilledBase} w-fit text-white py-2 px-3 font-medium text-label-1 `}
+      className={`${buttonFilledBase} ${buttonSmallHeight} w-fit text-white py-2 px-3 font-medium text-label-1 `}
       {...rest}
     >
       {children}
@@ -50,9 +49,9 @@ export function ButtonFilledPrimarySFit({ children, colorNum = "100", ...rest }:
 export function ButtonFilledGrayLFull({ children, ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="gray"
+      bgColor="gray"
       colorNum="300"
-      className={`${buttonFilledBase} w-full text-black-300 py-3 px-4 font-semibold text-body-1`}
+      className={`${buttonFilledBase} ${buttonLargeHeight} w-full text-black-300 py-3 px-4 font-semibold text-body-1`}
       {...rest}
     >
       {children}
@@ -62,9 +61,9 @@ export function ButtonFilledGrayLFull({ children, ...rest }: IButtonFilledProps)
 export function ButtonFilledGrayLFit({ children, ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="gray"
+      bgColor="gray"
       colorNum="300"
-      className={`${buttonFilledBase} w-fit text-black-300 py-3 px-4 font-semibold text-body-1`}
+      className={`${buttonFilledBase} ${buttonLargeHeight} w-fit text-black-300 py-3 px-4 font-semibold text-body-1`}
       {...rest}
     >
       {children}
@@ -75,9 +74,9 @@ export function ButtonFilledGrayLFit({ children, ...rest }: IButtonFilledProps) 
 export function ButtonFilledGrayLFixed({ children, className, ...rest }: IButtonFilledProps) {
   return (
     <ButtonBase
-      color="gray"
+      bgColor="gray"
       colorNum="300"
-      className={`${buttonFilledBase} ${className} text-black-300 py-3 px-4 font-semibold text-body-1`}
+      className={`${buttonFilledBase} ${buttonLargeHeight} ${className} text-black-300 py-3 px-4 font-semibold text-body-1`}
       {...rest}
     >
       {children}
