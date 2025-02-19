@@ -31,6 +31,18 @@ export default {
         },
         red: "#ed1c24",
       },
+      fontSize: {
+        "headline-1": "36px",
+        "headline-2": "28px",
+        "headline-3": "24px",
+        "title-1": "20px",
+        "title-2": "18px",
+        "body-1": "16px",
+        "body-2": "15px",
+        "label-1": "14px",
+        "label-2": "13px",
+        "label-3": "12px",
+      },
       fontFamily: {
         pretendard: ["var(--font-pretendard)"],
       },
