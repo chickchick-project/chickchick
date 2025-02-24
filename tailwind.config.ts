@@ -43,6 +43,8 @@ export default {
         "label-1": "14px",
         "label-2": "13px",
         "label-3": "12px",
+        "label-4": "11px",
+        "label-5": "10px",
       },
       fontFamily: {
         pretendard: ["var(--font-pretendard)"],
