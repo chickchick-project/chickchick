@@ -1,15 +1,24 @@
 import { supabase } from "@/lib/supabase/init";
 
+interface SearchParams {
+  search_text: string;
+  limit?: number;
+  lastId?: string;
+}
+
+interface SearchParamsWithFilters extends SearchParams {
+  brand_filter: string;
+  notes_filter: string[];
+  accords_filter: string[];
+}
+
 /**
- * 향수 검색 함수
+ * 단순 검색 함수 (GET 요청)
  */
-export async function fetchSearch(
-  searchTerm: string,
-  limit: number = 15,
-  lastId?: string
-) {
+export async function fetchSearch(params: SearchParams) {
+  const { search_text, limit = 15, lastId } = params;
   const { data, error } = await supabase.rpc("search_perfumes", {
-    search_text: searchTerm,
+    search_text,
     result_limit: limit + 1,
     last_seen_id: lastId ?? null,
   });
@@ -21,6 +30,53 @@ export async function fetchSearch(
   return data;
 }
 
+/**
+ * 필터 포함 검색 함수 (POST 요청)
+ */
+export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
+  const {
+    search_text,
+    brand_filter,
+    notes_filter,
+    accords_filter,
+    lastId: last_seen_id,
+    limit: result_limit,
+  } = params;
+
+  const formattedNotes =
+    Array.isArray(notes_filter) && notes_filter.length > 0
+      ? notes_filter
+      : null;
+  const formattedAccords =
+    Array.isArray(accords_filter) && accords_filter.length > 0
+      ? accords_filter
+      : null;
+
+  const { data, error } = await supabase.rpc("search_perfumes_with_filters", {
+    search_text,
+    brand_filter,
+    notes_filter: formattedNotes,
+    accords_filter: formattedAccords,
+    last_seen_id,
+    result_limit,
+  });
+
+  if (error) {
+    console.error("Supabase RPC Error:", error);
+    throw new Error(`Supabase RPC Error: ${error.message}`);
+  }
+
+  if (data === null) {
+    console.error("Supabase RPC returned null data");
+    throw new Error("Supabase RPC returned null data");
+  }
+
+  return data;
+}
+
+/**
+ * last_seen_id가 실제로 존재하는지 확인하는 함수
+ */
 export async function checkPerfumeExists(perfumeId: string) {
   const { data, error } = await supabase
     .from("perfumes")
