@@ -2,8 +2,8 @@ import { supabase } from "@/lib/supabase/init";
 
 interface SearchParams {
   search_text: string;
-  limit?: number;
-  lastId?: string;
+  result_limit?: number;
+  last_seen_id?: string;
 }
 
 interface SearchParamsWithFilters extends SearchParams {
@@ -16,11 +16,11 @@ interface SearchParamsWithFilters extends SearchParams {
  * 단순 검색 함수 (GET 요청)
  */
 export async function fetchSearch(params: SearchParams) {
-  const { search_text, limit = 15, lastId } = params;
+  const { search_text, result_limit = 15, last_seen_id } = params;
   const { data, error } = await supabase.rpc("search_perfumes", {
     search_text,
-    result_limit: limit + 1,
-    last_seen_id: lastId ?? null,
+    result_limit: result_limit + 1,
+    last_seen_id: last_seen_id ?? null,
   });
 
   if (error) {
@@ -39,8 +39,8 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
     brand_filter,
     notes_filter,
     accords_filter,
-    lastId: last_seen_id,
-    limit: result_limit,
+    last_seen_id,
+    result_limit,
   } = params;
 
   const formattedNotes =
@@ -52,7 +52,7 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
       ? accords_filter
       : null;
 
-  const { data, error } = await supabase.rpc("search_perfumes_with_filters", {
+  const { data, error } = await supabase.rpc("search_perfumes", {
     search_text,
     brand_filter,
     notes_filter: formattedNotes,
