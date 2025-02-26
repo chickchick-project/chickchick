@@ -76,8 +76,8 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
     // 검색 수행 (Supabase RPC 호출)
     const data: Perfume[] = await fetchSearch({
       search_text,
-      result_limit,
       last_seen_id,
+      result_limit: result_limit + 1,
     });
 
     // 검색 결과가 없을 경우 빈 데이터 반환

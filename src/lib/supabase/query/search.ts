@@ -16,11 +16,12 @@ interface SearchParamsWithFilters extends SearchParams {
  * 단순 검색 함수 (GET 요청)
  */
 export async function fetchSearch(params: SearchParams) {
-  const { search_text, result_limit = 15, last_seen_id } = params;
+  const { search_text, result_limit, last_seen_id } = params;
+
   const { data, error } = await supabase.rpc("search_perfumes", {
     search_text,
-    result_limit: result_limit + 1,
-    last_seen_id: last_seen_id ?? null,
+    result_limit,
+    last_seen_id,
   });
 
   if (error) {
