@@ -2,7 +2,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import { SearchBar, type SearchBarProps } from "./SearchBar";
 
 export default {
-  title: "Components/InputBase",
+  title: "Components/SearchBar",
   component: SearchBar,
   argTypes: {},
 } as Meta;

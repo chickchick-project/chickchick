@@ -6,7 +6,7 @@ export interface SearchBarProps {
   placeholder?: string;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const PLACEHOLDER_TEXT = "제품명, 브랜드를 검색하세요.";
