@@ -1,8 +1,10 @@
 import React from "react";
 import Image from "next/image";
-import ViewIcon from "public/icons/View.svg";
-import LikeIcon from "public/icons/Like.svg";
-import CommentIcon from "public/icons/Comment.svg";
+import ViewIcon from "public/icons/meta/View.svg";
+import LikeIcon from "public/icons/meta/Like.svg";
+import CommentIcon from "public/icons/meta/Comment.svg";
+import IconBadge from "../author/IconBadge";
+import AuthorInfo from "../author/AuthorInfo";
 
 const CARD_TYPE = {
   SMALL: "small",
@@ -95,7 +97,7 @@ export const PostCard: React.FC<PostCardProps> = ({
 
       {/* 푸터 */}
       <footer className="w-full flex justify-between text-gray-500 text-xs">
-        <PostAuthor
+        <AuthorInfo
           author={author}
           createdAt={createdAt}
           profileImage={profileImage}
@@ -150,49 +152,15 @@ const Thumbnail: React.FC<{
   );
 };
 
-/** 작성자 정보 */
-const PostAuthor: React.FC<{
-  author: string;
-  createdAt: string;
-  profileImage?: string;
-  isAuthor: boolean;
-}> = ({ author, createdAt, profileImage, isAuthor }) => (
-  <div className="flex items-center gap-2">
-    {!isAuthor && profileImage && (
-      <>
-        <Image
-          src={profileImage}
-          alt="프로필 이미지"
-          width={28}
-          height={28}
-          className="rounded-full"
-        />
-        <span className="text-label-2 font-medium"> {author}</span>
-        <span className="text-gray-200">|</span>
-      </>
-    )}
-    <span className="text-label-2 font-medium text-black-300">{createdAt}</span>
-  </div>
-);
-
 /** 좋아요, 댓글, 조회수 */
 const PostMeta: React.FC<{ meta: PostMetaData }> = ({ meta }) => {
-  const formatMetaValue = (value: number) => (value > 999 ? "999+" : value);
-
   return (
     <div className="flex gap-2 text-gray-500 text-sm">
-      <span className="flex items-center gap-0.5">
-        <Image src={LikeIcon} alt="좋아요" width={20} height={20} />
-        {formatMetaValue(meta.likes)}
-      </span>
-      <span className="flex items-center gap-0.5">
-        <Image src={CommentIcon} alt="댓글" width={20} height={20} />
-        {formatMetaValue(meta.comments)}
-      </span>
-      <span className="flex items-center gap-0.5">
-        <Image src={ViewIcon} alt="조회수" width={20} height={20} />
-        {formatMetaValue(meta.views)}
-      </span>
+      <IconBadge iconSrc={LikeIcon} altText="좋아요" count={meta.likes} />
+      <IconBadge iconSrc={CommentIcon} altText="댓글" count={meta.comments} />
+      <IconBadge iconSrc={ViewIcon} altText="조회수" count={meta.views} />
     </div>
   );
 };
+
+export default PostMeta;

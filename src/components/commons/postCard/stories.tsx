@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import { PostCard, type PostCardProps } from "./PostCard";
+import dayjs from "dayjs";
 
 const CARD_TYPE = {
   SMALL: "small",
@@ -32,7 +33,7 @@ const COMMON_TEXT = {
   content:
     "국무총리는 국무위원의 해임을 대통령에게 건의할 수 있다. 국회의원의 수는 법률로 정하되, 200인 이상으로 한다. 선거에 관한 경비는 법률이 정하는 경우를 제외하고는 정당 또는 후보자에게 부담시킬 수 없다. 대한민국은 국제평화의 유지에 노력하고 침략적 전쟁을 부인한다. 대통령은 조국의 평화적 통일을 위한 성실한 의무를 진다. 국회의 정기회는 법률이 정하는 바에 의하여 매년 1회 집회되며, 국회의 임시회는 대통령 또는 국회재적의원 4분의 1 이상의 요구에 의하여 집회된다.",
   author: "주현",
-  createdAt: "1시간 전",
+  createdAt: dayjs().subtract(1, "hour").toISOString(),
 };
 
 const COMMON_META = {
