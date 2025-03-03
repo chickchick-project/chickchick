@@ -2,27 +2,13 @@ import React from "react";
 import AuthorProfile from "./AuthorProfile";
 import IconBadge from "./IconBadge";
 import PostTime from "./PostTime";
-import ViewIcon from "public/icons/meta/View.svg";
-import LikeIcon from "public/icons/meta/Like.svg";
-import CommentIcon from "public/icons/meta/Comment.svg";
-
-export const REVIEW_STATUSES = {
-  NOW: "지금 쓰고 있어요",
-  USED: "써 봤어요",
-  WANT: "갖고 싶어요",
-} as const;
-
-export const SIZE_STATUSES = {
-  DEFAULT: "default",
-  LARGE: "large",
-} as const;
-
-type MetaType = "likes" | "comments" | "views";
-
-export type ReviewStatusType =
-  (typeof REVIEW_STATUSES)[keyof typeof REVIEW_STATUSES];
-
-export type SizeStatusType = (typeof SIZE_STATUSES)[keyof typeof SIZE_STATUSES];
+import {
+  SIZE_STATUSES,
+  META_ICONS,
+  MetaType,
+  ReviewStatusType,
+  SizeStatusType,
+} from "@/lib/constants/author";
 
 interface MetaItem {
   type: MetaType;
@@ -45,7 +31,7 @@ export interface AuthorInfoProps {
   size?: SizeStatusType;
   author: string;
   createdAt: string;
-  profileImage?: string;
+  profileImage: string;
   isAuthor: boolean;
   info?: InfoType;
 }
@@ -60,68 +46,37 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
 }) => {
   const items = [];
 
-  const getIcon = (type: MetaType) => {
-    switch (type) {
-      case "likes":
-        return LikeIcon;
-      case "comments":
-        return CommentIcon;
-      case "views":
-        return ViewIcon;
-      default:
-        return ViewIcon;
-    }
-  };
-
-  // 내가 작성한 포스트가 아닐 경우
+  // 1. 내가 작성한 포스트가 아닐 경우 → 작성자 추가
   if (!isAuthor) {
     items.push(
       <AuthorProfile key="author" name={author} profileImage={profileImage} />
     );
   }
 
-  // 작성 시간 추가
+  // 2. 작성 시간 추가
   items.push(<PostTime key="time" time={createdAt} size={size} />);
 
-  // info가 없으면 기본 정보만 반환
-  if (!info) {
-    return (
-      <div
-        className={`flex items-center ${
-          size === SIZE_STATUSES.DEFAULT ? "text-label-2" : "text-body-1"
-        } font-medium text-gray-500`}
-      >
-        {addDividers(items, size)}
-      </div>
-    );
-  }
+  // 3. info가 존재할 경우만 추가
+  if (info) {
+    switch (info.type) {
+      case "review":
+        items.push(<span key="status">{info.item.status}</span>);
+        break;
 
-  // 리뷰인 경우
-  if (info.type === "review") {
-    items.push(
-      <span key="status" className="text-black-300 text-sm font-medium">
-        {info.item.status}
-      </span>
-    );
-  }
-
-  // 게시글인 경우
-  if (info.type === "post") {
-    const metaItems = info.item.map((meta) => (
-      <IconBadge
-        key={meta.type}
-        iconSrc={getIcon(meta.type)}
-        altText={meta.type}
-        count={meta.count}
-      />
-    ));
-
-    if (metaItems.length > 0) {
-      items.push(
-        <div key="meta" className="flex items-center gap-2">
-          {metaItems}
-        </div>
-      );
+      case "post":
+        items.push(
+          <div key="meta" className="flex items-center gap-2">
+            {info.item.map((meta) => (
+              <IconBadge
+                key={meta.type}
+                iconSrc={META_ICONS[meta.type]}
+                altText={meta.type}
+                count={meta.count}
+              />
+            ))}
+          </div>
+        );
+        break;
     }
   }
 
@@ -129,7 +84,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
     <div
       className={`flex items-center justify-between ${
         size === SIZE_STATUSES.DEFAULT ? "text-label-2" : "text-body-1"
-      }  text-black-300`}
+      } font-medium text-black-300`}
     >
       {addDividers(items, size)}
     </div>

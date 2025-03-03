@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants/author";
 
 interface AuthorProfileProps {
   name: string;
@@ -9,7 +10,7 @@ interface AuthorProfileProps {
 
 const AuthorProfile: React.FC<AuthorProfileProps> = ({
   name,
-  profileImage,
+  profileImage = DEFAULT_PROFILE_IMAGE,
   size = 28,
 }) => {
   return (

@@ -1,5 +1,9 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { SearchBar, type SearchBarProps } from "./SearchBar";
+import {
+  SEARCHBAR_PLACEHOLDER_TEXT,
+  SearchBar,
+  type SearchBarProps,
+} from "./SearchBar";
 
 export default {
   title: "Components/SearchBar",
@@ -11,18 +15,18 @@ const Template: StoryFn<SearchBarProps> = (args) => <SearchBar {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  placeholder: "제품명, 브랜드를 검색하세요.",
+  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
 };
 
 export const Focused = Template.bind({});
 Focused.args = {
-  placeholder: "제품명, 브랜드를 검색하세요.",
+  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
   value: "",
   autoFocus: true,
 };
 
 export const Done = Template.bind({});
 Done.args = {
-  placeholder: "제품명, 브랜드를 검색하세요.",
+  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
   value: "시트러스",
 };

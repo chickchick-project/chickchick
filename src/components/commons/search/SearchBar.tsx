@@ -9,7 +9,7 @@ export interface SearchBarProps {
   [key: string]: unknown;
 }
 
-const PLACEHOLDER_TEXT = "제품명, 브랜드를 검색하세요.";
+export const SEARCHBAR_PLACEHOLDER_TEXT = "제품명, 브랜드를 검색하세요.";
 
 export const SearchBar: React.FC<SearchBarProps> = ({
   value,
@@ -26,7 +26,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="relative w-full max-w-[840px] flex items-center">
       <input
         className={`${baseStyle} pr-10`}
-        placeholder={PLACEHOLDER_TEXT}
+        placeholder={SEARCHBAR_PLACEHOLDER_TEXT}
         value={value}
         onChange={onChange}
         {...rest}

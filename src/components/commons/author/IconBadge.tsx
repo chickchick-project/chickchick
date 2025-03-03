@@ -13,7 +13,7 @@ const IconBadge: React.FC<IconBadgeProps> = ({ iconSrc, altText, count }) => {
   const formattedCount = count > MAX_COUNT ? `${MAX_COUNT}+` : count;
 
   return (
-    <span className="flex items-center gap-0.5 text-gray-500 text-sm">
+    <span className="flex items-center gap-0.5 text-gray-100 text-label-2">
       <Image src={iconSrc} alt={altText} width={20} height={20} />
       {formattedCount}
     </span>

@@ -1,10 +1,7 @@
 import { Meta, StoryFn } from "@storybook/react";
-import AuthorInfo, {
-  type AuthorInfoProps,
-  REVIEW_STATUSES,
-  SIZE_STATUSES,
-} from "./AuthorInfo";
+import AuthorInfo, { type AuthorInfoProps } from "./AuthorInfo";
 import dayjs from "dayjs";
+import { SIZE_STATUSES, REVIEW_STATUSES } from "@/lib/constants/author";
 
 export default {
   title: "Commons/AuthorInfo",
@@ -19,12 +16,12 @@ export default {
 
 const AUTHOR_INFO = {
   author: "주현",
-  profileImage: "https://placehold.co/28",
+  profileImage: undefined,
 };
 
 const TIMESTAMP = {
   now: dayjs().subtract(1, "hour").toISOString(), // "1시간 전"
-  specificDate: dayjs("2024-12-19").toISOString(), // 특정 날짜
+  specificDate: dayjs("2024-12-19").toISOString(), // 특정 날짜 ("2024-12-18T15:00:00.000Z")
 };
 
 const Template: StoryFn<AuthorInfoProps> = (args) => (
@@ -83,5 +80,19 @@ ReviewWithDate.args = {
   info: {
     type: "review",
     item: { status: REVIEW_STATUSES.WANT },
+  },
+};
+
+export const DetailWithMeta: StoryFn<AuthorInfoProps> = Template.bind({});
+DetailWithMeta.args = {
+  ...AUTHOR_INFO,
+  createdAt: TIMESTAMP.specificDate,
+  isAuthor: false,
+  info: {
+    type: "post",
+    item: [
+      { type: "comments", count: 999 },
+      { type: "views", count: 999 },
+    ],
   },
 };
