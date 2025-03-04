@@ -30,7 +30,7 @@ export interface PostCardProps {
   isCategory?: boolean;
   categoryType: CategoryType;
   cardType?: PostCardType;
-  profileImage?: string;
+  profileImage: string;
   isAuthor: boolean;
 }
 
@@ -49,10 +49,11 @@ export const PostCard: React.FC<PostCardProps> = ({
 }) => {
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
+  const cardStyle = POST_CARD_STYLES[cardType];
 
   return (
     <article
-      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 ${POST_CARD_STYLES[cardType]}`}
+      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 h-full ${cardStyle}`}
     >
       {/* 헤더 */}
       {isCategory && (
