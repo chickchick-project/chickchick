@@ -10,7 +10,8 @@ export interface IChipBaseProps extends React.ComponentProps<"div"> {
 export default function ChipBase(props: IChipBaseProps) {
   const { children, bgColor, colorNum = "300", className, ...restProps } = props;
 
-  const chipBaseStyle = "w-fit text-center rounded leading-none flex justify-center items-center font-medium";
+  const chipBaseStyle =
+    "w-fit text-center rounded leading-none flex justify-center items-center font-medium hover:select-none";
 
   const bgColorValue = bgColor ? BACKGROUND_COLORS[bgColor] : "";
   const chipColor =
