@@ -1,9 +1,9 @@
-import { BACKGROUND_COLORS } from "@/lib/constants/colors";
+import { BACKGROUND_COLORS, TBgColor } from "@/lib/constants/colors";
 import { ReactNode } from "react";
 
 export interface IChipBaseProps extends React.ComponentProps<"div"> {
   children: ReactNode;
-  bgColor?: string;
+  bgColor?: TBgColor;
   colorNum?: string;
 }
 
