@@ -1,11 +1,11 @@
-import { BACKGROUND_COLORS } from "@/lib/constants/colors";
+import { BACKGROUND_COLORS, TBgColor } from "@/lib/constants/colors";
 import { ReactNode } from "react";
 
 export interface IButtonBaseProps extends React.ComponentProps<"button"> {
   children: ReactNode;
   iconLeading?: ReactNode;
   iconTrailing?: ReactNode;
-  bgColor: string;
+  bgColor: TBgColor;
   colorNum?: string;
 }
 

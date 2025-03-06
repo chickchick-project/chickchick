@@ -6,7 +6,7 @@ export default {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/lib/constants/colors.ts",
+    "./src/lib/constants/*.ts",
   ],
   theme: {
     extend: {
@@ -43,6 +43,8 @@ export default {
         "label-1": "14px",
         "label-2": "13px",
         "label-3": "12px",
+        "label-4": "11px",
+        "label-5": "10px",
       },
       fontFamily: {
         pretendard: ["var(--font-pretendard)"],

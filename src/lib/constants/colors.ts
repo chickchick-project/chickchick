@@ -1,10 +1,10 @@
 type TColors = {
-  [key: string]:
-    | {
-        [key: string]: string;
-      }
-    | string;
+  primary: { [key: string]: string };
+  gray: { [key: string]: string };
+  white: string;
 };
+
+export type TBgColor = keyof TColors;
 
 export const BACKGROUND_COLORS: TColors = {
   primary: {
