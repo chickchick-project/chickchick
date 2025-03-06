@@ -1,8 +1,4 @@
 import React from "react";
-import Image from "next/image";
-import ViewIcon from "public/icons/meta/View.svg";
-import LikeIcon from "public/icons/meta/Like.svg";
-import CommentIcon from "public/icons/meta/Comment.svg";
 import IconBadge from "../author/IconBadge";
 import AuthorInfo from "../author/AuthorInfo";
 import {
@@ -12,6 +8,8 @@ import {
   CategoryType,
   PostCardType,
 } from "@/lib/constants/post";
+import { META_ICONS } from "@/lib/constants/author";
+import Thumbnail from "./Thumbnail";
 
 export interface PostMetaData {
   likes: number;
@@ -30,7 +28,7 @@ export interface PostCardProps {
   isCategory?: boolean;
   categoryType: CategoryType;
   cardType?: PostCardType;
-  profileImage: string;
+  profileImage?: string;
   isAuthor: boolean;
 }
 
@@ -85,7 +83,7 @@ export const PostCard: React.FC<PostCardProps> = ({
           }`}
         >
           <p className={`text-gray-600 flex-1 ${contentClamp}`}>{content}</p>
-          {thumbnail && <Thumbnail thumbnail={thumbnail} cardType={cardType} />}
+          <Thumbnail thumbnail={thumbnail} cardType={cardType} />
         </div>
       </main>
 
@@ -117,36 +115,58 @@ const CategoryBadge: React.FC<{ categoryType: CategoryType }> = ({
 };
 
 /** 썸네일 */
-const Thumbnail: React.FC<{
-  thumbnail?: string;
-  cardType: PostCardType;
-}> = ({ thumbnail, cardType }) => {
-  if (!thumbnail) return null;
+// const Thumbnail: React.FC<{
+//   thumbnail?: string;
+//   cardType: PostCardType;
+// }> = ({ thumbnail, cardType }) => {
+//   const thumbnailSizes = {
+//     [POST_CARD_TYPES.SMALL]: { width: 80, height: 80 },
+//     [POST_CARD_TYPES.DEFAULT]: { width: 100, height: 100 },
+//     [POST_CARD_TYPES.DETAIL]: { width: 307, height: 180 },
+//   };
 
-  const thumbnailSizes = {
-    [POST_CARD_TYPES.SMALL]: { width: 80, height: 80 },
-    [POST_CARD_TYPES.DEFAULT]: { width: 100, height: 100 },
-    [POST_CARD_TYPES.DETAIL]: { width: 307, height: 180 },
-  };
+//   const { width, height } = thumbnailSizes[cardType];
 
-  return (
-    <Image
-      src={thumbnail}
-      alt="게시글 썸네일"
-      width={thumbnailSizes[cardType].width}
-      height={thumbnailSizes[cardType].height}
-      className="object-cover rounded-md"
-    />
-  );
-};
+//   return (
+//     <div className="relative">
+//       {thumbnail ? (
+//         <Image
+//           src={thumbnail}
+//           alt="게시글 썸네일"
+//           width={width}
+//           height={height}
+//           className="object-cover rounded-md"
+//           unoptimized
+//         />
+//       ) : (
+//         <div
+//           className="animate-pulse bg-gray-200 rounded-md"
+//           style={{ width, height }}
+//         />
+//       )}
+//     </div>
+//   );
+// };
 
 /** 좋아요, 댓글, 조회수 */
-const PostMeta: React.FC<{ meta: PostMetaData }> = ({ meta }) => {
+export const PostMeta: React.FC<{ meta: PostMetaData }> = ({ meta }) => {
   return (
     <div className="flex gap-2">
-      <IconBadge iconSrc={LikeIcon} altText="좋아요" count={meta.likes} />
-      <IconBadge iconSrc={CommentIcon} altText="댓글" count={meta.comments} />
-      <IconBadge iconSrc={ViewIcon} altText="조회수" count={meta.views} />
+      <IconBadge
+        iconSrc={META_ICONS.likes}
+        altText="좋아요"
+        count={meta.likes}
+      />
+      <IconBadge
+        iconSrc={META_ICONS.comments}
+        altText="댓글"
+        count={meta.comments}
+      />
+      <IconBadge
+        iconSrc={META_ICONS.views}
+        altText="조회수"
+        count={meta.views}
+      />
     </div>
   );
 };

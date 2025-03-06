@@ -1,6 +1,5 @@
-import React from "react";
 import Image from "next/image";
-import SearchIcon from "public/icons/Search.svg";
+import React from "react";
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -32,7 +31,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {...rest}
       />
       <Image
-        src={SearchIcon}
+        src="/icons/Search.svg"
         alt="Search"
         width={20}
         height={20}

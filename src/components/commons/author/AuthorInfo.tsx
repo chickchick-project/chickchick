@@ -31,7 +31,7 @@ export interface AuthorInfoProps {
   size?: SizeStatusType;
   author: string;
   createdAt: string;
-  profileImage: string;
+  profileImage?: string;
   isAuthor: boolean;
   info?: InfoType;
 }
