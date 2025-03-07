@@ -1,5 +1,4 @@
 import React from "react";
-import IconBadge from "../author/IconBadge";
 import AuthorInfo from "../author/AuthorInfo";
 import {
   POST_CARD_STYLES,
@@ -8,14 +7,9 @@ import {
   PostCardType,
 } from "@/lib/constants/post";
 import Thumbnail from "./Thumbnail";
-import ICONS from "@/lib/constants/icons";
 import BoardChip from "../chip/boardChip";
-
-export interface PostMetaData {
-  likes: number;
-  comments: number;
-  views: number;
-}
+import PostMeta from "../author/PostMeta";
+import { PostMetaItem } from "@/lib/constants/author";
 
 export interface PostCardProps {
   id: string;
@@ -23,7 +17,7 @@ export interface PostCardProps {
   content: string;
   author: string;
   createdAt: string;
-  meta: PostMetaData;
+  meta: PostMetaItem[];
   thumbnail?: string;
   isCategory?: boolean;
   categoryType: CategoryType;
@@ -56,7 +50,6 @@ export const PostCard: React.FC<PostCardProps> = ({
       {/* 헤더 */}
       {isCategory && (
         <header className="flex justify-between items-center">
-          {/* <CategoryBadge categoryType={categoryType} /> */}
           <BoardChip type={categoryType} />
         </header>
       )}
@@ -101,33 +94,3 @@ export const PostCard: React.FC<PostCardProps> = ({
     </article>
   );
 };
-
-/** 카테고리 뱃지 */
-// const CategoryBadge: React.FC<{ categoryType: CategoryType }> = ({
-//   categoryType,
-// }) => {
-//   if (!categoryType) return null;
-
-//   return (
-//     <span className="border border-primary-300 text-primary-300 text-xs px-2 py-1 rounded-[4px]">
-//       {CATEGORY_LABELS[categoryType]}
-//     </span>
-//   );
-// };
-
-/** 좋아요, 댓글, 조회수 */
-export const PostMeta: React.FC<{ meta: PostMetaData }> = ({ meta }) => {
-  return (
-    <div className="flex gap-2">
-      <IconBadge iconSrc={ICONS.Like.src} altText="좋아요" count={meta.likes} />
-      <IconBadge
-        iconSrc={ICONS.Comment.src}
-        altText="댓글"
-        count={meta.comments}
-      />
-      <IconBadge iconSrc={ICONS.View.src} altText="조회수" count={meta.views} />
-    </div>
-  );
-};
-
-export default PostMeta;

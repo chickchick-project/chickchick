@@ -1,6 +1,7 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { PostCard, type PostCardProps } from "./PostCard";
 import dayjs from "dayjs";
+import { PostCard, type PostCardProps } from "./PostCard";
+import { PostMetaItem } from "@/lib/constants/author";
 
 const CARD_TYPE = {
   SMALL: "small",
@@ -36,11 +37,17 @@ const COMMON_TEXT = {
   createdAt: dayjs().subtract(1, "hour").toISOString(),
 };
 
-const COMMON_META = {
-  likes: 999,
-  comments: 1200,
-  views: 1200,
-};
+const COMMON_META: PostMetaItem[] = [
+  { type: "Like", count: 999 },
+  {
+    type: "Comment",
+    count: 1200,
+  },
+  {
+    type: "View",
+    count: 1200,
+  },
+];
 
 const COMMON_IMAGES = {
   profile: "https://placehold.co/28",
@@ -86,7 +93,6 @@ Default.args = {
   ...COMMON_ARGS,
   cardType: CARD_TYPE.DEFAULT,
   thumbnail: COMMON_IMAGES.thumbnails[CARD_TYPE.DEFAULT],
-  meta: { ...COMMON_META, views: 1000 },
 };
 
 export const Detail = Template.bind({});
@@ -94,5 +100,4 @@ Detail.args = {
   ...COMMON_ARGS,
   cardType: CARD_TYPE.DETAIL,
   thumbnail: COMMON_IMAGES.thumbnails[CARD_TYPE.DETAIL],
-  meta: { ...COMMON_META, views: 1000 },
 };

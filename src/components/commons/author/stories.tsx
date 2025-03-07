@@ -1,7 +1,11 @@
 import { Meta, StoryFn } from "@storybook/react";
-import AuthorInfo, { type AuthorInfoProps } from "./AuthorInfo";
 import dayjs from "dayjs";
-import { SIZE_STATUSES, REVIEW_STATUSES } from "@/lib/constants/author";
+import {
+  SIZE_STATUSES,
+  REVIEW_STATUSES,
+  AuthorInfoProps,
+} from "@/lib/constants/author";
+import AuthorInfo from "./AuthorInfo";
 
 export default {
   title: "Commons/AuthorInfo",
@@ -10,7 +14,9 @@ export default {
     size: { control: { type: "radio", options: Object.values(SIZE_STATUSES) } },
     isAuthor: { control: "boolean" },
     profileImage: { control: "boolean" },
-    "info.type": { control: { type: "radio", options: ["post", "review"] } },
+    "info.type": {
+      control: { type: "radio", options: ["post", "review", "comment"] },
+    },
   },
 } as Meta;
 
@@ -22,6 +28,7 @@ const AUTHOR_INFO = {
 const TIMESTAMP = {
   now: dayjs().subtract(1, "hour").toISOString(), // "1시간 전"
   specificDate: dayjs("2024-12-19").toISOString(), // 특정 날짜 ("2024-12-18T15:00:00.000Z")
+  withTime: dayjs().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
 };
 
 const Template: StoryFn<AuthorInfoProps> = (args) => (
@@ -81,6 +88,14 @@ ReviewWithDate.args = {
     type: "review",
     item: { status: REVIEW_STATUSES.WANT },
   },
+};
+
+// `CommentOnly` (댓글 타입에서 시간 포맷 확인)
+export const CommentOnly: StoryFn<AuthorInfoProps> = Template.bind({});
+CommentOnly.args = {
+  createdAt: TIMESTAMP.withTime,
+  isAuthor: true,
+  info: { type: "comment" },
 };
 
 export const DetailWithMeta: StoryFn<AuthorInfoProps> = Template.bind({});

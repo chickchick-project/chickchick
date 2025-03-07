@@ -1,39 +1,12 @@
 import React from "react";
 import AuthorProfile from "./AuthorProfile";
-import IconBadge from "./IconBadge";
 import PostTime from "./PostTime";
 import {
+  AuthorInfoProps,
   SIZE_STATUSES,
-  ReviewStatusType,
   SizeStatusType,
 } from "@/lib/constants/author";
-import ICONS from "@/lib/constants/icons";
-
-interface MetaItem {
-  type: string;
-  count: number;
-}
-
-interface PostInfo {
-  type: "post";
-  item: MetaItem[];
-}
-
-interface ReviewInfo {
-  type: "review";
-  item: { status: ReviewStatusType };
-}
-
-type InfoType = PostInfo | ReviewInfo | undefined;
-
-export interface AuthorInfoProps {
-  size?: SizeStatusType;
-  author: string;
-  createdAt: string;
-  profileImage?: string;
-  isAuthor: boolean;
-  info?: InfoType;
-}
+import PostMeta from "./PostMeta";
 
 const AuthorInfo: React.FC<AuthorInfoProps> = ({
   size = SIZE_STATUSES.DEFAULT,
@@ -41,7 +14,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   createdAt,
   profileImage,
   isAuthor,
-  info,
+  info = { type: "basic" },
 }) => {
   const items = [];
 
@@ -53,30 +26,20 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   }
 
   // 2. 작성 시간 추가
-  items.push(<PostTime key="time" time={createdAt} size={size} />);
+  items.push(
+    <PostTime key="time" type={info.type} time={createdAt} size={size} />
+  );
 
-  // 3. info가 존재할 경우만 추가
-  if (info) {
-    switch (info.type) {
-      case "review":
-        items.push(<span key="status">{info.item.status}</span>);
-        break;
+  switch (info.type) {
+    case "review":
+      items.push(<span key="status">{info.item?.status}</span>);
+      break;
 
-      case "post":
-        items.push(
-          <div key="meta" className="flex items-center gap-2">
-            {info.item.map((meta) => (
-              <IconBadge
-                key={meta.type}
-                iconSrc={ICONS[meta.type].src}
-                altText={meta.type}
-                count={meta.count}
-              />
-            ))}
-          </div>
-        );
-        break;
-    }
+    case "post":
+      if (Array.isArray(info.item) && info.item.length > 0) {
+        items.push(<PostMeta key="meta" meta={info.item} />);
+      }
+      break;
   }
 
   return (
