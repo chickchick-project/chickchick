@@ -2,14 +2,14 @@ import React from "react";
 import IconBadge from "../author/IconBadge";
 import AuthorInfo from "../author/AuthorInfo";
 import {
-  CATEGORY_LABELS,
   POST_CARD_STYLES,
   POST_CARD_TYPES,
   CategoryType,
   PostCardType,
 } from "@/lib/constants/post";
-import { META_ICONS } from "@/lib/constants/author";
 import Thumbnail from "./Thumbnail";
+import ICONS from "@/lib/constants/icons";
+import BoardChip from "../chip/boardChip";
 
 export interface PostMetaData {
   likes: number;
@@ -56,7 +56,8 @@ export const PostCard: React.FC<PostCardProps> = ({
       {/* 헤더 */}
       {isCategory && (
         <header className="flex justify-between items-center">
-          <CategoryBadge categoryType={categoryType} />
+          {/* <CategoryBadge categoryType={categoryType} /> */}
+          <BoardChip type={categoryType} />
         </header>
       )}
 
@@ -102,49 +103,15 @@ export const PostCard: React.FC<PostCardProps> = ({
 };
 
 /** 카테고리 뱃지 */
-const CategoryBadge: React.FC<{ categoryType: CategoryType }> = ({
-  categoryType,
-}) => {
-  if (!categoryType) return null;
-
-  return (
-    <span className="border border-primary-300 text-primary-300 text-xs px-2 py-1 rounded-[4px]">
-      {CATEGORY_LABELS[categoryType]}
-    </span>
-  );
-};
-
-/** 썸네일 */
-// const Thumbnail: React.FC<{
-//   thumbnail?: string;
-//   cardType: PostCardType;
-// }> = ({ thumbnail, cardType }) => {
-//   const thumbnailSizes = {
-//     [POST_CARD_TYPES.SMALL]: { width: 80, height: 80 },
-//     [POST_CARD_TYPES.DEFAULT]: { width: 100, height: 100 },
-//     [POST_CARD_TYPES.DETAIL]: { width: 307, height: 180 },
-//   };
-
-//   const { width, height } = thumbnailSizes[cardType];
+// const CategoryBadge: React.FC<{ categoryType: CategoryType }> = ({
+//   categoryType,
+// }) => {
+//   if (!categoryType) return null;
 
 //   return (
-//     <div className="relative">
-//       {thumbnail ? (
-//         <Image
-//           src={thumbnail}
-//           alt="게시글 썸네일"
-//           width={width}
-//           height={height}
-//           className="object-cover rounded-md"
-//           unoptimized
-//         />
-//       ) : (
-//         <div
-//           className="animate-pulse bg-gray-200 rounded-md"
-//           style={{ width, height }}
-//         />
-//       )}
-//     </div>
+//     <span className="border border-primary-300 text-primary-300 text-xs px-2 py-1 rounded-[4px]">
+//       {CATEGORY_LABELS[categoryType]}
+//     </span>
 //   );
 // };
 
@@ -152,21 +119,13 @@ const CategoryBadge: React.FC<{ categoryType: CategoryType }> = ({
 export const PostMeta: React.FC<{ meta: PostMetaData }> = ({ meta }) => {
   return (
     <div className="flex gap-2">
+      <IconBadge iconSrc={ICONS.Like.src} altText="좋아요" count={meta.likes} />
       <IconBadge
-        iconSrc={META_ICONS.likes}
-        altText="좋아요"
-        count={meta.likes}
-      />
-      <IconBadge
-        iconSrc={META_ICONS.comments}
+        iconSrc={ICONS.Comment.src}
         altText="댓글"
         count={meta.comments}
       />
-      <IconBadge
-        iconSrc={META_ICONS.views}
-        altText="조회수"
-        count={meta.views}
-      />
+      <IconBadge iconSrc={ICONS.View.src} altText="조회수" count={meta.views} />
     </div>
   );
 };

@@ -4,14 +4,13 @@ import IconBadge from "./IconBadge";
 import PostTime from "./PostTime";
 import {
   SIZE_STATUSES,
-  META_ICONS,
-  MetaType,
   ReviewStatusType,
   SizeStatusType,
 } from "@/lib/constants/author";
+import ICONS from "@/lib/constants/icons";
 
 interface MetaItem {
-  type: MetaType;
+  type: string;
   count: number;
 }
 
@@ -69,7 +68,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
             {info.item.map((meta) => (
               <IconBadge
                 key={meta.type}
-                iconSrc={META_ICONS[meta.type]}
+                iconSrc={ICONS[meta.type].src}
                 altText={meta.type}
                 count={meta.count}
               />

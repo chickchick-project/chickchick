@@ -12,7 +12,11 @@ import {
   Home,
   Activity,
   Collection,
-} from "../../../public/icons/icons";
+  Search,
+  Like,
+  Comment,
+  View,
+} from "../../../public/icons";
 
 type TIcon = {
   src: string;
@@ -33,6 +37,10 @@ const ICONS: { [key: string]: TIcon } = {
   Home: { src: Home, alt: "home" },
   Activity: { src: Activity, alt: "activity" },
   Collection: { src: Collection, alt: "collection" },
+  Search: { src: Search, alt: "search" },
+  Like: { src: Like, alt: "like" },
+  Comment: { src: Comment, alt: "comment" },
+  View: { src: View, alt: "view" },
 };
 
 export default ICONS;

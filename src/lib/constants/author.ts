@@ -11,13 +11,13 @@ export const SIZE_STATUSES = {
 
 export const DEFAULT_PROFILE_IMAGE = "/images/profile.png";
 
-export const META_ICONS = {
-  likes: "/icons/meta/Like.svg",
-  comments: "/icons/meta/Comment.svg",
-  views: "/icons/meta/View.svg",
-} as const;
+// export const META_ICONS = {
+//   likes: "/icons/meta/Like.svg",
+//   comments: "/icons/meta/Comment.svg",
+//   views: "/icons/meta/View.svg",
+// } as const;
 
 export type ReviewStatusType =
   (typeof REVIEW_STATUSES)[keyof typeof REVIEW_STATUSES];
 export type SizeStatusType = (typeof SIZE_STATUSES)[keyof typeof SIZE_STATUSES];
-export type MetaType = keyof typeof META_ICONS;
+// export type MetaType = keyof typeof META_ICONS;

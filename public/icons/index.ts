@@ -16,6 +16,12 @@ import Home from "./Home.svg";
 import Activity from "./Activity.svg";
 import Collection from "./Collection.svg";
 
+import Search from "./Search.svg";
+
+import Like from "./meta/Like.svg";
+import Comment from "./meta/Comment.svg";
+import View from "./meta/View.svg";
+
 export {
   ArrowDownGray,
   ArrowDownPrimary,
@@ -30,4 +36,8 @@ export {
   Home,
   Activity,
   Collection,
+  Search,
+  Like,
+  Comment,
+  View,
 };

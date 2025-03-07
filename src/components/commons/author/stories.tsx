@@ -91,8 +91,8 @@ DetailWithMeta.args = {
   info: {
     type: "post",
     item: [
-      { type: "comments", count: 999 },
-      { type: "views", count: 999 },
+      { type: "Comment", count: 999 },
+      { type: "View", count: 999 },
     ],
   },
 };
