@@ -1,6 +1,6 @@
 import { Meta, StoryFn } from "@storybook/react";
 import dayjs from "dayjs";
-import { PostCard, type PostCardProps } from "./PostCard";
+import { PostCard, type PostCardProps } from ".";
 import { PostMetaItem } from "@/lib/constants/author";
 
 const CARD_TYPE = {

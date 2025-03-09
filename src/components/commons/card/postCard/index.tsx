@@ -1,14 +1,15 @@
 import React from "react";
-import AuthorInfo from "../author/AuthorInfo";
+import AuthorInfo from "../../author/AuthorInfo";
+import BoardChip from "../../chip/boardChip";
+import PostMeta from "../../author/PostMeta";
+import Thumbnail from "./Thumbnail";
+
 import {
   POST_CARD_STYLES,
   POST_CARD_TYPES,
   CategoryType,
   PostCardType,
 } from "@/lib/constants/post";
-import Thumbnail from "./Thumbnail";
-import BoardChip from "../chip/boardChip";
-import PostMeta from "../author/PostMeta";
 import { PostMetaItem } from "@/lib/constants/author";
 
 export interface PostCardProps {

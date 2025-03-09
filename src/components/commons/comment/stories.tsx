@@ -1,5 +1,5 @@
 import { Meta, StoryFn } from "@storybook/react";
-import Comment, { type CommentProps } from "./Comment";
+import Comment, { type CommentProps } from ".";
 import {
   COMMENT_MAX_LENGTH,
   COMMENT_PLACEHOLDERS,
