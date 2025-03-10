@@ -4,9 +4,13 @@ import Image from "next/image";
 import IMAGES from "@/lib/constants/images";
 import { SocialLogoContainer } from "../commons/socialLogo/SocialLogoContainer";
 
-export const LoginModal = () => {
+interface ILoginModalProps {
+  closeModal: () => void;
+}
+
+export const LoginModal = ({ closeModal }: ILoginModalProps) => {
   return (
-    <ModalContainer>
+    <ModalContainer closeModal={closeModal}>
       <div className="flex flex-col justify-center items-center gap-7 w-[444px] h-[308px]">
         <Image src={IMAGES.Logo.src} alt={IMAGES.Logo.alt} width={120} height={44} />
         <div className="text-black-300 font-normal text-lg">로그인 / 회원가입</div>

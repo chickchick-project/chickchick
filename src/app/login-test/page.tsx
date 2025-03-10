@@ -12,7 +12,13 @@ export default function LoginTestPage() {
   return (
     <>
       <button onClick={handleOpenModal}>login modal button</button>
-      {openModal && <LoginModal />}
+      {openModal && (
+        <LoginModal
+          closeModal={() => {
+            setOpenModal(false);
+          }}
+        />
+      )}
     </>
   );
 }
