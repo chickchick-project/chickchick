@@ -15,7 +15,7 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
 }) => {
   return (
     <div className="flex items-center gap-2">
-      {profileImage && (
+      {profileImage && profileImage.trim() !== "" && (
         <Image
           src={profileImage}
           alt={`${name}의 프로필 이미지`}

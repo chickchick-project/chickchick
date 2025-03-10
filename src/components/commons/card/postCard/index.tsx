@@ -46,7 +46,7 @@ export const PostCard: React.FC<PostCardProps> = ({
 
   return (
     <article
-      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 h-full ${cardStyle}`}
+      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 h-full shadow-card ${cardStyle}`}
     >
       {/* 헤더 */}
       {isCategory && (

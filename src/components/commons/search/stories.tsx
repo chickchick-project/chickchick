@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta } from "@storybook/react";
 import {
   SEARCHBAR_PLACEHOLDER_TEXT,
   SearchBar,
@@ -8,25 +8,35 @@ import {
 export default {
   title: "Components/SearchBar",
   component: SearchBar,
-  argTypes: {},
-} as Meta;
+  parameters: {
+    controls: {
+      include: ["value"],
+    },
+  },
+  argTypes: {
+    value: { control: "text" },
+  },
+} satisfies Meta<typeof SearchBar>;
 
-const Template: StoryFn<SearchBarProps> = (args) => <SearchBar {...args} />;
+const Template = (args: SearchBarProps) => <SearchBar {...args} />;
 
-export const Default = Template.bind({});
-Default.args = {
-  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
+export const Default = {
+  render: Template,
+  args: {
+    placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
+  },
 };
 
-export const Focused = Template.bind({});
-Focused.args = {
-  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
-  value: "",
-  autoFocus: true,
+export const Focus = {
+  render: Template,
+  args: {
+    autoFocus: true,
+  },
 };
 
-export const Done = Template.bind({});
-Done.args = {
-  placeholder: SEARCHBAR_PLACEHOLDER_TEXT,
-  value: "시트러스",
+export const Done = {
+  render: Template,
+  args: {
+    value: "시트러스",
+  },
 };
