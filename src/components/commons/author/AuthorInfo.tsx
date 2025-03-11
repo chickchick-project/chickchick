@@ -45,7 +45,9 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   return (
     <div
       className={`flex items-center justify-between ${
-        size === SIZE_STATUSES.DEFAULT ? "text-label-2" : "text-body-1"
+        size === SIZE_STATUSES.DEFAULT
+          ? "text-label-4 tablet:text-label-2"
+          : "text-body-1"
       } font-medium text-black-300`}
     >
       {addDividers(items, size)}
@@ -56,9 +58,10 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
 export default React.memo(AuthorInfo);
 
 const addDividers = (items: React.ReactNode[], size: SizeStatusType) => {
-  if (items.length < 2) return items;
+  const validItems = items.filter(Boolean);
+  if (validItems.length < 2) return validItems;
 
-  return items.reduce<React.ReactNode[]>((acc, item, index) => {
+  return validItems.reduce<React.ReactNode[]>((acc, item, index) => {
     if (index > 0) {
       acc.push(
         <div

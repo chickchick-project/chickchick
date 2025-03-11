@@ -35,7 +35,9 @@ const PostTime: React.FC<PostTimeProps> = ({ time, type, size }) => {
   return (
     <span
       className={`${
-        size === SIZE_STATUSES.DEFAULT ? "text-label-2" : "text-body-1"
+        size === SIZE_STATUSES.DEFAULT
+          ? "text-label-4 tablet:text-label-2"
+          : "text-body-1"
       } font-medium text-black-300`}
     >
       {formattedTime}

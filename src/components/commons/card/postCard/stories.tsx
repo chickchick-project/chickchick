@@ -20,8 +20,8 @@ export default {
     cardType: {
       control: {
         type: "select",
-        options: Object.values(CARD_TYPE),
       },
+      options: Object.values(CARD_TYPE),
     },
     isAuthor: { control: "boolean" },
     isCategory: { control: "boolean" },
