@@ -11,7 +11,7 @@ export const SIZE_STATUSES = {
   LARGE: "large",
 } as const;
 
-export const DEFAULT_PROFILE_IMAGE = "/images/profile.png";
+export const DEFAULT_PROFILE_IMAGE = "/images/Profile.svg";
 
 export type ReviewStatusType =
   (typeof REVIEW_STATUSES)[keyof typeof REVIEW_STATUSES];
