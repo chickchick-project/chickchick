@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import BoardChip from "./boardChip";
-import AccordChip from "./accordChip";
-import ReviewChip from "./reviewChip";
-import LevelChip from "./levelChip";
+import BoardChip from "./BoardChip";
+import AccordChip from "./AccordChip";
+import ReviewChip from "./ReviewChip";
+import LevelChip from "./LevelChip";
 import { CATEGORY_LABELS, CategoryType } from "@/lib/constants/post";
 import { ACCORDS, TAccords } from "@/lib/constants/accords";
 

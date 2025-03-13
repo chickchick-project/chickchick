@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import AuthorInfo from "../../author/AuthorInfo";
 import { InfoType } from "@/lib/constants/author";
-import ReviewChip from "../../chip/reviewChip";
+import ReviewChip from "../../chip/ReviewChip";
 import Image from "next/image";
 
 export interface ReviewCardProps {
@@ -50,13 +50,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
 
   const MAX_CHIPS = isMyPage ? 2 : 3;
 
-  const ARTICLE_SIZE = isMyPage
-    ? "w-[504px] h-[220px]"
-    : "w-[320px] h-[162px] tablet:w-[704px] tablet:h-[248px]";
+  const ARTICLE_SIZE = isMyPage ? "w-[504px] h-[220px]" : "w-[320px] h-[162px] tablet:w-[704px] tablet:h-[248px]";
 
-  const IMAGE_SIZE = isMyPage
-    ? { width: 180, height: 180 }
-    : { width: 200, height: 200 };
+  const IMAGE_SIZE = isMyPage ? { width: 180, height: 180 } : { width: 200, height: 200 };
 
   return (
     <article
@@ -88,28 +84,17 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
           <h1 className="text-label-2 font-semibold">{title}</h1>
         </header>
         {/* 리뷰 내용 */}
-        <p
-          className={`line-clamp-2 tablet:line-clamp-3 text-label-2 tablet:text-body-2 flex-shrink-0`}
-        >
-          {review}
-        </p>
+        <p className={`line-clamp-2 tablet:line-clamp-3 text-label-2 tablet:text-body-2 flex-shrink-0`}>{review}</p>
         {/* 리뷰 칩*/}
         <div className="flex gap-1">
           {chips.slice(0, MAX_CHIPS).map((label, index) => (
             <ReviewChip key={index} label={label} />
           ))}
-          {chips.length > MAX_CHIPS && (
-            <ReviewChip count={chips.length - MAX_CHIPS} />
-          )}
+          {chips.length > MAX_CHIPS && <ReviewChip count={chips.length - MAX_CHIPS} />}
         </div>
         {/* 리뷰 메타 정보 */}
         <footer className="flex">
-          <AuthorInfo
-            author="주현"
-            createdAt={createdAt}
-            info={info}
-            isAuthor={isAuthorResponsive}
-          />
+          <AuthorInfo author="주현" createdAt={createdAt} info={info} isAuthor={isAuthorResponsive} />
         </footer>
       </main>
     </article>

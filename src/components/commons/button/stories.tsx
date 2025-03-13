@@ -1,4 +1,4 @@
-import ButtonBase from "./buttonBase";
+import ButtonBase from "./ButtonBase";
 import {
   ButtonFilledGrayLFit,
   ButtonFilledGrayLFixed,
@@ -6,8 +6,8 @@ import {
   ButtonFilledPrimaryLFit,
   ButtonFilledPrimaryLFull,
   ButtonFilledPrimarySFit,
-} from "./buttonFilled";
-import { ButtonOutlinedGraySFit, ButtonOutlinedPrimaryLFit, ButtonOutlinedPrimaryLFull } from "./buttonOutlined";
+} from "./ButtonFilled";
+import { ButtonOutlinedGraySFit, ButtonOutlinedPrimaryLFit, ButtonOutlinedPrimaryLFull } from "./ButtonOutlined";
 
 const Component = {
   title: "Button",
