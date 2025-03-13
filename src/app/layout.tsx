@@ -15,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body className={`${pretendard.variable} font-pretendard`}>{children}</body>
+      <body className={`${pretendard.variable} font-pretendard`}>
+        {children}
+        <div id="modal"></div>
+      </body>
     </html>
   );
 }
