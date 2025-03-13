@@ -1,5 +1,5 @@
 import { Meta } from "@storybook/react";
-import { InputBase, type InputBaseProps } from "./inputBase";
+import { InputBase, type InputBaseProps } from ".";
 
 export default {
   title: "Commons/InputBase",
