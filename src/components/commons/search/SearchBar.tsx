@@ -1,3 +1,4 @@
+import ICONS from "@/lib/constants/icons";
 import Image from "next/image";
 import React from "react";
 
@@ -31,7 +32,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {...rest}
       />
       <Image
-        src="/icons/Search.svg"
+        src={ICONS.Search.src}
         alt="Search"
         width={20}
         height={20}

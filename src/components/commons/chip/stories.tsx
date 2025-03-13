@@ -3,7 +3,7 @@ import BoardChip from "./boardChip";
 import AccordChip from "./accordChip";
 import ReviewChip from "./reviewChip";
 import LevelChip from "./levelChip";
-import { BOARD_TYPES, TBoardType } from "@/lib/constants/communityBoard";
+import { CATEGORY_LABELS, CategoryType } from "@/lib/constants/post";
 import { ACCORDS, TAccords } from "@/lib/constants/accords";
 
 const meta: Meta = {
@@ -27,12 +27,12 @@ export const Board: BoardChipStory = {
     },
     type: {
       control: { type: "select" },
-      options: Object.keys(BOARD_TYPES),
+      options: Object.keys(CATEGORY_LABELS),
     },
   },
   args: {
     size: "m",
-    type: "question" as TBoardType,
+    type: "question" as CategoryType,
   },
 };
 
@@ -71,8 +71,8 @@ export const AllChips: StoryObj = {
       <div>
         <h3 className="mb-2">Board Chips</h3>
         <div className="flex gap-2 flex-wrap">
-          {Object.keys(BOARD_TYPES).map((type) => (
-            <BoardChip key={type} size="m" type={type as TBoardType} />
+          {Object.keys(CATEGORY_LABELS).map((type) => (
+            <BoardChip key={type} size="m" type={type as CategoryType} />
           ))}
         </div>
       </div>

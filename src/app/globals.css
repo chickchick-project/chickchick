@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .shadow-card {
+    @apply shadow-[0_4px_20px_rgba(0,0,0,0.08)];
+  }
+
+  .divider-vertical {
+    @apply relative after:content-[''] after:absolute after:right-[-10px] after:top-1/4 after:h-3 after:w-px after:bg-gray-200 last:after:hidden;
+    @apply px-6;
+  }
+}
