@@ -1,16 +1,24 @@
-import { logout, naverLogin } from "@/lib/database/action/login";
+"use client";
 
-export default async function LoginTestPage() {
+import { LoginModal } from "@/components/modal/LoginModal";
+import { useState } from "react";
+
+export default function LoginTestPage() {
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal((prev) => !prev);
+  };
   return (
     <>
-      <form action={naverLogin}>
-        <button>naver login</button>
-      </form>
-      <br />
-      <br />
-      <form action={logout}>
-        <button>logout</button>
-      </form>
+      <button onClick={handleOpenModal}>login modal button</button>
+      {openModal && (
+        <LoginModal
+          closeModal={() => {
+            setOpenModal(false);
+          }}
+        />
+      )}
     </>
   );
 }
