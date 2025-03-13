@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useRef } from "react";
 import { Dropdown } from "./Dropdown";
+import ICONS from "@/lib/constants/icons";
 
 export interface NavBarProps {
   currentPath: string;
@@ -68,7 +69,7 @@ const NavBar: React.FC<NavBarProps> = ({
 
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                     <Image
-                      src="/icons/ArrowDownGray.svg"
+                      src={ICONS.ArrowDownGray.src}
                       width={16}
                       height={16}
                       alt="Down"

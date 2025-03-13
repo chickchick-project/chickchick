@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/levelChip";
+import ICONS from "@/lib/constants/icons";
 
 interface DropdownProps {
   onClose: () => void;
@@ -20,30 +21,30 @@ export const Dropdown: React.FC<DropdownProps> = ({ onClose, parentRef }) => {
 
   const menuItems = [
     {
-      icon: "/icons/Collection.svg",
+      icon: ICONS.Collection,
       label: "나의 컬렉션",
-      onclick: () => console.log("나의 컬렉션"),
+      onClick: () => console.log("나의 컬렉션"),
     },
     {
-      icon: "/icons/BookmarkOutlined.svg",
+      icon: ICONS.BookmarkOutlined,
       label: "북마크",
-      onclick: () => console.log("북마크"),
+      onClick: () => console.log("북마크"),
     },
     {
-      icon: "/icons/Activity.svg",
+      icon: ICONS.Activity,
       label: "내 활동",
-      onclick: () => console.log("내 활동"),
+      onClick: () => console.log("내 활동"),
     },
   ];
 
   const footerItems = [
     {
       label: "의견 보내기",
-      onclick: () => console.log("의견 보내기"),
+      onClick: () => console.log("의견 보내기"),
     },
     {
       label: "로그아웃",
-      onclick: onClose,
+      onClick: onClose,
     },
   ];
 
@@ -75,11 +76,11 @@ export const Dropdown: React.FC<DropdownProps> = ({ onClose, parentRef }) => {
             <div
               key={index}
               className="flex flex-col items-center gap-2 cursor-pointer"
-              onClick={item.onclick}
+              onClick={item.onClick}
             >
               <Image
-                src={item.icon}
-                alt={item.label}
+                src={item.icon.src}
+                alt={item.icon.alt}
                 width={24}
                 height={24}
                 priority
@@ -94,7 +95,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ onClose, parentRef }) => {
             <React.Fragment key={index}>
               <span
                 className="text-body-2 font-medium text-black-300 cursor-pointer"
-                onClick={item.onclick}
+                onClick={item.onClick}
               >
                 {item.label}
               </span>
