@@ -1,7 +1,7 @@
 "use client";
 import { DEFAULT_SORT_BY, Option, SORT_BY_OPTIONS, TSortBy } from "@/lib/constants/options";
 import { useState } from "react";
-import Dropdown from "./dropdownBase";
+import Dropdown from "./DropdownBase";
 
 interface ISortDropdownProps {
   currentOption?: TSortBy;

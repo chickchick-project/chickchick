@@ -1,5 +1,5 @@
-import DropdownButton from "./dropdownButton";
-import DropdownMenu from "./dropdownMenu";
+import DropdownButton from "./DropdownButton";
+import DropdownMenu from "./DropdownMenu";
 import Image from "next/image";
 import ICONS from "@/lib/constants/icons";
 import { Option } from "@/lib/constants/options";
