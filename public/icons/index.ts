@@ -21,6 +21,7 @@ import Search from "./Search.svg";
 import Like from "./meta/Like.svg";
 import Comment from "./meta/Comment.svg";
 import View from "./meta/View.svg";
+import CloseCircle from "./CloseCircle.svg";
 
 export {
   ArrowDownGray,
@@ -40,4 +41,5 @@ export {
   Like,
   Comment,
   View,
+  CloseCircle,
 };

@@ -16,6 +16,7 @@ import {
   Like,
   Comment,
   View,
+  CloseCircle,
 } from "../../../public/icons";
 
 type TIcon = {
@@ -41,6 +42,7 @@ const ICONS: { [key: string]: TIcon } = {
   Like: { src: Like, alt: "like" },
   Comment: { src: Comment, alt: "comment" },
   View: { src: View, alt: "view" },
+  CloseCircle: { src: CloseCircle, alt: "close" },
 };
 
 export default ICONS;
