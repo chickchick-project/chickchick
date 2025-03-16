@@ -1,0 +1,155 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model brands {
+  id                       String                     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                     Json
+  description              String?
+  image_url                String?
+  map_location             Json?
+  perfumes                 perfumes[]
+  temp_brand_official_urls temp_brand_official_urls[]
+}
+
+model perfume_accords {
+  id                   String                 @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                 Json                   @unique
+  description          String?
+  perfumes_accords_map perfumes_accords_map[]
+}
+
+model perfume_notes {
+  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name               Json                 @unique
+  description        String?
+  perfumes_notes_map perfumes_notes_map[]
+}
+
+model perfumes {
+  id                         String                       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name                       Json
+  brand_id                   String                       @db.Uuid
+  price                      Int?
+  image_url                  String?
+  description                String?
+  created_at                 DateTime                     @default(now()) @db.Timestamptz(6)
+  official_url               String?
+  brands                     brands                       @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  perfumes_accords_map       perfumes_accords_map[]
+  perfumes_notes_map         perfumes_notes_map[]
+  temp_perfumes_official_url temp_perfumes_official_url[]
+  user_collections           user_collections[]
+}
+
+model perfumes_accords_map {
+  id              String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perfume_id      String          @db.Uuid
+  accord_id       String          @db.Uuid
+  perfume_accords perfume_accords @relation(fields: [accord_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  perfumes        perfumes        @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([perfume_id, accord_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model perfumes_notes_map {
+  id            String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perfume_id    String        @db.Uuid
+  note_id       String        @db.Uuid
+  note_stage    String        @db.VarChar
+  perfume_notes perfume_notes @relation(fields: [note_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  perfumes      perfumes      @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([perfume_id, note_id, note_stage])
+}
+
+model raw_perfumes {
+  id              Int       @id @default(autoincrement())
+  perfume_name    String
+  brand_name      String
+  page_url        String    @unique
+  image_url       String?
+  description     String?
+  accords         String[]
+  notes           Json?
+  add_description String?
+  created_at      DateTime? @default(now()) @db.Timestamp(6)
+}
+
+model temp_brand_official_urls {
+  id           String  @id(map: "brand_official_links_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  brand_id     String  @db.Uuid
+  official_url String?
+  brands       brands  @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "brand_official_links_brand_id_fkey")
+}
+
+model temp_perfume_image_migration {
+  id            String  @id(map: "perfume_image_migration_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perfume_name  String
+  old_image_url String
+  new_image_url String?
+}
+
+model temp_perfumes_official_url {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perfume_id   String?   @db.Uuid
+  official_url String?
+  perfumes     perfumes? @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_activity {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id       String?   @db.Uuid
+  activity_type String?
+  target_id     String    @db.Uuid
+  created_at    DateTime? @default(now()) @db.Timestamp(6)
+  users         users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model user_bookmarks {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String?   @db.Uuid
+  item_id    String    @db.Uuid
+  item_type  String?
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, item_id, item_type])
+}
+
+model user_collections {
+  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String?   @db.Uuid
+  perfume_id String?   @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  perfumes   perfumes? @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users      users?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([user_id, perfume_id])
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model users {
+  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String
+  auth_id          String             @unique @db.Uuid
+  email            String             @unique
+  nickname         String             @unique
+  age              Int?
+  gender           String?
+  created_at       DateTime?          @default(now()) @db.Timestamp(6)
+  is_active        Boolean?           @default(true)
+  role             String?            @default("user")
+  user_activity    user_activity[]
+  user_bookmarks   user_bookmarks[]
+  user_collections user_collections[]
+}
