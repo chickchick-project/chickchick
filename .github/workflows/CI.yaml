@@ -18,10 +18,10 @@ jobs:
         with:
           node-version: "20.9.0"
           cache: "yarn"
-          cache-dependency-path: "**/.yarn/releases/*.cjs"
+          cache-dependency-path: "yarn.lock"
 
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
 
       - name: Build
         run: yarn build
