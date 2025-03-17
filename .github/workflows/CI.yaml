@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [dev]
+  pull_request:
+    branches: [dev]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.9.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.9.0"
+          cache: "yarn"
+          cache-dependency-path: "**/.yarn/releases/*.cjs"
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test --passWithNoTests
