@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase/init";
+import { prisma } from "@/lib/prisma";
 
 interface SearchParams {
   search_text: string;
@@ -16,21 +16,20 @@ interface SearchParamsWithFilters extends SearchParams {
  * 단순 검색 함수 (GET 요청)
  */
 export async function fetchSearch(params: SearchParams) {
-  const { search_text, result_limit, last_seen_id } = params;
+  const { search_text, result_limit = 15, last_seen_id } = params;
 
-  const { data, error } = await supabase.rpc("search_perfumes", {
+  const data = await prisma.$queryRawUnsafe(
+    "SELECT * FROM search_perfumes($1::text, $2::uuid, $3::text[], $4::text[], $5::uuid, $6::integer)",
     search_text,
-    result_limit,
+    null,
+    null,
+    null,
     last_seen_id,
-  });
-
-  if (error) {
-    throw new Error(error.message);
-  }
+    result_limit
+  );
 
   return data;
 }
-
 /**
  * 필터 포함 검색 함수 (POST 요청)
  */
@@ -44,50 +43,44 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
     result_limit,
   } = params;
 
-  const formattedNotes =
-    Array.isArray(notes_filter) && notes_filter.length > 0
-      ? notes_filter
-      : null;
-  const formattedAccords =
-    Array.isArray(accords_filter) && accords_filter.length > 0
-      ? accords_filter
-      : null;
+  const formattedNotes = notes_filter.length
+    ? `{${notes_filter.join(",")}}`
+    : null;
+  const formattedAccords = accords_filter.length
+    ? `{${accords_filter.join(",")}}`
+    : null;
 
-  const { data, error } = await supabase.rpc("search_perfumes", {
-    search_text,
-    brand_filter,
-    notes_filter: formattedNotes,
-    accords_filter: formattedAccords,
-    last_seen_id,
-    result_limit,
-  });
+  try {
+    const data = await prisma.$queryRawUnsafe(
+      "SELECT * FROM search_perfumes($1::text, $2::uuid, $3::text[], $4::text[], $5::uuid, $6::integer)",
+      search_text,
+      brand_filter || null,
+      formattedNotes,
+      formattedAccords,
+      last_seen_id || null,
+      result_limit ?? 15
+    );
 
-  if (error) {
-    console.error("Supabase RPC Error:", error);
-    throw new Error(`Supabase RPC Error: ${error.message}`);
+    if (!data) {
+      console.error("Prisma query returned null data");
+      throw new Error("No data found");
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Prisma Query Error:", error);
+    throw new Error(`Database query failed: ${(error as Error).message}`);
   }
-
-  if (data === null) {
-    console.error("Supabase RPC returned null data");
-    throw new Error("Supabase RPC returned null data");
-  }
-
-  return data;
 }
 
 /**
  * last_seen_id가 실제로 존재하는지 확인하는 함수
  */
 export async function checkPerfumeExists(perfumeId: string) {
-  const { data, error } = await supabase
-    .from("perfumes")
-    .select("id")
-    .eq("id", perfumeId)
-    .single();
+  const perfume = await prisma.perfumes.findUnique({
+    where: { id: perfumeId },
+    select: { id: true },
+  });
 
-  if (error) {
-    return false;
-  }
-
-  return Boolean(data);
+  return Boolean(perfume);
 }

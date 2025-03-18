@@ -1,3 +1,4 @@
+import NavBarWrapper from "@/components/commons/navBar/Wrapper";
 import "./globals.css";
 import localFont from "next/font/local";
 
@@ -16,6 +17,7 @@ export default function RootLayout({
   return (
     <html lang="kr">
       <body className={`${pretendard.variable} font-pretendard`}>
+        <NavBarWrapper />
         {children}
         <div id="modal"></div>
       </body>
