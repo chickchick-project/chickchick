@@ -67,11 +67,6 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
     }
   }
 
-  // // 검색어가 없는 경우 빈 데이터 반환
-  // if (!search_text) {
-  //   return NextResponse.json({ data: [], nextCursor: null }, { status: 200 });
-  // }
-
   try {
     // 검색 수행 (Supabase RPC 호출)
     const data: Perfume[] = (await fetchSearch({
@@ -157,7 +152,7 @@ export async function POST(
           data: [],
           nextCursor: null,
         },
-        { status: 204 }
+        { status: 200 }
       );
     }
 

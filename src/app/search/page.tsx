@@ -1,104 +1,121 @@
 "use client";
 
-import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
-import { Perfume, SearchResponse } from "../api/search/route";
-import Image from "next/image";
-import { SearchBar } from "@/components/commons/search/SearchBar";
 import { ChangeEvent, useState, useCallback, useMemo, FormEvent } from "react";
+import Image from "next/image";
+import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
+import { Perfume } from "../api/search/route";
+import { SearchBar } from "@/components/commons/search/SearchBar";
+import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
+import { useFilters } from "@/lib/hooks/useFilters";
 
-// 서버 요청 함수를 컴포넌트 외부로 분리
-const fetchPerfumes = async (
-  cursor: string | null,
-  query: string
-): Promise<SearchResponse> => {
-  const url = cursor
-    ? `/api/search?${query}&cursor=${cursor}`
-    : `/api/search?${query}`;
-
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data: ${response.status}`);
-  }
-
-  return await response.json();
-};
-
-// 필터 옵션 정의
+// 필터 옵션 정의(Mock)
 const FILTER_OPTIONS = {
   gender: [
     { label: "남성", value: "male" },
     { label: "여성", value: "female" },
   ],
-  brand: [{ label: "Dior", value: "Dior" }],
-  note: [{ label: "Vanilla", value: "Vanilla" }],
+  brand: [
+    { label: "Dior", value: "2c88f47d-47b5-4127-bcce-c54400b52dd4" },
+    {
+      label: "Frederic Malle",
+      value: "608b9ece-7c4c-487b-bfe8-5646ec35fc98",
+    },
+  ],
+  notes: [
+    { label: "Vanilla", value: "vanilla" },
+    { label: "Lemon", value: "Lemon" },
+  ],
 };
 
 export default function SearchPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const { filters, handleFilterChange, resetFilters } = useFilters();
 
-  // 검색 제출 핸들러
-  const handleSubmit = useCallback(
-    (e?: FormEvent) => {
-      if (e) e.preventDefault();
-      setSubmittedSearchTerm(searchTerm);
-    },
-    [searchTerm]
-  );
+  const adaptedFetchPerfumes = async (
+    cursor: string | null,
+    queryStr: string
+  ) => {
+    try {
+      const params = new URLSearchParams(queryStr);
+      const searchText = params.get("q") || "";
 
-  // 필터 변경 핸들러
-  const handleFilterChange = useCallback(
-    (key: string, value: string) => {
-      setFilters((prevFilters) => {
-        // 이미 선택된 필터를 다시 클릭하면 해제
-        if (prevFilters[key] === value) {
-          const newFilters = { ...prevFilters };
-          delete newFilters[key];
-          return newFilters;
+      const newFilters = new Map<string, Set<string>>();
+
+      params.forEach((value, key) => {
+        if (key !== "q" && key !== "cursor") {
+          if (!newFilters.has(key)) {
+            newFilters.set(key, new Set());
+          }
+          newFilters.get(key)!.add(value);
         }
-        return { ...prevFilters, [key]: value };
       });
 
-      // 필터 변경 시 자동으로 검색 실행
-      setTimeout(() => handleSubmit(), 0);
-    },
-    [handleSubmit]
-  );
+      const result = await fetchPerfumes(cursor, searchText, newFilters);
 
-  // 필터 초기화 핸들러
-  const resetFilters = useCallback(() => {
-    setFilters({});
+      return {
+        data: result.data || [],
+        nextCursor: result.nextCursor
+          ? { last_seen_id: result.nextCursor.last_seen_id }
+          : null,
+      };
+    } catch (error) {
+      console.error("adaptedFetchPerfumes 오류:", error);
+      return { data: [], nextCursor: null };
+    }
+  };
 
-    // 필터 초기화 시 자동으로 검색 실행
-    setTimeout(() => handleSubmit(), 0);
-  }, [handleSubmit]);
+  // 검색 제출 핸들러
+  const handleSubmit = (e?: FormEvent) => {
+    if (e) e.preventDefault();
+    setSubmittedSearchTerm(searchTerm);
+  };
 
   // 검색어 변경 핸들러
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
-  }, []);
+  };
 
   // 검색 파라미터 생성 (메모이제이션)
   const query = useMemo(() => {
-    const searchParams = { q: submittedSearchTerm, ...filters };
-    return new URLSearchParams(
-      Object.entries(searchParams).filter(([key, v]) => {
-        void key;
-        return v;
-      })
-    ).toString();
+    const searchParams = new URLSearchParams();
+    searchParams.append("q", submittedSearchTerm);
+
+    filters.forEach((values, key) => {
+      if (values.size > 0) {
+        values.forEach((value) => searchParams.append(key, value));
+      }
+    });
+
+    return searchParams.toString();
   }, [submittedSearchTerm, filters]);
 
   // 무한 스크롤 훅 사용
   const { data, isLoading, moreRef, hasMore, error, refetch } =
-    useInfiniteScroll<Perfume>(fetchPerfumes, query);
+    useInfiniteScroll<Perfume>(adaptedFetchPerfumes, query);
+
+  // 🔹 중복된 perfume_id 제거 로직 추가
+  const uniquePerfumes = useMemo(() => {
+    const perfumeMap = new Map<string, Perfume>();
+
+    data.forEach((item) => {
+      if (
+        !perfumeMap.has(item.perfume_id) ||
+        perfumeMap.get(item.perfume_id)!.priority < item.priority
+      ) {
+        perfumeMap.set(item.perfume_id, item);
+      }
+    });
+
+    return Array.from(perfumeMap.values());
+  }, [data]);
 
   // 필터 스타일 계산
   const getFilterStyle = useCallback(
     (key: string, value: string) => {
-      return filters[key] === value ? "bg-gray-200 font-bold" : "bg-white";
+      return filters.get(key)?.has(value)
+        ? "bg-gray-200 font-bold"
+        : "bg-white";
     },
     [filters]
   );
@@ -167,7 +184,7 @@ export default function SearchPage() {
           </div>
         )}
 
-        <div className="mt-10 px-4">
+        <main className="mt-10 px-4">
           <h3 className="text-headline-3 font-semibold">향수</h3>
 
           {data.length === 0 && !isLoading ? (
@@ -176,7 +193,7 @@ export default function SearchPage() {
             </div>
           ) : (
             <div className="grid grid-cols-5 gap-x-[52px] gap-y-10 mt-5">
-              {data.map((item) => (
+              {uniquePerfumes.map((item) => (
                 <figure
                   key={item.perfume_id}
                   className="flex flex-col overflow-hidden rounded w-full max-w-[180px] mx-auto"
@@ -188,6 +205,7 @@ export default function SearchPage() {
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width:1200px) 50vw, 33vw"
                       className="object-cover"
+                      priority
                     />
                   </div>
                   <figcaption className="w-full text-left mt-2 space-y-1">
@@ -208,7 +226,7 @@ export default function SearchPage() {
               <p className="text-gray-500">모든 결과를 확인했습니다.</p>
             )}
           </div>
-        </div>
+        </main>
       </section>
     </div>
   );
