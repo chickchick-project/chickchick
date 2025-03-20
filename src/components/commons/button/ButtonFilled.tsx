@@ -1,13 +1,16 @@
-import { ReactNode } from "react";
 import ButtonBase, { IButtonBaseProps } from "./ButtonBase";
 
-export interface IButtonFilledProps extends Omit<IButtonBaseProps, "bgColor"> {}
+export type IButtonFilledProps = Omit<IButtonBaseProps, "bgColor">;
 
 export const buttonLargeHeight = "h-[43px]";
 export const buttonSmallHeight = "h-[33px]";
 const buttonFilledBase = `text-center rounded-full leading-none flex justify-center items-center `;
 
-export function ButtonFilledPrimaryLFull({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
+export function ButtonFilledPrimaryLFull({
+  children,
+  colorNum = "100",
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="primary"
@@ -20,7 +23,11 @@ export function ButtonFilledPrimaryLFull({ children, colorNum = "100", ...rest }
   );
 }
 
-export function ButtonFilledPrimaryLFit({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
+export function ButtonFilledPrimaryLFit({
+  children,
+  colorNum = "100",
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="primary"
@@ -33,7 +40,11 @@ export function ButtonFilledPrimaryLFit({ children, colorNum = "100", ...rest }:
   );
 }
 
-export function ButtonFilledPrimarySFit({ children, colorNum = "100", ...rest }: IButtonFilledProps) {
+export function ButtonFilledPrimarySFit({
+  children,
+  colorNum = "100",
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="primary"
@@ -46,7 +57,10 @@ export function ButtonFilledPrimarySFit({ children, colorNum = "100", ...rest }:
   );
 }
 
-export function ButtonFilledGrayLFull({ children, ...rest }: IButtonFilledProps) {
+export function ButtonFilledGrayLFull({
+  children,
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="gray"
@@ -58,7 +72,10 @@ export function ButtonFilledGrayLFull({ children, ...rest }: IButtonFilledProps)
     </ButtonBase>
   );
 }
-export function ButtonFilledGrayLFit({ children, ...rest }: IButtonFilledProps) {
+export function ButtonFilledGrayLFit({
+  children,
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="gray"
@@ -71,7 +88,11 @@ export function ButtonFilledGrayLFit({ children, ...rest }: IButtonFilledProps) 
   );
 }
 
-export function ButtonFilledGrayLFixed({ children, className, ...rest }: IButtonFilledProps) {
+export function ButtonFilledGrayLFixed({
+  children,
+  className,
+  ...rest
+}: IButtonFilledProps) {
   return (
     <ButtonBase
       bgColor="gray"

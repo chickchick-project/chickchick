@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { fetchBrandWithPerfumes } from "@/lib/supabase/query/brands";
 
 export async function GET(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { name: string } }
 ) {
   const brandName = params.name;

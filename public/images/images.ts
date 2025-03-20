@@ -4,6 +4,6 @@ import Google from "./Google.svg";
 import Naver from "./Naver.svg";
 import Kakao from "./Kakao.svg";
 
-import Profile from "./Profile.png";
+import Profile from "./Profile.svg";
 
 export { Logo, Google, Naver, Kakao, Profile };

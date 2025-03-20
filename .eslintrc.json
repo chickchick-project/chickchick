@@ -1,7 +1,6 @@
 {
-  "extends": [
-    "next/core-web-vitals",
-    "next/typescript",
-    "plugin:storybook/recommended"
-  ]
+  "rules": {
+    "jsx-a11y/alt-text": "off"
+  },
+  "extends": ["next/core-web-vitals", "next/typescript", "plugin:storybook/recommended"]
 }

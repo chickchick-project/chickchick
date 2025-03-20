@@ -1,6 +1,6 @@
 import ChipBase, { IChipBaseProps } from "./ChipBase";
 
-interface IChipFilledProps extends Omit<IChipBaseProps, "bgColor" | "colorNum"> {}
+type IChipFilledProps = Omit<IChipBaseProps, "bgColor" | "colorNum">;
 
 export function ChipFilled(props: IChipFilledProps) {
   const { children, className, ...rest } = props;
@@ -14,7 +14,12 @@ export function ChipFilled(props: IChipFilledProps) {
 export function ChipFilledPrimary(props: IChipFilledProps) {
   const { children, className, ...rest } = props;
   return (
-    <ChipBase bgColor="primary" colorNum="300" className={`${className} text-white`} {...rest}>
+    <ChipBase
+      bgColor="primary"
+      colorNum="300"
+      className={`${className} text-white`}
+      {...rest}
+    >
       {children}
     </ChipBase>
   );
@@ -23,7 +28,12 @@ export function ChipFilledPrimary(props: IChipFilledProps) {
 export function ChipFilledGray(props: IChipFilledProps) {
   const { children, className, ...rest } = props;
   return (
-    <ChipBase bgColor="gray" colorNum="300" className={`${className} text-black-200`} {...rest}>
+    <ChipBase
+      bgColor="gray"
+      colorNum="300"
+      className={`${className} text-black-200`}
+      {...rest}
+    >
       {children}
     </ChipBase>
   );
