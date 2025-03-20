@@ -1,13 +1,20 @@
 import ButtonBase from "./ButtonBase";
-import { IButtonFilledProps, buttonLargeHeight, buttonSmallHeight } from "./ButtonFilled";
+import {
+  IButtonFilledProps,
+  buttonLargeHeight,
+  buttonSmallHeight,
+} from "./ButtonFilled";
 
-interface IButtonOutlinedProps extends Omit<IButtonFilledProps, "colorNum"> {}
+type IButtonOutlinedProps = Omit<IButtonFilledProps, "colorNum">;
 
 const buttonOutlinedBase = `text-center rounded-full leading-none flex justify-center items-center border `;
 const outlinePrimary = "border-primary-100 text-primary-100";
 const outlineGray = "border-gray-100 text-black-100";
 
-export function ButtonOutlinedPrimaryLFull({ children, ...rest }: IButtonOutlinedProps) {
+export function ButtonOutlinedPrimaryLFull({
+  children,
+  ...rest
+}: IButtonOutlinedProps) {
   return (
     <ButtonBase
       bgColor="white"
@@ -19,7 +26,10 @@ export function ButtonOutlinedPrimaryLFull({ children, ...rest }: IButtonOutline
   );
 }
 
-export function ButtonOutlinedPrimaryLFit({ children, ...rest }: IButtonOutlinedProps) {
+export function ButtonOutlinedPrimaryLFit({
+  children,
+  ...rest
+}: IButtonOutlinedProps) {
   return (
     <ButtonBase
       bgColor="white"
@@ -31,7 +41,11 @@ export function ButtonOutlinedPrimaryLFit({ children, ...rest }: IButtonOutlined
   );
 }
 
-export function ButtonOutlinedGraySFit({ children, iconTrailing, ...rest }: IButtonOutlinedProps) {
+export function ButtonOutlinedGraySFit({
+  children,
+  iconTrailing,
+  ...rest
+}: IButtonOutlinedProps) {
   return (
     <ButtonBase
       bgColor="white"
