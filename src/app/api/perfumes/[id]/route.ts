@@ -1,18 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase/init";
 
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const perfumeId = params.id;
+  const { id } = await params;
 
-  if (!perfumeId) {
+  if (!id) {
     return NextResponse.json({ error: "Missing perfume ID" }, { status: 400 });
   }
 
   const { data, error } = await supabase.rpc("get_perfume_details", {
-    perfume_uuid: perfumeId,
+    perfume_uuid: id,
   });
 
   if (error) {
