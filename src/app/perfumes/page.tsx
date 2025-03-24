@@ -1,12 +1,13 @@
 "use client";
 
 import { ChangeEvent, useState, useCallback, useMemo, FormEvent } from "react";
-import Image from "next/image";
-import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { Perfume } from "../api/search/route";
-import { SearchBar } from "@/components/commons/search/SearchBar";
+import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
+import { withCache } from "@/lib/utils/withCache";
 import { useFilters } from "@/lib/hooks/useFilters";
+import { SearchBar } from "@/components/commons/search/SearchBar";
+import { PerfumeCard } from "@/components/commons/perfumeCard";
 
 // 필터 옵션 정의(Mock)
 const FILTER_OPTIONS = {
@@ -32,38 +33,35 @@ export default function SearchPage() {
   const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
   const { filters, handleFilterChange, resetFilters } = useFilters();
 
-  const adaptedFetchPerfumes = async (
-    cursor: string | null,
-    queryStr: string
-  ) => {
-    try {
-      const params = new URLSearchParams(queryStr);
-      const searchText = params.get("q") || "";
+  const adaptedFetchPerfumes = useCallback(
+    async (cursor: string | null, queryStr: string) => {
+      try {
+        const params = new URLSearchParams(queryStr);
+        const searchText = params.get("q") || "";
 
-      const newFilters = new Map<string, Set<string>>();
-
-      params.forEach((value, key) => {
-        if (key !== "q" && key !== "cursor") {
-          if (!newFilters.has(key)) {
-            newFilters.set(key, new Set());
+        const newFilters = new Map<string, Set<string>>();
+        params.forEach((value, key) => {
+          if (key !== "q" && key !== "cursor") {
+            if (!newFilters.has(key)) newFilters.set(key, new Set());
+            newFilters.get(key)!.add(value);
           }
-          newFilters.get(key)!.add(value);
-        }
-      });
+        });
 
-      const result = await fetchPerfumes(cursor, searchText, newFilters);
+        const result = await fetchPerfumes(cursor, searchText, newFilters);
 
-      return {
-        data: result.data || [],
-        nextCursor: result.nextCursor
-          ? { last_seen_id: result.nextCursor.last_seen_id }
-          : null,
-      };
-    } catch (error) {
-      console.error("adaptedFetchPerfumes 오류:", error);
-      return { data: [], nextCursor: null };
-    }
-  };
+        return {
+          data: result.data || [],
+          nextCursor: result.nextCursor
+            ? { last_seen_id: result.nextCursor.last_seen_id }
+            : null,
+        };
+      } catch (error) {
+        console.error("adaptedFetchPerfumes 오류:", error);
+        return { data: [], nextCursor: null };
+      }
+    },
+    []
+  );
 
   // 검색 제출 핸들러
   const handleSubmit = (e?: FormEvent) => {
@@ -91,10 +89,14 @@ export default function SearchPage() {
   }, [submittedSearchTerm, filters]);
 
   // 무한 스크롤 훅 사용
-  const { data, isLoading, moreRef, hasMore, error, refetch } =
-    useInfiniteScroll<Perfume>(adaptedFetchPerfumes, query);
+  const cachedFetchPerfumes = useMemo(
+    () => withCache(adaptedFetchPerfumes),
+    [adaptedFetchPerfumes]
+  );
 
-  // 🔹 중복된 perfume_id 제거 로직 추가
+  const { data, isLoading, moreRef, hasMore, error, refetch } =
+    useInfiniteScroll<Perfume>(cachedFetchPerfumes, query);
+
   const uniquePerfumes = useMemo(() => {
     const perfumeMap = new Map<string, Perfume>();
 
@@ -194,27 +196,12 @@ export default function SearchPage() {
           ) : (
             <div className="grid grid-cols-5 gap-x-[52px] gap-y-10 mt-5">
               {uniquePerfumes.map((item) => (
-                <figure
+                <PerfumeCard
                   key={item.perfume_id}
-                  className="flex flex-col overflow-hidden rounded w-full max-w-[180px] mx-auto"
-                >
-                  <div className="relative w-full aspect-square shadow-md">
-                    <Image
-                      src={item.image_url}
-                      alt={item.perfume_name.en}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width:1200px) 50vw, 33vw"
-                      className="object-cover"
-                      priority
-                    />
-                  </div>
-                  <figcaption className="w-full text-left mt-2 space-y-1">
-                    <p className="text-sm text-gray-600">
-                      {item.brand_name.en}
-                    </p>
-                    <p className="font-medium">{item.perfume_name.en}</p>
-                  </figcaption>
-                </figure>
+                  perfumeImage={item.image_url}
+                  brandName={item.brand_name.en}
+                  perfumeName={item.perfume_name.en}
+                />
               ))}
             </div>
           )}

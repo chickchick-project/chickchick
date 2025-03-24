@@ -6,10 +6,14 @@ export const PERFUME_CARD_TYPES = {
   CLOSABLE: "closable",
 } as const;
 
-type PerfumeCardType = (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
+type PerfumeCardType =
+  (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
 
 const PERFUME_CARD_STYLES = {
-  images: { [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]", [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]" },
+  images: {
+    [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]",
+    [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]",
+  },
   brandName: {
     [PERFUME_CARD_TYPES.DEFAULT]: "text-label-1",
     [PERFUME_CARD_TYPES.CLOSABLE]: "text-label-2",
@@ -38,29 +42,34 @@ export const PerfumeCard = ({
   return (
     <article className={`relative ${PERFUME_CARD_STYLES.images[cardType]} `}>
       {cardType === PERFUME_CARD_TYPES.CLOSABLE && (
-        <button type="button" aria-label="Close" onClick={onClose} className="absolute top-2 right-2 z-10">
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="absolute top-2 right-2 z-10"
+        >
           <Image {...ICONS.CloseCircle} width={20} height={20} />
         </button>
       )}
 
-      <figure className="relative aspect-square rounded-xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.08)] w-full h-full">
-        {perfumeImage ? (
-          <Image
-            src={perfumeImage}
-            alt="향수 이미지"
-            fill
-            sizes={`
+      <figure className="relative aspect-square rounded-xl overflow-hidden shadow-card">
+        <Image
+          src={perfumeImage}
+          alt={perfumeName}
+          fill
+          sizes={`
             (max-width: 768px) 100vw, 
             (max-width: 1200px) 50vw, 
             33vw
           `}
-          />
-        ) : (
-          <div className="w-full h-full bg-slate-400" />
-        )}
+          placeholder="blur"
+          blurDataURL="/images/BlurShimmer.svg"
+          priority
+          className="object-contain"
+        />
       </figure>
 
-      <footer className="pt-2">
+      <figcaption className="w-full text-left mt-2 space-y-1">
         <p
           className={`text-black-300 font-medium ${PERFUME_CARD_STYLES.brandName[cardType]} overflow-hidden whitespace-nowrap text-ellipsis`}
         >
@@ -71,7 +80,7 @@ export const PerfumeCard = ({
         >
           {perfumeName}
         </h3>
-      </footer>
+      </figcaption>
     </article>
   );
 };

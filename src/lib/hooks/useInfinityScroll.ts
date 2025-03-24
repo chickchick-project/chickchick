@@ -14,7 +14,7 @@ export function useInfiniteScroll<T>(
   const isIntersecting = useIntersectionObserver(moreRef);
   const [data, setData] = useState<T[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -28,7 +28,7 @@ export function useInfiniteScroll<T>(
 
   // fetchData 함수를 메모이제이션하여 불필요한 재렌더링 방지
   const fetchData = useCallback(async () => {
-    if (isLoading || !hasMore) return;
+    if (!hasMore) return;
 
     setIsLoading(true);
     setError(null);
@@ -59,14 +59,20 @@ export function useInfiniteScroll<T>(
     } finally {
       setIsLoading(false);
     }
-  }, [fetchFunction, cursor, query, isLoading, hasMore]);
+  }, [fetchFunction, cursor, query, hasMore]);
+
+  useEffect(() => {
+    if (data.length === 0 && !isLoading) {
+      fetchData(); // 최초 진입 시 강제 fetch
+    }
+  }, [data.length, isLoading, fetchData]);
 
   // 요소가 화면에 나타날 때 데이터를 가져옴
   useEffect(() => {
-    if (isIntersecting && !isLoading) {
+    if (isIntersecting) {
       fetchData();
     }
-  }, [isIntersecting, fetchData, isLoading]);
+  }, [isIntersecting, isLoading, fetchData]);
 
   // 수동으로 데이터 다시 불러오기
   const refetch = useCallback(() => {
@@ -74,8 +80,8 @@ export function useInfiniteScroll<T>(
     setData([]);
     setHasMore(true);
     setError(null);
-    // 다음 렌더링에서 `fetchData`가 실행됨
-  }, []);
+    fetchData(); // 수동으로 강제 fetch
+  }, [fetchData]);
 
   return {
     moreRef,
