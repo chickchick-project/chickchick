@@ -19,7 +19,7 @@ export async function fetchSearch(params: SearchParams) {
   const { search_text, result_limit = 15, last_seen_id } = params;
 
   const data = await prisma.$queryRawUnsafe(
-    "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::text[], $4::text[], $5::uuid, $6::integer)",
+    "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
     search_text,
     null,
     null,
@@ -54,7 +54,7 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
 
   try {
     const data = await prisma.$queryRawUnsafe(
-      "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::text[], $4::text[], $5::uuid, $6::integer)",
+      "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
       search_text,
       brand_filter || null,
       formattedNotes,
