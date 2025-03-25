@@ -22,6 +22,7 @@ export const Default = Template.bind({});
 Default.args = {
   cardType: PERFUME_CARD_TYPES.DEFAULT,
   perfumeImage: COMMON_IMAGES[PERFUME_CARD_TYPES.DEFAULT],
+  onClick: () => alert("카드 클릭"),
   ...COMMON_TEXT,
 };
 
@@ -33,6 +34,7 @@ export const Closable = Template.bind({});
 Closable.args = {
   cardType: PERFUME_CARD_TYPES.CLOSABLE,
   perfumeImage: COMMON_IMAGES[PERFUME_CARD_TYPES.CLOSABLE],
+  onClose: () => alert("삭제 버튼 클릭"),
   ...COMMON_TEXT,
 };
 
