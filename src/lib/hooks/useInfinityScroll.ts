@@ -69,18 +69,18 @@ export function useInfiniteScroll<T>(
 
   // 요소가 화면에 나타날 때 데이터를 가져옴
   useEffect(() => {
-    if (isIntersecting) {
+    if (isIntersecting && hasMore) {
       fetchData();
     }
-  }, [isIntersecting, isLoading, fetchData]);
+  }, [isIntersecting, hasMore, fetchData]);
 
   // 수동으로 데이터 다시 불러오기
-  const refetch = useCallback(() => {
+  const refetch = useCallback(async () => {
     setCursor(null);
     setData([]);
     setHasMore(true);
     setError(null);
-    fetchData(); // 수동으로 강제 fetch
+    await fetchData();
   }, [fetchData]);
 
   return {

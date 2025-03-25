@@ -5,33 +5,17 @@ import { Perfume } from "../api/search/route";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
 import { withCache } from "@/lib/utils/withCache";
-import { useFilters } from "@/lib/hooks/useFilters";
+import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import { PerfumeCard } from "@/components/commons/perfumeCard";
-
-// 필터 옵션 정의(Mock)
-const FILTER_OPTIONS = {
-  gender: [
-    { label: "남성", value: "male" },
-    { label: "여성", value: "female" },
-  ],
-  brand: [
-    { label: "Dior", value: "2c88f47d-47b5-4127-bcce-c54400b52dd4" },
-    {
-      label: "Frederic Malle",
-      value: "608b9ece-7c4c-487b-bfe8-5646ec35fc98",
-    },
-  ],
-  notes: [
-    { label: "Vanilla", value: "vanilla" },
-    { label: "Lemon", value: "Lemon" },
-  ],
-};
+import PurFumeFilter from "@/components/domains/perfumes/filter";
+import SortDropdown from "@/components/commons/dropdown/SortDropdown";
+import Link from "next/link";
 
 export default function SearchPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [submittedSearchTerm, setSubmittedSearchTerm] = useState("");
-  const { filters, handleFilterChange, resetFilters } = useFilters();
+  const [inputValue, setInputValue] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const { filters } = useFilterStore();
 
   const adaptedFetchPerfumes = useCallback(
     async (cursor: string | null, queryStr: string) => {
@@ -66,18 +50,18 @@ export default function SearchPage() {
   // 검색 제출 핸들러
   const handleSubmit = (e?: FormEvent) => {
     if (e) e.preventDefault();
-    setSubmittedSearchTerm(searchTerm);
+    setSearchKeyword(inputValue);
   };
 
   // 검색어 변경 핸들러
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    setInputValue(e.target.value);
   };
 
   // 검색 파라미터 생성 (메모이제이션)
   const query = useMemo(() => {
     const searchParams = new URLSearchParams();
-    searchParams.append("q", submittedSearchTerm);
+    searchParams.append("q", searchKeyword);
 
     filters.forEach((values, key) => {
       if (values.size > 0) {
@@ -86,7 +70,7 @@ export default function SearchPage() {
     });
 
     return searchParams.toString();
-  }, [submittedSearchTerm, filters]);
+  }, [searchKeyword, filters]);
 
   // 무한 스크롤 훅 사용
   const cachedFetchPerfumes = useMemo(
@@ -112,56 +96,18 @@ export default function SearchPage() {
     return Array.from(perfumeMap.values());
   }, [data]);
 
-  // 필터 스타일 계산
-  const getFilterStyle = useCallback(
-    (key: string, value: string) => {
-      return filters.get(key)?.has(value)
-        ? "bg-gray-200 font-bold"
-        : "bg-white";
-    },
-    [filters]
-  );
-
   return (
     <div className="flex flex-col items-center">
       <header className="w-full">
         <div className="flex flex-col items-center max-w-[1200px] mx-auto my-10">
           <SearchBar
-            value={searchTerm}
+            value={inputValue}
             onChange={handleChange}
             onClick={handleSubmit}
           />
           <nav className="w-full mt-7">
             <div className="flex justify-between">
-              <div className="flex gap-5">
-                {/* 필터 버튼 렌더링 */}
-                {Object.entries(FILTER_OPTIONS).map(([category, options]) => (
-                  <div key={category} className="flex gap-2">
-                    {options.map((option) => (
-                      <button
-                        key={`${category}-${option.value}`}
-                        type="button"
-                        onClick={() =>
-                          handleFilterChange(category, option.value)
-                        }
-                        className={`px-3 py-1 rounded ${getFilterStyle(
-                          category,
-                          option.value
-                        )}`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={resetFilters}
-                className="px-3 py-1 rounded border"
-              >
-                필터 초기화
-              </button>
+              <PurFumeFilter />
             </div>
           </nav>
         </div>
@@ -170,11 +116,11 @@ export default function SearchPage() {
       <section className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
           <span className="text-headline-2 font-semibold">
-            {submittedSearchTerm
-              ? `'${submittedSearchTerm}'에 대한 검색 결과`
+            {searchKeyword
+              ? `'${searchKeyword}'에 대한 검색 결과`
               : "현재 인기있는 향수들이에요!"}
           </span>
-          <button className="px-3 py-1 rounded border">베스트</button>
+          <SortDropdown />
         </div>
 
         {error && (
@@ -196,12 +142,16 @@ export default function SearchPage() {
           ) : (
             <div className="grid grid-cols-5 gap-x-[52px] gap-y-10 mt-5">
               {uniquePerfumes.map((item) => (
-                <PerfumeCard
+                <Link
                   key={item.perfume_id}
-                  perfumeImage={item.image_url}
-                  brandName={item.brand_name.en}
-                  perfumeName={item.perfume_name.en}
-                />
+                  href={`/perfumes/${item.perfume_id}`}
+                >
+                  <PerfumeCard
+                    perfumeImage={item.image_url}
+                    brandName={item.brand_name.en}
+                    perfumeName={item.perfume_name.en}
+                  />
+                </Link>
               ))}
             </div>
           )}

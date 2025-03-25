@@ -43,7 +43,7 @@ export function withCache<P extends unknown[], R>(
     const key = createCacheKey(args);
 
     const cached = cache.get(key);
-    console.log(`[withCache] 캐시 HIT - key:`, key);
+    // console.log(`[withCache] 캐시 HIT - key:`, key);
     if (cached) return cached;
 
     const result = await fn(...args);
