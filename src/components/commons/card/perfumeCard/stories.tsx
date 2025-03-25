@@ -25,9 +25,17 @@ Default.args = {
   ...COMMON_TEXT,
 };
 
+Default.argTypes = {
+  onClose: { control: false, table: { disable: true } },
+};
+
 export const Closable = Template.bind({});
 Closable.args = {
   cardType: PERFUME_CARD_TYPES.CLOSABLE,
   perfumeImage: COMMON_IMAGES[PERFUME_CARD_TYPES.CLOSABLE],
   ...COMMON_TEXT,
+};
+
+Closable.argTypes = {
+  onClick: { control: false, table: { disable: true } },
 };

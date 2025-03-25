@@ -6,10 +6,14 @@ export const PERFUME_CARD_TYPES = {
   CLOSABLE: "closable",
 } as const;
 
-type PerfumeCardType = (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
+type PerfumeCardType =
+  (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
 
 const PERFUME_CARD_STYLES = {
-  images: { [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]", [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]" },
+  images: {
+    [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]",
+    [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]",
+  },
   brandName: {
     [PERFUME_CARD_TYPES.DEFAULT]: "text-label-1",
     [PERFUME_CARD_TYPES.CLOSABLE]: "text-label-2",
@@ -18,6 +22,10 @@ const PERFUME_CARD_STYLES = {
     [PERFUME_CARD_TYPES.DEFAULT]: "text-body-1",
     [PERFUME_CARD_TYPES.CLOSABLE]: "text-body-2",
   },
+  cursor: {
+    [PERFUME_CARD_TYPES.DEFAULT]: "cursor-pointer",
+    [PERFUME_CARD_TYPES.CLOSABLE]: "cursor-default",
+  },
 } as const;
 
 export interface PerfumeCardProps {
@@ -25,6 +33,7 @@ export interface PerfumeCardProps {
   perfumeImage: string;
   brandName: string;
   perfumeName: string;
+  onClick?: () => void;
   onClose?: () => void;
 }
 
@@ -33,12 +42,21 @@ export const PerfumeCard = ({
   perfumeImage,
   brandName,
   perfumeName,
+  onClick,
   onClose,
 }: PerfumeCardProps) => {
   return (
-    <article className={`relative ${PERFUME_CARD_STYLES.images[cardType]} `}>
+    <article
+      className={`relative ${PERFUME_CARD_STYLES.images[cardType]} ${PERFUME_CARD_STYLES.cursor[cardType]}`}
+      onClick={onClick}
+    >
       {cardType === PERFUME_CARD_TYPES.CLOSABLE && (
-        <button type="button" aria-label="Close" onClick={onClose} className="absolute top-2 right-2 z-10">
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="absolute top-2 right-2 z-10"
+        >
           <Image {...ICONS.CloseCircle} width={20} height={20} />
         </button>
       )}
