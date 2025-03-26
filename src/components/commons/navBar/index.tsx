@@ -45,7 +45,7 @@ const NavBar: React.FC<NavBarProps> = ({
         <nav>
           <ul className="flex gap-4 items-center">
             <li className="divider-vertical">
-              <Link href="/purfumes" className={selectedLink("/purfumes")}>
+              <Link href="/perfumes" className={selectedLink("/perfumes")}>
                 향수
               </Link>
             </li>

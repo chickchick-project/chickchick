@@ -1,31 +1,36 @@
 "use client";
 
-import { ChangeEvent, useState, useCallback, useMemo, FormEvent } from "react";
-import Link from "next/link";
+import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
+
+import { brands, perfume_accords, perfume_notes } from "@prisma/client";
+
+import { Perfume } from "@/app/api/search/route";
+import SortDropdown from "@/components/commons/dropdown/SortDropdown";
+import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
 import { withCache } from "@/lib/utils/withCache";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { SearchBar } from "@/components/commons/search/SearchBar";
-import { PerfumeCard } from "@/components/commons/perfumeCard";
-import PerFumeFilter from "@/components/domains/perfumes/filter";
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { Perfume } from "@/app/api/search/route";
-import { brands, perfume_notes } from "@prisma/client";
+
+import { PerfumeSection } from "./section";
+import { SearchHeader } from "./search";
 
 export default function PageClient({
   brands,
   notes,
+  accords,
 }: {
   brands: brands[];
   notes: perfume_notes[];
+  accords: perfume_accords[];
 }) {
   const memoizedBrands = useMemo(() => brands, [brands]);
   const memoizedNotes = useMemo(() => notes, [notes]);
+  const memoizeAccords = useMemo(() => accords, [accords]);
 
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
   const { filters } = useFilterStore();
+
   const adaptedFetchPerfumes = useCallback(
     async (cursor: string | null, queryStr: string) => {
       try {
@@ -87,8 +92,10 @@ export default function PageClient({
     [adaptedFetchPerfumes]
   );
 
-  const { data, isLoading, moreRef, hasMore, error, refetch } =
-    useInfiniteScroll<Perfume>(cachedFetchPerfumes, query);
+  const { data, isLoading, moreRef, hasMore } = useInfiniteScroll<Perfume>(
+    cachedFetchPerfumes,
+    query
+  );
 
   const uniquePerfumes = useMemo(() => {
     const perfumeMap = new Map<string, Perfume>();
@@ -107,20 +114,14 @@ export default function PageClient({
 
   return (
     <div className="flex flex-col items-center">
-      <header className="w-full">
-        <div className="flex flex-col items-center max-w-[1200px] mx-auto my-10">
-          <SearchBar
-            value={inputValue}
-            onChange={handleChange}
-            onClick={handleSubmit}
-          />
-          <nav className="w-full mt-7">
-            <div className="flex justify-between">
-              <PerFumeFilter brands={memoizedBrands} notes={memoizedNotes} />
-            </div>
-          </nav>
-        </div>
-      </header>
+      <SearchHeader
+        inputValue={inputValue}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        brands={memoizedBrands}
+        notes={memoizedNotes}
+        accords={memoizeAccords}
+      />
 
       <section className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
@@ -132,47 +133,12 @@ export default function PageClient({
           <SortDropdown />
         </div>
 
-        {error && (
-          <div className="w-full p-4 bg-red-50 text-red-500 rounded mb-5">
-            검색 결과를 불러오는데 실패했습니다. 다시 시도해주세요.
-            <button onClick={refetch} className="ml-2 text-blue-500 underline">
-              다시 시도
-            </button>
-          </div>
-        )}
-
-        <main className="mt-10 px-4">
-          <h3 className="text-headline-3 font-semibold">향수</h3>
-
-          {data.length === 0 && !isLoading ? (
-            <div className="flex justify-center items-center h-40">
-              검색 결과가 없습니다.
-            </div>
-          ) : (
-            <div className="grid grid-cols-5 gap-x-[52px] gap-y-10 mt-5">
-              {uniquePerfumes.map((item) => (
-                <Link
-                  key={item.perfume_id}
-                  href={`/perfumes/${item.perfume_id}`}
-                >
-                  <PerfumeCard
-                    perfumeImage={item.image_url}
-                    brandName={item.brand_name.en}
-                    perfumeName={item.perfume_name.en}
-                  />
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* 로딩 및 더 보기 표시 */}
-          <div ref={moreRef} className="py-10 text-center">
-            {isLoading && <p className="text-gray-500">불러오는 중...</p>}
-            {!hasMore && data.length > 0 && (
-              <p className="text-gray-500">모든 결과를 확인했습니다.</p>
-            )}
-          </div>
-        </main>
+        <PerfumeSection
+          perfumes={uniquePerfumes}
+          isLoading={isLoading}
+          hasMore={hasMore}
+          moreRef={moreRef}
+        />
       </section>
     </div>
   );
