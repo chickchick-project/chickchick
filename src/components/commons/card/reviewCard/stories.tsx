@@ -1,9 +1,6 @@
 import ReviewCard from ".";
-import {
-  ReviewStatusType,
-  InfoType,
-} from "@/components/commons/author/author.constants";
 import dayjs from "dayjs";
+import { InfoType, ReviewStatusType } from "../../author/author.types";
 
 const COMMON_TEXT = {
   brand: "르 라보",

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import AuthorInfo from "../../author/AuthorInfo";
-import { InfoType } from "@/components/commons/author/author.constants";
-import ReviewChip from "../../chip/ReviewChip";
 import Image from "next/image";
+import AuthorInfo from "../../author/AuthorInfo";
+import ReviewChip from "../../chip/ReviewChip";
+import { InfoType } from "../../author/author.types";
 
 export interface ReviewCardProps {
   brand: string;

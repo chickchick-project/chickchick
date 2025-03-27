@@ -2,12 +2,34 @@ import Image from "next/image";
 import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
-import ICONS from "@/lib/constants/icons";
+import { NAV_MY_INFO, NAV_ITEMS } from "./navBar.constants";
 
 interface DropdownProps {
   onClose: () => void;
   parentRef: React.RefObject<HTMLElement>;
 }
+
+const renderNavItem = (
+  item: (typeof NAV_ITEMS.myPage)[number],
+  onClose: () => void
+) => (
+  <div
+    key={item.label}
+    className="flex flex-col items-center gap-2 cursor-pointer"
+    onClick={onClose}
+  >
+    {item.icon && (
+      <Image
+        src={item.icon.src}
+        alt={item.icon.alt}
+        width={24}
+        height={24}
+        priority
+      />
+    )}
+    <span className="text-body-2 font-medium">{item.label}</span>
+  </div>
+);
 
 export const NavDropdown: React.FC<DropdownProps> = ({
   onClose,
@@ -16,40 +38,6 @@ export const NavDropdown: React.FC<DropdownProps> = ({
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
-
-  const MY_INFO = {
-    nickname: "내 이름",
-    level: 1,
-  };
-
-  const menuItems = [
-    {
-      icon: ICONS.Collection,
-      label: "나의 컬렉션",
-      onClick: () => console.log("나의 컬렉션"),
-    },
-    {
-      icon: ICONS.BookmarkOutlined,
-      label: "북마크",
-      onClick: () => console.log("북마크"),
-    },
-    {
-      icon: ICONS.Activity,
-      label: "내 활동",
-      onClick: () => console.log("내 활동"),
-    },
-  ];
-
-  const footerItems = [
-    {
-      label: "의견 보내기",
-      onClick: () => console.log("의견 보내기"),
-    },
-    {
-      label: "로그아웃",
-      onClick: onClose,
-    },
-  ];
 
   return createPortal(
     <div
@@ -68,41 +56,30 @@ export const NavDropdown: React.FC<DropdownProps> = ({
             height={80}
             alt="프로필"
           />
-          <LevelChip level={MY_INFO.level} />
+          <LevelChip level={NAV_MY_INFO.level} />
           <span className="text-title-2 font-semibold text-black-100">
-            {MY_INFO.nickname}
+            {NAV_MY_INFO.nickname}
           </span>
         </div>
         {/* 마이페이지 */}
         <div className="grid grid-cols-3 gap-7 text-center">
-          {menuItems.map((item, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-2 cursor-pointer"
-              onClick={item.onClick}
-            >
-              <Image
-                src={item.icon.src}
-                alt={item.icon.alt}
-                width={24}
-                height={24}
-                priority
-              />
-              <span className="text-body-2 font-medium">{item.label}</span>
-            </div>
-          ))}
+          {NAV_ITEMS.myPage
+            .map((item) => ({
+              ...item,
+            }))
+            .map((item) => renderNavItem(item, onClose))}
         </div>
         {/* 푸터 */}
         <div className="flex items-center justify-center py-5 border-t border-gray-200 w-[400px]">
-          {footerItems.map((item, index) => (
-            <React.Fragment key={index}>
+          {NAV_ITEMS.footer.map((item, index) => (
+            <React.Fragment key={item.label}>
               <span
                 className="text-body-2 font-medium text-black-300 cursor-pointer"
-                onClick={item.onClick}
+                onClick={onClose}
               >
                 {item.label}
               </span>
-              {index < footerItems.length - 1 && (
+              {index < NAV_ITEMS.footer.length - 1 && (
                 <div className="w-0.5 h-4 mx-[60px] bg-gray-200" />
               )}
             </React.Fragment>
