@@ -4,8 +4,10 @@ import Image from "next/image";
 import ICONS from "@/lib/constants/icons";
 import { Option } from "@/lib/constants/options";
 import { useState, useEffect } from "react";
+import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
 
 interface IFilterDropdownProps {
+  id: string;
   selectedOption: Option;
   options: Option[];
   currentOption?: string;
@@ -13,39 +15,32 @@ interface IFilterDropdownProps {
 }
 
 export default function Dropdown({
+  id,
   selectedOption,
   options,
   currentOption,
   handleChangeOption,
 }: IFilterDropdownProps) {
   const [isSelected, setIsSelected] = useState(!!currentOption);
-  const [isOpen, setIsOpen] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-
+  const isOpen = useVisibilityStore((state) => state.isOpen(id));
+  const toggle = useVisibilityStore((state) => state.toggle);
   useEffect(() => {
     setIsSelected(!!currentOption);
   }, [currentOption]);
 
-  const arrowIcon = isHovered
-    ? ICONS.ArrowDownGray
-    : isSelected
-    ? ICONS.ArrowDownPrimary
-    : ICONS.ArrowDownGray;
+  const arrowIcon = isSelected ? ICONS.ArrowDownPrimary : ICONS.ArrowDownGray;
 
   const handleSelectOption = (option: Option) => {
     handleChangeOption(option);
-    setIsOpen(false);
     setIsSelected(true);
   };
 
   return (
     <div className="relative inline-block">
       <DropdownButton
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={() => toggle(id)}
         isSelected={isSelected}
         className="tablet:w-[117px]"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         {selectedOption.label}
         <Image

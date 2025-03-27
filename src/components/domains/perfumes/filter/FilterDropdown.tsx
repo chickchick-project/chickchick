@@ -33,6 +33,7 @@ const FilterDropdown = ({
   return (
     <div className="flex flex-col items-start">
       <Dropdown
+        id={label}
         selectedOption={selectedOption}
         options={options}
         currentOption={currentOption}
