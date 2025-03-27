@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useRef } from "react";
-import { Dropdown } from "./Dropdown";
+import { NavDropdown } from "./Dropdown";
 import ICONS from "@/lib/constants/icons";
 
 export interface NavBarProps {
@@ -92,7 +92,7 @@ const NavBar: React.FC<NavBarProps> = ({
 
       {/* 드롭다운을 NavBar의 바로 아래에 배치 */}
       {isDropdownOpen && navBarRef.current && (
-        <Dropdown
+        <NavDropdown
           onClose={() => setIsDropdownOpen(false)}
           parentRef={navBarRef}
         />

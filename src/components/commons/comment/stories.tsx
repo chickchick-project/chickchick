@@ -3,7 +3,7 @@ import {
   COMMENT_MAX_LENGTH,
   COMMENT_PLACEHOLDERS,
   COMMENT_TYPES,
-} from "@/lib/constants/comments";
+} from "./comments.constants";
 
 export default {
   title: "Commons/Comment",

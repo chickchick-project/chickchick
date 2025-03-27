@@ -2,11 +2,8 @@ import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
-import {
-  InfoType,
-  SIZE_STATUSES,
-  SizeStatusType,
-} from "@/lib/constants/author";
+import { InfoType, SizeStatusType } from "./author.types";
+import { SIZE_STATUSES } from "./author.constants";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");

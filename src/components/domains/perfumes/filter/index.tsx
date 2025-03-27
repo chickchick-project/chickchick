@@ -3,6 +3,7 @@ import { useFilterStore } from "@/lib/stores/useFilterStore";
 import FilterDropdown from "./FilterDropdown";
 import { brands, perfume_accords, perfume_notes } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
+import { FILTER_LABELS } from "./filter.constants";
 
 const typedKeys = <T extends Record<string, unknown>>(obj: T) =>
   Object.keys(obj) as (keyof T)[];
@@ -33,13 +34,6 @@ const PerFumeFilter = ({
     accords: accords.map(toOption),
   };
 
-  const LABELS = {
-    gender: "성별",
-    brand: "브랜드",
-    notes: "노트",
-    accords: "어코드",
-  };
-
   return (
     <>
       <div className="flex gap-5">
@@ -48,7 +42,7 @@ const PerFumeFilter = ({
           <FilterDropdown
             key={category}
             category={category}
-            label={LABELS[category]}
+            label={FILTER_LABELS[category]}
             options={filterOptions[category]}
           />
         ))}

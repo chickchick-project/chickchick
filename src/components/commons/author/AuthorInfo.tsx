@@ -1,12 +1,10 @@
 import React from "react";
 import AuthorProfile from "./AuthorProfile";
 import PostTime from "./PostTime";
-import {
-  AuthorInfoProps,
-  SIZE_STATUSES,
-  SizeStatusType,
-} from "@/lib/constants/author";
+
 import PostMeta from "./PostMeta";
+import { SIZE_STATUSES } from "./author.constants";
+import { AuthorInfoProps, SizeStatusType } from "./author.types";
 
 const AuthorInfo: React.FC<AuthorInfoProps> = ({
   size = SIZE_STATUSES.DEFAULT,

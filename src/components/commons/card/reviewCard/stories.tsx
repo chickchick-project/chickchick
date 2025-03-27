@@ -1,5 +1,8 @@
 import ReviewCard from ".";
-import { ReviewStatusType, InfoType } from "@/lib/constants/author";
+import {
+  ReviewStatusType,
+  InfoType,
+} from "@/components/commons/author/author.constants";
 import dayjs from "dayjs";
 
 const COMMON_TEXT = {

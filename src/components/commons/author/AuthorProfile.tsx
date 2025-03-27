@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants/author";
+import { DEFAULT_PROFILE_IMAGE } from "./author.constants";
 
 interface AuthorProfileProps {
   name: string;

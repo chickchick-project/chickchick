@@ -12,3 +12,8 @@ export const COMMENT_MAX_LENGTH = {
   [COMMENT_TYPES.POST]: 500,
   [COMMENT_TYPES.REVIEW]: 500,
 } as const;
+
+export const COMMENT_STYLES = {
+  [COMMENT_TYPES.POST]: " h-[140px] bg-white shadow-card",
+  [COMMENT_TYPES.REVIEW]: "h-[200px] bg-white border border-gray-200",
+} as const;

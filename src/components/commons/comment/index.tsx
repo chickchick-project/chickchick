@@ -1,20 +1,6 @@
-import { COMMENT_PLACEHOLDERS, COMMENT_TYPES } from "@/lib/constants/comments";
 import React, { useState, useRef } from "react";
-
-const COMMENT_STYLES = {
-  [COMMENT_TYPES.POST]: " h-[140px] bg-white shadow-card",
-  [COMMENT_TYPES.REVIEW]: "h-[200px] bg-white border border-gray-200",
-} as const;
-
-export type CommentType = (typeof COMMENT_TYPES)[keyof typeof COMMENT_TYPES];
-
-export interface CommentProps {
-  type: CommentType;
-  placeholder?: string;
-  value?: string;
-  maxLength?: number;
-  onChange?: (value: string) => void;
-}
+import { COMMENT_PLACEHOLDERS, COMMENT_STYLES } from "./comments.constants";
+import { CommentProps } from "./comments.types";
 
 const Comment: React.FC<CommentProps> = ({
   type,
