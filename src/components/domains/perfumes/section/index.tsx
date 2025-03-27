@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
-import { PerfumeCard } from "@/components/commons/perfumeCard";
 import { Perfume } from "@/app/api/search/route";
+import { PerfumeCard } from "@/components/commons/card/perfumeCard";
 
 interface PerfumeSectionProps {
   perfumes: Perfume[];
