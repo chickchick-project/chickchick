@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { fetchBrandWithPerfumes } from "@/lib/supabase/query/brands";
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { name: string } }
-) {
-  const brandName = params.name;
+  request: NextRequest,
+  { params }: { params: Promise<{ name: string }> }
+): Promise<NextResponse> {
+  const { name } = await params;
 
-  if (!brandName) {
+  if (!name) {
     return NextResponse.json(
       { error: "브랜드 이름이 제공되지 않았습니다." },
       { status: 400 }
@@ -15,7 +15,7 @@ export async function GET(
   }
 
   try {
-    const data = await fetchBrandWithPerfumes(brandName);
+    const data = await fetchBrandWithPerfumes(name);
 
     if (!data || data.length === 0) {
       return NextResponse.json(
