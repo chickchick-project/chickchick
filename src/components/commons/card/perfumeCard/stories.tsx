@@ -2,7 +2,7 @@ import { Meta, StoryFn } from "@storybook/react";
 import { PERFUME_CARD_TYPES, PerfumeCard, PerfumeCardProps } from ".";
 
 export default {
-  title: "Components/PerfumeCard",
+  title: "Components/Card/PerfumeCard",
   component: PerfumeCard,
 } as Meta;
 
@@ -22,12 +22,22 @@ export const Default = Template.bind({});
 Default.args = {
   cardType: PERFUME_CARD_TYPES.DEFAULT,
   perfumeImage: COMMON_IMAGES[PERFUME_CARD_TYPES.DEFAULT],
+  onClick: () => alert("카드 클릭"),
   ...COMMON_TEXT,
+};
+
+Default.argTypes = {
+  onClose: { control: false, table: { disable: true } },
 };
 
 export const Closable = Template.bind({});
 Closable.args = {
   cardType: PERFUME_CARD_TYPES.CLOSABLE,
   perfumeImage: COMMON_IMAGES[PERFUME_CARD_TYPES.CLOSABLE],
+  onClose: () => alert("삭제 버튼 클릭"),
   ...COMMON_TEXT,
+};
+
+Closable.argTypes = {
+  onClick: { control: false, table: { disable: true } },
 };
