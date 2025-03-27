@@ -30,6 +30,7 @@ export default {
           500: "#EAD8C4",
           600: "#F3EDE7",
         },
+        secondary: "#FF8749",
         red: "#ed1c24",
       },
       fontSize: {
@@ -56,5 +57,6 @@ export default {
       pc: "1200px",
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
