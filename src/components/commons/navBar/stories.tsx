@@ -21,7 +21,7 @@ export default {
       options: ["홈", "향수", "커뮤니티"],
       mapping: {
         홈: "/",
-        향수: "/purfumes",
+        향수: "/perfumes",
         커뮤니티: "/community",
       },
       defaultValue: "홈",

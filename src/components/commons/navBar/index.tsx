@@ -28,9 +28,16 @@ const NavBar: React.FC<NavBarProps> = ({
         className="flex justify-between items-center py-5 px-7 w-full h-20 relative"
       >
         {/* 로고 */}
-        <div className="w-[108px]">
+        <div>
           {currentPath !== "/" && (
-            <Image src="/images/Logo.svg" width={108} height={40} alt="logo" />
+            <Image
+              src="/images/Logo.svg"
+              width={108}
+              height={40}
+              alt="logo"
+              priority
+              className="size-auto"
+            />
           )}
         </div>
 
@@ -38,7 +45,7 @@ const NavBar: React.FC<NavBarProps> = ({
         <nav>
           <ul className="flex gap-4 items-center">
             <li className="divider-vertical">
-              <Link href="/purfumes" className={selectedLink("/purfumes")}>
+              <Link href="/perfumes" className={selectedLink("/perfumes")}>
                 향수
               </Link>
             </li>

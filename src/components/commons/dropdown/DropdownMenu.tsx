@@ -4,10 +4,13 @@ interface IDropdownMenuProps {
   handleSelectOption: (option: Option) => void;
 }
 
-export default function DropdownMenu({ options, handleSelectOption }: IDropdownMenuProps) {
+export default function DropdownMenu({
+  options,
+  handleSelectOption,
+}: IDropdownMenuProps) {
   return (
     <>
-      <div className="absolute mt-1 right-0 w-full px-2 py-2 flex flex-col gap-1 border bg-white border-gray-200 rounded-md tablet:rounded-lg text-black-200">
+      <div className="absolute mt-1 right-0 w-full px-2 py-2 flex flex-col gap-1 border bg-white border-gray-200 rounded-md tablet:rounded-lg text-black-200 z-10">
         {options.map((option: Option) => (
           <li
             onClick={() => handleSelectOption(option)}

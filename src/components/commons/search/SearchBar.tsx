@@ -6,6 +6,7 @@ export interface SearchBarProps {
   placeholder?: string;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   [key: string]: unknown;
 }
 
@@ -14,6 +15,7 @@ export const SEARCHBAR_PLACEHOLDER_TEXT = "제품명, 브랜드를 검색하세�
 export const SearchBar: React.FC<SearchBarProps> = ({
   value,
   onChange,
+  onClick,
   ...rest
 }) => {
   const baseStyle = `
@@ -31,13 +33,15 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         onChange={onChange}
         {...rest}
       />
-      <Image
-        src={ICONS.Search.src}
-        alt="Search"
-        width={20}
-        height={20}
-        className="absolute right-4 top-1/2 transform -translate-y-1/2"
-      />
+      <button onClick={onClick}>
+        <Image
+          src={ICONS.Search.src}
+          alt="Search"
+          width={20}
+          height={20}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2"
+        />
+      </button>
     </div>
   );
 };

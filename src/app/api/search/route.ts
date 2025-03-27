@@ -5,7 +5,7 @@ import {
   checkPerfumeExists,
 } from "@/lib/supabase/query/search";
 
-interface Perfume {
+export interface Perfume {
   perfume_id: string; // 향수의 고유 ID
   perfume_name: { en: string; kr?: string }; // 다국어 향수명 (예: { en: "Rose", kr: "로즈" })
   brand_id: string; // 브랜드 ID
@@ -14,7 +14,7 @@ interface Perfume {
   priority: number; // 검색 우선순위 (100: 향수 이름(Name), 80: 브랜드(Brand), 60: 노트(Note), 40: 계열(Accord))
 }
 
-interface SearchResponse {
+export interface SearchResponse {
   data: Perfume[]; // 검색된 향수 목록
   nextCursor: { last_seen_id: string } | null; // 다음 페이지를 위한 커서 (없으면 null)
 }
@@ -67,18 +67,13 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
     }
   }
 
-  // // 검색어가 없는 경우 빈 데이터 반환
-  // if (!search_text) {
-  //   return NextResponse.json({ data: [], nextCursor: null }, { status: 200 });
-  // }
-
   try {
     // 검색 수행 (Supabase RPC 호출)
-    const data: Perfume[] = await fetchSearch({
+    const data: Perfume[] = (await fetchSearch({
       search_text,
       last_seen_id,
       result_limit: result_limit + 1,
-    });
+    })) as Perfume[];
 
     // 검색 결과가 없을 경우 빈 데이터 반환
     if (!Array.isArray(data) || data.length === 0) {
@@ -150,10 +145,16 @@ export async function POST(
       result_limit: result_limit + 1, // 다음 페이지 확인을 위해 1개 더 가져옴
     });
 
-    // // 검색 결과가 없는 경우 빈 데이터 반환
-    // if (!Array.isArray(data) || data.length === 0) {
-    //   return NextResponse.json({ data: [], nextCursor: null }, { status: 200 });
-    // }
+    // 검색 결과가 없는 경우 빈 데이터 반환
+    if (!Array.isArray(data) || data.length === 0) {
+      return NextResponse.json(
+        {
+          data: [],
+          nextCursor: null,
+        },
+        { status: 200 }
+      );
+    }
 
     // limit 개수만큼 데이터 반환, 추가 데이터가 있다면 다음 페이지 존재 여부 설정
     const hasNextPage = data.length > result_limit;

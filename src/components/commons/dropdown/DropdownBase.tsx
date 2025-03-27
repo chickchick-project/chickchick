@@ -3,7 +3,7 @@ import DropdownMenu from "./DropdownMenu";
 import Image from "next/image";
 import ICONS from "@/lib/constants/icons";
 import { Option } from "@/lib/constants/options";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface IFilterDropdownProps {
   selectedOption: Option;
@@ -12,12 +12,25 @@ interface IFilterDropdownProps {
   handleChangeOption: (option: Option) => void;
 }
 
-export default function Dropdown({ selectedOption, options, currentOption, handleChangeOption }: IFilterDropdownProps) {
+export default function Dropdown({
+  selectedOption,
+  options,
+  currentOption,
+  handleChangeOption,
+}: IFilterDropdownProps) {
   const [isSelected, setIsSelected] = useState(!!currentOption);
   const [isOpen, setIsOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const arrowIcon = isHovered ? ICONS.ArrowDownGray : isSelected ? ICONS.ArrowDownPrimary : ICONS.ArrowDownGray;
+  useEffect(() => {
+    setIsSelected(!!currentOption);
+  }, [currentOption]);
+
+  const arrowIcon = isHovered
+    ? ICONS.ArrowDownGray
+    : isSelected
+    ? ICONS.ArrowDownPrimary
+    : ICONS.ArrowDownGray;
 
   const handleSelectOption = (option: Option) => {
     handleChangeOption(option);
@@ -28,7 +41,7 @@ export default function Dropdown({ selectedOption, options, currentOption, handl
   return (
     <div className="relative inline-block">
       <DropdownButton
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen((prev) => !prev)}
         isSelected={isSelected}
         className="tablet:w-[117px]"
         onMouseEnter={() => setIsHovered(true)}
@@ -43,7 +56,12 @@ export default function Dropdown({ selectedOption, options, currentOption, handl
           className="w-3 h-3 tablet:w-4 tablet:h-4"
         />
       </DropdownButton>
-      {isOpen && <DropdownMenu handleSelectOption={handleSelectOption} options={options} />}
+      {isOpen && (
+        <DropdownMenu
+          handleSelectOption={handleSelectOption}
+          options={options}
+        />
+      )}
     </div>
   );
 }
