@@ -29,7 +29,7 @@ export default function PageClient({
 
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { filters } = useFilterStore();
+  const filters = useFilterStore((state) => state.filters);
 
   const adaptedFetchPerfumes = useCallback(
     async (cursor: string | null, queryStr: string) => {
@@ -38,6 +38,7 @@ export default function PageClient({
         const searchText = params.get("q") || "";
 
         const newFilters = new Map<string, Set<string>>();
+
         params.forEach((value, key) => {
           if (key !== "q" && key !== "cursor") {
             if (!newFilters.has(key)) newFilters.set(key, new Set());
@@ -92,7 +93,7 @@ export default function PageClient({
     [adaptedFetchPerfumes]
   );
 
-  const { data, isLoading, moreRef, hasMore } = useInfiniteScroll<Perfume>(
+  const { data, isLoading, moreRef, isIdle } = useInfiniteScroll<Perfume>(
     cachedFetchPerfumes,
     query
   );
@@ -136,7 +137,7 @@ export default function PageClient({
         <PerfumeSection
           perfumes={uniquePerfumes}
           isLoading={isLoading}
-          hasMore={hasMore}
+          isIdle={isIdle}
           moreRef={moreRef}
         />
       </section>
