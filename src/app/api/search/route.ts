@@ -4,6 +4,7 @@ import {
   fetchSearchWithFilters,
   checkPerfumeExists,
 } from "@/lib/supabase/query/search";
+import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 export interface Perfume {
   perfume_id: string; // 향수의 고유 ID
@@ -12,11 +13,6 @@ export interface Perfume {
   brand_name: { en: string; kr?: string }; // 다국어 브랜드명 (예: { en: "Dior", kr: "디올" })
   image_url: string; // 향수 이미지 URL
   priority: number; // 검색 우선순위 (100: 향수 이름(Name), 80: 브랜드(Brand), 60: 노트(Note), 40: 계열(Accord))
-}
-
-export interface SearchResponse {
-  data: Perfume[]; // 검색된 향수 목록
-  nextCursor: { last_seen_id: string } | null; // 다음 페이지를 위한 커서 (없으면 null)
 }
 
 /**
@@ -34,7 +30,9 @@ function validateUUID(uuid: string): boolean {
  * - 검색어(q)와 페이지네이션(limit, last_seen_id)을 받아 향수 목록을 반환
  * - 유효하지 않은 last_seen_id 또는 존재하지 않는 ID는 400 에러 반환
  */
-export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
+export async function GET(
+  req: Request
+): Promise<NextResponse<SearchResponse<Perfume>>> {
   const url = new URL(req.url);
   const search_text = url.searchParams.get("q") || ""; // 검색어
   const result_limit = Number(url.searchParams.get("limit")) || 15; // 한 번에 가져올 데이터 개수
@@ -69,7 +67,7 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
 
   try {
     // 검색 수행 (Supabase RPC 호출)
-    const data: Perfume[] = (await fetchSearch({
+    const [data, total] = (await fetchSearch({
       search_text,
       last_seen_id,
       result_limit: result_limit + 1,
@@ -86,11 +84,16 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
 
     // 다음 페이지 커서 설정 (마지막 아이템의 ID)
     const nextCursor = hasNextPage
-      ? { last_seen_id: trimmedData[trimmedData.length - 1].perfume_id }
+      ? trimmedData[trimmedData.length - 1].perfume_id
       : null;
 
+    const totalCount =
+      Array.isArray(total) && total[0]?.search_perfumes_total
+        ? total[0].search_perfumes_total
+        : 0;
+
     return NextResponse.json(
-      { data: trimmedData, nextCursor },
+      { data: trimmedData, nextCursor, totalCount },
       { status: 200 }
     );
   } catch (error) {
@@ -108,7 +111,7 @@ export async function GET(req: Request): Promise<NextResponse<SearchResponse>> {
  */
 export async function POST(
   req: Request
-): Promise<NextResponse<SearchResponse>> {
+): Promise<NextResponse<SearchResponse<Perfume>>> {
   try {
     // 요청 바디에서 필요한 파라미터 추출
     const {
@@ -136,7 +139,7 @@ export async function POST(
 
     // Supabase RPC 호출을 통해 검색 수행
     // - limit + 1 개를 가져와서 다음 페이지 여부 확인
-    const data = await fetchSearchWithFilters({
+    const [data, total] = await fetchSearchWithFilters({
       search_text,
       brand_filter,
       notes_filter,
@@ -162,11 +165,16 @@ export async function POST(
 
     // 다음 페이지 커서 설정 (마지막 아이템의 ID)
     const nextCursor = hasNextPage
-      ? { last_seen_id: trimmedData[trimmedData.length - 1].perfume_id }
+      ? trimmedData[trimmedData.length - 1].perfume_id
       : null;
 
+    const totalCount =
+      Array.isArray(total) && total[0]?.search_perfumes_total
+        ? total[0].search_perfumes_total
+        : 0;
+
     return NextResponse.json(
-      { data: trimmedData, nextCursor },
+      { data: trimmedData, nextCursor, totalCount },
       { status: 200 }
     );
   } catch (error) {

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 
-type FilterStore = {
+interface FilterStore {
   filters: Map<string, Set<string>>;
   handleFilterChange: (category: string, value: string) => void;
   resetFilters: () => void;
-};
+}
 
 export const useFilterStore = create<FilterStore>((set) => ({
   filters: new Map(),

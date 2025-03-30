@@ -1,5 +1,10 @@
 "use client";
-import { DEFAULT_SORT_BY, Option, SORT_BY_OPTIONS, TSortBy } from "@/lib/constants/options";
+import {
+  DEFAULT_SORT_BY,
+  Option,
+  SORT_BY_OPTIONS,
+  TSortBy,
+} from "@/lib/constants/options";
 import { useState } from "react";
 import Dropdown from "./DropdownBase";
 
@@ -9,7 +14,9 @@ interface ISortDropdownProps {
 
 export default function SortDropdown({ currentOption }: ISortDropdownProps) {
   const [selectedOption, setSelectedOption] = useState<Option>(
-    () => SORT_BY_OPTIONS.find((option) => option.value === currentOption) || DEFAULT_SORT_BY
+    () =>
+      SORT_BY_OPTIONS.find((option) => option.value === currentOption) ||
+      DEFAULT_SORT_BY
   );
 
   const handleSortChange = (option: Option) => {
@@ -23,6 +30,7 @@ export default function SortDropdown({ currentOption }: ISortDropdownProps) {
         currentOption={currentOption}
         options={SORT_BY_OPTIONS}
         handleChangeOption={handleSortChange}
+        id={""}
       />
     </>
   );

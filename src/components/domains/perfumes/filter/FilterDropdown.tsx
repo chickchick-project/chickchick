@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Option } from "@/lib/constants/options";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
-import Dropdown from "@/components/commons/dropdown/DropdownBase";
+import BackDropdown from "@/components/commons/dropdown/BackDropdown";
 
 const FilterDropdown = ({
   category,
@@ -32,8 +32,8 @@ const FilterDropdown = ({
 
   return (
     <div className="flex flex-col items-start">
-      <Dropdown
-        id={label}
+      <BackDropdown
+        id={category}
         selectedOption={selectedOption}
         options={options}
         currentOption={currentOption}

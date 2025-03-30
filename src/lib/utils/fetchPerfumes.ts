@@ -1,23 +1,24 @@
-import { SearchResponse } from "@/app/api/search/route";
+import { Perfume } from "@/app/api/search/route";
+import { SearchResponse } from "../hooks/useInfinityScroll";
+
+const formatFilters = (filters: Map<string, Set<string>>) => {
+  const result: Record<string, string[]> = {};
+
+  Array.from(filters.entries()).forEach(([key, values]) => {
+    if (values.size > 0) {
+      result[`${key}_filter`] = Array.from(values);
+    }
+  });
+
+  return result;
+};
 
 export const fetchPerfumes = async (
   cursor: string | null,
   searchText: string,
   filters: Map<string, Set<string>>
-): Promise<SearchResponse> => {
+): Promise<SearchResponse<Perfume>> => {
   let response;
-
-  const formatFilters = (filters: Map<string, Set<string>>) => {
-    const result: Record<string, string[]> = {};
-
-    Array.from(filters.entries()).forEach(([key, values]) => {
-      if (values.size > 0) {
-        result[`${key}_filter`] = Array.from(values);
-      }
-    });
-
-    return result;
-  };
 
   const formattedFilters = formatFilters(filters);
   if (filters.size > 0) {
@@ -28,8 +29,6 @@ export const fetchPerfumes = async (
       ...formattedFilters,
     };
 
-    // console.log("POST Request Body:", requestBody);
-
     response = await fetch("/api/search", {
       method: "POST",
       headers: {
@@ -38,6 +37,7 @@ export const fetchPerfumes = async (
       body: JSON.stringify(requestBody),
     });
   } else {
+    //GET 요청
     const queryParams = new URLSearchParams();
     if (searchText) queryParams.append("q", searchText);
     if (cursor) queryParams.append("cursor", cursor);

@@ -3,7 +3,7 @@ import { useFilterStore } from "@/lib/stores/useFilterStore";
 import FilterDropdown from "./FilterDropdown";
 import { brands, perfume_accords, perfume_notes } from "@prisma/client";
 import { JsonValue } from "@prisma/client/runtime/library";
-import { FILTER_LABELS } from "./filter.constants";
+import { FILTER_LABELS, GENDER_OPTIONS } from "./filter.constants";
 
 const typedKeys = <T extends Record<string, unknown>>(obj: T) =>
   Object.keys(obj) as (keyof T)[];
@@ -25,10 +25,7 @@ const PerFumeFilter = ({
   });
 
   const filterOptions = {
-    gender: [
-      { id: "male", name: { en: "남성", ko: "남성" } },
-      { id: "female", name: { en: "여성", ko: "여성" } },
-    ].map(toOption),
+    gender: GENDER_OPTIONS.map(toOption),
     brand: brands.map(toOption),
     notes: notes.map(toOption),
     accords: accords.map(toOption),

@@ -3,9 +3,16 @@
 import { useEffect, useRef, useReducer, useCallback } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
 
+export interface SearchResponse<T> {
+  data: T[]; // 검색된 목록
+  nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
+  totalCount?: number | null;
+}
+
 // 상태 타입
 type State<T> = {
   data: T[];
+  totalCount: number | null;
   cursor: string | null;
   isIdle: boolean;
   isLoading: boolean;
@@ -17,12 +24,16 @@ type State<T> = {
 type Action<T> =
   | { type: "RESET" }
   | { type: "FETCH_START" }
-  | { type: "FETCH_SUCCESS"; payload: { data: T[]; nextCursor: string | null } }
+  | {
+      type: "FETCH_SUCCESS";
+      payload: SearchResponse<T>;
+    }
   | { type: "FETCH_ERROR"; payload: Error };
 
 // 초기 상태 팩토리
 const initialState = <T>(): State<T> => ({
   data: [],
+  totalCount: 0,
   cursor: null,
   isIdle: true,
   isLoading: false,
@@ -46,6 +57,7 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
           : action.payload.data,
         cursor: action.payload.nextCursor,
         hasMore: !!action.payload.nextCursor,
+        totalCount: action.payload.totalCount ?? state.totalCount,
       };
     case "FETCH_ERROR":
       return {
@@ -63,14 +75,14 @@ export function useInfiniteScroll<T>(
   fetchFunction: (
     cursor: string | null,
     query: string
-  ) => Promise<{ data: T[]; nextCursor: { last_seen_id: string } | null }>,
+  ) => Promise<SearchResponse<T>>,
   query: string
 ) {
   const moreRef = useRef<HTMLDivElement>(null);
   const isIntersecting = useIntersectionObserver(moreRef);
 
   const [state, dispatch] = useReducer(reducer<T>, undefined, initialState);
-  const { data, cursor, isLoading, hasMore, error, isIdle } = state;
+  const { data, totalCount, cursor, isLoading, hasMore, error, isIdle } = state;
 
   const fetchData = useCallback(
     async (cursorToUse: string | null) => {
@@ -78,17 +90,13 @@ export function useInfiniteScroll<T>(
 
       try {
         const res = await fetchFunction(cursorToUse, query);
-
         if (!Array.isArray(res.data)) {
           throw new Error("데이터 형식이 잘못되었습니다.");
         }
 
         dispatch({
           type: "FETCH_SUCCESS",
-          payload: {
-            data: res.data,
-            nextCursor: res.nextCursor?.last_seen_id ?? null,
-          },
+          payload: res,
         });
       } catch (err) {
         dispatch({
@@ -122,6 +130,7 @@ export function useInfiniteScroll<T>(
   return {
     moreRef,
     data,
+    totalCount,
     isLoading,
     hasMore,
     error,
