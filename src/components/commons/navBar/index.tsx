@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { NavDropdown } from "./Dropdown";
 import ICONS from "@/lib/constants/icons";
 import { NAV_LABELS, NAV_PATHS } from "./navBar.constants";
+import IMAGES from "@/lib/constants/images";
 
 export interface NavBarProps {
   currentPath: string;
@@ -32,7 +33,7 @@ const NavBar: React.FC<NavBarProps> = ({
         <div>
           {currentPath !== NAV_PATHS.HOME && (
             <Image
-              src="/images/Logo.svg"
+              src={IMAGES.Logo.src}
               width={108}
               height={40}
               alt="logo"

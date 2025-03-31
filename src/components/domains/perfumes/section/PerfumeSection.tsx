@@ -18,7 +18,7 @@ export const PerfumeSection = ({
   moreRef,
 }: PerfumeSectionProps) => {
   return (
-    <main className="mt-10 px-4">
+    <section className="mt-10 px-4">
       <h3 className="text-headline-3 font-semibold">향수</h3>
 
       {!isIdle && perfumes.length === 0 && !isLoading ? (
@@ -47,6 +47,6 @@ export const PerfumeSection = ({
           </div>
         )}
       </div>
-    </main>
+    </section>
   );
 };

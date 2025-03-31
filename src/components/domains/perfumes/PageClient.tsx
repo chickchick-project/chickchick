@@ -1,23 +1,27 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState, useMemo, useEffect } from "react";
-
 import { brands, perfume_accords, perfume_notes } from "@prisma/client";
-
 import { Perfume } from "@/app/api/search/route";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { useTotalStore } from "@/lib/stores/useCountStore";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { withCache } from "@/lib/utils/withCache";
-
-import { PerfumeSection } from "./section";
-import { SearchHeader } from "./search";
 import {
   getUniquePerfumes,
   createQueryKey,
   adaptedFetchPerfumes,
 } from "./perfumes.helpers";
-import { useTotalStore } from "@/lib/stores/useCountStore";
+
+import { PerfumeSection } from "./section/PerfumeSection";
+import { BrandSection } from "./section/BrandSection";
+import { SearchHeader } from "./search";
+
+type BrandName = {
+  en: string;
+  ko: string;
+};
 
 export default function PageClient({
   brands,
@@ -34,6 +38,7 @@ export default function PageClient({
 
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [matchedBrand, setMatchedBrand] = useState<string | null>(null);
   const filters = useFilterStore((state) => state.filters);
   const setCount = useTotalStore((state) => state.setTotalCount);
 
@@ -72,6 +77,15 @@ export default function PageClient({
     }
   }, [totalCount, setCount]);
 
+  useEffect(() => {
+    const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
+    const match = memoizedBrands.find((brand) => {
+      const brandName = brand.name as BrandName;
+      return keywordWords.includes(brandName.en.toLowerCase());
+    });
+    setMatchedBrand(match ? (match.name as BrandName).en : null);
+  }, [searchKeyword, memoizedBrands]);
+
   const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
   return (
     <div className="flex flex-col items-center">
@@ -84,7 +98,7 @@ export default function PageClient({
         accords={memoizedAccords}
       />
 
-      <section className="w-full max-w-[1200px] px-4">
+      <main className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
           <span className="text-headline-2 font-semibold">
             {searchKeyword
@@ -93,14 +107,14 @@ export default function PageClient({
           </span>
           <SortDropdown />
         </div>
-
+        {matchedBrand && <BrandSection brandName={matchedBrand} />}
         <PerfumeSection
           perfumes={uniquePerfumes}
           isLoading={isLoading}
           isIdle={isIdle}
           moreRef={moreRef}
         />
-      </section>
+      </main>
     </div>
   );
 }
