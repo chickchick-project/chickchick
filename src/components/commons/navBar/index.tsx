@@ -37,7 +37,6 @@ const NavBar: React.FC<NavBarProps> = ({
               width={108}
               height={40}
               alt="logo"
-              priority
               className="size-auto"
             />
           )}
@@ -79,7 +78,6 @@ const NavBar: React.FC<NavBarProps> = ({
                     width={36}
                     height={36}
                     alt="User"
-                    priority
                   />
 
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
@@ -88,7 +86,6 @@ const NavBar: React.FC<NavBarProps> = ({
                       width={16}
                       height={16}
                       alt="Down"
-                      priority
                     />
                   </button>
                 </div>

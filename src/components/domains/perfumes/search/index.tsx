@@ -21,13 +21,11 @@ export const SearchHeader = ({
   accords,
 }: SearchHeaderProps) => {
   return (
-    <header className="w-full">
+    <header className="w-full px-4">
       <div className="flex flex-col items-center max-w-[1200px] mx-auto my-10">
         <SearchBar value={inputValue} onChange={onChange} onClick={onSubmit} />
         <nav className="w-full mt-7">
-          <div className="flex justify-between">
-            <PerFumeFilter brands={brands} notes={notes} accords={accords} />
-          </div>
+          <PerFumeFilter brands={brands} notes={notes} accords={accords} />
         </nav>
       </div>
     </header>

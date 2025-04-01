@@ -3,6 +3,7 @@ export const FILTER_LABELS = {
   brand: "브랜드",
   notes: "노트",
   accords: "어코드",
+  list: "필터 목록",
 };
 
 export const GENDER_OPTIONS = [

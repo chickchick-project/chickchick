@@ -18,7 +18,7 @@ import { PerfumeSection } from "./section/PerfumeSection";
 import { BrandSection } from "./section/BrandSection";
 import { SearchHeader } from "./search";
 
-type BrandName = {
+export type BrandName = {
   en: string;
   ko: string;
 };

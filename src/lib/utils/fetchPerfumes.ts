@@ -13,11 +13,11 @@ const formatFilters = (filters: Map<string, Set<string>>) => {
   return result;
 };
 
-export const fetchPerfumes = async (
+export async function fetchPerfumes(
   cursor: string | null,
   searchText: string,
   filters: Map<string, Set<string>>
-): Promise<SearchResponse<Perfume>> => {
+): Promise<SearchResponse<Perfume>> {
   let response;
 
   const formattedFilters = formatFilters(filters);
@@ -62,4 +62,4 @@ export const fetchPerfumes = async (
   }
 
   return await response.json();
-};
+}

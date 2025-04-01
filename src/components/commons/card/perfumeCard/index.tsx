@@ -73,7 +73,6 @@ export const PerfumeCard = ({
           `}
           placeholder="blur"
           blurDataURL="/images/BlurShimmer.svg"
-          priority
           className="object-contain"
         />
       </figure>

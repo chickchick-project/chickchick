@@ -6,7 +6,8 @@ import BookmarkOutlined from "./BookmarkOutlined.svg";
 import Close from "./Close.svg";
 import CheckGray from "./CheckGray.svg";
 import Pen from "./Pen.svg";
-import Filter from "./Filter.svg";
+import FilterGray from "./FilterGray.svg";
+import FilterPrimary from "./FilterPrimary.svg";
 
 import Link from "./Link.svg";
 import Pin from "./Pin.svg";
@@ -26,7 +27,8 @@ import CloseCircle from "./CloseCircle.svg";
 export {
   ArrowDownGray,
   ArrowDownPrimary,
-  Filter,
+  FilterGray,
+  FilterPrimary,
   BookmarkOutlined,
   Close,
   CheckGray,

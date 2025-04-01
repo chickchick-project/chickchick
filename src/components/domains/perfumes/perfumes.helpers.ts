@@ -1,5 +1,9 @@
 import { Perfume } from "@/app/api/search/route";
 import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
+import { FILTER_LABELS } from "./filter/filter.constants";
+
+const getLabel = (key: string) =>
+  FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
 
 const adaptedFetchPerfumes = async (
   cursor: string | null,
@@ -41,4 +45,4 @@ const getUniquePerfumes = (perfumes: Perfume[]): Perfume[] => {
   return Array.from(perfumeMap.values());
 };
 
-export { adaptedFetchPerfumes, createQueryKey, getUniquePerfumes };
+export { getLabel, adaptedFetchPerfumes, createQueryKey, getUniquePerfumes };
