@@ -6,12 +6,12 @@ export interface InputBaseProps
   helperText?: string;
 }
 
-export const InputBase: React.FC<InputBaseProps> = ({
+export default function InputBase({
   className,
   helperText,
   isError,
   ...props
-}) => {
+}: InputBaseProps) {
   return (
     <div className="w-full max-w-[400px] flex flex-col">
       <input
@@ -38,4 +38,4 @@ export const InputBase: React.FC<InputBaseProps> = ({
       </p>
     </div>
   );
-};
+}

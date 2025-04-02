@@ -5,7 +5,7 @@ import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
 import ICONS from "@/lib/constants/icons";
 import FilterItemModal from "../modal/ItemModal";
-import DropdownButton from "@/components/commons/dropdown/DropdownButton";
+import FilterTriggerButton from "@/components/commons/dropdown/DropdownButton";
 import { getFilterOptionMeta } from "./filter.helper";
 
 const FilterItem = ({
@@ -42,7 +42,7 @@ const FilterItem = ({
 
   return (
     <div className="flex flex-col items-start">
-      <DropdownButton
+      <FilterTriggerButton
         onClick={() => open(category)}
         isSelected={isSelected}
         className="tablet:w-[117px]"
@@ -55,7 +55,7 @@ const FilterItem = ({
           height={16}
           className="w-3 h-3 tablet:w-4 tablet:h-4"
         />
-      </DropdownButton>
+      </FilterTriggerButton>
       {isOpenForId && (
         <FilterItemModal
           id={category}

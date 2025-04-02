@@ -9,7 +9,7 @@ interface IconBadgeProps {
 
 const MAX_COUNT = 999;
 
-const IconBadge: React.FC<IconBadgeProps> = ({ iconSrc, altText, count }) => {
+export default function IconBadge({ iconSrc, altText, count }: IconBadgeProps) {
   const formattedCount = count > MAX_COUNT ? `${MAX_COUNT}+` : count;
 
   return (
@@ -18,6 +18,4 @@ const IconBadge: React.FC<IconBadgeProps> = ({ iconSrc, altText, count }) => {
       {formattedCount}
     </span>
   );
-};
-
-export default IconBadge;
+}

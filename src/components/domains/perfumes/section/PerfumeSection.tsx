@@ -1,8 +1,8 @@
 import React from "react";
 import Link from "next/link";
 import { Perfume } from "@/app/api/search/route";
-import { PerfumeCard } from "@/components/commons/card/perfumeCard";
 import { Spinner } from "@/components/commons/loading/Spinner";
+import PerfumeCard from "@/components/commons/card/perfumeCard";
 
 interface PerfumeSectionProps {
   perfumes: Perfume[];
@@ -11,12 +11,12 @@ interface PerfumeSectionProps {
   moreRef: React.RefObject<HTMLDivElement>;
 }
 
-export const PerfumeSection = ({
+export function PerfumeSection({
   perfumes,
   isLoading,
   isIdle,
   moreRef,
-}: PerfumeSectionProps) => {
+}: PerfumeSectionProps) {
   return (
     <section className="mt-10 px-4">
       <h3 className="text-headline-3 font-semibold">향수</h3>
@@ -49,4 +49,4 @@ export const PerfumeSection = ({
       </div>
     </section>
   );
-};
+}

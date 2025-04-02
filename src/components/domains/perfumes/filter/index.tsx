@@ -6,7 +6,7 @@ import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
 import FilterList from "./FilterList";
 
-const PerFumeFilter = ({
+export default function PerFumeFilter({
   brands,
   notes,
   accords,
@@ -14,7 +14,7 @@ const PerFumeFilter = ({
   brands: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
-}) => {
+}) {
   const filterOptions = useMemo(
     () => ({
       gender: GENDER_OPTIONS.map(toOption),
@@ -42,6 +42,4 @@ const PerFumeFilter = ({
       <FilterList filterOptions={filterOptions} />
     </div>
   );
-};
-
-export default PerFumeFilter;
+}

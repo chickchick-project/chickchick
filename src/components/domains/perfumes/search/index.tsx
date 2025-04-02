@@ -12,14 +12,14 @@ interface SearchHeaderProps {
   accords: perfume_accords[];
 }
 
-export const SearchHeader = ({
+export function SearchHeader({
   inputValue,
   onChange,
   onSubmit,
   brands,
   notes,
   accords,
-}: SearchHeaderProps) => {
+}: SearchHeaderProps) {
   return (
     <header className="w-full px-4">
       <div className="flex flex-col items-center max-w-[1200px] mx-auto my-10">
@@ -30,4 +30,4 @@ export const SearchHeader = ({
       </div>
     </header>
   );
-};
+}

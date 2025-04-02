@@ -12,11 +12,11 @@ export interface NavBarProps {
   onLogin: () => void;
 }
 
-const NavBar: React.FC<NavBarProps> = ({
+export default function NavBar({
   currentPath,
   isLoggedIn,
   onLogin,
-}) => {
+}: NavBarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const navBarRef = useRef<HTMLElement | null>(null);
 
@@ -104,6 +104,4 @@ const NavBar: React.FC<NavBarProps> = ({
       )}
     </>
   );
-};
-
-export default NavBar;
+}

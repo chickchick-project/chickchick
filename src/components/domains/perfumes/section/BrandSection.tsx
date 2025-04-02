@@ -1,13 +1,14 @@
 import Image from "next/image";
+import IMAGES from "@/lib/constants/images";
 
-export const BrandSection = ({ brandName }: { brandName: string }) => {
+export function BrandSection({ brandName }: { brandName: string }) {
   return (
     <section className="mt-10 px-4">
       <h3 className="text-headline-3 font-semibold">브랜드</h3>
       <div className="flex border p-5 my-5 gap-6 items-center rounded-xl">
         <Image
-          src="/images/Logo.svg" // 임시
-          alt="브랜드 로고"
+          src={IMAGES.Logo.src}
+          alt={IMAGES.Logo.alt}
           width={160}
           height={68}
           placeholder="blur"
@@ -27,4 +28,4 @@ export const BrandSection = ({ brandName }: { brandName: string }) => {
       </div>
     </section>
   );
-};
+}

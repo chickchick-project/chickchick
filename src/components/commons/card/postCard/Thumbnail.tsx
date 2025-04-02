@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 import { POST_CARD_TYPES, PostCardType } from "@/lib/constants/post";
 
@@ -14,11 +13,11 @@ const thumbnailSizes = {
   [POST_CARD_TYPES.DETAIL]: { width: 307, height: 180 },
 };
 
-const Thumbnail: React.FC<ThumbnailProps> = ({
+export default function Thumbnail({
   thumbnail,
   cardType,
   isLoading = false,
-}) => {
+}: ThumbnailProps) {
   const { width, height } = thumbnailSizes[cardType];
 
   if (isLoading) {
@@ -48,6 +47,4 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
       )}
     </div>
   );
-};
-
-export default Thumbnail;
+}

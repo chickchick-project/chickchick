@@ -9,32 +9,7 @@ interface DropdownProps {
   parentRef: React.RefObject<HTMLElement>;
 }
 
-const renderNavItem = (
-  item: (typeof NAV_ITEMS.myPage)[number],
-  onClose: () => void
-) => (
-  <div
-    key={item.label}
-    className="flex flex-col items-center gap-2 cursor-pointer"
-    onClick={onClose}
-  >
-    {item.icon && (
-      <Image
-        src={item.icon.src}
-        alt={item.icon.alt}
-        width={24}
-        height={24}
-        priority
-      />
-    )}
-    <span className="text-body-2 font-medium">{item.label}</span>
-  </div>
-);
-
-export const NavDropdown: React.FC<DropdownProps> = ({
-  onClose,
-  parentRef,
-}) => {
+export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
@@ -89,4 +64,26 @@ export const NavDropdown: React.FC<DropdownProps> = ({
     </div>,
     document.body
   );
-};
+}
+
+const renderNavItem = (
+  item: (typeof NAV_ITEMS.myPage)[number],
+  onClose: () => void
+) => (
+  <div
+    key={item.label}
+    className="flex flex-col items-center gap-2 cursor-pointer"
+    onClick={onClose}
+  >
+    {item.icon && (
+      <Image
+        src={item.icon.src}
+        alt={item.icon.alt}
+        width={24}
+        height={24}
+        priority
+      />
+    )}
+    <span className="text-body-2 font-medium">{item.label}</span>
+  </div>
+);

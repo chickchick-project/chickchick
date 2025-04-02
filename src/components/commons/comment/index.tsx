@@ -2,13 +2,13 @@ import React, { useState, useRef } from "react";
 import { COMMENT_PLACEHOLDERS, COMMENT_STYLES } from "./comments.constants";
 import { CommentProps } from "./comments.types";
 
-const Comment: React.FC<CommentProps> = ({
+export default function Comment({
   type,
   placeholder,
   value = "",
   maxLength = 500,
   onChange,
-}) => {
+}: CommentProps) {
   const [inputValue, setInputValue] = useState(value);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -40,6 +40,4 @@ const Comment: React.FC<CommentProps> = ({
       </span>
     </div>
   );
-};
-
-export default Comment;
+}

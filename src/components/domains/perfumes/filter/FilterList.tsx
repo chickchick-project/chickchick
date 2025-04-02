@@ -26,9 +26,9 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
         type="button"
         disabled={!hasActiveFilters}
         onClick={() => open("list")}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md border h-fit self-end ${
+        className={`flex items-center gap-2 px-3 py-2 rounded-md border h-fit self-end  ${
           hasActiveFilters
-            ? "border-primary-200 text-primary-200"
+            ? "border-primary-200 text-primary-200 hover:bg-gray-300"
             : "border-gray-100 text-gray-100"
         }`}
       >

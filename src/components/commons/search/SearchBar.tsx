@@ -12,12 +12,12 @@ export interface SearchBarProps {
 
 export const SEARCHBAR_PLACEHOLDER_TEXT = "제품명, 브랜드를 검색하세요.";
 
-export const SearchBar: React.FC<SearchBarProps> = ({
+export function SearchBar({
   value,
   onChange,
   onClick,
   ...rest
-}) => {
+}: SearchBarProps) {
   const baseStyle = `
     w-full max-w-[840px] h-12 max-h-[48px]
     rounded-lg px-5 py-3 border flex items-center
@@ -44,4 +44,4 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </button>
     </div>
   );
-};
+}

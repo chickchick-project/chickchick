@@ -1,4 +1,3 @@
-import React from "react";
 import AuthorInfo from "../../author/AuthorInfo";
 import BoardChip from "../../chip/BoardChip";
 import PostMeta from "../../author/PostMeta";
@@ -27,7 +26,7 @@ export interface PostCardProps {
   isAuthor: boolean;
 }
 
-export const PostCard: React.FC<PostCardProps> = ({
+export function PostCard({
   title,
   content,
   author,
@@ -39,7 +38,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   cardType = POST_CARD_TYPES.DEFAULT,
   profileImage,
   isAuthor = false,
-}) => {
+}: PostCardProps) {
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
   const cardStyle = POST_CARD_STYLES[cardType];
@@ -94,4 +93,4 @@ export const PostCard: React.FC<PostCardProps> = ({
       </footer>
     </article>
   );
-};
+}

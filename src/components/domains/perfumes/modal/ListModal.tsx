@@ -22,14 +22,14 @@ interface ListModalProps {
   resetFilters: () => void;
 }
 
-const ListModal = ({
+export default function ListModal({
   visible,
   close,
   filters,
   filterOptions,
   closeFilter,
   resetFilters,
-}: ListModalProps) => {
+}: ListModalProps) {
   if (!visible) return null;
 
   const visibleFilters = Array.from(filters.entries()).filter(
@@ -88,6 +88,4 @@ const ListModal = ({
       </FilterModalLayout>
     </ModalContainer>
   );
-};
-
-export default ListModal;
+}

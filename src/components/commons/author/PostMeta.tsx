@@ -7,7 +7,7 @@ interface PostMetaProps {
   meta: PostMetaItem[];
 }
 
-const PostMeta: React.FC<PostMetaProps> = ({ meta }) => {
+export default function PostMeta({ meta }: PostMetaProps) {
   return (
     <div className="flex gap-2">
       {meta.map((item) => (
@@ -20,6 +20,4 @@ const PostMeta: React.FC<PostMetaProps> = ({ meta }) => {
       ))}
     </div>
   );
-};
-
-export default PostMeta;
+}
