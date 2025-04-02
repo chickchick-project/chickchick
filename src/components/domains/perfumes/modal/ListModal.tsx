@@ -48,43 +48,45 @@ export default function ListModal({
         onReset={resetFilters}
         onSubmit={close}
       >
-        {visibleFilters.map(([key, value], index) => {
-          const typedKey = key as keyof FilterOptions;
-          const isLast = index === visibleFilters.length - 1;
-          return (
-            <div
-              key={key}
-              className={`py-5 border-b border-gray-200 ${
-                isLast ? "border-none" : ""
-              }`}
-            >
-              <h3 className="text-body-1 font-semibold">
-                {getLabel(typedKey)}
-              </h3>
-              <div className="flex gap-2 mt-3">
-                {[...value].map((id) => {
-                  const name = getName(typedKey, id);
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      className="flex gap-1 p-2 border border-gray-100 rounded-full text-label-1 font-medium"
-                      onClick={() => closeFilter(id)}
-                    >
-                      {name}
-                      <Image
-                        src={ICONS.Close.src}
-                        alt={ICONS.Close.alt}
-                        width={16}
-                        height={16}
-                      />
-                    </button>
-                  );
-                })}
+        <div className="flex flex-col w-full">
+          {visibleFilters.map(([key, value], index) => {
+            const typedKey = key as keyof FilterOptions;
+            const isLast = index === visibleFilters.length - 1;
+            return (
+              <div
+                key={key}
+                className={`py-5 border-b border-gray-200 ${
+                  isLast ? "border-none" : ""
+                }`}
+              >
+                <h3 className="text-body-1 font-semibold">
+                  {getLabel(typedKey)}
+                </h3>
+                <div className="flex gap-2 mt-3">
+                  {[...value].map((id) => {
+                    const name = getName(typedKey, id);
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        className="flex gap-1 p-2 border border-gray-100 rounded-full text-label-1 font-medium"
+                        onClick={() => closeFilter(id)}
+                      >
+                        {name}
+                        <Image
+                          src={ICONS.Close.src}
+                          alt={ICONS.Close.alt}
+                          width={16}
+                          height={16}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </FilterModalLayout>
     </ModalContainer>
   );
