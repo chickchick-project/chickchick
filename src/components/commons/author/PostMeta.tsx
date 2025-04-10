@@ -1,13 +1,13 @@
 import React from "react";
 import IconBadge from "../author/IconBadge";
-import { PostMetaItem } from "@/lib/constants/author";
 import ICONS from "@/lib/constants/icons";
+import { PostMetaItem } from "./author.types";
 
 interface PostMetaProps {
   meta: PostMetaItem[];
 }
 
-const PostMeta: React.FC<PostMetaProps> = ({ meta }) => {
+export default function PostMeta({ meta }: PostMetaProps) {
   return (
     <div className="flex gap-2">
       {meta.map((item) => (
@@ -20,6 +20,4 @@ const PostMeta: React.FC<PostMetaProps> = ({ meta }) => {
       ))}
     </div>
   );
-};
-
-export default PostMeta;
+}

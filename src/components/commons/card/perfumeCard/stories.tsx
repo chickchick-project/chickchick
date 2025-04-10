@@ -1,5 +1,7 @@
 import { Meta, StoryFn } from "@storybook/react";
-import { PERFUME_CARD_TYPES, PerfumeCard, PerfumeCardProps } from ".";
+import PerfumeCard from ".";
+import { PerfumeCardProps } from "./perfumeCard.types";
+import { PERFUME_CARD_TYPES } from "./perfumeCard.constants";
 
 export default {
   title: "Components/Card/PerfumeCard",

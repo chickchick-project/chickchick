@@ -1,12 +1,8 @@
-import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
-import {
-  InfoType,
-  SIZE_STATUSES,
-  SizeStatusType,
-} from "@/lib/constants/author";
+import { InfoType, SizeStatusType } from "./author.types";
+import { SIZE_STATUSES } from "./author.constants";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
@@ -17,7 +13,7 @@ interface PostTimeProps {
   size: SizeStatusType;
 }
 
-const PostTime: React.FC<PostTimeProps> = ({ time, type, size }) => {
+export default function PostTime({ time, type, size }: PostTimeProps) {
   const now = dayjs();
   const postDate = dayjs(time);
   const diffInHours = now.diff(postDate, "hour");
@@ -43,6 +39,4 @@ const PostTime: React.FC<PostTimeProps> = ({ time, type, size }) => {
       {formattedTime}
     </span>
   );
-};
-
-export default PostTime;
+}

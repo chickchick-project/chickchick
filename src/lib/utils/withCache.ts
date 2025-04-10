@@ -1,10 +1,10 @@
 export type CacheKey = string;
 
-function createCacheKey(args: unknown[]): CacheKey {
+const createCacheKey = (args: unknown[]): CacheKey => {
   return JSON.stringify(args);
-}
+};
 
-function createLRUCache<K extends string, V>(maxSize: number = 50) {
+const createLRUCache = <K extends string, V>(maxSize: number = 50) => {
   const cache = new Map<K, V>();
 
   const get = (key: K): V | undefined => {
@@ -29,7 +29,7 @@ function createLRUCache<K extends string, V>(maxSize: number = 50) {
   };
 
   return { get, set };
-}
+};
 
 export function withCache<P extends unknown[], R>(
   fn: (...args: P) => Promise<R>
@@ -41,7 +41,6 @@ export function withCache<P extends unknown[], R>(
 
   return async (...args: FnArgs): Promise<FnReturn> => {
     const key = createCacheKey(args);
-
     const cached = cache.get(key);
     // console.log(`[withCache] 캐시 HIT - key:`, key);
     if (cached) return cached;

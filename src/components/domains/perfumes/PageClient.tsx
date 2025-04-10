@@ -1,18 +1,27 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useCallback, useMemo, useState } from "react";
-
+import { ChangeEvent, FormEvent, useState, useMemo, useEffect } from "react";
 import { brands, perfume_accords, perfume_notes } from "@prisma/client";
-
 import { Perfume } from "@/app/api/search/route";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { useTotalStore } from "@/lib/stores/useCountStore";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
-import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
 import { withCache } from "@/lib/utils/withCache";
+import {
+  getUniquePerfumes,
+  createQueryKey,
+  adaptedFetchPerfumes,
+} from "./perfumes.helpers";
 
-import { PerfumeSection } from "./section";
+import { PerfumeSection } from "./section/PerfumeSection";
+import { BrandSection } from "./section/BrandSection";
 import { SearchHeader } from "./search";
+
+export type BrandName = {
+  en: string;
+  ko: string;
+};
 
 export default function PageClient({
   brands,
@@ -25,41 +34,13 @@ export default function PageClient({
 }) {
   const memoizedBrands = useMemo(() => brands, [brands]);
   const memoizedNotes = useMemo(() => notes, [notes]);
-  const memoizeAccords = useMemo(() => accords, [accords]);
+  const memoizedAccords = useMemo(() => accords, [accords]);
 
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { filters } = useFilterStore();
-
-  const adaptedFetchPerfumes = useCallback(
-    async (cursor: string | null, queryStr: string) => {
-      try {
-        const params = new URLSearchParams(queryStr);
-        const searchText = params.get("q") || "";
-
-        const newFilters = new Map<string, Set<string>>();
-        params.forEach((value, key) => {
-          if (key !== "q" && key !== "cursor") {
-            if (!newFilters.has(key)) newFilters.set(key, new Set());
-            newFilters.get(key)!.add(value);
-          }
-        });
-
-        const result = await fetchPerfumes(cursor, searchText, newFilters);
-
-        return {
-          data: result.data || [],
-          nextCursor: result.nextCursor
-            ? { last_seen_id: result.nextCursor.last_seen_id }
-            : null,
-        };
-      } catch (error) {
-        console.error("adaptedFetchPerfumes 오류:", error);
-        return { data: [], nextCursor: null };
-      }
-    },
-    []
-  );
+  const [matchedBrand, setMatchedBrand] = useState<string | null>(null);
+  const filters = useFilterStore((state) => state.filters);
+  const setCount = useTotalStore((state) => state.setTotalCount);
 
   // 검색 제출 핸들러
   const handleSubmit = (e?: FormEvent) => {
@@ -73,45 +54,39 @@ export default function PageClient({
   };
 
   // 검색 파라미터 생성 (메모이제이션)
-  const query = useMemo(() => {
-    const searchParams = new URLSearchParams();
-    searchParams.append("q", searchKeyword);
-
-    filters.forEach((values, key) => {
-      if (values.size > 0) {
-        values.forEach((value) => searchParams.append(key, value));
-      }
-    });
-
-    return searchParams.toString();
-  }, [searchKeyword, filters]);
+  const query: string = useMemo(
+    () => createQueryKey(searchKeyword, filters),
+    [searchKeyword, filters]
+  );
 
   // 무한 스크롤 훅 사용
-  const cachedFetchPerfumes = useMemo(
-    () => withCache(adaptedFetchPerfumes),
-    [adaptedFetchPerfumes]
+  const fetcher = useMemo(
+    () =>
+      withCache((cursor: string | null) =>
+        adaptedFetchPerfumes(cursor, searchKeyword, filters)
+      ),
+    [searchKeyword, filters]
   );
 
-  const { data, isLoading, moreRef, hasMore } = useInfiniteScroll<Perfume>(
-    cachedFetchPerfumes,
-    query
-  );
+  const { data, totalCount, isLoading, moreRef, isIdle } =
+    useInfiniteScroll<Perfume>(fetcher, query);
 
-  const uniquePerfumes = useMemo(() => {
-    const perfumeMap = new Map<string, Perfume>();
+  useEffect(() => {
+    if (totalCount !== null && typeof totalCount === "number") {
+      setCount(totalCount);
+    }
+  }, [totalCount, setCount]);
 
-    data.forEach((item) => {
-      if (
-        !perfumeMap.has(item.perfume_id) ||
-        perfumeMap.get(item.perfume_id)!.priority < item.priority
-      ) {
-        perfumeMap.set(item.perfume_id, item);
-      }
+  useEffect(() => {
+    const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
+    const match = memoizedBrands.find((brand) => {
+      const brandName = brand.name as BrandName;
+      return keywordWords.includes(brandName.en.toLowerCase());
     });
+    setMatchedBrand(match ? (match.name as BrandName).en : null);
+  }, [searchKeyword, memoizedBrands]);
 
-    return Array.from(perfumeMap.values());
-  }, [data]);
-
+  const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
   return (
     <div className="flex flex-col items-center">
       <SearchHeader
@@ -120,10 +95,10 @@ export default function PageClient({
         onSubmit={handleSubmit}
         brands={memoizedBrands}
         notes={memoizedNotes}
-        accords={memoizeAccords}
+        accords={memoizedAccords}
       />
 
-      <section className="w-full max-w-[1200px] px-4">
+      <main className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
           <span className="text-headline-2 font-semibold">
             {searchKeyword
@@ -132,14 +107,14 @@ export default function PageClient({
           </span>
           <SortDropdown />
         </div>
-
+        {matchedBrand && <BrandSection brandName={matchedBrand} />}
         <PerfumeSection
           perfumes={uniquePerfumes}
           isLoading={isLoading}
-          hasMore={hasMore}
+          isIdle={isIdle}
           moreRef={moreRef}
         />
-      </section>
+      </main>
     </div>
   );
 }

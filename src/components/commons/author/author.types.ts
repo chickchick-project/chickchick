@@ -1,17 +1,5 @@
-import ICONS from "./icons";
-
-export const REVIEW_STATUSES = {
-  NOW: "지금 쓰고 있어요",
-  USED: "써 봤어요",
-  WANT: "갖고 싶어요",
-} as const;
-
-export const SIZE_STATUSES = {
-  DEFAULT: "default",
-  LARGE: "large",
-} as const;
-
-export const DEFAULT_PROFILE_IMAGE = "/images/Profile.svg";
+import ICONS from "@/lib/constants/icons";
+import { REVIEW_STATUSES, SIZE_STATUSES } from "./author.constants";
 
 export type ReviewStatusType =
   (typeof REVIEW_STATUSES)[keyof typeof REVIEW_STATUSES];

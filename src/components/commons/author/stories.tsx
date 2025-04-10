@@ -1,11 +1,11 @@
 import dayjs from "dayjs";
-import {
-  SIZE_STATUSES,
-  REVIEW_STATUSES,
-  AuthorInfoProps,
-  DEFAULT_PROFILE_IMAGE,
-} from "@/lib/constants/author";
 import AuthorInfo from "./AuthorInfo";
+import {
+  DEFAULT_PROFILE_IMAGE,
+  REVIEW_STATUSES,
+  SIZE_STATUSES,
+} from "./author.constants";
+import { AuthorInfoProps } from "./author.types";
 
 const AUTHOR_INFO = {
   author: "주현",

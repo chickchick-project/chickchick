@@ -1,13 +1,12 @@
-import React from "react";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import FilterDropdown from "./FilterDropdown";
+import React, { useMemo } from "react";
+import FilterItem from "./FilterItem";
 import { brands, perfume_accords, perfume_notes } from "@prisma/client";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { GENDER_OPTIONS } from "./filter.constants";
+import { getLabel } from "../perfumes.helpers";
+import { toOption, typedKeys } from "./filter.helper";
+import FilterList from "./FilterList";
 
-const typedKeys = <T extends Record<string, unknown>>(obj: T) =>
-  Object.keys(obj) as (keyof T)[];
-
-const PerFumeFilter = ({
+export default function PerFumeFilter({
   brands,
   notes,
   accords,
@@ -15,54 +14,32 @@ const PerFumeFilter = ({
   brands: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
-}) => {
-  const { resetFilters } = useFilterStore();
-
-  const toOption = (item: { id: string; name: JsonValue }) => ({
-    label: (item.name as { en: string }).en,
-    value: item.id,
-  });
-
-  const filterOptions = {
-    gender: [
-      { id: "male", name: { en: "남성", ko: "남성" } },
-      { id: "female", name: { en: "여성", ko: "여성" } },
-    ].map(toOption),
-    brand: brands.map(toOption),
-    notes: notes.map(toOption),
-    accords: accords.map(toOption),
-  };
-
-  const LABELS = {
-    gender: "성별",
-    brand: "브랜드",
-    notes: "노트",
-    accords: "어코드",
-  };
+}) {
+  const filterOptions = useMemo(
+    () => ({
+      gender: GENDER_OPTIONS.map(toOption),
+      brand: brands.map(toOption),
+      notes: notes.map(toOption),
+      accords: accords.map(toOption),
+    }),
+    [brands, notes, accords]
+  );
 
   return (
-    <>
+    <div className="flex justify-between">
       <div className="flex gap-5">
         {/* 필터 버튼 렌더링 */}
         {typedKeys(filterOptions).map((category) => (
-          <FilterDropdown
+          <FilterItem
             key={category}
             category={category}
-            label={LABELS[category]}
+            label={getLabel(category)}
             options={filterOptions[category]}
           />
         ))}
       </div>
       {/* 필터 목록 버튼 */}
-      <button
-        type="button"
-        onClick={resetFilters}
-        className="px-3 py-1 rounded border h-fit self-end"
-      >
-        필터 목록
-      </button>
-    </>
+      <FilterList filterOptions={filterOptions} />
+    </div>
   );
-};
-
-export default PerFumeFilter;
+}

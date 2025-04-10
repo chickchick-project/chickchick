@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useRef } from "react";
-import { Dropdown } from "./Dropdown";
+import { NavDropdown } from "./Dropdown";
 import ICONS from "@/lib/constants/icons";
+import { NAV_LABELS, NAV_PATHS } from "./navBar.constants";
+import IMAGES from "@/lib/constants/images";
 
 export interface NavBarProps {
   currentPath: string;
@@ -10,11 +12,11 @@ export interface NavBarProps {
   onLogin: () => void;
 }
 
-const NavBar: React.FC<NavBarProps> = ({
+export default function NavBar({
   currentPath,
   isLoggedIn,
   onLogin,
-}) => {
+}: NavBarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const navBarRef = useRef<HTMLElement | null>(null);
 
@@ -29,13 +31,12 @@ const NavBar: React.FC<NavBarProps> = ({
       >
         {/* 로고 */}
         <div>
-          {currentPath !== "/" && (
+          {currentPath !== NAV_PATHS.HOME && (
             <Image
-              src="/images/Logo.svg"
+              src={IMAGES.Logo.src}
               width={108}
               height={40}
               alt="logo"
-              priority
               className="size-auto"
             />
           )}
@@ -45,13 +46,19 @@ const NavBar: React.FC<NavBarProps> = ({
         <nav>
           <ul className="flex gap-4 items-center">
             <li className="divider-vertical">
-              <Link href="/perfumes" className={selectedLink("/perfumes")}>
-                향수
+              <Link
+                href={NAV_PATHS.PERFUMES}
+                className={selectedLink(NAV_PATHS.PERFUMES)}
+              >
+                {NAV_LABELS.PERFUMES}
               </Link>
             </li>
             <li className="divider-vertical">
-              <Link href="/community" className={selectedLink("/community")}>
-                커뮤니티
+              <Link
+                href={NAV_PATHS.COMMUNITY}
+                className={selectedLink(NAV_PATHS.COMMUNITY)}
+              >
+                {NAV_LABELS.COMMUNITY}
               </Link>
             </li>
 
@@ -62,7 +69,7 @@ const NavBar: React.FC<NavBarProps> = ({
                   className="text-body-2 font-medium text-black-300"
                   onClick={onLogin}
                 >
-                  로그인/회원가입
+                  {NAV_LABELS.LOGIN}
                 </button>
               ) : (
                 <div className="flex items-center gap-2">
@@ -71,7 +78,6 @@ const NavBar: React.FC<NavBarProps> = ({
                     width={36}
                     height={36}
                     alt="User"
-                    priority
                   />
 
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
@@ -80,7 +86,6 @@ const NavBar: React.FC<NavBarProps> = ({
                       width={16}
                       height={16}
                       alt="Down"
-                      priority
                     />
                   </button>
                 </div>
@@ -92,13 +97,11 @@ const NavBar: React.FC<NavBarProps> = ({
 
       {/* 드롭다운을 NavBar의 바로 아래에 배치 */}
       {isDropdownOpen && navBarRef.current && (
-        <Dropdown
+        <NavDropdown
           onClose={() => setIsDropdownOpen(false)}
           parentRef={navBarRef}
         />
       )}
     </>
   );
-};
-
-export default NavBar;
+}

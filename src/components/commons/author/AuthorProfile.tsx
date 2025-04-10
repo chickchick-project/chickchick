@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { DEFAULT_PROFILE_IMAGE } from "@/lib/constants/author";
+import { DEFAULT_PROFILE_IMAGE } from "./author.constants";
 
 interface AuthorProfileProps {
   name: string;
@@ -8,11 +8,11 @@ interface AuthorProfileProps {
   size?: number;
 }
 
-const AuthorProfile: React.FC<AuthorProfileProps> = ({
+export default function AuthorProfile({
   name,
   profileImage = DEFAULT_PROFILE_IMAGE,
   size = 28,
-}) => {
+}: AuthorProfileProps) {
   return (
     <div className="flex items-center gap-2">
       {profileImage && profileImage.trim() !== "" && (
@@ -27,6 +27,4 @@ const AuthorProfile: React.FC<AuthorProfileProps> = ({
       <span className="text-label-2 font-medium">{name}</span>
     </div>
   );
-};
-
-export default AuthorProfile;
+}

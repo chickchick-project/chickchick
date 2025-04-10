@@ -1,12 +1,10 @@
 import React from "react";
 import AuthorProfile from "./AuthorProfile";
 import PostTime from "./PostTime";
-import {
-  AuthorInfoProps,
-  SIZE_STATUSES,
-  SizeStatusType,
-} from "@/lib/constants/author";
+
 import PostMeta from "./PostMeta";
+import { SIZE_STATUSES } from "./author.constants";
+import { AuthorInfoProps, SizeStatusType } from "./author.types";
 
 const AuthorInfo: React.FC<AuthorInfoProps> = ({
   size = SIZE_STATUSES.DEFAULT,
@@ -50,29 +48,37 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
           : "text-body-1"
       } font-medium text-black-300`}
     >
-      {addDividers(items, size)}
+      <AuthorInfoItems items={items} size={size} />
     </div>
   );
 };
 
 export default React.memo(AuthorInfo);
 
-const addDividers = (items: React.ReactNode[], size: SizeStatusType) => {
+const AuthorInfoItems = ({
+  items,
+  size,
+}: {
+  items: React.ReactNode[];
+  size: SizeStatusType;
+}) => {
   const validItems = items.filter(Boolean);
-  if (validItems.length < 2) return validItems;
+  if (validItems.length < 2) return <>{validItems}</>;
 
-  return validItems.reduce<React.ReactNode[]>((acc, item, index) => {
-    if (index > 0) {
-      acc.push(
-        <div
-          key={`divider-${index}`}
-          className={`w-px ${
-            size === SIZE_STATUSES.DEFAULT ? "h-3" : "h-4"
-          } bg-gray-200 mx-4`}
-        />
-      );
-    }
-    acc.push(item);
-    return acc;
-  }, []);
+  return (
+    <>
+      {validItems.map((item, index) => (
+        <React.Fragment key={index}>
+          {index > 0 && (
+            <div
+              className={`w-px ${
+                size === SIZE_STATUSES.DEFAULT ? "h-3" : "h-4"
+              } bg-gray-200 mx-4`}
+            />
+          )}
+          {item}
+        </React.Fragment>
+      ))}
+    </>
+  );
 };

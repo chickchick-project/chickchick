@@ -1,50 +1,19 @@
 import ICONS from "@/lib/constants/icons";
 import Image from "next/image";
+import {
+  PERFUME_CARD_STYLES,
+  PERFUME_CARD_TYPES,
+} from "./perfumeCard.constants";
+import { PerfumeCardProps } from "./perfumeCard.types";
 
-export const PERFUME_CARD_TYPES = {
-  DEFAULT: "default",
-  CLOSABLE: "closable",
-} as const;
-
-type PerfumeCardType =
-  (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
-
-const PERFUME_CARD_STYLES = {
-  images: {
-    [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]",
-    [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]",
-  },
-  brandName: {
-    [PERFUME_CARD_TYPES.DEFAULT]: "text-label-1",
-    [PERFUME_CARD_TYPES.CLOSABLE]: "text-label-2",
-  },
-  perfumeName: {
-    [PERFUME_CARD_TYPES.DEFAULT]: "text-body-1",
-    [PERFUME_CARD_TYPES.CLOSABLE]: "text-body-2",
-  },
-  cursor: {
-    [PERFUME_CARD_TYPES.DEFAULT]: "cursor-pointer",
-    [PERFUME_CARD_TYPES.CLOSABLE]: "cursor-default",
-  },
-} as const;
-
-export interface PerfumeCardProps {
-  cardType?: PerfumeCardType;
-  perfumeImage: string;
-  brandName: string;
-  perfumeName: string;
-  onClick?: () => void;
-  onClose?: () => void;
-}
-
-export const PerfumeCard = ({
+export default function PerfumeCard({
   cardType = PERFUME_CARD_TYPES.DEFAULT,
   perfumeImage,
   brandName,
   perfumeName,
   onClick,
   onClose,
-}: PerfumeCardProps) => {
+}: PerfumeCardProps) {
   return (
     <article
       className={`relative ${PERFUME_CARD_STYLES.images[cardType]} ${PERFUME_CARD_STYLES.cursor[cardType]}`}
@@ -73,7 +42,6 @@ export const PerfumeCard = ({
           `}
           placeholder="blur"
           blurDataURL="/images/BlurShimmer.svg"
-          priority
           className="object-contain"
         />
       </figure>
@@ -92,4 +60,4 @@ export const PerfumeCard = ({
       </figcaption>
     </article>
   );
-};
+}

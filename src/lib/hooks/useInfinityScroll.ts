@@ -1,94 +1,140 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useReducer, useCallback } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
+
+export interface SearchResponse<T> {
+  data: T[]; // 검색된 목록
+  nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
+  totalCount?: number | null;
+}
+
+// 상태 타입
+type State<T> = {
+  data: T[];
+  totalCount: number | null;
+  cursor: string | null;
+  isIdle: boolean;
+  isLoading: boolean;
+  hasMore: boolean;
+  error: Error | null;
+};
+
+// 액션 타입
+type Action<T> =
+  | { type: "RESET" }
+  | { type: "FETCH_START" }
+  | {
+      type: "FETCH_SUCCESS";
+      payload: SearchResponse<T>;
+    }
+  | { type: "FETCH_ERROR"; payload: Error };
+
+// 초기 상태 팩토리
+const initialState = <T>(): State<T> => ({
+  data: [],
+  totalCount: 0,
+  cursor: null,
+  isIdle: true,
+  isLoading: false,
+  hasMore: true,
+  error: null,
+});
+
+// 리듀서 함수
+function reducer<T>(state: State<T>, action: Action<T>): State<T> {
+  switch (action.type) {
+    case "RESET":
+      return initialState<T>();
+    case "FETCH_START":
+      return { ...state, isIdle: false, isLoading: true, error: null };
+    case "FETCH_SUCCESS":
+      return {
+        ...state,
+        isLoading: false,
+        data: state.cursor
+          ? [...state.data, ...action.payload.data]
+          : action.payload.data,
+        cursor: action.payload.nextCursor,
+        hasMore: !!action.payload.nextCursor,
+        totalCount: action.payload.totalCount ?? state.totalCount,
+      };
+    case "FETCH_ERROR":
+      return {
+        ...state,
+        isLoading: false,
+        error: action.payload,
+        hasMore: false,
+      };
+    default:
+      return state;
+  }
+}
 
 export function useInfiniteScroll<T>(
   fetchFunction: (
     cursor: string | null,
     query: string
-  ) => Promise<{ data: T[]; nextCursor: { last_seen_id: string } | null }>,
+  ) => Promise<SearchResponse<T>>,
   query: string
 ) {
   const moreRef = useRef<HTMLDivElement>(null);
   const isIntersecting = useIntersectionObserver(moreRef);
-  const [data, setData] = useState<T[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
 
-  // `query`가 변경될 때 상태를 초기화
-  useEffect(() => {
-    setCursor(null);
-    setData([]);
-    setHasMore(true);
-    setError(null);
-  }, [query]);
+  const [state, dispatch] = useReducer(reducer<T>, undefined, initialState);
+  const { data, totalCount, cursor, isLoading, hasMore, error, isIdle } = state;
 
-  // fetchData 함수를 메모이제이션하여 불필요한 재렌더링 방지
-  const fetchData = useCallback(async () => {
-    if (!hasMore) return;
+  const fetchData = useCallback(
+    async (cursorToUse: string | null) => {
+      dispatch({ type: "FETCH_START" });
 
-    setIsLoading(true);
-    setError(null);
+      try {
+        const res = await fetchFunction(cursorToUse, query);
+        if (!Array.isArray(res.data)) {
+          throw new Error("데이터 형식이 잘못되었습니다.");
+        }
 
-    try {
-      const response = await fetchFunction(cursor, query);
-
-      // 응답 데이터 구조 검증
-      if (!response || !Array.isArray(response.data)) {
-        throw new Error(
-          "잘못된 데이터 형식입니다. data 배열이 포함된 객체가 필요합니다."
-        );
+        dispatch({
+          type: "FETCH_SUCCESS",
+          payload: res,
+        });
+      } catch (err) {
+        dispatch({
+          type: "FETCH_ERROR",
+          payload: err instanceof Error ? err : new Error(String(err)),
+        });
       }
+    },
+    [fetchFunction, query]
+  );
 
-      // 기존 데이터에 새로운 데이터를 추가 (또는 검색어 변경 시 초기화)
-      setData((prevData) =>
-        cursor ? [...prevData, ...response.data] : response.data
-      );
-
-      // 다음 페이지를 위한 커서 업데이트
-      const nextCursor = response.nextCursor?.last_seen_id || null;
-      setCursor(nextCursor);
-      setHasMore(!!nextCursor);
-    } catch (error) {
-      console.error("데이터 불러오기 실패:", error);
-      setError(error instanceof Error ? error : new Error(String(error)));
-      setHasMore(false);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [fetchFunction, cursor, query, hasMore]);
-
+  // 초기화 및 첫 fetch
   useEffect(() => {
-    if (data.length === 0 && !isLoading) {
-      fetchData(); // 최초 진입 시 강제 fetch
-    }
-  }, [data.length, isLoading, fetchData]);
+    dispatch({ type: "RESET" });
+    fetchData(null);
+  }, [query, fetchData]);
 
-  // 요소가 화면에 나타날 때 데이터를 가져옴
+  // Intersection 감지 시 추가 fetch
   useEffect(() => {
-    if (isIntersecting && hasMore) {
-      fetchData();
+    if (isIntersecting && hasMore && !isLoading) {
+      fetchData(cursor);
     }
-  }, [isIntersecting, hasMore, fetchData]);
+  }, [isIntersecting, hasMore, isLoading, cursor, fetchData]);
 
-  // 수동으로 데이터 다시 불러오기
-  const refetch = useCallback(async () => {
-    setCursor(null);
-    setData([]);
-    setHasMore(true);
-    setError(null);
-    await fetchData();
+  // 수동 refetch
+  const refetch = useCallback(() => {
+    dispatch({ type: "RESET" });
+    fetchData(null);
   }, [fetchData]);
 
   return {
     moreRef,
-    isLoading,
     data,
+    totalCount,
+    isLoading,
     hasMore,
     error,
     refetch,
+    isIdle,
   };
 }

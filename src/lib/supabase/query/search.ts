@@ -18,17 +18,26 @@ interface SearchParamsWithFilters extends SearchParams {
 export async function fetchSearch(params: SearchParams) {
   const { search_text, result_limit = 15, last_seen_id } = params;
 
-  const data = await prisma.$queryRawUnsafe(
-    "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
-    search_text,
-    null,
-    null,
-    null,
-    last_seen_id,
-    result_limit
-  );
+  const result = Promise.all([
+    prisma.$queryRawUnsafe(
+      "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
+      search_text,
+      null,
+      null,
+      null,
+      last_seen_id,
+      result_limit
+    ),
+    prisma.$queryRawUnsafe(
+      "SELECT * FROM search_perfumes_total($1::text, $2::uuid[], $3::uuid[], $4::uuid[])",
+      search_text,
+      null,
+      null,
+      null
+    ),
+  ]);
 
-  return data;
+  return result;
 }
 /**
  * 필터 포함 검색 함수 (POST 요청)
@@ -47,28 +56,38 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
     Array.isArray(notes_filter) && notes_filter.length > 0
       ? notes_filter
       : null;
+
   const formattedAccords =
     Array.isArray(accords_filter) && accords_filter.length > 0
       ? accords_filter
       : null;
 
   try {
-    const data = await prisma.$queryRawUnsafe(
-      "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
-      search_text,
-      brand_filter || null,
-      formattedNotes,
-      formattedAccords,
-      last_seen_id || null,
-      result_limit ?? 15
-    );
+    const result = await Promise.all([
+      prisma.$queryRawUnsafe(
+        "SELECT * FROM search_perfumes($1::text, $2::uuid[], $3::uuid[], $4::uuid[], $5::uuid, $6::integer)",
+        search_text,
+        brand_filter || null,
+        formattedNotes,
+        formattedAccords,
+        last_seen_id || null,
+        result_limit ?? 15
+      ),
+      prisma.$queryRawUnsafe(
+        "SELECT * FROM search_perfumes_total($1::text, $2::uuid[], $3::uuid[], $4::uuid[])",
+        search_text,
+        brand_filter || null,
+        formattedNotes,
+        formattedAccords
+      ),
+    ]);
 
-    if (!data) {
+    if (!result) {
       console.error("Prisma query returned null data");
       throw new Error("No data found");
     }
 
-    return data;
+    return result;
   } catch (error) {
     console.error("Prisma Query Error:", error);
     throw new Error(`Database query failed: ${(error as Error).message}`);

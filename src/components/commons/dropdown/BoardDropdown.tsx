@@ -9,7 +9,9 @@ interface IBoardDropdownProps {
 
 export default function BoardDropdown({ currentOption }: IBoardDropdownProps) {
   const [selectedOption, setSelectedOption] = useState<Option>(
-    () => BOARD_OPTIONS.find((option) => option.value === currentOption) || DEFAULT_BOARD
+    () =>
+      BOARD_OPTIONS.find((option) => option.value === currentOption) ||
+      DEFAULT_BOARD
   );
 
   const handleSortChange = (option: Option) => {
@@ -19,6 +21,7 @@ export default function BoardDropdown({ currentOption }: IBoardDropdownProps) {
   return (
     <>
       <Dropdown
+        id={""}
         selectedOption={selectedOption}
         currentOption={currentOption}
         options={BOARD_OPTIONS}
