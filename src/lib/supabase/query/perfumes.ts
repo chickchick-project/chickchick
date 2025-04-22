@@ -35,3 +35,25 @@ export async function fetchPerfumeDetails(perfumeId: string) {
 
   return data;
 }
+
+/**
+ * main 페이지 배너에 표시할 향수 데이터 조회
+ */
+// TODO: main 페이지 배너 주제에 맞는 필터 적용 필요
+export async function fetchPerfumesWithBanner(
+  page: number = 1,
+  limit: number = 5
+) {
+  const offset = (page - 1) * limit;
+
+  const { data, error } = await supabase.rpc("get_perfumes_with_brands", {
+    limit_param: limit,
+    offset_param: offset,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
+}
