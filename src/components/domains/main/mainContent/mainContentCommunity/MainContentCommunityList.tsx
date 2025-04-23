@@ -1,0 +1,78 @@
+"use client";
+
+import { BOARD_TYPES } from "@/lib/constants/communityBoard";
+import ICONS from "@/lib/constants/icons";
+import Image from "next/image";
+import { useState } from "react";
+import { boardDataMap } from "../dummyCommunity";
+
+interface IMainContentCommunityList {
+  size: "s" | "m";
+}
+
+export const MainContentCommunityList = ({
+  size,
+}: IMainContentCommunityList) => {
+  const boards = Object.entries(BOARD_TYPES).map(([key, value]) => ({
+    key,
+    label: value,
+  }));
+
+  const [selectedTab, setSelectedTab] = useState(boards[0].key);
+
+  const handleTabClick = (key: string) => {
+    setSelectedTab(key);
+  };
+
+  return (
+    <div
+      className={`${
+        size === "m" ? "w-115" : "w-80"
+      } p-6 bg-white rounded-xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.08)] flex flex-col justify-start items-center gap-2`}
+    >
+      <div className="px-10 py-3 rounded-3 flex flex-col justify-start items-start">
+        <div className="flex justify-center items-center gap-12">
+          {boards.map((board) => (
+            <button
+              onClick={() => handleTabClick(board.key)}
+              key={board.key}
+              className="flex flex-col justify-start items-center gap-2"
+            >
+              <div
+                className={`w-6 h-1.5 rounded-full ${
+                  selectedTab === board.key ? "bg-primary-200" : "bg-gray-200"
+                }`}
+              />
+              <div className="justify-center text-black-100 text-lg font-semibold ">
+                {board.label}
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="w-full">
+        {boardDataMap[selectedTab].map((post) => (
+          <div
+            key={post.id}
+            className="flex justify-between items-start w-full"
+          >
+            <div className="text-black-100 text-body-2 font-medium py-2">
+              {post.title}
+            </div>
+            <div className="flex items-center justify-end gap-0.5">
+              <Image
+                src={ICONS.Comment.src}
+                alt={ICONS.Comment.alt}
+                width={16}
+                height={16}
+              />
+              <div className="text-gray-100">
+                {post.commentCount > 1000 ? "999+" : post.commentCount}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};

@@ -1,5 +1,13 @@
 import type { StaticImageData } from "next/image";
-import { Google, Kakao, Logo, Naver, Profile } from "../../../public/images/images";
+import {
+  Google,
+  Kakao,
+  Logo,
+  MainButton1,
+  MainButton2,
+  Naver,
+  Profile,
+} from "../../../public/images/images";
 
 type TImage = {
   src: StaticImageData;
@@ -12,6 +20,8 @@ const IMAGES: { [key: string]: TImage } = {
   Google: { src: Google, alt: "google" },
   Naver: { src: Naver, alt: "naver" },
   Kakao: { src: Kakao, alt: "kakao" },
+  MainButton1: { src: MainButton1, alt: "main button 1" },
+  MainButton2: { src: MainButton2, alt: "main button 2" },
 };
 
 export default IMAGES;

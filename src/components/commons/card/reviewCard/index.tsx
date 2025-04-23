@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import AuthorInfo from "../../author/AuthorInfo";
@@ -67,7 +69,7 @@ export default function ReviewCard({
           alt={title}
           width={imageSize.width}
           height={imageSize.height}
-          className="object-cover border flex-shrink-0 hidden tablet:block"
+          className="object-contain border flex-shrink-0 hidden tablet:block"
         />
       ) : (
         <div

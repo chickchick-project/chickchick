@@ -30,7 +30,7 @@ export default function PerfumeCard({
         </button>
       )}
 
-      <figure className="relative aspect-square rounded-xl overflow-hidden shadow-card">
+      <figure className="relative aspect-square rounded-xl overflow-hidden shadow-card bg-white">
         <Image
           src={perfumeImage}
           alt={perfumeName}
