@@ -53,6 +53,6 @@ export const freeBoard: CommunityPost[] = [
 
 export const boardDataMap: { [key: string]: CommunityPost[] } = {
   question: questionBoard,
-  recommend: recommendBoard,
-  free: freeBoard,
+  recommendation: recommendBoard,
+  discussion: freeBoard,
 };

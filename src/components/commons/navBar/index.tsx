@@ -12,33 +12,21 @@ export interface NavBarProps {
   onLogin: () => void;
 }
 
-export default function NavBar({
-  currentPath,
-  isLoggedIn,
-  onLogin,
-}: NavBarProps) {
+export default function NavBar({ currentPath, isLoggedIn, onLogin }: NavBarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const navBarRef = useRef<HTMLElement | null>(null);
 
-  const selectedLink = (path: string) =>
-    currentPath === path ? "text-black font-bold" : "text-gray-500";
+  const selectedLink = (path: string) => (currentPath === path ? "text-black font-bold" : "text-gray-500");
 
   return (
     <>
-      <header
-        ref={navBarRef}
-        className="flex justify-between items-center py-5 px-7 w-full h-20 relative"
-      >
+      <header ref={navBarRef} className="flex justify-between items-center py-5 px-7 w-full h-20 relative">
         {/* 로고 */}
         <div>
           {currentPath !== NAV_PATHS.HOME && (
-            <Image
-              src={IMAGES.Logo.src}
-              width={108}
-              height={40}
-              alt="logo"
-              className="size-auto"
-            />
+            <Link href={NAV_PATHS.HOME}>
+              <Image src={IMAGES.Logo.src} width={108} height={40} alt="logo" className="size-auto" />
+            </Link>
           )}
         </div>
 
@@ -46,18 +34,12 @@ export default function NavBar({
         <nav>
           <ul className="flex gap-4 items-center">
             <li className="divider-vertical">
-              <Link
-                href={NAV_PATHS.PERFUMES}
-                className={selectedLink(NAV_PATHS.PERFUMES)}
-              >
+              <Link href={NAV_PATHS.PERFUMES} className={selectedLink(NAV_PATHS.PERFUMES)}>
                 {NAV_LABELS.PERFUMES}
               </Link>
             </li>
             <li className="divider-vertical">
-              <Link
-                href={NAV_PATHS.COMMUNITY}
-                className={selectedLink(NAV_PATHS.COMMUNITY)}
-              >
+              <Link href={NAV_PATHS.COMMUNITY} className={selectedLink(NAV_PATHS.COMMUNITY)}>
                 {NAV_LABELS.COMMUNITY}
               </Link>
             </li>
@@ -65,28 +47,15 @@ export default function NavBar({
             {/* 로그인 / 프로필 버튼 */}
             <li className="pl-6 relative flex items-center gap-2">
               {!isLoggedIn ? (
-                <button
-                  className="text-body-2 font-medium text-black-300"
-                  onClick={onLogin}
-                >
+                <button className="text-body-2 font-medium text-black-300" onClick={onLogin}>
                   {NAV_LABELS.LOGIN}
                 </button>
               ) : (
                 <div className="flex items-center gap-2">
-                  <Image
-                    src="/images/Profile.svg"
-                    width={36}
-                    height={36}
-                    alt="User"
-                  />
+                  <Image src="/images/Profile.svg" width={36} height={36} alt="User" />
 
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                    <Image
-                      src={ICONS.ArrowDownGray.src}
-                      width={16}
-                      height={16}
-                      alt="Down"
-                    />
+                    <Image src={ICONS.ArrowDownGray.src} width={16} height={16} alt="Down" />
                   </button>
                 </div>
               )}
@@ -97,10 +66,7 @@ export default function NavBar({
 
       {/* 드롭다운을 NavBar의 바로 아래에 배치 */}
       {isDropdownOpen && navBarRef.current && (
-        <NavDropdown
-          onClose={() => setIsDropdownOpen(false)}
-          parentRef={navBarRef}
-        />
+        <NavDropdown onClose={() => setIsDropdownOpen(false)} parentRef={navBarRef} />
       )}
     </>
   );

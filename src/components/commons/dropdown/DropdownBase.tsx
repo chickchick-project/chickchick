@@ -33,15 +33,12 @@ export default function Dropdown({
   const handleSelectOption = (option: Option) => {
     handleChangeOption(option);
     setIsSelected(true);
+    toggle(id);
   };
 
   return (
     <div className="relative inline-block">
-      <DropdownButton
-        onClick={() => toggle(id)}
-        isSelected={isSelected}
-        className="tablet:w-[117px]"
-      >
+      <DropdownButton onClick={() => toggle(id)} isSelected={isSelected} className="tablet:w-[117px]">
         {selectedOption.label}
         <Image
           src={arrowIcon.src}
@@ -51,12 +48,7 @@ export default function Dropdown({
           className="w-3 h-3 tablet:w-4 tablet:h-4"
         />
       </DropdownButton>
-      {isOpen && (
-        <DropdownMenu
-          handleSelectOption={handleSelectOption}
-          options={options}
-        />
-      )}
+      {isOpen && <DropdownMenu handleSelectOption={handleSelectOption} options={options} />}
     </div>
   );
 }

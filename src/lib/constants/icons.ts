@@ -20,7 +20,7 @@ import {
   CloseCircle,
 } from "../../../public/icons";
 
-type TIcon = {
+export type TIcon = {
   src: string;
   alt: string;
 };

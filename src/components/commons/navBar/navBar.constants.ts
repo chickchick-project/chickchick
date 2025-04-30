@@ -4,6 +4,7 @@ export const NAV_PATHS = {
   HOME: "/",
   PERFUMES: "/perfumes",
   COMMUNITY: "/community",
+  POST: "/community/post",
   MY: {
     COLLECTION: "/my/collection",
     BOOKMARK: "/my/bookmarks",
