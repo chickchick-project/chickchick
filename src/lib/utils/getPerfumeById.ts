@@ -1,11 +1,20 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from "../prisma";
 
 export async function getPerfumeById(id: string) {
   return prisma.perfumes.findUnique({
     where: { id },
     include: {
-      perfumes_notes_map: true,
-      perfumes_accords_map: true,
+      brands: true,
+      perfumes_notes_map: {
+        include: {
+          perfume_notes: true,
+        },
+      },
+      perfumes_accords_map: {
+        include: {
+          perfume_accords: true,
+        },
+      },
     },
   });
 }
