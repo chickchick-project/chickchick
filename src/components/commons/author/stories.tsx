@@ -1,16 +1,14 @@
 import dayjs from "dayjs";
 import AuthorInfo from "./AuthorInfo";
-import {
-  DEFAULT_PROFILE_IMAGE,
-  REVIEW_STATUSES,
-  SIZE_STATUSES,
-} from "./author.constants";
+import { REVIEW_STATUSES, SIZE_STATUSES } from "./author.constants";
 import { AuthorInfoProps } from "./author.types";
 
 const AUTHOR_INFO = {
   author: "주현",
   profileImage: undefined,
 } as const;
+
+const defaultProfileImage = "/images/Profile.svg";
 
 const TIMESTAMP = {
   now: dayjs().subtract(1, "hour").toISOString(), // "1시간 전"
@@ -48,10 +46,7 @@ export default {
   } as Partial<Record<string, unknown>>,
 } satisfies import("@storybook/react").Meta<typeof AuthorInfo>;
 
-const Template = ({
-  displayType,
-  ...args
-}: AuthorInfoProps & { displayType: string }) => {
+const Template = ({ displayType, ...args }: AuthorInfoProps & { displayType: string }) => {
   let modifiedArgs = { ...args };
 
   switch (displayType) {
@@ -59,7 +54,7 @@ const Template = ({
       modifiedArgs = {
         ...modifiedArgs,
         createdAt: TIMESTAMP.now,
-        profileImage: DEFAULT_PROFILE_IMAGE,
+        profileImage: defaultProfileImage,
         info: { type: "basic" },
       };
       break;
@@ -76,7 +71,7 @@ const Template = ({
       modifiedArgs = {
         ...modifiedArgs,
         createdAt: TIMESTAMP.withTime,
-        profileImage: DEFAULT_PROFILE_IMAGE,
+        profileImage: defaultProfileImage,
         info: { type: "comment" },
       };
       break;
@@ -85,7 +80,7 @@ const Template = ({
       modifiedArgs = {
         ...modifiedArgs,
         createdAt: TIMESTAMP.specificDate,
-        profileImage: DEFAULT_PROFILE_IMAGE,
+        profileImage: defaultProfileImage,
         info: {
           type: "post",
           item: [
