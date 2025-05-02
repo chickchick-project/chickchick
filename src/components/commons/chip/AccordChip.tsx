@@ -12,7 +12,7 @@ export default function AccordChip({ accord }: IAccordChipProps) {
         ACCORDS[accord]?.chipColor ?? "bg-gray-50"
       }`}
     >
-      {ACCORDS[accord]?.name.en ?? "등록 안됨"}
+      {ACCORDS[accord]?.name.en ?? `등록안됨 (${accord})`}
     </ChipBase>
   );
 }
