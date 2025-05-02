@@ -1,16 +1,18 @@
 import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
 import { PerfumeImage } from "./perfumeImage";
+import { PerfumeInfo } from "./perfumeInfo";
 
 export const PerfumeOverview = ({
   perfumeDetail,
 }: {
   perfumeDetail: TPerfumeDetail;
 }) => {
-  const { imageUrl, name } = perfumeDetail;
+  const { imageUrl, ...perfumeInfo } = perfumeDetail;
 
   return (
     <div>
-      <PerfumeImage src={imageUrl} alt={name} />
+      <PerfumeImage src={imageUrl} alt={perfumeInfo.name} />
+      <PerfumeInfo perfumeInfo={perfumeInfo} />
     </div>
   );
 };

@@ -18,6 +18,7 @@ import {
   Comment,
   View,
   CloseCircle,
+  ArrowRightGray,
 } from "../../../public/icons";
 
 export type TIcon = {
@@ -28,6 +29,7 @@ export type TIcon = {
 const ICONS: { [key: string]: TIcon } = {
   ArrowDownGray: { src: ArrowDownGray, alt: "arrow" },
   ArrowDownPrimary: { src: ArrowDownPrimary, alt: "arrow" },
+  ArrowRightGray: { src: ArrowRightGray, alt: "arrow" },
   CheckGray: { src: CheckGray, alt: "check" },
   Close: { src: Close, alt: "close" },
   BookmarkOutlined: { src: BookmarkOutlined, alt: "bookmark" },

@@ -1,5 +1,6 @@
 import ArrowDownGray from "./ArrowDownGray.svg";
 import ArrowDownPrimary from "./ArrowDownPrimary.svg";
+import ArrowRightGray from "./ArrowRightGray.svg";
 
 import BookmarkOutlined from "./BookmarkOutlined.svg";
 
@@ -27,6 +28,7 @@ import CloseCircle from "./CloseCircle.svg";
 export {
   ArrowDownGray,
   ArrowDownPrimary,
+  ArrowRightGray,
   FilterGray,
   FilterPrimary,
   BookmarkOutlined,

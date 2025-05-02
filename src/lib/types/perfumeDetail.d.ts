@@ -23,7 +23,6 @@ export type TPerfumeDetail = {
   brand: string;
   imageUrl: string;
   officialUrl: string | null;
-  description: string | null;
   notes: {
     id: string;
     name: string;

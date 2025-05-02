@@ -7,7 +7,6 @@ export type TPerfumeDetail = {
   brand: string;
   imageUrl: string;
   officialUrl: string | null;
-  description: string | null;
   notes: { id: string; name: string }[];
   accords: { id: string; name: string }[];
 };
@@ -27,7 +26,6 @@ export function mapPerfumeDetail(raw: TPerfumeDetailRaw): TPerfumeDetail {
     brand: getLocalized(raw.brands.name),
     imageUrl: raw.image_url ?? "",
     officialUrl: raw.official_url ?? null,
-    description: raw.description ?? null,
     notes: raw.perfumes_notes_map.map((m) => ({
       id: m.perfume_notes.id,
       name: getLocalized(m.perfume_notes.name),
