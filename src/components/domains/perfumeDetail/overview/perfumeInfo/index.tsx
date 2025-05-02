@@ -3,6 +3,7 @@
 import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
 import { PerfumeInfoHeader } from "./header";
 import { useState } from "react";
+import { PerfumeInfoMainAccord } from "./mainAccords";
 
 export type InteractionStates = {
   liked: boolean;
@@ -14,7 +15,7 @@ export const PerfumeInfo = ({
 }: {
   perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
 }) => {
-  const { name, brand } = perfumeInfo;
+  const { name, brand, accords } = perfumeInfo;
 
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
@@ -38,6 +39,7 @@ export const PerfumeInfo = ({
         interactionStates={interactionStates}
         onToggleInteraction={toggleInteraction}
       />
+      <PerfumeInfoMainAccord accords={accords} />
     </>
   );
 };

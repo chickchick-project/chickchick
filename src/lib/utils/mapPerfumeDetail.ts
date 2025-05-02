@@ -1,5 +1,6 @@
 import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
 import { JsonValue } from "@prisma/client/runtime/library";
+import { TAccords } from "../constants/accords";
 
 export type TPerfumeDetail = {
   id: string;
@@ -8,7 +9,7 @@ export type TPerfumeDetail = {
   imageUrl: string;
   officialUrl: string | null;
   notes: { id: string; name: string }[];
-  accords: { id: string; name: string }[];
+  accords: { id: string; name: TAccords }[];
 };
 
 function getLocalized(name: JsonValue): string {
@@ -32,7 +33,7 @@ export function mapPerfumeDetail(raw: TPerfumeDetailRaw): TPerfumeDetail {
     })),
     accords: raw.perfumes_accords_map.map((m) => ({
       id: m.perfume_accords.id,
-      name: getLocalized(m.perfume_accords.name),
+      name: getLocalized(m.perfume_accords.name) as TAccords,
     })),
   };
 }

@@ -6,6 +6,7 @@ import {
   perfume_notes,
   perfume_accords,
 } from "@prisma/client";
+import { TAccords } from "../constants/accords";
 
 export type TPerfumeDetailRaw = perfumes & {
   brands: brands;
@@ -29,6 +30,6 @@ export type TPerfumeDetail = {
   }[];
   accords: {
     id: string;
-    name: string;
+    name: TAccords;
   }[];
 };
