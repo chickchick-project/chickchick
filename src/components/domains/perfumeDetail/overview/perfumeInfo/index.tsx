@@ -5,6 +5,9 @@ import { PerfumeInfoHeader } from "./header";
 import { useState } from "react";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";
+import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOutlined";
+import Image from "next/image";
+import { GlobePrimary } from "../../../../../../public/icons";
 
 export type InteractionStates = {
   liked: boolean;
@@ -16,7 +19,7 @@ export const PerfumeInfo = ({
 }: {
   perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
 }) => {
-  const { name, brand, accords, notes } = perfumeInfo;
+  const { name, brand, officialUrl, accords, notes } = perfumeInfo;
 
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
@@ -42,6 +45,16 @@ export const PerfumeInfo = ({
       />
       <PerfumeInfoMainAccord accords={accords} />
       <PerfumeInfoNote notes={notes} />
+      {/* {officialUrl && ( */}
+      <ButtonOutlinedPrimaryLFit
+        iconLeading={<Image {...GlobePrimary} width={20} height={20} />}
+        // onClick={() =>
+        //   window.open(officialUrl, "_blank", "noopener,noreferrer")
+        // }
+      >
+        공식 사이트
+      </ButtonOutlinedPrimaryLFit>
+      {/* )} */}
     </>
   );
 };

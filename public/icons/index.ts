@@ -13,6 +13,7 @@ import FilterPrimary from "./FilterPrimary.svg";
 import Link from "./Link.svg";
 import Pin from "./Pin.svg";
 import Globe from "./Globe.svg";
+import GlobePrimary from "./GlobePrimary.svg";
 
 import Home from "./Home.svg";
 import Activity from "./Activity.svg";
@@ -38,6 +39,7 @@ export {
   Link,
   Pin,
   Globe,
+  GlobePrimary,
   Home,
   Activity,
   Collection,
