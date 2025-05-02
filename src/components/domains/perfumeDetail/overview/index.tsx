@@ -7,7 +7,6 @@ export const PerfumeOverview = ({
   perfumeDetail: TPerfumeDetail;
 }) => {
   const { imageUrl, name } = perfumeDetail;
-  console.log(perfumeDetail);
 
   return (
     <div>
