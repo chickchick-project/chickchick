@@ -8,7 +8,7 @@ interface PerfumeImageProps {
 // temp: 반응형 만들면 sizes 조정하기
 export const PerfumeImage = ({ src, alt }: PerfumeImageProps) => {
   return (
-    <div className="relative max-h-[400px] h-full aspect-square shadow-card rounded-xl">
+    <div className="relative w-full aspect-square shadow-card rounded-xl">
       <Image
         src={src}
         alt={alt}

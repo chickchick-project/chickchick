@@ -10,7 +10,7 @@ export const DetailClient = ({
   perfumeDetail: TPerfumeDetail;
 }) => {
   return (
-    <div>
+    <div className="w-full px-5">
       <PerfumeOverview perfumeDetail={perfumeDetail} />
     </div>
   );

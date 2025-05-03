@@ -13,7 +13,7 @@ export const PerfumeInfoNote = ({ notes }: PerfumeInfoNoteProps) => {
       <h2 className="text-label-1 tablet:text-body-1 font-semibold text-black-100 pb-2 tablet:pb-3">
         노트
       </h2>
-      <ul className="flex gap-2 items-center">
+      <ul className="flex gap-2 items-center flex-wrap">
         {notes.map(({ id, name }, index) => (
           <li key={id} className="flex items-center gap-2">
             <div

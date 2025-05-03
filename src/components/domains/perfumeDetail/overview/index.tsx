@@ -10,9 +10,9 @@ export const PerfumeOverview = ({
   const { imageUrl, ...perfumeInfo } = perfumeDetail;
 
   return (
-    <div>
+    <section className="w-full flex flex-col gap-10 tablet:grid tablet:grid-cols-[minmax(0,400px)_1fr]">
       <PerfumeImage src={imageUrl} alt={perfumeInfo.name} />
       <PerfumeInfo perfumeInfo={perfumeInfo} />
-    </div>
+    </section>
   );
 };
