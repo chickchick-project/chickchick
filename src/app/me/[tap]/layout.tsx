@@ -3,5 +3,5 @@ export default async function MeLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="w-[1200px] mx-auto mt-10">{children}</div>;
+  return <div className="w-[1200px] mx-auto my-10">{children}</div>;
 }

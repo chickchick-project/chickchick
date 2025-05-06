@@ -67,6 +67,15 @@ async function mockFetchAllMyPageData(): Promise<MeAllData> {
     collection: [
       { id: 1, name: "향수 A" },
       { id: 2, name: "향수 B" },
+      { id: 3, name: "향수 C" },
+      { id: 4, name: "향수 D" },
+      { id: 5, name: "향수 E" },
+      { id: 6, name: "향수 F" },
+      { id: 7, name: "향수 G" },
+      { id: 8, name: "향수 H" },
+      { id: 9, name: "향수 I" },
+      { id: 10, name: "향수 J" },
+      { id: 11, name: "향수 K" },
     ],
     bookmarks: {
       perfumes: [
