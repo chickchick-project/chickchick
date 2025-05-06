@@ -45,13 +45,13 @@ export const DoughnutChart = ({ data, centerText }: DoughnutChartProps) => {
 
   return (
     <article className="flex gap-7 items-center">
-      <div className="relative w-[120px] h-[120px] overflow-visible">
+      <div className="relative w-[120px] h-[120px]">
         <Doughnut data={chartData} options={options} />
         <h3 className="text-body-1 font-semibold text-black-100 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           {centerText}
         </h3>
       </div>
-      <ul className="space-y-2">
+      <ul className="flex flex-col gap-1">
         {data.map((item, i) => (
           <li key={i} className="flex items-center gap-2 text-sm text-gray-700">
             <span
