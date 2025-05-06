@@ -11,4 +11,12 @@
     @apply relative after:content-[''] after:absolute after:right-[-10px] after:top-1/4 after:h-3 after:w-px after:bg-gray-200 last:after:hidden;
     @apply px-6;
   }
+
+  .divider-horizontal {
+    @apply bg-gray-200 h-[1px] w-full;
+  }
+
+  .divider-horizontal-tick {
+    @apply bg-gray-300 h-[8px] w-full;
+  }
 }

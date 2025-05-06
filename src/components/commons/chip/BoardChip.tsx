@@ -8,6 +8,13 @@ interface IBoardChipProps {
 }
 
 export default function BoardChip({ size = "m", type }: IBoardChipProps) {
-  const chipSize = size === "s" ? "text-label-2 px-2 py-1" : "text-label-1 px-3 py-2";
-  return <ChipOutlinedPrimary className={`${chipSize}`}>{CATEGORY_LABELS[type]}</ChipOutlinedPrimary>;
+  const chipSize =
+    size === "s"
+      ? "text-label-2 px-2 py-1"
+      : "text-label-2 px-2 py-1 tablet:text-label-1 tablet:px-3 tablet:py-2 ";
+  return (
+    <ChipOutlinedPrimary className={`${chipSize}`}>
+      {CATEGORY_LABELS[type]}
+    </ChipOutlinedPrimary>
+  );
 }

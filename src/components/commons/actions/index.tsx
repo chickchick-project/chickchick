@@ -1,3 +1,5 @@
+import { Fragment } from "react";
+
 export const ACTION_TYPES = {
   EDIT: "edit",
   DELETE: "delete",
@@ -26,7 +28,7 @@ type ActionType = (typeof ACTION_TYPES)[keyof typeof ACTION_TYPES];
 
 type ActionSize = (typeof ACTION_SIZES)[keyof typeof ACTION_SIZES];
 
-interface ActionItem {
+export interface ActionItem {
   type: ActionType;
   label?: string;
   onClick: () => void;
