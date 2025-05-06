@@ -15,7 +15,7 @@ const authorInfo: TAuthorInfo = {
   author: "김철수",
   createdAt: "2023-10-01",
   profileImage: "",
-  isAuthor: false,
+  isAuthor: true,
   info: {
     type: "post",
     item: [
@@ -27,7 +27,7 @@ const authorInfo: TAuthorInfo = {
 
 export default function PostHeader() {
   return (
-    <header className="mobile:mt-10 tablet:mt-[60px]">
+    <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
         <BoardChip type="question" />
         <PostInteractions />
@@ -44,7 +44,7 @@ export default function PostHeader() {
           isAuthor={false}
           info={authorInfo.info}
         />
-        <PostActions />
+        {authorInfo.isAuthor && <PostActions section="header" />}
       </div>
       <div className="divider-horizontal mt-4 tablet:mt-5 mb-10" />
     </header>

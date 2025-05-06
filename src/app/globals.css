@@ -16,7 +16,7 @@
     @apply bg-gray-200 h-[1px] w-full;
   }
 
-  .divider-horizontal-tick {
+  .divider-horizontal-thick {
     @apply bg-gray-300 h-[8px] w-full;
   }
 }

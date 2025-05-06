@@ -6,8 +6,8 @@ export default function PageClient() {
   return (
     <article className="w-full max-w-[1000px]">
       <PostHeader />
-      {/* <PostContent />
-      <CommentSection /> */}
+      <PostContent />
+      {/* <CommentSection /> */}
     </article>
   );
 }
