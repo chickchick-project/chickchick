@@ -1,4 +1,12 @@
+import ReviewCard from "@/components/commons/card/reviewCard";
 import { SubTabSwitcher } from "../tabs/SubTabs";
+import { MOCK_REVIEW_CARD } from "./mocks/reviewCard";
+import { PostCard } from "@/components/commons/card/postCard";
+import { MOCK_POST_CARD } from "./mocks/postCard";
+import { MOCK_PERFUME_CARD } from "./mocks/perfumeCard";
+import { MOCK_REPLY } from "./mocks/reply";
+import PerfumeCard from "@/components/commons/card/perfumeCard";
+import Reply from "../Rely";
 
 type ActivityData = {
   myReviews: { id: number; perfume: string; content: string }[];
@@ -19,9 +27,13 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
           content: (
             <ul className="space-y-2">
               {data.myReviews.map((item) => (
-                <li key={item.id} className="border p-3 rounded-md bg-gray-50">
-                  <strong>{item.perfume}</strong>: {item.content}
-                </li>
+                <ReviewCard
+                  chips={[]}
+                  isAuthor={true}
+                  key={item.id}
+                  {...MOCK_REVIEW_CARD}
+                  isMyPage
+                />
               ))}
             </ul>
           ),
@@ -32,10 +44,11 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
           content: (
             <ul className="space-y-2">
               {data.myPosts.map((item) => (
-                <li key={item.id} className="border p-3 rounded-md bg-white">
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-sm text-gray-600">{item.content}</p>
-                </li>
+                <PostCard
+                  id={item.id.toString()}
+                  key={item.id}
+                  {...MOCK_POST_CARD}
+                />
               ))}
             </ul>
           ),
@@ -45,10 +58,12 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
           label: "내가 쓴 댓글",
           content: (
             <ul className="space-y-2">
-              {data.myComments.map((item) => (
-                <li key={item.id} className="border p-3 rounded-md bg-gray-50">
-                  <p className="text-sm">{item.content}</p>
-                </li>
+              {data.myComments.map((item, idx) => (
+                <Reply
+                  key={item.id}
+                  {...MOCK_REPLY}
+                  isLast={idx === data.myComments.length - 1}
+                />
               ))}
             </ul>
           ),
@@ -59,9 +74,7 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
           content: (
             <ul className="grid grid-cols-5 gap-4">
               {data.likedPerfumes.map((item) => (
-                <li key={item.id} className="border p-4 rounded-md bg-white">
-                  {item.name}
-                </li>
+                <PerfumeCard key={item.id} {...MOCK_PERFUME_CARD} />
               ))}
             </ul>
           ),
@@ -72,9 +85,11 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
           content: (
             <ul className="space-y-2">
               {data.likedPosts.map((item) => (
-                <li key={item.id} className="border p-3 rounded-md bg-gray-50">
-                  {item.title}
-                </li>
+                <PostCard
+                  id={item.id.toString()}
+                  key={item.id}
+                  {...MOCK_POST_CARD}
+                />
               ))}
             </ul>
           ),

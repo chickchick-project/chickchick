@@ -90,9 +90,12 @@ async function mockFetchAllMyPageData(): Promise<MeAllData> {
     activity: {
       myReviews: [{ id: 7, perfume: "향수 A", content: "아주 좋았어요." }],
       myPosts: [{ id: 8, title: "추천 부탁", content: "상큼한 향 좋아요." }],
-      myComments: [{ id: 9, postId: 8, content: "저도 궁금해요!" }],
-      likedPerfumes: [{ id: 10, name: "좋아한 향수" }],
-      likedPosts: [{ id: 11, title: "향수 vs 디퓨저" }],
+      myComments: [
+        { id: 9, postId: 8, content: "저도 궁금해요!" },
+        { id: 10, postId: 8, content: "저도 궁금해요!" },
+      ],
+      likedPerfumes: [{ id: 11, name: "좋아한 향수" }],
+      likedPosts: [{ id: 12, title: "향수 vs 디퓨저" }],
     },
     profile: {
       name: "김하은",
