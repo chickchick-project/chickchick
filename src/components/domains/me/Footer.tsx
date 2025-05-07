@@ -1,4 +1,8 @@
 import React from "react";
+import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { MOCK_POST_CARD } from "./sections/mocks/postCard";
+import { MOCK_PERFUME_CARD } from "./sections/mocks/perfumeCard";
+import { PostCard } from "@/components/commons/card/postCard";
 
 const ScrollRowSection = ({
   title,
@@ -23,15 +27,14 @@ const MeFooter = () => {
   return (
     <div className="flex flex-col gap-y-16 mt-[60px]">
       <ScrollRowSection title="최근에 본 게시글 10">
-        <div className="w-[540px] h-[235px] bg-gray-100"></div>
-        <div className="w-[540px] h-[235px] bg-gray-100"></div>
+        {Array.from({ length: 2 }).map((_, idx) => (
+          <PostCard key={idx} id={idx.toString()} {...MOCK_POST_CARD} />
+        ))}
       </ScrollRowSection>
       <ScrollRowSection title="최근에 본 향수 10" gap="gap-x-[50px]">
-        <div className="w-[180px] h-[180px] bg-gray-100"></div>
-        <div className="w-[180px] h-[180px] bg-gray-100"></div>
-        <div className="w-[180px] h-[180px] bg-gray-100"></div>
-        <div className="w-[180px] h-[180px] bg-gray-100"></div>
-        <div className="w-[180px] h-[180px] bg-gray-100"></div>
+        {Array.from({ length: 5 }).map((_, idx) => (
+          <PerfumeCard key={idx} {...MOCK_PERFUME_CARD} />
+        ))}
       </ScrollRowSection>
     </div>
   );
