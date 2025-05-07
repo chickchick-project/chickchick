@@ -1,6 +1,7 @@
 export type CollectionItem = {
   id: number;
   name: string;
+  imageHeight?: number;
 };
 
 type PerfumeBookmark = {
