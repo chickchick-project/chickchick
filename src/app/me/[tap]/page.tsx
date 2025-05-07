@@ -2,12 +2,12 @@ import MeFooter from "@/components/domains/me/Footer";
 import MeHeader from "@/components/domains/me/Header";
 import PageClient from "@/components/domains/me/PageClient";
 
-type CollectionItem = {
+export type CollectionItem = {
   id: number;
   name: string;
 };
 
-type BookmarkItem = {
+export type BookmarkItem = {
   id: number;
   name: string;
 };
@@ -130,7 +130,8 @@ export default async function MePage({
   return (
     <>
       <MeHeader />
-      <PageClient {...tabData} />
+      <PageClient isMe={true} selectedUser={"테스트"} {...tabData} />
+      {/* <PageClient isMe={false} selectedUser={"테스트"} {...tabData} /> */}
       {tap !== "profile" && <MeFooter />}
     </>
   );

@@ -1,7 +1,4 @@
-type CollectionItem = {
-  id: number;
-  name: string;
-};
+import { CollectionItem } from "./me.sections.type";
 
 export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
   const extendedData = Array.from({ length: 10 }).flatMap(() => data);

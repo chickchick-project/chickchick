@@ -7,14 +7,7 @@ import { MOCK_PERFUME_CARD } from "./mocks/perfumeCard";
 import { MOCK_REPLY } from "./mocks/reply";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import Reply from "../Rely";
-
-type ActivityData = {
-  myReviews: { id: number; perfume: string; content: string }[];
-  myPosts: { id: number; title: string; content: string }[];
-  myComments: { id: number; postId: number; content: string }[];
-  likedPerfumes: { id: number; name: string }[];
-  likedPosts: { id: number; title: string }[];
-};
+import { ActivityData } from "./me.sections.type";
 
 export const ActivitySection = ({ data }: { data: ActivityData }) => {
   return (
