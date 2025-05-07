@@ -11,12 +11,13 @@ import {
 
 type TImage = {
   src: StaticImageData;
+  Component?: React.FC<React.SVGProps<SVGSVGElement>>;
   alt: string;
 };
 
 const IMAGES: { [key: string]: TImage } = {
-  Profile: { src: Profile, alt: "profile" },
-  Logo: { src: Logo, alt: "logo" },
+  Profile: { src: Profile, Component: Profile, alt: "profile" },
+  Logo: { src: Logo, Component: Logo, alt: "logo" },
   Google: { src: Google, alt: "google" },
   Naver: { src: Naver, alt: "naver" },
   Kakao: { src: Kakao, alt: "kakao" },
