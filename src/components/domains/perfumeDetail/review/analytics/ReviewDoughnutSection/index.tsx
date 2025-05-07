@@ -1,6 +1,6 @@
 import { DoughnutChart } from "./DoughnutChart";
 
-const mockApiResponse = [
+const mockData = [
   {
     category: "만족도",
     results: [
@@ -40,18 +40,21 @@ const mockApiResponse = [
 
 export const ReviewDoughnutSection = () => {
   return (
-    <section className="grid grid-cols-[max-content_1fr] gap-x-9 gap-y-9 p-9 rounded-xl shadow-card w-full">
-      {mockApiResponse.map((item) => (
-        <DoughnutChart
-          key={item.category}
-          centerText={item.category}
-          data={item.results.map((r) => ({
-            label: r.label,
-            value: r.count,
-            color: r.color,
-          }))}
-        />
-      ))}
+    <section className="w-full p-9 rounded-xl shadow-card">
+      <ul className="grid grid-cols-[max-content_1fr] gap-x-9 gap-y-9 w-full">
+        {mockData.map((item) => (
+          <li key={item.category}>
+            <DoughnutChart
+              centerText={item.category}
+              data={item.results.map((r) => ({
+                label: r.label,
+                value: r.count,
+                color: r.color,
+              }))}
+            />
+          </li>
+        ))}
+      </ul>
     </section>
   );
 };

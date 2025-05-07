@@ -1,15 +1,9 @@
 "use client";
 
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend,
-  ChartOptions,
-} from "chart.js";
+import { Chart as ChartJS, ArcElement, ChartOptions } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement);
 
 type DoughnutChartProps = {
   data: {
@@ -37,14 +31,10 @@ export const DoughnutChart = ({ data, centerText }: DoughnutChartProps) => {
 
   const options: ChartOptions<"doughnut"> = {
     cutout: "80%",
-    plugins: {
-      legend: { display: false },
-      tooltip: { enabled: false },
-    },
   };
 
   return (
-    <article className="flex gap-7 items-center">
+    <div className="flex gap-7 items-center">
       <div className="relative w-[120px] h-[120px]">
         <Doughnut data={chartData} options={options} />
         <h3 className="text-body-1 font-semibold text-black-100 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
@@ -67,6 +57,6 @@ export const DoughnutChart = ({ data, centerText }: DoughnutChartProps) => {
           </li>
         ))}
       </ul>
-    </article>
+    </div>
   );
 };
