@@ -1,14 +1,26 @@
+import {
+  ButtonFilledPrimaryLFit,
+  ButtonFilledPrimaryLFull,
+} from "@/components/commons/button/ButtonFilled";
 import { ReviewBarSection } from "./ReviewBarSection";
 import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
 
 export const ReviewAnalytics = () => {
   return (
-    <>
+    <section className="flex flex-col gap-4 tablet:gap-5 w-full">
       <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2">
         리뷰 한눈에 보기
       </h2>
-      <ReviewDoughnutSection />
-      <ReviewBarSection />
-    </>
+      <section className="flex flex-col gap-5">
+        <ReviewDoughnutSection />
+        <ReviewBarSection />
+      </section>
+      <section className="w-60 self-center">
+        <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
+          주현님의 소중한 의견을 나눠주세요!
+        </div>
+        <ButtonFilledPrimaryLFull>리뷰 작성하기</ButtonFilledPrimaryLFull>
+      </section>
+    </section>
   );
 };
