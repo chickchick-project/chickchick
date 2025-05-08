@@ -1,7 +1,4 @@
-import {
-  ButtonFilledPrimaryLFit,
-  ButtonFilledPrimaryLFull,
-} from "@/components/commons/button/ButtonFilled";
+import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewBarSection } from "./ReviewBarSection";
 import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
 
