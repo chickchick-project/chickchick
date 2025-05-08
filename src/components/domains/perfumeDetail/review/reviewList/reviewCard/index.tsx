@@ -2,10 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ACTION_TYPES, Actions } from "@/components/commons/actions";
-import {
-  DEFAULT_PROFILE_IMAGE,
-  REVIEW_STATUSES,
-} from "@/components/commons/author/author.constants";
+import { REVIEW_STATUSES } from "@/components/commons/author/author.constants";
 import AuthorInfo from "@/components/commons/author/AuthorInfo";
 import ReviewChip from "@/components/commons/chip/ReviewChip";
 import clsx from "clsx";
@@ -57,7 +54,7 @@ export const ReviewCard = ({
           author={author}
           createdAt={createdAt}
           isAuthor={false}
-          profileImage={profileImage || DEFAULT_PROFILE_IMAGE}
+          profileImage={profileImage}
           info={{ type: "review", item: { status: REVIEW_STATUSES.WANT } }}
         />
         {isMain && (
@@ -73,7 +70,7 @@ export const ReviewCard = ({
         ref={contentRef}
         className={clsx(
           isExpanded ? "" : "line-clamp-3",
-          "text-black-100 font-medium text-body-2"
+          "text-black-100 font-medium text-body-2 leading-[150%]"
         )}
       >
         {content}
