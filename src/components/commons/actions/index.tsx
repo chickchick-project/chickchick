@@ -5,6 +5,7 @@ export const ACTION_TYPES = {
   DELETE: "delete",
   REPLY: "reply",
   SUBMIT: "submit",
+  CANCEL: "cancel",
 } as const;
 
 export const ACTION_SIZES = {
@@ -17,6 +18,7 @@ const DEFAULT_LABEL: Record<ActionType, string> = {
   [ACTION_TYPES.DELETE]: "삭제",
   [ACTION_TYPES.REPLY]: "답글",
   [ACTION_TYPES.SUBMIT]: "완료",
+  [ACTION_TYPES.CANCEL]: "취소",
 };
 
 const ACTION_SIZE_STYLES = {
@@ -32,6 +34,7 @@ export interface ActionItem {
   type: ActionType;
   label?: string;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 interface ActionsProps {
@@ -42,12 +45,13 @@ interface ActionsProps {
 export const Actions = ({ actions, size = "default" }: ActionsProps) => {
   return (
     <div className="flex gap-3 items-center">
-      {actions.map(({ type, label, onClick }, index) => (
+      {actions.map(({ type, label, onClick, disabled }, index) => (
         <div key={type} className="flex gap-3 items-center">
           {index !== 0 && <div className="bg-gray-200 h-3 w-[1px]"></div>}
           <button
-            className={`text-black-300 ${ACTION_SIZE_STYLES[size]}`}
+            className={`text-black-300 ${ACTION_SIZE_STYLES[size]} disabled:opacity-50`}
             onClick={onClick}
+            disabled={disabled}
           >
             {label ?? DEFAULT_LABEL[type]}
           </button>

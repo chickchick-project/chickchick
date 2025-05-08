@@ -21,7 +21,7 @@ export default function Comment({
 
   return (
     <div
-      className={`relative p-5 rounded-xl text-body-2 font-medium ${COMMENT_STYLES[type]}`}
+      className={`w-full relative p-5 rounded-xl text-body-2 font-medium ${COMMENT_STYLES[type]}`}
     >
       <textarea
         ref={textAreaRef}

@@ -5,6 +5,7 @@ import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOut
 import Comment from "@/components/commons/comment";
 import { useState } from "react";
 import { ICommentFormProps } from "./postComment.types";
+
 export default function CommentForm({
   type,
   value,
