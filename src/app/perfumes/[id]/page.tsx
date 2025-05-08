@@ -6,11 +6,10 @@ import { mapPerfumeDetail } from "@/lib/utils/mapPerfumeDetail";
 export default async function PerfumeDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeById(
-    params.id
-  );
+  const { id } = await params;
+  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeById(id);
   if (!perfumeDetailRaw) {
     return <div>향수를 찾을 수 없습니다.</div>;
   }
