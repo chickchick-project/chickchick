@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from 'next/link';
 import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
@@ -70,7 +71,8 @@ const renderNavItem = (
   item: (typeof NAV_ITEMS.myPage)[number],
   onClose: () => void
 ) => (
-  <div
+  <Link 
+    href={item.href}
     key={item.label}
     className="flex flex-col items-center gap-2 cursor-pointer"
     onClick={onClose}
@@ -85,5 +87,5 @@ const renderNavItem = (
       />
     )}
     <span className="text-body-2 font-medium">{item.label}</span>
-  </div>
+  </Link>
 );

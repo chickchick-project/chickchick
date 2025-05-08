@@ -14,8 +14,8 @@ const COMMON_TEXT = {
 };
 
 const COMMON_IMAGES = {
-  [PERFUME_CARD_TYPES.DEFAULT]: "https://placehold.co/180",
-  [PERFUME_CARD_TYPES.CLOSABLE]: "https://placehold.co/144",
+  [PERFUME_CARD_TYPES.DEFAULT]: "https://picsum.photos/180",
+  [PERFUME_CARD_TYPES.CLOSABLE]: "https://picsum.photos/144",
 };
 
 const Template: StoryFn<PerfumeCardProps> = (args) => <PerfumeCard {...args} />;
