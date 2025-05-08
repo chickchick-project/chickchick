@@ -19,7 +19,7 @@ export const DetailClient = ({
         <PerfumeOverview perfumeDetail={perfumeDetail} />
       </section>
       <hr className="w-full h-px bg-gray-200 my-10" />
-      <section className="flex gap-[84px]">
+      <section className="flex justify-between w-full">
         <PerfumeReview />
         <PerfumeDetailSidebar />
       </section>
