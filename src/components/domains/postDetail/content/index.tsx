@@ -2,6 +2,33 @@ import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 import PostNavigation from "./postNavigation";
 
+const relatedPerfumes = [
+  {
+    perfume_id: 1,
+    image_url:
+      "https://wvedpvxspndgyoisudyr.supabase.co/storage/v1/object/public/perfume_image/perfumes/375x500.31172.jpg",
+    brand_name: "Chanel",
+    brand_id: 1,
+    perfume_name: "Chanel No. 5",
+  },
+  {
+    perfume_id: 2,
+    image_url:
+      "https://wvedpvxspndgyoisudyr.supabase.co/storage/v1/object/public/perfume_image/perfumes/375x500.31172.jpg",
+    brand_name: "Dior",
+    brand_id: 2,
+    perfume_name: "Dior Sauvage",
+  },
+  {
+    perfume_id: 3,
+    image_url:
+      "https://wvedpvxspndgyoisudyr.supabase.co/storage/v1/object/public/perfume_image/perfumes/375x500.31172.jpg",
+    brand_name: "Gucci",
+    brand_id: 3,
+    perfume_name: "Gucci Bloom",
+  },
+];
+
 export default function PostContent() {
   return (
     <section>
@@ -33,7 +60,7 @@ export default function PostContent() {
       </div>
       <div className="divider-horizontal-thick block tablet:hidden" />
       <div className="px-4">
-        <RelatedPerfume />
+        {relatedPerfumes && <RelatedPerfume perfumes={relatedPerfumes} />}
         <PostNavigation />
       </div>
       <div className="divider-horizontal-thick block tablet:hidden mb-10" />
