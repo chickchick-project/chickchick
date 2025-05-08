@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "i.ibb.co",
+        pathname: "/**",
         hostname: "placehold.co",
       },
       {

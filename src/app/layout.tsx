@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body className={`${pretendard.variable} font-pretendard`}>
+      <body
+        className={`${pretendard.variable} font-pretendard max-w-[1200px] mx-auto`}
+      >
         <NavBarWrapper />
         {children}
         <div id="modal"></div>

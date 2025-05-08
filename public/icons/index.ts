@@ -1,5 +1,6 @@
 import ArrowDownGray from "./ArrowDownGray.svg";
 import ArrowDownPrimary from "./ArrowDownPrimary.svg";
+import ArrowRightGray from "./ArrowRightGray.svg";
 
 import BookmarkOutlined from "./BookmarkOutlined.svg";
 
@@ -12,6 +13,7 @@ import FilterPrimary from "./FilterPrimary.svg";
 import Link from "./Link.svg";
 import Pin from "./Pin.svg";
 import Globe from "./Globe.svg";
+import GlobePrimary from "./GlobePrimary.svg";
 
 import Home from "./Home.svg";
 import Activity from "./Activity.svg";
@@ -27,6 +29,7 @@ import CloseCircle from "./CloseCircle.svg";
 export {
   ArrowDownGray,
   ArrowDownPrimary,
+  ArrowRightGray,
   FilterGray,
   FilterPrimary,
   BookmarkOutlined,
@@ -36,6 +39,7 @@ export {
   Link,
   Pin,
   Globe,
+  GlobePrimary,
   Home,
   Activity,
   Collection,

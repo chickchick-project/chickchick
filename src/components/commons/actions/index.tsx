@@ -41,16 +41,15 @@ export const Actions = ({ actions, size = "default" }: ActionsProps) => {
   return (
     <div className="flex gap-3 items-center">
       {actions.map(({ type, label, onClick }, index) => (
-        <>
-          {index !== 0 && <span className="bg-gray-200 h-3 w-[1px]"></span>}
+        <div key={type} className="flex gap-3 items-center">
+          {index !== 0 && <div className="bg-gray-200 h-3 w-[1px]"></div>}
           <button
             className={`text-black-300 ${ACTION_SIZE_STYLES[size]}`}
-            key={type}
             onClick={onClick}
           >
             {label ?? DEFAULT_LABEL[type]}
           </button>
-        </>
+        </div>
       ))}
     </div>
   );

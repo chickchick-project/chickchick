@@ -7,8 +7,12 @@ interface IAccordChipProps {
 
 export default function AccordChip({ accord }: IAccordChipProps) {
   return (
-    <ChipBase className={`px-3 py-2 text-label-1 font-medium ${ACCORDS[accord].chipColor}`}>
-      {ACCORDS[accord].name.en}
+    <ChipBase
+      className={`px-3 py-2 text-label-1 font-medium ${
+        ACCORDS[accord]?.chipColor ?? "bg-gray-50"
+      }`}
+    >
+      {ACCORDS[accord]?.name.en ?? `등록안됨 (${accord})`}
     </ChipBase>
   );
 }
