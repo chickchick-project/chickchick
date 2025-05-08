@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-
 export const ACTION_TYPES = {
   EDIT: "edit",
   DELETE: "delete",
