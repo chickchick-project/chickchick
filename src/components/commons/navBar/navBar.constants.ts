@@ -5,10 +5,10 @@ export const NAV_PATHS = {
   PERFUMES: "/perfumes",
   COMMUNITY: "/community",
   POST: "/community/post",
-  MY: {
-    COLLECTION: "/my/collection",
-    BOOKMARK: "/my/bookmarks",
-    ACTIVITY: "/my/activity",
+  ME: {
+    COLLECTION: "/me/collection",
+    BOOKMARK: "/me/bookmarks",
+    ACTIVITY: "/me/activity",
   },
 } as const;
 
@@ -28,14 +28,14 @@ export const NAV_ITEMS = {
     {
       icon: ICONS.Collection,
       label: "나의 컬렉션",
-      href: NAV_PATHS.MY.COLLECTION,
+      href: NAV_PATHS.ME.COLLECTION,
     },
     {
       icon: ICONS.BookmarkOutlined,
       label: "북마크",
-      href: NAV_PATHS.MY.BOOKMARK,
+      href: NAV_PATHS.ME.BOOKMARK,
     },
-    { icon: ICONS.Activity, label: "내 활동", href: NAV_PATHS.MY.ACTIVITY },
+    { icon: ICONS.Activity, label: "내 활동", href: NAV_PATHS.ME.ACTIVITY },
   ],
   footer: [{ label: "의견 보내기" }, { label: "로그아웃" }],
 };
