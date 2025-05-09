@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { waitFor, within, userEvent } from "@storybook/test";
 import { action } from "@storybook/addon-actions";
-import { useState } from "react";
+// import { useState } from "react";
 import NavBar, { NavBarProps } from ".";
 
 export default {
@@ -13,9 +13,9 @@ export default {
     },
   },
   argTypes: {
-    isLoggedIn: {
-      control: { type: "boolean" },
-    },
+    // isLoggedIn: {
+    //   control: { type: "boolean" },
+    // },
     currentPath: {
       control: { type: "radio" },
       options: ["홈", "향수", "커뮤니티"],
@@ -31,13 +31,13 @@ export default {
 } satisfies Meta<NavBarProps>;
 
 const NavBarWrapper = (args: NavBarProps) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(args.isLoggedIn);
+  // const [isLoggedIn, setIsLoggedIn] = useState(args.isLoggedIn);
 
   return (
     <NavBar
       {...args}
-      isLoggedIn={isLoggedIn}
-      onLogin={() => setIsLoggedIn(true)}
+      // isLoggedIn={isLoggedIn}
+      // onLogin={() => setIsLoggedIn(true)}
     />
   );
 };
@@ -55,7 +55,7 @@ export const Default = {
 export const AutoLogin: StoryObj<NavBarProps> = {
   render: (args) => <NavBarWrapper {...args} />,
   args: {
-    isLoggedIn: false,
+    // isLoggedIn: false,
     currentPath: "/",
   },
   play: async ({ canvasElement }) => {
