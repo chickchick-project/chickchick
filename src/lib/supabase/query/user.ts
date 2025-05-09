@@ -1,13 +1,25 @@
+"use server";
+
+import { getSession } from "@/lib/database/getSession";
 import { supabase } from "@/lib/supabase/init";
 
 /**
  * 현재 로그인한 사용자 정보 가져오기
  */
 export async function fetchUserInfo() {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user)
-    throw new Error("사용자 정보를 가져올 수 없습니다.");
-  return data.user;
+  const data = await getSession();
+
+  const { data: userData, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", data?.user?.id)
+    .single();
+
+  if (error) {
+    location.replace("/");
+  }
+
+  return userData;
 }
 
 /**
