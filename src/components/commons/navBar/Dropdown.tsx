@@ -4,6 +4,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
 import { NAV_MY_INFO, NAV_ITEMS } from "./navBar.constants";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
 interface DropdownProps {
   onClose: () => void;
@@ -11,6 +12,8 @@ interface DropdownProps {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
+  const { user } = useUserStore();
+
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
@@ -34,7 +37,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
           />
           <LevelChip level={NAV_MY_INFO.level} />
           <span className="text-title-2 font-semibold text-black-100">
-            {NAV_MY_INFO.nickname}
+            {user?.nickname}
           </span>
         </div>
         {/* 마이페이지 */}
