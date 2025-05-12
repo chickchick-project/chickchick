@@ -1,4 +1,7 @@
 import ICONS from "@/lib/constants/icons";
+import { logout } from "@/lib/database/action/login";
+
+type ButtonType = "button" | "reset" | "submit" | undefined;
 
 export const NAV_PATHS = {
   HOME: "/",
@@ -37,5 +40,16 @@ export const NAV_ITEMS = {
     },
     { icon: ICONS.Activity, label: "내 활동", href: NAV_PATHS.ME.ACTIVITY },
   ],
-  footer: [{ label: "의견 보내기" }, { label: "로그아웃" }],
+  footer: [
+    {
+      label: "의견 보내기",
+      type: "button" as ButtonType,
+      onClick: () => {},
+    },
+    {
+      label: "로그아웃",
+      type: "submit" as ButtonType,
+      action: logout,
+    },
+  ],
 };
