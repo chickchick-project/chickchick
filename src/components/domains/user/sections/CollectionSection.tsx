@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CollectionItem } from "./me.sections.type";
+import { CollectionItem } from "./type";
 import Image from "next/image";
 
 export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {

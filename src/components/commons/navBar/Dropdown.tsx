@@ -3,12 +3,17 @@ import Link from "next/link";
 import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
-import { NAV_MY_INFO, NAV_ITEMS } from "./navBar.constants";
+import {
+  MOCK_USER_INFO,
+  NAV_ITEMS_FOOTER,
+  getMyPageNavItems,
+} from "./navBar.constants";
 import { useUserStore } from "@/lib/stores/useUserStore";
 
 interface DropdownProps {
   onClose: () => void;
   parentRef: React.RefObject<HTMLElement>;
+  userId: string;
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
@@ -17,6 +22,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
+  const navItems = getMyPageNavItems(user!.id);
 
   return createPortal(
     <div
@@ -35,22 +41,20 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
             height={80}
             alt="프로필"
           />
-          <LevelChip level={NAV_MY_INFO.level} />
+          <LevelChip level={MOCK_USER_INFO.level} />
           <span className="text-title-2 font-semibold text-black-100">
             {user?.nickname}
           </span>
         </div>
+
         {/* 마이페이지 */}
         <div className="grid grid-cols-3 gap-7 text-center">
-          {NAV_ITEMS.myPage
-            .map((item) => ({
-              ...item,
-            }))
-            .map((item) => renderNavItem(item, onClose))}
+          {navItems.map((item) => renderNavItem(item, onClose))}
         </div>
+
         {/* 푸터 */}
         <div className="flex items-center justify-center py-5 border-t border-gray-200 w-[400px]">
-          {NAV_ITEMS.footer.map((item, index) => (
+          {NAV_ITEMS_FOOTER.map((item, index) => (
             <React.Fragment key={item.label}>
               <form action={item.action}>
                 <button
@@ -61,7 +65,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
                   {item.label}
                 </button>
               </form>
-              {index < NAV_ITEMS.footer.length - 1 && (
+              {index < NAV_ITEMS_FOOTER.length - 1 && (
                 <div className="w-0.5 h-4 mx-[60px] bg-gray-200" />
               )}
             </React.Fragment>
@@ -74,7 +78,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
 }
 
 const renderNavItem = (
-  item: (typeof NAV_ITEMS.myPage)[number],
+  item: ReturnType<typeof getMyPageNavItems>[number],
   onClose: () => void
 ) => (
   <Link

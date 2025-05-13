@@ -1,13 +1,9 @@
-import MeFooter from "@/components/domains/me/Footer";
-import MeHeader from "@/components/domains/me/Header";
-import PageClient from "@/components/domains/me/PageClient";
-
-export type CollectionItem = {
+type CollectionItem = {
   id: number;
   name: string;
 };
 
-export type BookmarkItem = {
+type BookmarkItem = {
   id: number;
   name: string;
 };
@@ -33,36 +29,7 @@ type MeAllData = {
   };
 };
 
-export type TabData =
-  | { tap: "collection"; data: CollectionItem[] }
-  | {
-      tap: "bookmarks";
-      data: {
-        perfumes: BookmarkItem[];
-        community: { id: number; title: string; category: string }[];
-      };
-    }
-  | {
-      tap: "activity";
-      data: {
-        myReviews: { id: number; perfume: string; content: string }[];
-        myPosts: { id: number; title: string; content: string }[];
-        myComments: { id: number; postId: number; content: string }[];
-        likedPerfumes: CollectionItem[];
-        likedPosts: { id: number; title: string }[];
-      };
-    }
-  | {
-      tap: "profile";
-      data: {
-        name: string;
-        nickname: string;
-        gender: string;
-        age: number;
-      };
-    };
-
-async function mockFetchAllMyPageData(): Promise<MeAllData> {
+export async function mockFetchAllMyPageData(): Promise<MeAllData> {
   return {
     collection: [
       { id: 1, name: "향수 A" },
@@ -104,35 +71,4 @@ async function mockFetchAllMyPageData(): Promise<MeAllData> {
       age: 0,
     },
   };
-}
-
-export default async function MePage({
-  params,
-}: {
-  params: Promise<{ tap: string }>;
-}) {
-  const { tap } = await params;
-
-  const allData = await mockFetchAllMyPageData();
-
-  let tabData: TabData;
-
-  if (tap === "collection") {
-    tabData = { tap, data: allData.collection };
-  } else if (tap === "bookmarks") {
-    tabData = { tap, data: allData.bookmarks };
-  } else if (tap === "activity") {
-    tabData = { tap, data: allData.activity };
-  } else {
-    tabData = { tap: "profile", data: allData.profile };
-  }
-
-  return (
-    <>
-      <MeHeader />
-      <PageClient isMe={true} selectedUser={"테스트"} {...tabData} />
-      {/* <PageClient isMe={false} selectedUser={"테스트"} {...tabData} /> */}
-      {tap !== "profile" && <MeFooter />}
-    </>
-  );
 }

@@ -1,13 +1,13 @@
 import ReviewCard from "@/components/commons/card/reviewCard";
-import { SubTabSwitcher } from "../tabs/SubTabs";
-import { MOCK_REVIEW_CARD } from "./mocks/reviewCard";
-import { PostCard } from "@/components/commons/card/postCard";
-import { MOCK_POST_CARD } from "./mocks/postCard";
-import { MOCK_PERFUME_CARD } from "./mocks/perfumeCard";
-import { MOCK_REPLY } from "./mocks/reply";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { SubTabSwitcher } from "../tabs/SubTabs";
+import { MOCK_REVIEW_CARD } from "./__mocks__ /reviewCard";
+import { PostCard } from "@/components/commons/card/postCard";
+import { MOCK_POST_CARD } from "./__mocks__ /postCard";
+import { MOCK_PERFUME_CARD } from "./__mocks__ /perfumeCard";
+import { MOCK_REPLY } from "./__mocks__ /reply";
 import Reply from "../Rely";
-import { ActivityData } from "./me.sections.type";
+import { ActivityData } from "./type";
 
 export const ActivitySection = ({ data }: { data: ActivityData }) => {
   return (

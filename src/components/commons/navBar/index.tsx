@@ -99,6 +99,7 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
         <NavDropdown
           onClose={() => setIsDropdownOpen(false)}
           parentRef={navBarRef}
+          userId={user!.id}
         />
       )}
     </>

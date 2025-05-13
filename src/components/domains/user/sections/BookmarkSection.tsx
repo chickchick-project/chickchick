@@ -1,10 +1,10 @@
 import React from "react";
-import { SubTabSwitcher } from "@/components/domains/me/tabs/SubTabs";
+import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { PostCard } from "@/components/commons/card/postCard";
-import { MOCK_POST_CARD } from "@/components/domains/me/sections/mocks/postCard";
-import { MOCK_PERFUME_CARD } from "@/components/domains/me/sections/mocks/perfumeCard";
-import { BookmarkData } from "./me.sections.type";
+import { MOCK_POST_CARD } from "@/components/domains/user/sections/__mocks__ /postCard";
+import { MOCK_PERFUME_CARD } from "@/components/domains/user/sections/__mocks__ /perfumeCard";
+import { BookmarkData } from "./type";
 
 export const BookmarkSection = ({
   data,

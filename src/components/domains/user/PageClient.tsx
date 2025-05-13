@@ -1,4 +1,3 @@
-import { TabData } from "@/app/me/[tap]/page";
 import { ActivitySection } from "./sections/ActivitySection";
 import { CollectionSection } from "./sections/CollectionSection";
 import { BookmarkSection } from "./sections/BookmarkSection";
@@ -9,13 +8,14 @@ import {
   BookmarkData,
   CollectionItem,
   ProfileItem,
-} from "./sections/me.sections.type";
+  TabData,
+} from "./sections/type";
 
 interface PageClientProps {
   tap: TabData["tap"];
   data: TabData["data"];
   isMe?: boolean;
-  selectedUser?: string;
+  selectedUser?: { id: string; nickname: string };
 }
 
 export default function ClientComponent({

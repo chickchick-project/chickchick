@@ -1,8 +1,8 @@
 import React from "react";
 import Image from "next/image";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { MOCK_POST_CARD } from "./sections/mocks/postCard";
-import { MOCK_PERFUME_CARD } from "./sections/mocks/perfumeCard";
+import { MOCK_POST_CARD } from "../sections/__mocks__ /postCard";
+import { MOCK_PERFUME_CARD } from "../sections/__mocks__ /perfumeCard";
 import { PostCard } from "@/components/commons/card/postCard";
 import ICONS from "@/lib/constants/icons";
 
@@ -41,7 +41,7 @@ const ScrollRowSection = ({
   </div>
 );
 
-const MeFooter = () => {
+const UserFooter = () => {
   return (
     <div className="flex flex-col gap-y-16 mt-[60px]">
       <ScrollRowSection title="최근에 본 게시글 10">
@@ -58,4 +58,4 @@ const MeFooter = () => {
   );
 };
 
-export default MeFooter;
+export default UserFooter;

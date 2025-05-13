@@ -8,10 +8,10 @@ export const NAV_PATHS = {
   PERFUMES: "/perfumes",
   COMMUNITY: "/community",
   POST: "/community/post",
-  ME: {
-    COLLECTION: "/me/collection",
-    BOOKMARK: "/me/bookmarks",
-    ACTIVITY: "/me/activity",
+  USER: {
+    COLLECTION: (id: string) => `/user/${id}/collection`,
+    BOOKMARK: (id: string) => `/user/${id}/bookmarks`,
+    ACTIVITY: (id: string) => `/user/${id}/activity`,
   },
 } as const;
 
@@ -21,35 +21,45 @@ export const NAV_LABELS = {
   LOGIN: "로그인/회원가입",
 } as const;
 
-export const NAV_MY_INFO = {
-  nickname: "내 이름",
-  level: 1,
-} as const;
+export const getMyPagePaths = (id: string) => ({
+  COLLECTION: NAV_PATHS.USER.COLLECTION(id),
+  BOOKMARK: NAV_PATHS.USER.BOOKMARK(id),
+  ACTIVITY: NAV_PATHS.USER.ACTIVITY(id),
+});
 
-export const NAV_ITEMS = {
-  myPage: [
-    {
-      icon: ICONS.Collection,
-      label: "나의 컬렉션",
-      href: NAV_PATHS.ME.COLLECTION,
-    },
-    {
-      icon: ICONS.BookmarkOutlined,
-      label: "북마크",
-      href: NAV_PATHS.ME.BOOKMARK,
-    },
-    { icon: ICONS.Activity, label: "내 활동", href: NAV_PATHS.ME.ACTIVITY },
-  ],
-  footer: [
-    {
-      label: "의견 보내기",
-      type: "button" as ButtonType,
-      onClick: () => {},
-    },
-    {
-      label: "로그아웃",
-      type: "submit" as ButtonType,
-      action: logout,
-    },
-  ],
+export const getMyPageNavItems = (id: string) => [
+  {
+    icon: ICONS.Collection,
+    label: "나의 컬렉션",
+    href: NAV_PATHS.USER.COLLECTION(id),
+  },
+  {
+    icon: ICONS.BookmarkOutlined,
+    label: "북마크",
+    href: NAV_PATHS.USER.BOOKMARK(id),
+  },
+  {
+    icon: ICONS.Activity,
+    label: "내 활동",
+    href: NAV_PATHS.USER.ACTIVITY(id),
+  },
+];
+
+export const NAV_ITEMS_FOOTER = [
+  {
+    label: "의견 보내기",
+    type: "button" as ButtonType,
+    onClick: () => {},
+  },
+  {
+    label: "로그아웃",
+    type: "submit" as ButtonType,
+    action: logout,
+  },
+];
+
+export const MOCK_USER_INFO = {
+  id: "test-user",
+  nickname: "테스트유저",
+  level: 1,
 };
