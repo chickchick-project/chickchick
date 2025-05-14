@@ -5,6 +5,7 @@ import Dropdown from "@/components/commons/dropdown/DropdownBase";
 import InputBase from "@/components/commons/input";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
+import { ProfileItem } from "./type";
 
 const ProfileRow = ({
   label,
@@ -29,13 +30,6 @@ const ProfileRow = ({
     {children}
   </>
 );
-
-type ProfileItem = {
-  name: string;
-  nickname: string;
-  gender: string;
-  age: number;
-};
 
 export const ProfileSection = ({ data }: { data: ProfileItem }) => {
   const [name, setName] = useState<string>(data.name || "");

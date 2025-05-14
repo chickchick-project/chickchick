@@ -4,13 +4,22 @@ import PageClient from "@/components/domains/user/PageClient";
 import { TabData } from "@/components/domains/user/sections/type";
 import { mockFetchAllMyPageData } from "@/lib/utils/fetchUser";
 import { MOCK_USER_INFO } from "@/components/commons/navBar/navBar.constants";
+import { redirect } from "next/navigation";
 
 export default async function MePage({
   params,
 }: {
   params: Promise<{ id: string; tap: string }>;
 }) {
-  const { tap } = await params;
+  const { tap, id } = await params;
+
+  const isMe = MOCK_USER_INFO.id === "test-user2";
+  console.log(isMe);
+  const restrictedTapsForOthers = ["activity", "profile"];
+
+  if (!isMe && restrictedTapsForOthers.includes(tap)) {
+    redirect(`/user/${id}/collection`);
+  }
 
   const allData = await mockFetchAllMyPageData();
 
@@ -25,8 +34,6 @@ export default async function MePage({
   } else {
     tabData = { tap: "profile", data: allData.profile };
   }
-
-  const isMe = MOCK_USER_INFO.id === "test-user2";
 
   return (
     <>

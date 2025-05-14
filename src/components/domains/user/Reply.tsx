@@ -1,20 +1,18 @@
 import React from "react";
+import Link from "next/link";
 import dayjs from "dayjs";
 
 const Reply = ({
   content,
-  postId,
+  postInfo,
   createdAt,
   isLast,
 }: {
   content: string;
-  postId: string;
+  postInfo: { id: string; title: string };
   createdAt: string;
   isLast?: boolean;
 }) => {
-  const postTitle = (postId: string) => {
-    return postId === "1" ? "[서울 동대문구]올리브영 향수 나눔합니다!" : "";
-  };
   return (
     <li className={`${isLast ? "" : "border-b"} p-4`}>
       <div className="flex flex-col items-start gap-2">
@@ -27,7 +25,7 @@ const Reply = ({
               댓글을 남긴 게시글
             </span>
             <span className="text-primary-200 text-label-1 font-medium">
-              {postTitle(postId)}
+              <Link href={`/community/${postInfo.id}`}>{postInfo.title}</Link>
             </span>
           </div>
           <div className="text-black-300 text-label-1 font-medium">

@@ -1,4 +1,4 @@
-export default async function MeLayout({
+export default async function UserLayout({
   children,
 }: {
   children: React.ReactNode;

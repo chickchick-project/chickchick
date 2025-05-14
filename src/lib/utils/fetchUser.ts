@@ -1,25 +1,17 @@
-type CollectionItem = {
-  id: number;
-  name: string;
-};
-
-type BookmarkItem = {
-  id: number;
-  name: string;
-};
+import {
+  CollectionItem,
+  BookmarkData,
+} from "@/components/domains/user/sections/type";
 
 type MeAllData = {
   collection: CollectionItem[];
-  bookmarks: {
-    perfumes: BookmarkItem[];
-    community: { id: number; title: string; category: string }[];
-  };
+  bookmarks: BookmarkData;
   activity: {
     myReviews: { id: number; perfume: string; content: string }[];
     myPosts: { id: number; title: string; content: string }[];
     myComments: { id: number; postId: number; content: string }[];
     likedPerfumes: CollectionItem[];
-    likedPosts: { id: number; title: string }[];
+    likedPosts: { id: number; title: string; category: string }[];
   };
   profile: {
     name: string;
@@ -29,21 +21,20 @@ type MeAllData = {
   };
 };
 
+function generateMockCollection(count: number): CollectionItem[] {
+  return Array.from({ length: count }, (_, i) => {
+    const id = i + 1;
+    return {
+      id,
+      name: `향수 ${String.fromCharCode(65 + (i % 26))}`,
+      imageUrl: `https://picsum.photos/seed/collection-${id}/300`,
+    };
+  });
+}
+
 export async function mockFetchAllMyPageData(): Promise<MeAllData> {
   return {
-    collection: [
-      { id: 1, name: "향수 A" },
-      { id: 2, name: "향수 B" },
-      { id: 3, name: "향수 C" },
-      { id: 4, name: "향수 D" },
-      { id: 5, name: "향수 E" },
-      { id: 6, name: "향수 F" },
-      { id: 7, name: "향수 G" },
-      { id: 8, name: "향수 H" },
-      { id: 9, name: "향수 I" },
-      { id: 10, name: "향수 J" },
-      { id: 11, name: "향수 K" },
-    ],
+    collection: generateMockCollection(12),
     bookmarks: {
       perfumes: [
         { id: 3, name: "북마크 향수 1" },
@@ -62,7 +53,9 @@ export async function mockFetchAllMyPageData(): Promise<MeAllData> {
         { id: 10, postId: 8, content: "저도 궁금해요!" },
       ],
       likedPerfumes: [{ id: 11, name: "좋아한 향수" }],
-      likedPosts: [{ id: 12, title: "향수 vs 디퓨저" }],
+      likedPosts: [
+        { id: 12, title: "향수 vs 디퓨저", category: "자유 게시판" },
+      ],
     },
     profile: {
       name: "김하은",

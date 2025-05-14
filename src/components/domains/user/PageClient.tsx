@@ -24,22 +24,43 @@ export default function ClientComponent({
   isMe,
   selectedUser,
 }: PageClientProps) {
+  function isCollectionData(
+    data: TabData["data"],
+    tap: TabData["tap"]
+  ): data is CollectionItem[] {
+    return tap === "collection";
+  }
+
+  function isBookmarkData(
+    data: TabData["data"],
+    tap: TabData["tap"]
+  ): data is BookmarkData {
+    return tap === "bookmarks";
+  }
+
+  function isActivityData(
+    data: TabData["data"],
+    tap: TabData["tap"]
+  ): data is ActivityData {
+    return tap === "activity";
+  }
+
+  function isProfileData(
+    data: TabData["data"],
+    tap: TabData["tap"]
+  ): data is ProfileItem {
+    return tap === "profile";
+  }
   return (
     <>
       <MainTabs selectedUser={selectedUser} isMe={isMe} tab={tap} />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
-        {tap === "collection" && (
-          <CollectionSection data={data as CollectionItem[]} />
+        {isCollectionData(data, tap) && <CollectionSection data={data} />}
+        {isBookmarkData(data, tap) && (
+          <BookmarkSection isMe={isMe} data={data} />
         )}
-        {tap === "bookmarks" && (
-          <BookmarkSection isMe={isMe} data={data as BookmarkData} />
-        )}
-        {isMe && tap === "activity" && (
-          <ActivitySection data={data as ActivityData} />
-        )}
-        {isMe && tap === "profile" && (
-          <ProfileSection data={data as ProfileItem} />
-        )}
+        {isActivityData(data, tap) && <ActivitySection data={data} />}
+        {isProfileData(data, tap) && <ProfileSection data={data} />}
       </div>
     </>
   );
