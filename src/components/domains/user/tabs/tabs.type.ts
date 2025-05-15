@@ -14,7 +14,9 @@ type SubTabKey =
   | "myPosts"
   | "myComments"
   | "likedPerfumes"
-  | "likedPosts";
+  | "likedPosts"
+  | "bookmarksPerfumes"
+  | "bookmarksPosts";
 
 type SubTabItem = {
   key: SubTabKey;

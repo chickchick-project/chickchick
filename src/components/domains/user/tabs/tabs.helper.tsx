@@ -1,0 +1,51 @@
+import { TabItemConfig, User } from "./tabs.type";
+
+const TAB_CONFIGS: TabItemConfig[] = [
+  {
+    getLabel: (isMe, nickname) =>
+      !isMe && nickname ? (
+        <>
+          {nickname}님의
+          <br />
+          컬렉션
+        </>
+      ) : (
+        "나의 컬렉션"
+      ),
+    value: "collection",
+  },
+  {
+    getLabel: (isMe, nickname) =>
+      !isMe && nickname ? (
+        <>
+          {nickname}님의
+          <br />
+          취향
+        </>
+      ) : (
+        "북마크"
+      ),
+    value: "bookmarks",
+  },
+  {
+    getLabel: () => "내 활동",
+    value: "activity",
+    isMeOnly: true,
+  },
+  {
+    getLabel: () => "내 정보",
+    value: "profile",
+    isMeOnly: true,
+  },
+];
+
+const getRenderableTabItems = (isMe?: boolean, selectedUser?: User) => {
+  return TAB_CONFIGS.filter((config) => isMe || !config.isMeOnly).map(
+    (config) => ({
+      label: config.getLabel(isMe, selectedUser?.nickname),
+      value: config.value,
+    })
+  );
+};
+
+export { getRenderableTabItems };

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SubTabSwitcherProps } from "./type";
+import { SubTabSwitcherProps } from "./tabs.type";
 
 export function SubTabSwitcher({ tabs, defaultKey }: SubTabSwitcherProps) {
   const [current, setCurrent] = useState(defaultKey ?? tabs[0].key);
