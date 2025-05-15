@@ -17,11 +17,17 @@ export default function PageClient() {
   };
   //임시 목데이터
   const postData =
-    selectedTab === "best" ? communityPostData : communityPostData.filter((post) => post.categoryType === selectedTab);
+    selectedTab === "best"
+      ? communityPostData
+      : communityPostData.filter((post) => post.categoryType === selectedTab);
 
   return (
-    <div className="w-full flex flex-col items-center gap-5">
-      <Header boards={boards} selectedTab={selectedTab} handleTabClick={handleTabClick} />
+    <div className="px-4 w-full flex flex-col items-center gap-5">
+      <Header
+        boards={boards}
+        selectedTab={selectedTab}
+        handleTabClick={handleTabClick}
+      />
       <main className="pb-[280px]">
         <CommunityCards postData={postData} selectedTab={selectedTab} />
       </main>

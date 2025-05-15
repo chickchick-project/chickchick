@@ -5,6 +5,7 @@ export interface IButtonBaseProps extends React.ComponentProps<"button"> {
   children: ReactNode;
   iconLeading?: ReactNode;
   iconTrailing?: ReactNode;
+  iconGap?: string;
   bgColor: TBgColor;
   colorNum?: string;
 }
@@ -16,6 +17,7 @@ export default function ButtonBase(props: IButtonBaseProps) {
     iconLeading,
     iconTrailing,
     bgColor,
+    iconGap,
     colorNum = "100",
     ...restProps
   } = props;
@@ -25,12 +27,13 @@ export default function ButtonBase(props: IButtonBaseProps) {
     typeof colorValue === "string"
       ? colorValue
       : colorValue[colorNum] || colorValue["100"];
-  const iconGap =
-    iconLeading && iconTrailing
+  const resolvedIconGap =
+    iconGap ??
+    (iconLeading && iconTrailing
       ? "gap-2"
       : iconLeading || iconTrailing
       ? "gap-1"
-      : "";
+      : "");
 
   return (
     <button
@@ -38,11 +41,11 @@ export default function ButtonBase(props: IButtonBaseProps) {
       className={`${className} ${buttonColor} disabled:bg-gray-200 disabled:text-white disabled:border-none disabled:cursor-not-allowed`}
     >
       <div
-        className={`flex items-center justify-center leading-none ${iconGap}`}
+        className={`flex items-center justify-center leading-none ${resolvedIconGap}`}
       >
-        <>{iconLeading}</>
+        {iconLeading}
         {children}
-        <>{iconTrailing}</>
+        {iconTrailing}
       </div>
     </button>
   );

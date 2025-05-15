@@ -33,7 +33,7 @@ export function ButtonOutlinedPrimaryLFit({
   return (
     <ButtonBase
       bgColor="white"
-      className={`${buttonOutlinedBase} ${buttonLargeHeight} ${outlinePrimary} w-fit py-3 px-4 font-semibold text-body-1`}
+      className={`${buttonOutlinedBase} ${buttonLargeHeight} ${outlinePrimary} w-fit px-3 py-2 tablet:px-4 tablet:py-3 font-semibold text-label-1 tablet:text-body-1`}
       {...rest}
     >
       {children}

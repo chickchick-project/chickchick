@@ -20,6 +20,7 @@ import {
   CloseCircle,
   ArrowRightGray,
   GlobePrimary,
+  Reply,
 } from "../../../public/icons";
 
 export type TIcon = {
@@ -49,6 +50,7 @@ const ICONS: { [key: string]: TIcon } = {
   Comment: { src: Comment, alt: "comment" },
   View: { src: View, alt: "view" },
   CloseCircle: { src: CloseCircle, alt: "close" },
+  Reply: { src: Reply, alt: "reply" },
 };
 
 export default ICONS;
