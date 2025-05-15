@@ -16,6 +16,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        pathname: "/**",
+        hostname: "placehold.co",
+      },
     ],
   },
 };

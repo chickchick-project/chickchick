@@ -1,9 +1,10 @@
 import Image from "next/image";
-import Link from 'next/link';
+import Link from "next/link";
 import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
 import { NAV_MY_INFO, NAV_ITEMS } from "./navBar.constants";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
 interface DropdownProps {
   onClose: () => void;
@@ -11,6 +12,8 @@ interface DropdownProps {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
+  const { user } = useUserStore();
+
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
@@ -34,7 +37,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
           />
           <LevelChip level={NAV_MY_INFO.level} />
           <span className="text-title-2 font-semibold text-black-100">
-            {NAV_MY_INFO.nickname}
+            {user?.nickname}
           </span>
         </div>
         {/* 마이페이지 */}
@@ -49,12 +52,15 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         <div className="flex items-center justify-center py-5 border-t border-gray-200 w-[400px]">
           {NAV_ITEMS.footer.map((item, index) => (
             <React.Fragment key={item.label}>
-              <span
-                className="text-body-2 font-medium text-black-300 cursor-pointer"
-                onClick={onClose}
-              >
-                {item.label}
-              </span>
+              <form action={item.action}>
+                <button
+                  className="text-body-2 font-medium text-black-300 cursor-pointer"
+                  onClick={item.onClick}
+                  type={item.type}
+                >
+                  {item.label}
+                </button>
+              </form>
               {index < NAV_ITEMS.footer.length - 1 && (
                 <div className="w-0.5 h-4 mx-[60px] bg-gray-200" />
               )}
@@ -71,7 +77,7 @@ const renderNavItem = (
   item: (typeof NAV_ITEMS.myPage)[number],
   onClose: () => void
 ) => (
-  <Link 
+  <Link
     href={item.href}
     key={item.label}
     className="flex flex-col items-center gap-2 cursor-pointer"

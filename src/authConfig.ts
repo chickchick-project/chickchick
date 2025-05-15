@@ -2,15 +2,27 @@ import { Account, NextAuthConfig, User } from "next-auth";
 import { supabase } from "./lib/supabase/init";
 import { v4 as uuidv4 } from "uuid";
 
+// users data 중 image_url 추가하기
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
   callbacks: {
-    signIn: async ({ user, account }: { user: User; account: Account | null }) => {
+    signIn: async ({
+      user,
+      account,
+    }: {
+      user: User;
+      account: Account | null;
+    }) => {
       if (!account) return false;
 
+      // naver oAuth Login
       if (account?.provider === "naver") {
         const { name, email } = user;
-        const { data: existingUser, error } = await supabase.from("users").select("*").eq("email", email).single();
+        const { data: existingUser, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", email)
+          .single();
 
         if (error) console.error(error.message);
 
@@ -34,16 +46,21 @@ export const authConfig = {
             return false;
           }
 
-          user.id = newUser._id;
+          user.id = newUser.id;
         } else {
-          user.id = existingUser._id;
+          user.id = existingUser.id;
         }
         return true;
       }
 
+      // google oAuth Login
       if (account?.provider === "google") {
         const { name, email } = user;
-        const { data: existingUser, error } = await supabase.from("users").select("*").eq("email", email).single();
+        const { data: existingUser, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", email)
+          .single();
 
         if (error) console.error(error.message);
 
@@ -67,9 +84,9 @@ export const authConfig = {
             return false;
           }
 
-          user.id = newUser._id;
+          user.id = newUser.id;
         } else {
-          user.id = existingUser._id;
+          user.id = existingUser.id;
         }
         return true;
       }
@@ -77,7 +94,11 @@ export const authConfig = {
       // TODO: kakao email 받아오는 권한 없음. 보류
       if (account?.provider === "kakao") {
         const { name, email } = user;
-        const { data: existingUser, error } = await supabase.from("users").select("*").eq("email", email).single();
+        const { data: existingUser, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("email", email)
+          .single();
 
         if (error) console.error(error.message);
 
@@ -101,13 +122,27 @@ export const authConfig = {
             return false;
           }
 
-          user.id = newUser._id;
+          user.id = newUser.id;
         } else {
-          user.id = existingUser._id;
+          user.id = existingUser.id;
         }
         return true;
       }
       return false;
+    },
+
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+      }
+      return session;
     },
   },
   providers: [
