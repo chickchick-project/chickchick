@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
-import { PostCard, type PostCardProps } from ".";
 import { PostMetaItem } from "../../author/author.types";
+import { PostCardProps } from "./postCard.types";
+import { PostCard } from ".";
 
 const CARD_TYPE = {
   SMALL: "small",

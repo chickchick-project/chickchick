@@ -1,8 +1,8 @@
-import UserFooter from "@/components/domains/user/layouts/Footer";
-import UserHeader from "@/components/domains/user/layouts/Header";
+import UserFooter from "@/components/domains/user/layouts/UserFooter";
+import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
-import { TabData } from "@/components/domains/user/sections/type";
-import { mockFetchAllMyPageData } from "@/lib/utils/fetchUser";
+import { TabData } from "@/components/domains/user/sections/sections.type";
+import { mockFetchAllMyPageData } from "@/lib/mocks/fetchUser";
 import { MOCK_USER_INFO } from "@/components/commons/navBar/navBar.constants";
 import { redirect } from "next/navigation";
 

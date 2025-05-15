@@ -5,7 +5,7 @@ import Dropdown from "@/components/commons/dropdown/DropdownBase";
 import InputBase from "@/components/commons/input";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
-import { ProfileItem } from "./type";
+import { ProfileItem } from "../sections.type";
 
 const ProfileRow = ({
   label,

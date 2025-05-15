@@ -1,9 +1,9 @@
-type PerfumeBookmark = {
+export type PerfumeBookmark = {
   id: number;
   name: string;
 };
 
-type CommunityBookmark = {
+export type CommunityBookmark = {
   id: number;
   title: string;
   category: string;

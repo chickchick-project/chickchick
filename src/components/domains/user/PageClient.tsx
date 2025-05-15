@@ -9,7 +9,7 @@ import {
   CollectionItem,
   ProfileItem,
   TabData,
-} from "./sections/type";
+} from "./sections/sections.type";
 
 interface PageClientProps {
   tap: TabData["tap"];

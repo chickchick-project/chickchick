@@ -1,23 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import AuthorInfo from "../../author/AuthorInfo";
 import ReviewChip from "../../chip/ReviewChip";
-import { InfoType } from "../../author/author.types";
 import { getLayoutSize } from "./reviewCard.helpers";
-
-export interface ReviewCardProps {
-  brand: string;
-  title: string;
-  review: string;
-  createdAt: string;
-  info: InfoType;
-  chips: Array<string>;
-  imageUrl?: string;
-  isMyPage: boolean;
-  isAuthor: boolean;
-}
+import { ReviewCardProps } from "./reviewCard.types";
 
 export default function ReviewCard({
   brand,
@@ -25,31 +13,42 @@ export default function ReviewCard({
   review,
   createdAt,
   info,
-  chips = Array(8).fill("기본 칩"),
+  chips,
   imageUrl,
   isMyPage = false,
   isAuthor = false,
+  author,
 }: ReviewCardProps) {
   //컴포넌트 사이즈에 따라 AuthorInfo 값 변경
   const [isAuthorResponsive, setIsAuthorResponsive] = useState(isAuthor);
   const articleRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const newState = entry.contentRect.width < 656;
-        if (newState !== isAuthorResponsive) {
-          setIsAuthorResponsive(newState);
+  const handleResize = useCallback((entries: ResizeObserverEntry[]) => {
+    for (const entry of entries) {
+      const newIsAuthorResponsiveBasedOnWidth = entry.contentRect.width < 656;
+      setIsAuthorResponsive((prevIsAuthorResponsive) => {
+        if (newIsAuthorResponsiveBasedOnWidth !== prevIsAuthorResponsive) {
+          return newIsAuthorResponsiveBasedOnWidth;
         }
-      }
-    });
+        return prevIsAuthorResponsive;
+      });
+    }
+  }, []);
 
-    if (articleRef.current) {
-      observer.observe(articleRef.current);
+  useEffect(() => {
+    const currentArticleRef = articleRef.current;
+    if (!currentArticleRef) {
+      return;
     }
 
-    return () => observer.disconnect();
-  }, [isAuthorResponsive]);
+    const observer = new ResizeObserver(handleResize);
+    observer.observe(currentArticleRef);
+
+    return () => {
+      observer.unobserve(currentArticleRef);
+      observer.disconnect();
+    };
+  }, [handleResize]);
 
   const MAX_CHIPS = isMyPage ? 2 : 3;
 
@@ -102,7 +101,7 @@ export default function ReviewCard({
         {/* 리뷰 메타 정보 */}
         <footer className="flex">
           <AuthorInfo
-            author="주현"
+            author={author}
             createdAt={createdAt}
             info={info}
             isAuthor={isAuthorResponsive}

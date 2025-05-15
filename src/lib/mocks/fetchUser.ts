@@ -1,14 +1,26 @@
 import {
   CollectionItem,
   BookmarkData,
-} from "@/components/domains/user/sections/type";
+} from "@/components/domains/user/sections/sections.type";
 
 type MeAllData = {
   collection: CollectionItem[];
   bookmarks: BookmarkData;
   activity: {
-    myReviews: { id: number; perfume: string; content: string }[];
-    myPosts: { id: number; title: string; content: string }[];
+    myReviews: {
+      id: number;
+      perfume: string;
+      content: string;
+      chips: string[];
+      isAuthor: boolean;
+      isMyPage: boolean;
+    }[];
+    myPosts: {
+      id: number;
+      title: string;
+      content: string;
+      isAuthor: boolean;
+    }[];
     myComments: { id: number; postId: number; content: string }[];
     likedPerfumes: CollectionItem[];
     likedPosts: { id: number; title: string; category: string }[];
@@ -46,8 +58,24 @@ export async function mockFetchAllMyPageData(): Promise<MeAllData> {
       ],
     },
     activity: {
-      myReviews: [{ id: 7, perfume: "향수 A", content: "아주 좋았어요." }],
-      myPosts: [{ id: 8, title: "추천 부탁", content: "상큼한 향 좋아요." }],
+      myReviews: [
+        {
+          id: 7,
+          perfume: "향수 A",
+          content: "아주 좋았어요.",
+          chips: ["기본 칩"],
+          isAuthor: true,
+          isMyPage: true,
+        },
+      ],
+      myPosts: [
+        {
+          id: 8,
+          title: "추천 부탁",
+          content: "상큼한 향 좋아요.",
+          isAuthor: true,
+        },
+      ],
       myComments: [
         { id: 9, postId: 8, content: "저도 궁금해요!" },
         { id: 10, postId: 8, content: "저도 궁금해요!" },
