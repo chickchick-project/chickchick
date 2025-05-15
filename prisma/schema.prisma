@@ -149,6 +149,7 @@ model users {
   created_at       DateTime?          @default(now()) @db.Timestamp(6)
   is_active        Boolean?           @default(true)
   role             String?            @default("user")
+  image_url        String?
   user_activity    user_activity[]
   user_bookmarks   user_bookmarks[]
   user_collections user_collections[]

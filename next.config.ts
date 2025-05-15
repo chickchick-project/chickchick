@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
         pathname: "/**",
         hostname: "placehold.co",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        pathname: "/**",
+      },
     ],
   },
 };

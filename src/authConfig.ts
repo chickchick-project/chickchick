@@ -2,7 +2,6 @@ import { Account, NextAuthConfig, User } from "next-auth";
 import { supabase } from "./lib/supabase/init";
 import { v4 as uuidv4 } from "uuid";
 
-// users data 중 image_url 추가하기
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
   callbacks: {
@@ -17,7 +16,7 @@ export const authConfig = {
 
       // naver oAuth Login
       if (account?.provider === "naver") {
-        const { name, email } = user;
+        const { name, email, image } = user;
         const { data: existingUser, error } = await supabase
           .from("users")
           .select("*")
@@ -35,6 +34,7 @@ export const authConfig = {
                 name,
                 auth_id,
                 email,
+                image_url: image,
                 nickname: name,
               },
             ])
@@ -55,7 +55,7 @@ export const authConfig = {
 
       // google oAuth Login
       if (account?.provider === "google") {
-        const { name, email } = user;
+        const { name, email, image } = user;
         const { data: existingUser, error } = await supabase
           .from("users")
           .select("*")
@@ -73,6 +73,7 @@ export const authConfig = {
                 name,
                 auth_id,
                 email,
+                image_url: image,
                 nickname: name,
               },
             ])
@@ -93,7 +94,7 @@ export const authConfig = {
 
       // TODO: kakao email 받아오는 권한 없음. 보류
       if (account?.provider === "kakao") {
-        const { name, email } = user;
+        const { name, email, image } = user;
         const { data: existingUser, error } = await supabase
           .from("users")
           .select("*")
@@ -111,6 +112,7 @@ export const authConfig = {
                 name,
                 auth_id,
                 email,
+                image_url: image,
                 nickname: name,
               },
             ])

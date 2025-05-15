@@ -73,7 +73,10 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
               ) : (
                 <div className="flex items-center gap-2">
                   <Image
-                    src="/images/Profile.svg"
+                    src={
+                      user.image_url ? user.image_url : "/images/profile.svg"
+                    }
+                    className="rounded-full"
                     width={36}
                     height={36}
                     alt="User"
