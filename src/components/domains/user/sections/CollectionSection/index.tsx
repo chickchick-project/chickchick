@@ -1,36 +1,46 @@
-import { useMemo } from "react";
-import { CollectionItem } from "../sections.type";
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { SkeletonMasonry } from "./SkeletonMasonry";
+import { CollectionItem } from "../sections.type";
 
 export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
-  const extendedDataWithHeights = useMemo(() => {
+  const [extendedDataWithHeights, setExtendedDataWithHeights] = useState<
+    CollectionItem[]
+  >([]);
+
+  useEffect(() => {
     const extended = Array.from({ length: 10 }).flatMap(() => data);
-    return extended.map((item) => ({
+    const withHeights = extended.map((item) => ({
       ...item,
-      randomHeight: item.imageHeight ?? Math.floor(Math.random() * 200) + 150,
+      imageHeight: item.imageHeight ?? Math.floor(Math.random() * 200) + 150,
     }));
+    setExtendedDataWithHeights(withHeights);
   }, [data]);
 
   return (
-    <div className="max-h-[800px] overflow-y-auto pr-1">
-      <div className="columns-4 gap-4">
-        {extendedDataWithHeights.map((item, index) => {
-          return (
+    <div className="h-[800px] overflow-y-auto pr-1">
+      {extendedDataWithHeights.length < 1 ? (
+        <SkeletonMasonry />
+      ) : (
+        <div className="columns-4 gap-4">
+          {extendedDataWithHeights.map((item, index) => (
             <div
               key={`${item.id}-${index}`}
               className="break-inside-avoid mb-4 relative"
-              style={{ height: `${item.randomHeight}px` }}
+              style={{ height: `${item.imageHeight}px` }}
             >
               <Image
                 src={`https://picsum.photos/seed/${item.id}-${index}/300`}
                 alt="collection"
-                className={`w-full h-auto rounded-md bg-gray-100`}
+                className="w-full h-auto rounded-md bg-gray-100"
                 fill
               />
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

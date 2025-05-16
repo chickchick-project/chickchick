@@ -3,24 +3,24 @@
 import React from "react";
 import Link from "next/link";
 import { getRenderableTabItems } from "./tabs.helper";
-import { User } from "./tabs.type";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
 const MainTabs = ({
   tab,
   isMe,
-  selectedUser,
 }: {
   tab: string;
   isMe?: boolean;
-  selectedUser?: User;
 }) => {
-  if (!isMe && !selectedUser?.id) {
+  const user = useUserStore((state) => state.user);
+
+  if (!isMe && !user?.id) {
     return null;
   }
 
-  const profileOwnerId = selectedUser?.id;
+  const profileOwnerId = user?.id;
 
-  const tabItems = getRenderableTabItems(isMe, selectedUser);
+  const tabItems = getRenderableTabItems(isMe, user);
 
   return (
     <div className="flex space-x-2 ml-10 mb-[-1px] z-10 relative h-[52px]">

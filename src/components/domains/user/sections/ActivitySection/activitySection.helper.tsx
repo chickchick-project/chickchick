@@ -8,6 +8,7 @@ import { MOCK_REVIEW_CARD_DATA } from "@/lib/mocks/reviewCard";
 import { MOCK_PERFUME_CARD_DATA } from "@/lib/mocks/perfumeCard";
 import { MOCK_REPLY_DATA } from "@/lib/mocks/reply";
 import { MOCK_POST_CARD_DATA } from "@/lib/mocks/postCard";
+import { POST_CARD_TYPES } from "@/lib/constants/post";
 
 //TODO: Mock Data를 실제 데이터로 변경하는 작업이 필요함.
 
@@ -33,6 +34,8 @@ const renderMyPosts = (data: ActivityData) =>
           {...MOCK_POST_CARD_DATA}
           isAuthor={false}
           meta={MOCK_POST_CARD_DATA.meta}
+          isCategory={true}
+          cardType={POST_CARD_TYPES.SMALL}
         />
       ))}
     </ul>

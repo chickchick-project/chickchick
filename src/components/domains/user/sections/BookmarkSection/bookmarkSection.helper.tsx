@@ -3,6 +3,7 @@ import { MOCK_PERFUME_CARD_DATA } from "@/lib/mocks/perfumeCard";
 import { CommunityBookmark, PerfumeBookmark } from "../sections.type";
 import { PostCard } from "@/components/commons/card/postCard";
 import { MOCK_COMMUNITY_POST_DATA } from "@/lib/mocks/communityCard";
+import { POST_CARD_TYPES } from "@/lib/constants/post";
 
 const renderPerfumeBookmarks = (perfumes: PerfumeBookmark[]) => {
   const itemsToRender = Array.from({ length: 10 }).flatMap(() => perfumes);
@@ -40,6 +41,8 @@ const renderCommunityBookmarks = (communityPosts: CommunityBookmark[]) => {
         <PostCard
           key={`${item.id}-${idx}`}
           {...MOCK_COMMUNITY_POST_DATA[idx]}
+          cardType={POST_CARD_TYPES.SMALL}
+          isCategory={true}
           isAuthor={false}
         />
       ))}

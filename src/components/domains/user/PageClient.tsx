@@ -1,3 +1,5 @@
+"use client";
+
 import { ActivitySection } from "./sections/ActivitySection";
 import { CollectionSection } from "./sections/CollectionSection";
 import { BookmarkSection } from "./sections/BookmarkSection";
@@ -7,23 +9,21 @@ import {
   ActivityData,
   BookmarkData,
   CollectionItem,
-  ProfileItem,
   TabData,
 } from "./sections/sections.type";
+import { useUserStore } from "@/lib/stores/useUserStore";
+import { users } from "@prisma/client";
 
 interface PageClientProps {
   tap: TabData["tap"];
   data: TabData["data"];
-  isMe?: boolean;
-  selectedUser?: { id: string; nickname: string };
 }
 
-export default function ClientComponent({
-  tap,
-  data,
-  isMe,
-  selectedUser,
-}: PageClientProps) {
+export default function ClientComponent({ tap, data }: PageClientProps) {
+  const user = useUserStore((state) => state.user);
+
+  const isMe = user?.id === user?.id;
+
   function isCollectionData(
     data: TabData["data"],
     tap: TabData["tap"]
@@ -48,12 +48,12 @@ export default function ClientComponent({
   function isProfileData(
     data: TabData["data"],
     tap: TabData["tap"]
-  ): data is ProfileItem {
+  ): data is users {
     return tap === "profile";
   }
   return (
     <>
-      <MainTabs selectedUser={selectedUser} isMe={isMe} tab={tap} />
+      <MainTabs isMe={isMe} tab={tap} />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
         {isCollectionData(data, tap) && <CollectionSection data={data} />}
         {isBookmarkData(data, tap) && (

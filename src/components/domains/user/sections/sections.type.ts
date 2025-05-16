@@ -1,3 +1,5 @@
+import { users } from "@prisma/client";
+
 export type PerfumeBookmark = {
   id: number;
   name: string;
@@ -40,13 +42,6 @@ export type ActivityData = {
   likedPosts: CommunityBookmark[];
 };
 
-export type ProfileItem = {
-  name: string;
-  nickname: string;
-  gender: string;
-  age: number;
-};
-
 export type TabData =
   | { tap: "collection"; data: CollectionItem[] }
   | {
@@ -59,5 +54,5 @@ export type TabData =
     }
   | {
       tap: "profile";
-      data: ProfileItem;
+      data: users;
     };

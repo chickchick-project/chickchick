@@ -44,7 +44,8 @@ function generateMockCollection(count: number): CollectionItem[] {
   });
 }
 
-export async function mockFetchAllMyPageData(): Promise<MeAllData> {
+export async function mockFetchAllMyPageData(id: string): Promise<MeAllData> {
+  console.log(id);
   return {
     collection: generateMockCollection(12),
     bookmarks: {
