@@ -1,13 +1,11 @@
 import { ReviewAnalytics } from "./analytics";
-import { PerfumeRecentViewList } from "./recentViewList";
 import { ReviewList } from "./reviewList";
 
 export const PerfumeReview = () => {
   return (
-    <section className="flex flex-col gap-[60px] w-[760px]">
+    <section className="flex px-5 flex-col gap-[60px] pc:w-[760px] pc:px-0">
       <ReviewAnalytics />
       <ReviewList />
-      <PerfumeRecentViewList />
     </section>
   );
 };

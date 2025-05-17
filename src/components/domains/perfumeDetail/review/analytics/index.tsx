@@ -8,10 +8,11 @@ export const ReviewAnalytics = () => {
       <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2">
         리뷰 한눈에 보기
       </h2>
-      <section className="flex flex-col gap-5">
+      <section className="hidden tablet:flex flex-col gap-5">
         <ReviewDoughnutSection />
         <ReviewBarSection />
       </section>
+      <section className="tablet:hidden"></section>
       <section className="w-60 self-center">
         <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
           주현님의 소중한 의견을 나눠주세요!

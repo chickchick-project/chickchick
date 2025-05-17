@@ -31,11 +31,11 @@ export const PerfumeRecentViewList = () => {
   ];
 
   return (
-    <section>
+    <section className="pl-5 pc:pl-0">
       <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2 mb-5">
         최근 본 향수
       </h2>
-      <ul className="flex justify-between">
+      <ul className="flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0">
         {mockPerfumes.map((perfume) => (
           <li key={perfume.id}>
             <PerfumeCard
