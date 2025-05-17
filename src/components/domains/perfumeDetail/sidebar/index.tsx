@@ -83,11 +83,11 @@ export const PerfumeDetailSidebar = () => {
   ];
 
   return (
-    <section className="pl-5 pc:pl-0">
-      <h2 className="font-semibold text-black-100 text-title-2 pb-4 tablet:text-headline-2 tablet:pb-5">
+    <section>
+      <h2 className="pl-5 pc:pl-0 font-semibold text-black-100 text-title-2 tablet:text-headline-2">
         이 향수, 커뮤니티에서는?
       </h2>
-      <ul className="flex gap-4 overflow-x-auto pc:flex-col pc:gap-6 scrollbar-hide pr-5 pc:pr-0">
+      <ul className="pl-5 pc:pl-0 flex gap-4 pb-5 overflow-x-auto pc:overflow-x-visible pc:flex-col pc:gap-6 scrollbar-hide pr-5 pc:pr-0 pt-4 tablet:pt-5">
         {mockPosts.map((post) => (
           <li key={post.id}>
             <PostCard {...post} cardType={POST_CARD_TYPES.DETAIL} />
