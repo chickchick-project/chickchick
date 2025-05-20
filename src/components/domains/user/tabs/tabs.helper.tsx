@@ -1,4 +1,4 @@
-import { TabItemConfig, User } from "./tabs.type";
+import { TabItemConfig } from "./tabs.type";
 
 const TAB_CONFIGS: TabItemConfig[] = [
   {
@@ -39,10 +39,10 @@ const TAB_CONFIGS: TabItemConfig[] = [
   },
 ];
 
-const getRenderableTabItems = (isMe?: boolean, selectedUser?: User) => {
+const getRenderableTabItems = (isMe?: boolean, nickname?: string) => {
   return TAB_CONFIGS.filter((config) => isMe || !config.isMeOnly).map(
     (config) => ({
-      label: config.getLabel(isMe, selectedUser?.nickname),
+      label: config.getLabel(isMe, nickname),
       value: config.value,
     })
   );

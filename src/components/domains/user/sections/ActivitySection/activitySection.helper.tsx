@@ -4,10 +4,10 @@ import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { ActivityData } from "../sections.type";
 import Reply from "../../Reply";
 import { SubTabItem } from "../../tabs/tabs.type";
-import { MOCK_REVIEW_CARD_DATA } from "@/lib/mocks/reviewCard";
-import { MOCK_PERFUME_CARD_DATA } from "@/lib/mocks/perfumeCard";
-import { MOCK_REPLY_DATA } from "@/lib/mocks/reply";
-import { MOCK_POST_CARD_DATA } from "@/lib/mocks/postCard";
+import { mockReviewCardData } from "@/lib/mocks/reviewCard";
+import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
+import { mockReplyData } from "@/lib/mocks/reply";
+import { mockPostCardData } from "@/lib/mocks/postCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 
 //TODO: Mock Data를 실제 데이터로 변경하는 작업이 필요함.
@@ -16,7 +16,7 @@ const renderMyReviews = (data: ActivityData) =>
   data.myReviews.length > 0 ? (
     <ul className="space-y-2">
       {data.myReviews.map((item) => (
-        <ReviewCard key={item.id} {...MOCK_REVIEW_CARD_DATA} />
+        <ReviewCard key={item.id} {...mockReviewCardData} />
       ))}
     </ul>
   ) : (
@@ -31,9 +31,9 @@ const renderMyPosts = (data: ActivityData) =>
       {data.myPosts.map((item) => (
         <PostCard
           key={item.id}
-          {...MOCK_POST_CARD_DATA}
+          {...mockPostCardData}
           isAuthor={false}
-          meta={MOCK_POST_CARD_DATA.meta}
+          meta={mockPostCardData.meta}
           isCategory={true}
           cardType={POST_CARD_TYPES.SMALL}
         />
@@ -50,7 +50,7 @@ const renderMyComments = (data: ActivityData) => (
     {data.myComments.map((item, idx) => (
       <Reply
         key={item.id}
-        {...MOCK_REPLY_DATA}
+        {...mockReplyData}
         postInfo={{
           id: item.postId.toString(),
           title: "[서울 동대문구]올리브영 향수 나눔합니다!",
@@ -65,7 +65,7 @@ const renderLikedPerfumes = (data: ActivityData) =>
   data.likedPerfumes.length > 0 ? (
     <ul className="grid grid-cols-5 gap-4">
       {data.likedPerfumes.map((item) => (
-        <PerfumeCard key={item.id} {...MOCK_PERFUME_CARD_DATA} />
+        <PerfumeCard key={item.id} {...mockPerfumeCardData} />
       ))}
     </ul>
   ) : (
@@ -78,7 +78,7 @@ const renderLikedPosts = (data: ActivityData) =>
   data.likedPosts.length > 0 ? (
     <ul className="space-y-2">
       {data.likedPosts.map((item) => (
-        <PostCard key={item.id} {...MOCK_POST_CARD_DATA} />
+        <PostCard key={item.id} {...mockPostCardData} />
       ))}
     </ul>
   ) : (

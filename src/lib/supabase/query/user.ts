@@ -7,16 +7,17 @@ import { supabase } from "@/lib/supabase/init";
  * 현재 로그인한 사용자 정보 가져오기
  */
 export async function fetchUserInfo() {
-  const data = await getSession();
+  const session = await getSession();
+  if (!session?.user?.id) return;
 
   const { data: userData, error } = await supabase
     .from("users")
     .select("*")
-    .eq("id", data?.user?.id)
+    .eq("id", session?.user?.id)
     .single();
 
   if (error) {
-    location.replace("/");
+    throw error;
   }
 
   return userData;

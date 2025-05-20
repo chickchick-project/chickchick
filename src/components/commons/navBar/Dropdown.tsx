@@ -4,7 +4,7 @@ import React from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
 import {
-  MOCK_USER_INFO,
+  mockUserInfo,
   NAV_ITEMS_FOOTER,
   getMyPageNavItems,
 } from "./navBar.constants";
@@ -41,7 +41,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
             height={80}
             alt="프로필"
           />
-          <LevelChip level={MOCK_USER_INFO.level} />
+          <LevelChip level={mockUserInfo.level} />
           <span className="text-title-2 font-semibold text-black-100">
             {user?.nickname}
           </span>

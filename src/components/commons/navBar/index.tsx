@@ -15,7 +15,7 @@ export interface NavBarProps {
 export default function NavBar({ currentPath, onLogin }: NavBarProps) {
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const navBarRef = useRef<HTMLElement | null>(null);
-  const { user } = useUserStore();
+  const { user, isHydrated } = useUserStore();
 
   const selectedLink = (path: string) =>
     currentPath === path ? "text-black font-bold" : "text-gray-500";
@@ -62,7 +62,11 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
             </li>
 
             {/* 로그인 / 프로필 버튼 */}
-            <li className="pl-6 relative flex items-center gap-2">
+            <li
+              className={`w-[120px] pl-6 relative flex items-center gap-2 transition-opacity duration-300 ${
+                isHydrated ? "opacity-100 visible" : "opacity-0 invisible"
+              }`}
+            >
               {!user ? (
                 <button
                   className="text-body-2 font-medium text-black-300"
@@ -78,7 +82,6 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
                     height={36}
                     alt="User"
                   />
-
                   <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                     <Image
                       src={ICONS.ArrowDownGray.src}

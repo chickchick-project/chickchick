@@ -1,8 +1,8 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { MOCK_PERFUME_CARD_DATA } from "@/lib/mocks/perfumeCard";
+import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
 import { CommunityBookmark, PerfumeBookmark } from "../sections.type";
 import { PostCard } from "@/components/commons/card/postCard";
-import { MOCK_COMMUNITY_POST_DATA } from "@/lib/mocks/communityCard";
+import { mockCommunityPostData } from "@/lib/mocks/communityCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 
 const renderPerfumeBookmarks = (perfumes: PerfumeBookmark[]) => {
@@ -19,7 +19,7 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBookmark[]) => {
   return (
     <div className="grid grid-cols-5 gap-[52px]">
       {itemsToRender.map((item, idx) => (
-        <PerfumeCard {...MOCK_PERFUME_CARD_DATA} key={`${item.id}-${idx}`} />
+        <PerfumeCard {...mockPerfumeCardData} key={`${item.id}-${idx}`} />
       ))}
     </div>
   );
@@ -40,7 +40,7 @@ const renderCommunityBookmarks = (communityPosts: CommunityBookmark[]) => {
       {itemsToRender.map((item, idx) => (
         <PostCard
           key={`${item.id}-${idx}`}
-          {...MOCK_COMMUNITY_POST_DATA[idx]}
+          {...mockCommunityPostData[idx]}
           cardType={POST_CARD_TYPES.SMALL}
           isCategory={true}
           isAuthor={false}

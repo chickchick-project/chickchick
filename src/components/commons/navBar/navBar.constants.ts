@@ -58,7 +58,7 @@ export const NAV_ITEMS_FOOTER = [
   },
 ];
 
-export const MOCK_USER_INFO = {
+export const mockUserInfo = {
   id: "test-user2",
   nickname: "테스트유저",
   level: 1,

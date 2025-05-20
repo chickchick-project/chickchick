@@ -5,7 +5,7 @@ export interface CommunityPost {
 }
 
 // 질문게시판 더미 데이터
-export const questionBoard: CommunityPost[] = [
+export const mockQuestionPosts: CommunityPost[] = [
   { id: 1, title: "정당은 법률이 정하", commentCount: 10003 },
   {
     id: 2,
@@ -26,7 +26,7 @@ export const questionBoard: CommunityPost[] = [
 ];
 
 // 추천게시판 더미 데이터
-export const recommendBoard: CommunityPost[] = [
+export const mockRecommendPosts: CommunityPost[] = [
   { id: 1, title: "향수 추천 부탁드려요!", commentCount: 120 },
   { id: 2, title: "여름에 어울리는 시원한 향수 있을까요?", commentCount: 87 },
   { id: 3, title: "가성비 좋은 데일리 향수 추천", commentCount: 64 },
@@ -39,7 +39,7 @@ export const recommendBoard: CommunityPost[] = [
 ];
 
 // 자유게시판 더미 데이터
-export const freeBoard: CommunityPost[] = [
+export const mockFreePosts: CommunityPost[] = [
   { id: 1, title: "오늘 산 향수 언박싱 후기", commentCount: 43 },
   { id: 2, title: "향수 샘플 나눔합니다!", commentCount: 38 },
   { id: 3, title: "향수 뿌리는 꿀팁 공유해요", commentCount: 29 },
@@ -52,7 +52,7 @@ export const freeBoard: CommunityPost[] = [
 ];
 
 export const boardDataMap: { [key: string]: CommunityPost[] } = {
-  question: questionBoard,
-  recommendation: recommendBoard,
-  discussion: freeBoard,
+  question: mockQuestionPosts,
+  recommendation: mockRecommendPosts,
+  discussion: mockFreePosts,
 };

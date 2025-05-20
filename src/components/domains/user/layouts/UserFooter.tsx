@@ -3,8 +3,8 @@ import Image from "next/image";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { PostCard } from "@/components/commons/card/postCard";
 import ICONS from "@/lib/constants/icons";
-import { MOCK_PERFUME_CARD_DATA } from "@/lib/mocks/perfumeCard";
-import { MOCK_COMMUNITY_POST_DATA } from "@/lib/mocks/communityCard";
+import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
+import { mockCommunityPostData } from "@/lib/mocks/communityCard";
 
 const ScrollRowSection = ({
   title,
@@ -48,14 +48,14 @@ const UserFooter = () => {
         {Array.from({ length: 2 }).map((_, idx) => (
           <PostCard
             key={idx}
-            {...MOCK_COMMUNITY_POST_DATA[idx]}
+            {...mockCommunityPostData[idx]}
             isAuthor={false}
           />
         ))}
       </ScrollRowSection>
       <ScrollRowSection title="최근에 본 향수 10" gap="gap-x-[50px]">
         {Array.from({ length: 5 }).map((_, idx) => (
-          <PerfumeCard key={idx} {...MOCK_PERFUME_CARD_DATA} />
+          <PerfumeCard key={idx} {...mockPerfumeCardData} />
         ))}
       </ScrollRowSection>
     </div>

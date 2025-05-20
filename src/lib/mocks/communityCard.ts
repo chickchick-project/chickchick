@@ -11,7 +11,7 @@ export type TCommunityPost = {
   meta: PostMetaItem[];
 };
 
-export const MOCK_COMMUNITY_POST_DATA: TCommunityPost[] = [
+export const mockCommunityPostData: TCommunityPost[] = [
   {
     id: "1",
     title: "봄에 어울리는 향수 추천",

@@ -1,7 +1,7 @@
 import { REVIEW_STATUSES } from "@/components/commons/author/author.constants";
 import { ReviewCardProps } from "@/components/commons/card/reviewCard/reviewCard.types";
 
-export const MOCK_REVIEW_CARD_DATA: ReviewCardProps = {
+export const mockReviewCardData: ReviewCardProps = {
   brand: "르 라보",
   title: "떼 마차 26 EDP",
   review:

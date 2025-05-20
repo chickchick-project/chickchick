@@ -1,6 +1,6 @@
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
-export const MOCK_POST_CARD_DATA: PostCardProps = {
+export const mockPostCardData: PostCardProps = {
   id: "1",
   title: "봄에 어울리는 향수 추천",
   content: "따뜻한 봄날에 잘 어울리는 플로럴 계열 향수를 추천해요.",

@@ -5,13 +5,7 @@ import Link from "next/link";
 import { getRenderableTabItems } from "./tabs.helper";
 import { useUserStore } from "@/lib/stores/useUserStore";
 
-const MainTabs = ({
-  tab,
-  isMe,
-}: {
-  tab: string;
-  isMe?: boolean;
-}) => {
+const MainTabs = ({ tab, isMe }: { tab: string; isMe?: boolean }) => {
   const user = useUserStore((state) => state.user);
 
   if (!isMe && !user?.id) {
@@ -20,7 +14,7 @@ const MainTabs = ({
 
   const profileOwnerId = user?.id;
 
-  const tabItems = getRenderableTabItems(isMe, user);
+  const tabItems = getRenderableTabItems(isMe, user?.nickname);
 
   return (
     <div className="flex space-x-2 ml-10 mb-[-1px] z-10 relative h-[52px]">

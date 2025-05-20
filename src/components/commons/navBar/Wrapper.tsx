@@ -10,15 +10,13 @@ import { useUserStore } from "@/lib/stores/useUserStore";
 export default function NavBarWrapper() {
   const [openModal, setOpenModal] = useState(false);
   const currentPath = usePathname();
-  const { fetchUser } = useUserStore();
 
   const handleOpenModal = () => {
     setOpenModal((prev) => !prev);
   };
 
   useEffect(() => {
-    fetchUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useUserStore.getState().fetchUser();
   }, []);
 
   return (

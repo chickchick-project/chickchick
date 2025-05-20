@@ -4,6 +4,7 @@ import { users } from "@prisma/client";
 
 interface UserState {
   user: users | null;
+  isHydrated: boolean;
   fetchUser: () => Promise<void>;
   setUser: (user: users) => void;
   reset: () => void;
@@ -11,11 +12,12 @@ interface UserState {
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
+  isHydrated: false,
   setUser: (user) => set({ user }),
   fetchUser: async () => {
     try {
       const data = await fetchUserInfo();
-      set({ user: data as users });
+      set({ user: data as users, isHydrated: true });
     } catch {
       set({ user: null });
     }
