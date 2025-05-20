@@ -25,6 +25,9 @@ export async function fetchUserInfo() {
 }
 
 export async function fetchUserById(userId: string) {
+  if (!/^[0-9a-fA-F-]{36}$/.test(userId)) {
+    throw new Error("잘못된 사용자 ID 형식입니다.");
+  }
   const user = await prisma.users.findUnique({ where: { id: userId } });
 
   if (!user) throw new Error("사용자를 찾을 수 없습니다.");

@@ -1,8 +1,9 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
 import { TabData } from "@/components/domains/user/sections/sections.type";
+import { TAB_CONFIGS } from "@/components/domains/user/tabs/tabs.helper";
 import {
   fetchMockActivityData,
   fetchMockBookmarksData,
@@ -17,35 +18,41 @@ export default async function UserPage({
 }: {
   params: Promise<{ id: string; tap: string }>;
 }) {
-  const { tap, id } = await params; //pageowner id
+  const { tap, id: pageOwnerId } = await params; //pageowner id
   const session = await getSession(); //user id
   let user: users | null = null;
   try {
-    user = await fetchUserById(id);
+    user = await fetchUserById(pageOwnerId);
+    if (
+      !user ||
+      typeof user.id !== "string" ||
+      !/^[0-9a-fA-F-]{36}$/.test(user.id)
+    ) {
+      return notFound();
+    }
   } catch (error) {
     console.error("Error fetching user:", error);
-    throw new Error(
-      "사용자 정보를 가져오는데 실패했습니다. 잠시 후 다시 시도해주세요."
-    );
-  }
-
-  if (!user) {
-    return redirect("/");
+    return notFound();
   }
 
   let tabData: TabData;
 
   if (tap === "collection") {
-    tabData = { tap, data: await fetchMockCollectionData(id) };
+    tabData = { tap, data: await fetchMockCollectionData(pageOwnerId) };
   } else if (tap === "bookmarks") {
-    tabData = { tap, data: await fetchMockBookmarksData(id) };
+    tabData = { tap, data: await fetchMockBookmarksData(pageOwnerId) };
   } else if (tap === "activity") {
-    tabData = { tap, data: await fetchMockActivityData(id) };
+    tabData = { tap, data: await fetchMockActivityData(pageOwnerId) };
   } else {
     tabData = { tap: "profile", data: user };
   }
 
-  const isMe = session?.user?.id === id;
+  const isMe = session?.user?.id === pageOwnerId;
+  const requestedTabConfig = TAB_CONFIGS.find((config) => config.value === tap);
+
+  if (requestedTabConfig?.isMeOnly && !isMe) {
+    return notFound();
+  }
   return (
     <>
       <UserHeader user={user} />

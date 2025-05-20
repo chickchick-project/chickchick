@@ -1,6 +1,6 @@
 import { TabItemConfig } from "./tabs.type";
 
-const TAB_CONFIGS: TabItemConfig[] = [
+export const TAB_CONFIGS: TabItemConfig[] = [
   {
     getLabel: (isMe, nickname) =>
       !isMe && nickname ? (
