@@ -1,6 +1,7 @@
 "use server";
 
 import { getSession } from "@/lib/database/getSession";
+import { prisma } from "@/lib/prisma";
 import { supabase } from "@/lib/supabase/init";
 
 /**
@@ -21,6 +22,14 @@ export async function fetchUserInfo() {
   }
 
   return userData;
+}
+
+export async function fetchUserById(userId: string) {
+  const user = await prisma.users.findUnique({ where: { id: userId } });
+
+  if (!user) throw new Error("사용자를 찾을 수 없습니다.");
+
+  return user;
 }
 
 /**

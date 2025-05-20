@@ -11,19 +11,21 @@ import {
   CollectionItem,
   TabData,
 } from "./sections/sections.type";
-import { useUserStore } from "@/lib/stores/useUserStore";
 import { users } from "@prisma/client";
 
 interface PageClientProps {
+  pageOwner: users;
+  isMe: boolean;
   tap: TabData["tap"];
   data: TabData["data"];
 }
 
-export default function ClientComponent({ tap, data }: PageClientProps) {
-  const user = useUserStore((state) => state.user);
-
-  const isMe = user?.id === user?.id;
-
+export default function ClientComponent({
+  pageOwner,
+  isMe,
+  tap,
+  data,
+}: PageClientProps) {
   function isCollectionData(
     data: TabData["data"],
     tap: TabData["tap"]
@@ -53,7 +55,7 @@ export default function ClientComponent({ tap, data }: PageClientProps) {
   }
   return (
     <>
-      <MainTabs isMe={isMe} tab={tap} />
+      <MainTabs isMe={isMe} pageOwner={pageOwner} tab={tap} />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
         {isCollectionData(data, tap) && <CollectionSection data={data} />}
         {isBookmarkData(data, tap) && (

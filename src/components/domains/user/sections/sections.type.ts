@@ -12,9 +12,9 @@ export type CommunityBookmark = {
 };
 
 export type CollectionItem = {
-  id: number;
-  name: string;
-  imageHeight?: number;
+  id: string | number;
+  imageUrl: string;
+  title: string;
 };
 
 export type BookmarkData = {

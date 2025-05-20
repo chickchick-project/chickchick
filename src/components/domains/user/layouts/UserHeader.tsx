@@ -7,8 +7,7 @@ import { mockUserInfo } from "@/components/commons/navBar/navBar.constants";
 import { users } from "@prisma/client";
 
 const UserHeader = ({ user }: { user: users }) => {
-  console.log(user);
-  const profileImageSrc = DEFAULT_PROFILE_IMAGE;
+  const profileImageSrc = user.image_url || DEFAULT_PROFILE_IMAGE;
   return (
     <header className="ml-10 mb-16 flex items-center gap-4">
       <div className="flex items-center gap-5">

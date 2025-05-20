@@ -40,12 +40,15 @@ const TAB_CONFIGS: TabItemConfig[] = [
 ];
 
 const getRenderableTabItems = (isMe?: boolean, nickname?: string) => {
-  return TAB_CONFIGS.filter((config) => isMe || !config.isMeOnly).map(
-    (config) => ({
-      label: config.getLabel(isMe, nickname),
-      value: config.value,
-    })
-  );
+  return TAB_CONFIGS.filter((config) => {
+    if (!isMe) {
+      return ["collection", "bookmarks"].includes(config.value);
+    }
+    return true;
+  }).map((config) => ({
+    label: config.getLabel(isMe, nickname),
+    value: config.value,
+  }));
 };
 
 export { getRenderableTabItems };
