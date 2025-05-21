@@ -8,6 +8,7 @@ import { InteractionStates } from "./overview/perfumeInfo";
 import { PerfumeRecentViewList } from "./recentViewList";
 import { PerfumeReview } from "./review";
 import { PerfumeDetailSidebar } from "./sidebar";
+import { MobileSeparator } from "@/components/commons/mobileSeparator";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
@@ -41,14 +42,14 @@ export const DetailClient = ({
           onToggleInteraction={toggleInteraction}
         />
       </section>
-      <hr className="w-full h-2 bg-gray-300 pc:h-px pc:bg-gray-200 my-10 border-0" />
+      <MobileSeparator className="pc:h-px pc:bg-gray-200" mobileOnly={false} />
       <section className="w-full flex flex-col pc:flex-row pc:justify-between">
         <div className="flex flex-col pc:gap-[60px]">
           <PerfumeReview />
-          <hr className="w-full h-2 bg-gray-300 my-10 border-0 pc:hidden" />
+          <MobileSeparator />
           <PerfumeRecentViewList />
         </div>
-        <hr className="w-full h-2 bg-gray-300 my-10 border-0 pc:hidden" />
+        <MobileSeparator />
         <PerfumeDetailSidebar />
       </section>
       <section className="w-full fixed bottom-0 tablet:hidden">
