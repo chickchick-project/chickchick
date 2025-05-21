@@ -2,7 +2,6 @@
 
 import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
 import { PerfumeInfoHeader } from "./header";
-import { useState } from "react";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
@@ -14,28 +13,20 @@ export type InteractionStates = {
   bookmarked: boolean;
 };
 
+interface PerfumeInfoProps {
+  perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
+  interactionStates: InteractionStates;
+  onToggleInteraction: (type: keyof InteractionStates) => void;
+}
+
 export const PerfumeInfo = ({
   perfumeInfo,
-}: {
-  perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
-}) => {
+  interactionStates,
+  onToggleInteraction,
+}: PerfumeInfoProps) => {
   const { name, brand, officialUrl, accords, notes } = perfumeInfo;
   const isAccordAvailable = accords.length !== 0;
   const isNoteAvailable = notes.length !== 0;
-
-  const [interactionStates, setInteractionStates] = useState<InteractionStates>(
-    {
-      liked: false,
-      bookmarked: false,
-    }
-  );
-
-  const toggleInteraction = (type: keyof InteractionStates) => {
-    setInteractionStates((prev) => ({
-      ...prev,
-      [type]: !prev[type],
-    }));
-  };
 
   return (
     <section className="w-full flex flex-col justify-between gap-10 tablet:gap-5">
@@ -44,7 +35,7 @@ export const PerfumeInfo = ({
           perfumeName={name}
           brandName={brand}
           interactionStates={interactionStates}
-          onToggleInteraction={toggleInteraction}
+          onToggleInteraction={onToggleInteraction}
         />
         {isAccordAvailable && <PerfumeInfoMainAccord accords={accords} />}
         {isNoteAvailable && <PerfumeInfoNote notes={notes} />}
