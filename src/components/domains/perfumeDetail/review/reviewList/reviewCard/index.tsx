@@ -40,7 +40,7 @@ export const ReviewCard = ({
   }, [tags.length]);
 
   return (
-    <div className="shadow-card rounded-xl p-6 flex flex-col gap-4">
+    <div className="tablet:shadow-card tablet:rounded-xl py-6 px-5 tablet:px-6 flex flex-col gap-4">
       <header className="flex justify-between">
         <AuthorInfo
           size="large"
@@ -64,14 +64,14 @@ export const ReviewCard = ({
           ref={contentRef}
           className={clsx(
             isExpanded ? "" : "line-clamp-3",
-            "text-black-100 font-medium text-body-2 leading-[150%]"
+            "text-black-100 font-medium text-label-1 tablet:text-body-2 leading-[150%]"
           )}
         >
           {content}
         </p>
         {isContentClamped && (
           <button
-            className="w-full text-black-300 font-medium text-label-1 text-right"
+            className="w-full text-black-300 font-medium text-label-3 tablet:text-label-1 text-right"
             onClick={() => setIsExpanded(!isExpanded)}
           >
             {isExpanded ? "접기" : "더보기"}

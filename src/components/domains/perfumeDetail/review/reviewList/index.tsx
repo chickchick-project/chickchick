@@ -50,9 +50,12 @@ export const ReviewList = () => {
   return (
     <section className="flex flex-col gap-5">
       <SectionTitle itemCount="587">리뷰</SectionTitle>
-      <ul className="flex flex-col gap-6">
+      <ul className="flex flex-col tablet:gap-6 tablet:px-5 pc:px-0">
         {mockReviews.map((review) => (
-          <li key={review.id}>
+          <li
+            key={review.id}
+            className="last:border-0 border-b border-gray-200 tablet:border-0"
+          >
             <ReviewCard
               content={review.content}
               tags={review.tags}
@@ -64,7 +67,9 @@ export const ReviewList = () => {
           </li>
         ))}
       </ul>
-      <ButtonFilledGrayLFull>더보기</ButtonFilledGrayLFull>
+      <div className="px-5 pc:px-0">
+        <ButtonFilledGrayLFull>더보기</ButtonFilledGrayLFull>
+      </div>
     </section>
   );
 };
