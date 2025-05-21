@@ -1,6 +1,7 @@
 "use client";
 
 import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { SectionTitle } from "@/components/commons/sectionTitle";
 
 export const PerfumeRecentViewList = () => {
   const mockPerfumes = [
@@ -32,10 +33,8 @@ export const PerfumeRecentViewList = () => {
 
   return (
     <section>
-      <h2 className="pl-5 pc:pl-0 text-black-100 font-semibold text-title-2 tablet:text-headline-2 mb-5">
-        최근 본 향수
-      </h2>
-      <ul className="pl-5 pc:pl-0 flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0">
+      <SectionTitle>최근 본 향수</SectionTitle>
+      <ul className="pl-5 pc:pl-0 flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0 pt-4 pc:pt-5">
         {mockPerfumes.map((perfume) => (
           <li key={perfume.id}>
             <PerfumeCard

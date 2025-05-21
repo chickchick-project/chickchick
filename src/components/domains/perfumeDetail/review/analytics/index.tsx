@@ -1,13 +1,12 @@
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewBarSection } from "./ReviewBarSection";
 import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
+import { SectionTitle } from "@/components/commons/sectionTitle";
 
 export const ReviewAnalytics = () => {
   return (
     <section className="flex flex-col gap-4 tablet:gap-5 w-full">
-      <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2">
-        리뷰 한눈에 보기
-      </h2>
+      <SectionTitle>리뷰 한눈에 보기</SectionTitle>
       <section className="hidden tablet:flex flex-col gap-5">
         <ReviewDoughnutSection />
         <ReviewBarSection />

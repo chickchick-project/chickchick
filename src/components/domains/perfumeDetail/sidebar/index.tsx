@@ -1,6 +1,7 @@
 import React from "react";
 import { PostCard } from "@/components/commons/card/postCard";
 import { CATEGORY_TYPES, POST_CARD_TYPES } from "@/lib/constants/post";
+import { SectionTitle } from "@/components/commons/sectionTitle";
 
 export const PerfumeDetailSidebar = () => {
   const mockPosts = [
@@ -84,9 +85,7 @@ export const PerfumeDetailSidebar = () => {
 
   return (
     <section>
-      <h2 className="pl-5 pc:pl-0 font-semibold text-black-100 text-title-2 tablet:text-headline-2">
-        이 향수, 커뮤니티에서는?
-      </h2>
+      <SectionTitle>이 향수, 커뮤니티에서는?</SectionTitle>
       <ul className="pl-5 pc:pl-0 flex gap-4 pb-5 overflow-x-auto pc:overflow-x-visible pc:flex-col pc:gap-6 scrollbar-hide pr-5 pc:pr-0 pt-4 tablet:pt-5">
         {mockPosts.map((post) => (
           <li key={post.id}>

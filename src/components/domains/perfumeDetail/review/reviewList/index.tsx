@@ -1,5 +1,6 @@
 import { ButtonFilledGrayLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewCard } from "./reviewCard";
+import { SectionTitle } from "@/components/commons/sectionTitle";
 
 const mockReviews = [
   {
@@ -48,9 +49,7 @@ const mockReviews = [
 export const ReviewList = () => {
   return (
     <section className="flex flex-col gap-5">
-      <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2">
-        리뷰 587
-      </h2>
+      <SectionTitle itemCount="587">리뷰</SectionTitle>
       <ul className="flex flex-col gap-6">
         {mockReviews.map((review) => (
           <li key={review.id}>
