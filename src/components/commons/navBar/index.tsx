@@ -22,44 +22,42 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
 
   return (
     <>
-      <header
-        ref={navBarRef}
-        className="flex justify-between items-center py-5 px-7 w-full h-20 relative"
-      >
-        {/* 로고 */}
-        <div>
-          {currentPath !== NAV_PATHS.HOME && (
-            <Link href={NAV_PATHS.HOME}>
-              <Image
-                src={IMAGES.Logo.src}
-                width={108}
-                height={40}
-                alt="logo"
-                className="size-auto"
-              />
-            </Link>
-          )}
-        </div>
+      <header ref={navBarRef} className="max-w-[1200px] mx-auto">
+        <div className="flex justify-between items-center py-5 px-7 h-20 relative">
+          {/* 로고 */}
+          <div>
+            {currentPath !== NAV_PATHS.HOME && (
+              <Link href={NAV_PATHS.HOME}>
+                <Image
+                  src={IMAGES.Logo.src}
+                  width={108}
+                  height={40}
+                  alt="logo"
+                  className="size-auto"
+                />
+              </Link>
+            )}
+          </div>
 
-        {/* 네비게이션 */}
-        <nav>
-          <ul className="flex gap-4 items-center">
-            <li className="divider-vertical">
-              <Link
-                href={NAV_PATHS.PERFUMES}
-                className={selectedLink(NAV_PATHS.PERFUMES)}
-              >
-                {NAV_LABELS.PERFUMES}
-              </Link>
-            </li>
-            <li className="divider-vertical">
-              <Link
-                href={NAV_PATHS.COMMUNITY}
-                className={selectedLink(NAV_PATHS.COMMUNITY)}
-              >
-                {NAV_LABELS.COMMUNITY}
-              </Link>
-            </li>
+          {/* 네비게이션 */}
+          <nav>
+            <ul className="flex gap-4 items-center">
+              <li className="divider-vertical">
+                <Link
+                  href={NAV_PATHS.PERFUMES}
+                  className={selectedLink(NAV_PATHS.PERFUMES)}
+                >
+                  {NAV_LABELS.PERFUMES}
+                </Link>
+              </li>
+              <li className="divider-vertical">
+                <Link
+                  href={NAV_PATHS.COMMUNITY}
+                  className={selectedLink(NAV_PATHS.COMMUNITY)}
+                >
+                  {NAV_LABELS.COMMUNITY}
+                </Link>
+              </li>
 
             {/* 로그인 / 프로필 버튼 */}
             <li
