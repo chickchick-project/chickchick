@@ -1,5 +1,6 @@
 import { ButtonFilledGrayLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewCard } from "./reviewCard";
+import { SectionTitle } from "@/components/commons/sectionTitle";
 
 const mockReviews = [
   {
@@ -48,12 +49,13 @@ const mockReviews = [
 export const ReviewList = () => {
   return (
     <section className="flex flex-col gap-5">
-      <h2 className="text-black-100 font-semibold text-title-2 tablet:text-headline-2">
-        리뷰 587
-      </h2>
-      <ul className="flex flex-col gap-6">
+      <SectionTitle itemCount="587">리뷰</SectionTitle>
+      <ul className="flex flex-col tablet:gap-6 tablet:px-5 pc:px-0">
         {mockReviews.map((review) => (
-          <li key={review.id}>
+          <li
+            key={review.id}
+            className="last:border-0 border-b border-gray-200 tablet:border-0"
+          >
             <ReviewCard
               content={review.content}
               tags={review.tags}
@@ -65,7 +67,9 @@ export const ReviewList = () => {
           </li>
         ))}
       </ul>
-      <ButtonFilledGrayLFull>더보기</ButtonFilledGrayLFull>
+      <div className="px-5 pc:px-0">
+        <ButtonFilledGrayLFull>더보기</ButtonFilledGrayLFull>
+      </div>
     </section>
   );
 };

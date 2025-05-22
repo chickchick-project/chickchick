@@ -20,7 +20,7 @@ const DEFAULT_LABEL: Record<ActionType, string> = {
 };
 
 const ACTION_SIZE_STYLES = {
-  [ACTION_SIZES.DEFAULT]: "text-label-1",
+  [ACTION_SIZES.DEFAULT]: "text-label-3 tablet:text-label-1",
   [ACTION_SIZES.LARGE]: "text-body-1",
 };
 
