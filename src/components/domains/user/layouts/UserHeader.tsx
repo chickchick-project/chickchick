@@ -14,7 +14,7 @@ const UserHeader = ({ user }: { user: users }) => {
         <Image src={profileImageSrc} width={140} height={140} alt="프로필" />
         <div className="flex flex-col my-[7px] gap-1">
           <LevelChip level={mockUserInfo.level} />
-          <span className="text-headline-1 font-bold">{user?.nickname}</span>
+          <span className="text-headline-1 font-bold">{user.nickname}</span>
           <div className="flex text-body-1 font-semibold text-black-100 gap-x-5">
             <span>글 123개</span>
             <span>리뷰 123개</span>

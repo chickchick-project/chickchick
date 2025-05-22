@@ -14,7 +14,6 @@ export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
     const extended = Array.from({ length: 10 }).flatMap(() => data);
     const withHeights = extended.map((item) => ({
       ...item,
-      imageHeight: item.imageHeight ?? Math.floor(Math.random() * 200) + 150,
     }));
     setExtendedDataWithHeights(withHeights);
   }, [data]);
@@ -29,13 +28,15 @@ export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
             <div
               key={`${item.id}-${index}`}
               className="break-inside-avoid mb-4 relative"
-              style={{ height: `${item.imageHeight}px` }}
+              style={{ height: `${Math.floor(Math.random() * 200) + 150}px` }}
             >
               <Image
                 src={`https://picsum.photos/seed/${item.id}-${index}/300`}
                 alt="collection"
                 className="w-full h-auto rounded-md bg-gray-100"
                 fill
+                sizes="25vw"
+                priority={index === 0}
               />
             </div>
           ))}
