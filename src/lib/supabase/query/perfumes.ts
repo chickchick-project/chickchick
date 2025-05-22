@@ -52,7 +52,10 @@ export async function fetchPerfumesWithBanner(
   });
 
   if (error) {
-    throw new Error(error.message);
+    // TODO: 향수 데이터 채워지면 error 처리 필요
+    // throw new Error(error.message);
+
+    return [];
   }
 
   return data;

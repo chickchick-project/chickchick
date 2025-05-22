@@ -30,7 +30,8 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         {/* 프로필 */}
         <div className="flex flex-col items-center gap-2">
           <Image
-            src={"/images/profile.svg"}
+            src={user?.image_url ? user.image_url : "/images/profile.svg"}
+            className="rounded-full"
             width={80}
             height={80}
             alt="프로필"
