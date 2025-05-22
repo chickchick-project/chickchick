@@ -1,25 +1,38 @@
 "use server";
 
 import { getSession } from "@/lib/database/getSession";
+import { prisma } from "@/lib/prisma";
 import { supabase } from "@/lib/supabase/init";
 
 /**
  * 현재 로그인한 사용자 정보 가져오기
  */
 export async function fetchUserInfo() {
-  const data = await getSession();
+  const session = await getSession();
+  if (!session?.user?.id) return;
 
   const { data: userData, error } = await supabase
     .from("users")
     .select("*")
-    .eq("id", data?.user?.id)
+    .eq("id", session?.user?.id)
     .single();
 
   if (error) {
-    location.replace("/");
+    throw error;
   }
 
   return userData;
+}
+
+export async function fetchUserById(userId: string) {
+  if (!/^[0-9a-fA-F-]{36}$/.test(userId)) {
+    throw new Error("잘못된 사용자 ID 형식입니다.");
+  }
+  const user = await prisma.users.findUnique({ where: { id: userId } });
+
+  if (!user) throw new Error("사용자를 찾을 수 없습니다.");
+
+  return user;
 }
 
 /**

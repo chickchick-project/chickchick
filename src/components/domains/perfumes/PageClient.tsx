@@ -7,8 +7,11 @@ import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
-import { withCache } from "@/lib/utils/withCache";
-import { getUniquePerfumes, createQueryKey, adaptedFetchPerfumes } from "./perfumes.helpers";
+import {
+  getUniquePerfumes,
+  createQueryKey,
+  adaptedFetchPerfumes,
+} from "./perfumes.helpers";
 
 import { PerfumeSection } from "./section/PerfumeSection";
 import { BrandSection } from "./section/BrandSection";
@@ -50,15 +53,20 @@ export default function PageClient({
   };
 
   // 검색 파라미터 생성 (메모이제이션)
-  const query: string = useMemo(() => createQueryKey(searchKeyword, filters), [searchKeyword, filters]);
-
-  // 무한 스크롤 훅 사용
-  const fetcher = useMemo(
-    () => withCache((cursor: string | null) => adaptedFetchPerfumes(cursor, searchKeyword, filters)),
+  const query: string = useMemo(
+    () => createQueryKey(searchKeyword, filters),
     [searchKeyword, filters]
   );
 
-  const { data, totalCount, isLoading, moreRef, isIdle } = useInfiniteScroll<Perfume>(fetcher, query);
+  // 무한 스크롤 훅 사용
+  const fetcher = useMemo(
+    () => (cursor: string | null) =>
+      adaptedFetchPerfumes(cursor, searchKeyword, filters),
+    [searchKeyword, filters]
+  );
+
+  const { data, totalCount, isLoading, moreRef, isIdle } =
+    useInfiniteScroll<Perfume>(fetcher, query);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
@@ -90,12 +98,19 @@ export default function PageClient({
       <main className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
           <span className="text-headline-2 font-semibold">
-            {searchKeyword ? `'${searchKeyword}'에 대한 검색 결과` : "현재 인기있는 향수들이에요!"}
+            {searchKeyword
+              ? `'${searchKeyword}'에 대한 검색 결과`
+              : "현재 인기있는 향수들이에요!"}
           </span>
           <SortDropdown type="perfume" />
         </div>
         {matchedBrand && <BrandSection brandName={matchedBrand} />}
-        <PerfumeSection perfumes={uniquePerfumes} isLoading={isLoading} isIdle={isIdle} moreRef={moreRef} />
+        <PerfumeSection
+          perfumes={uniquePerfumes}
+          isLoading={isLoading}
+          isIdle={isIdle}
+          moreRef={moreRef}
+        />
       </main>
     </div>
   );

@@ -12,4 +12,4 @@ interface PerfumeCardProps {
   onClose?: () => void;
 }
 
-export { type PerfumeCardType, type PerfumeCardProps };
+export type { PerfumeCardType, PerfumeCardProps };

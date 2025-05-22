@@ -3,28 +3,8 @@ import BoardChip from "../../chip/BoardChip";
 import PostMeta from "../../author/PostMeta";
 import Thumbnail from "./Thumbnail";
 
-import {
-  POST_CARD_STYLES,
-  POST_CARD_TYPES,
-  CategoryType,
-  PostCardType,
-} from "@/lib/constants/post";
-import { PostMetaItem } from "../../author/author.types";
-
-export interface PostCardProps {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
-  meta: PostMetaItem[];
-  thumbnail?: string;
-  isCategory?: boolean;
-  categoryType: CategoryType;
-  cardType?: PostCardType;
-  profileImage?: string;
-  isAuthor: boolean;
-}
+import { POST_CARD_STYLES, POST_CARD_TYPES } from "./postCard.constants";
+import { PostCardProps } from "./postCard.types";
 
 export function PostCard({
   title,

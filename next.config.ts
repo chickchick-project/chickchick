@@ -12,9 +12,11 @@ const nextConfig: NextConfig = {
         hostname: "i.ibb.co",
         pathname: "/**",
       },
+
       {
         protocol: "https",
         hostname: "picsum.photos",
+        pathname: "/**",
       },
       {
         protocol: "https",

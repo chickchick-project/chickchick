@@ -142,7 +142,7 @@ model users {
   id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String
   auth_id          String             @unique @db.Uuid
-  email            String             @unique
+  email            String?            @unique
   nickname         String             @unique
   age              Int?
   gender           String?
