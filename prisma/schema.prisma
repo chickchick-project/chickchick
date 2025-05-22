@@ -142,13 +142,14 @@ model users {
   id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String
   auth_id          String             @unique @db.Uuid
-  email            String             @unique
+  email            String?            @unique
   nickname         String             @unique
   age              Int?
   gender           String?
   created_at       DateTime?          @default(now()) @db.Timestamp(6)
   is_active        Boolean?           @default(true)
   role             String?            @default("user")
+  image_url        String?
   user_activity    user_activity[]
   user_bookmarks   user_bookmarks[]
   user_collections user_collections[]
