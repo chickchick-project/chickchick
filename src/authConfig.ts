@@ -92,13 +92,13 @@ export const authConfig = {
         return true;
       }
 
-      // TODO: kakao email 받아오는 권한 없음. 보류
+      // TODO: kakao email 받아오는 권한 없음. 보류(임시로 기존회원 이름으로 구별)
       if (account?.provider === "kakao") {
-        const { name, email, image } = user;
+        const { name, image } = user;
         const { data: existingUser, error } = await supabase
           .from("users")
           .select("*")
-          .eq("email", email)
+          .eq("name", name)
           .single();
 
         if (error) console.error(error.message);
@@ -111,7 +111,6 @@ export const authConfig = {
               {
                 name,
                 auth_id,
-                email,
                 image_url: image,
                 nickname: name,
               },
