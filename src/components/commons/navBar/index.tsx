@@ -59,43 +59,44 @@ export default function NavBar({ currentPath, onLogin }: NavBarProps) {
                 </Link>
               </li>
 
-            {/* 로그인 / 프로필 버튼 */}
-            <li
-              className={`w-[120px] pl-6 relative flex items-center gap-2 transition-opacity duration-300 ${
-                isHydrated ? "opacity-100 visible" : "opacity-0 invisible"
-              }`}
-            >
-              {!user ? (
-                <button
-                  className="text-body-2 font-medium text-black-300"
-                  onClick={onLogin}
-                >
-                  {NAV_LABELS.LOGIN}
-                </button>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <Image
-                    src={
-                      user.image_url ? user.image_url : "/images/profile.svg"
-                    }
-                    className="rounded-full"
-                    width={36}
-                    height={36}
-                    alt="User"
-                  />
-                  <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-                    <Image
-                      src={ICONS.ArrowDownGray.src}
-                      width={16}
-                      height={16}
-                      alt="Down"
-                    />
+              {/* 로그인 / 프로필 버튼 */}
+              <li
+                className={`w-[120px] pl-6 relative flex items-center gap-2 transition-opacity duration-300 ${
+                  isHydrated ? "opacity-100 visible" : "opacity-0 invisible"
+                }`}
+              >
+                {!user ? (
+                  <button
+                    className="text-body-2 font-medium text-black-300"
+                    onClick={onLogin}
+                  >
+                    {NAV_LABELS.LOGIN}
                   </button>
-                </div>
-              )}
-            </li>
-          </ul>
-        </nav>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={
+                        user.image_url ? user.image_url : "/images/profile.svg"
+                      }
+                      className="rounded-full"
+                      width={36}
+                      height={36}
+                      alt="User"
+                    />
+                    <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
+                      <Image
+                        src={ICONS.ArrowDownGray.src}
+                        width={16}
+                        height={16}
+                        alt="Down"
+                      />
+                    </button>
+                  </div>
+                )}
+              </li>
+            </ul>
+          </nav>
+        </div>
       </header>
 
       {/* 드롭다운을 NavBar의 바로 아래에 배치 */}
