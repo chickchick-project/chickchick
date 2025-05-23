@@ -10,7 +10,8 @@ datasource db {
 
 model Brand {
   id          String    @id @default(uuid()) @db.Uuid
-  name        Json
+  nameKo      String?   @unique @map("name_ko")
+  nameEn      String    @unique @map("name_en")
   description String?
   imageUrl    String?   @map("image_url")
   mapLocation Json?     @map("map_location")
@@ -50,7 +51,8 @@ model PerfumeNote {
 
 model Perfume {
   id               String                 @id @default(uuid()) @db.Uuid
-  name             Json
+  nameKo           String?                @unique @map("name_ko")
+  nameEn           String                 @unique @map("name_en")
   brandId          String                 @map("brand_id") @db.Uuid
   imageUrl         String?                @map("image_url")
   officialUrl      String?                @map("official_url")
@@ -98,6 +100,8 @@ model User {
   activities  UserActivity[]   @relation("UserToActivities")
   bookmarks   UserBookmark[]   @relation("UserToBookmarks")
   collections UserCollection[] @relation("UserToCollections")
+
+  posts Post[] @relation("UserPosts")
 
   @@map("users")
 }
@@ -192,4 +196,30 @@ model UserCollection {
 
   @@unique([userId, perfumeId], name: "user_collection_unique_constraint")
   @@map("user_collections")
+}
+
+enum PostCategory {
+  QUESTION
+  FREEBOARD
+  RECOMMENDATION
+}
+
+model Post {
+  id           String       @id @default(uuid()) @db.Uuid
+  title        String
+  content      String
+  userId       String       @map("user_id") @db.Uuid
+  category     PostCategory @default(FREEBOARD)
+  published    Boolean      @default(true)
+  viewCount    Int          @default(0) @map("view_count")
+  likeCount    Int          @default(0) @map("like_count")
+  commentCount Int          @default(0) @map("comment_count")
+  thumbnailUrl String?      @map("thumbnail_url")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  author User @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("posts")
 }
