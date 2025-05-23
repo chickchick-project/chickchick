@@ -5,18 +5,20 @@ import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
 import FilterList from "./FilterList";
+import { usePathname } from "next/navigation";
 
 export default function PerFumeFilter({
   brands,
   notes,
   accords,
-  isBrandPage = false,
 }: {
   brands?: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
-  isBrandPage?: boolean;
 }) {
+  const pathname = usePathname();
+  const isBrandPage = pathname.includes("brand");
+
   const filterOptions = useMemo(
     () => ({
       gender: GENDER_OPTIONS.map(toOption),
