@@ -63,6 +63,8 @@ model Perfume {
   noteMappings     PerfumeNoteMapping[]   @relation("PerfumeToNoteMappings")
   collectedByUsers UserCollection[]       @relation("PerfumeToUserCollections")
 
+  reviews Review[] @relation("PerfumeToReviews")
+
   @@map("perfumes")
 }
 
@@ -101,7 +103,9 @@ model User {
   bookmarks   UserBookmark[]   @relation("UserToBookmarks")
   collections UserCollection[] @relation("UserToCollections")
 
-  posts Post[] @relation("UserPosts")
+  posts   Post[]   @relation("UserToPosts")
+  reviews Review[] @relation("UserToReviews")
+  comments Comment[] @relation("UserToComments")
 
   @@map("users")
 }
@@ -219,7 +223,62 @@ model Post {
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  author User @relation("UserPosts", fields: [userId], references: [id], onDelete: Cascade)
+  author User @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
+}
+
+enum PerfumeUsageStatus {
+  CURRENTLY_USING   // 현재 사용 중
+  USED_BEFORE       // 사용했었음 (지금은 안 씀)
+  NOT_USED_YET      // 아직 사용 안 해봄 (또는 위시리스트, 시향만 해봄 등)
+}
+
+model Review {
+  id        String  @id @default(uuid()) @db.Uuid
+  title     String
+  content   String  @db.Text
+  authorId  String  @map("author_id") @db.Uuid
+  perfumeId String @map("perfume_id") @db.Uuid
+
+  usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
+
+  tags      String[]
+  imageUrl  String?   @map("image_url")
+
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  author  User     @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  perfume Perfume  @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}
+
+enum CommentTargetType {
+  POST
+  REVIEW
+}
+
+model Comment {
+  id          String    @id @default(uuid()) @db.Uuid
+  content     String    @db.Text
+  authorId    String    @map("author_id") @db.Uuid
+
+  targetType  CommentTargetType @map("target_type")
+  targetId    String    @map("target_id") @db.Uuid
+
+  parentId    String?   @map("parent_id") @db.Uuid
+
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  author      User      @relation("UserToComments", fields: [authorId], references: [id], onDelete: Cascade)
+  parent      Comment?  @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentToReplies")
+
+  @@map("comments")
+
+  @@index([targetType, targetId, createdAt])
+  @@index([parentId, createdAt])
 }
