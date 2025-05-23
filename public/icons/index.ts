@@ -27,6 +27,9 @@ import View from "./meta/View.svg";
 import CloseCircle from "./CloseCircle.svg";
 import Reply from "./Reply.svg";
 
+import SwiperLeftButton from "./SwiperLeftButton.svg";
+import SwiperRightButton from "./SwiperRightButton.svg";
+
 export {
   ArrowDownGray,
   ArrowDownPrimary,
@@ -50,4 +53,6 @@ export {
   View,
   CloseCircle,
   Reply,
+  SwiperLeftButton,
+  SwiperRightButton,
 };

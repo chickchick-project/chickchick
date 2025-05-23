@@ -21,6 +21,8 @@ import {
   ArrowRightGray,
   GlobePrimary,
   Reply,
+  SwiperLeftButton,
+  SwiperRightButton,
 } from "../../../public/icons";
 
 export type TIcon = {
@@ -51,6 +53,8 @@ const ICONS: { [key: string]: TIcon } = {
   View: { src: View, alt: "view" },
   CloseCircle: { src: CloseCircle, alt: "close" },
   Reply: { src: Reply, alt: "reply" },
+  SwiperLeftButton: { src: SwiperLeftButton, alt: "swiper left" },
+  SwiperRightButton: { src: SwiperRightButton, alt: "swiper right" },
 };
 
 export default ICONS;
