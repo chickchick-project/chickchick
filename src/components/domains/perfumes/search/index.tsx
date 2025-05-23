@@ -4,12 +4,13 @@ import { SearchBar } from "@/components/commons/search/SearchBar";
 import PerFumeFilter from "@/components/domains/perfumes/filter";
 
 interface SearchHeaderProps {
-  inputValue: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e?: FormEvent) => void;
-  brands: brands[];
+  inputValue?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  onSubmit?: (e?: FormEvent) => void;
+  brands?: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
+  isSearch?: boolean;
 }
 
 export function SearchHeader({
@@ -19,13 +20,25 @@ export function SearchHeader({
   brands,
   notes,
   accords,
+  isSearch = true,
 }: SearchHeaderProps) {
   return (
     <header className="w-full px-4">
       <div className="flex flex-col items-center max-w-[1200px] mx-auto my-10">
-        <SearchBar value={inputValue} onChange={onChange} onClick={onSubmit} />
+        {isSearch && (
+          <SearchBar
+            value={inputValue}
+            onChange={onChange}
+            onClick={onSubmit}
+          />
+        )}
         <nav className="w-full mt-7">
-          <PerFumeFilter brands={brands} notes={notes} accords={accords} />
+          <PerFumeFilter
+            brands={brands}
+            notes={notes}
+            accords={accords}
+            isBrandPage={true}
+          />
         </nav>
       </div>
     </header>

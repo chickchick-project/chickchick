@@ -10,18 +10,21 @@ export default function PerFumeFilter({
   brands,
   notes,
   accords,
+  isBrandPage = false,
 }: {
-  brands: brands[];
+  brands?: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
+  isBrandPage?: boolean;
 }) {
   const filterOptions = useMemo(
     () => ({
       gender: GENDER_OPTIONS.map(toOption),
-      brand: brands.map(toOption),
+      ...(!isBrandPage && { brand: brands?.map(toOption) }),
       notes: notes.map(toOption),
       accords: accords.map(toOption),
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [brands, notes, accords]
   );
 
@@ -34,7 +37,7 @@ export default function PerFumeFilter({
             key={category}
             category={category}
             label={getLabel(category)}
-            options={filterOptions[category]}
+            options={filterOptions[category] ?? []}
           />
         ))}
       </div>

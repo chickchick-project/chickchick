@@ -7,7 +7,7 @@ import ListModal from "../modal/ListModal";
 
 type FilterOptions = {
   gender: Option[];
-  brand: Option[];
+  brand?: Option[];
   notes: Option[];
   accords: Option[];
 };
