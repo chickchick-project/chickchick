@@ -8,8 +8,6 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-// Master Tables
-
 model Brand {
   id          String    @id @default(uuid()) @db.Uuid
   name        Json
