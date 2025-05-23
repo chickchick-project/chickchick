@@ -15,7 +15,6 @@ model brands {
   image_url                String?
   map_location             Json?
   perfumes                 perfumes[]
-  temp_brand_official_urls temp_brand_official_urls[]
 }
 
 model perfume_accords {
@@ -44,7 +43,6 @@ model perfumes {
   brands                     brands                       @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfumes_accords_map       perfumes_accords_map[]
   perfumes_notes_map         perfumes_notes_map[]
-  temp_perfumes_official_url temp_perfumes_official_url[]
   user_collections           user_collections[]
 }
 
@@ -81,27 +79,6 @@ model raw_perfumes {
   notes           Json?
   add_description String?
   created_at      DateTime? @default(now()) @db.Timestamp(6)
-}
-
-model temp_brand_official_urls {
-  id           String  @id(map: "brand_official_links_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  brand_id     String  @db.Uuid
-  official_url String?
-  brands       brands  @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "brand_official_links_brand_id_fkey")
-}
-
-model temp_perfume_image_migration {
-  id            String  @id(map: "perfume_image_migration_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  perfume_name  String
-  old_image_url String
-  new_image_url String?
-}
-
-model temp_perfumes_official_url {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  perfume_id   String?   @db.Uuid
-  official_url String?
-  perfumes     perfumes? @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
