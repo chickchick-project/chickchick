@@ -94,8 +94,7 @@ model User {
   nickname    String           @unique
   age         Int?
   gender      Gender           @default(UNKNOWN)
-  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   isActive    Boolean          @default(true) @map("is_active")
   role        String?          @default("user")
   imageUrl    String?          @map("image_url")
@@ -106,6 +105,10 @@ model User {
   posts   Post[]   @relation("UserToPosts")
   reviews Review[] @relation("UserToReviews")
   comments Comment[] @relation("UserToComments")
+
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime?        @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   @@map("users")
 }

@@ -4,10 +4,10 @@ import Image from "next/image";
 import LevelChip from "@/components/commons/chip/LevelChip";
 import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
 import { mockUserInfo } from "@/components/commons/navBar/navBar.constants";
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 
-const UserHeader = ({ user }: { user: users }) => {
-  const profileImageSrc = user.image_url || DEFAULT_PROFILE_IMAGE;
+const UserHeader = ({ user }: { user: User }) => {
+  const profileImageSrc = user.imageUrl || DEFAULT_PROFILE_IMAGE;
   return (
     <header className="ml-10 mb-16 flex items-center gap-4">
       <div className="flex items-center gap-5">
