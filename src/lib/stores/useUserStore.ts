@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { fetchUserInfo } from "../supabase/query/user";
+import { fetchCurrentUserInfo } from "../queries/userQueries";
 import { User } from "@prisma/client";
 
 interface UserState {
@@ -17,8 +17,12 @@ export const useUserStore = create<UserState>((set) => ({
   fetchUser: async () => {
     set({ isLoading: true });
     try {
-      const data = await fetchUserInfo();
-      set({ user: data as User, isLoading: false });
+      const data = await fetchCurrentUserInfo();
+      if (!data.success) {
+        set({ user: null, isLoading: false });
+        return;
+      }
+      set({ user: data.data as User, isLoading: false });
     } catch {
       set({ user: null, isLoading: false });
     }

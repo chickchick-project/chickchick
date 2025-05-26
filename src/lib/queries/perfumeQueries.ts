@@ -24,7 +24,7 @@ export async function fetchPerfumesWithPagination(
 /**
  * 특정 향수 상세 정보 조회
  */
-export async function fetchPerfumeDetails(perfumeId: string) {
+export async function fetchPerfumeDetailsById(perfumeId: string) {
   const { data, error } = await supabase.rpc("get_perfume_details", {
     perfume_uuid: perfumeId,
   });

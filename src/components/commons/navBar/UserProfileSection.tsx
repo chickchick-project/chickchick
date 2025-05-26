@@ -15,15 +15,10 @@ const UserProfileSection = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   let displayContent = null;
-  if (isZustandLoading) {
+  console.log(user);
+  if (!user) {
     displayContent = (
-      <div className="w-[120px] pl-6">
-        <div className="h-[36px] w-[100px] bg-gray-200 animate-pulse rounded"></div>
-      </div>
-    );
-  } else if (!user) {
-    displayContent = (
-      <div className="w-[120px] pl-6">
+      <div className="w-[120px]">
         <button
           className="text-body-2 font-medium text-black-300"
           onClick={() => {

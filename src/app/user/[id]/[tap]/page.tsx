@@ -11,7 +11,7 @@ import {
 } from "@/lib/mocks/fetchUser";
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
-import { fetchUserById } from "@/lib/supabase/query/user";
+import { fetchUserById } from "@/lib/queries/userQueries";
 
 export default async function UserPage({
   params,

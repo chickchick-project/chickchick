@@ -3,7 +3,7 @@ import {
   fetchSearch,
   fetchSearchWithFilters,
   checkPerfumeExists,
-} from "@/lib/supabase/query/search";
+} from "@/lib/queries/searchQueries";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 export interface Perfume {

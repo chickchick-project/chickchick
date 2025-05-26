@@ -3,7 +3,7 @@ import {
   fetchUserInfo,
   fetchUserCollection,
   addUserCollection,
-} from "@/lib/supabase/query/user";
+} from "@/lib/queries/userQueries";
 
 export async function GET() {
   try {

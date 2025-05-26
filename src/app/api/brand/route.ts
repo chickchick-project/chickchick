@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchAllBrands } from "@/lib/supabase/query/brands";
+import { fetchAllBrands } from "@/lib/queries/brandQueries";
 
 export async function GET() {
   try {

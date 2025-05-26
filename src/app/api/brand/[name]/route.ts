@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { fetchBrandWithPerfumes } from "@/lib/supabase/query/brands";
+import { fetchBrandWithPerfumes } from "@/lib/queries/brandQueries";
 
 export async function GET(
   request: NextRequest,
