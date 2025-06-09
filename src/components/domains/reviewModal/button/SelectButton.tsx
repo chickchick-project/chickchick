@@ -16,7 +16,7 @@ export const SelectButton = ({
 }: ISelectButton) => {
   return (
     <button
-      className={`flex justify-between items-center w-[${width}] p-4 rounded-lg border ${
+      className={`flex justify-between items-center ${width} p-4 rounded-lg border ${
         isSelected
           ? "border-primary-100 bg-primary-500 text-primary-100"
           : "border-gray-100 bg-white text-black-200"

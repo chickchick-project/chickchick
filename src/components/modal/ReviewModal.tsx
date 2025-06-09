@@ -6,6 +6,7 @@ import { PriceSection } from "../domains/reviewModal/section/PriceSection";
 import { SeasonalSection } from "../domains/reviewModal/section/SeasonalSection";
 import { SillageSection } from "../domains/reviewModal/section/SillageSection";
 import { StatusSection } from "../domains/reviewModal/section/StatusSection";
+import { TimeSection } from "../domains/reviewModal/section/TimeSection";
 import { Title } from "../domains/reviewModal/Title";
 import { ModalContainer } from "./ModalContainer";
 
@@ -15,8 +16,11 @@ interface IReviewModalProps {
 
 export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
   return (
-    <ModalContainer closeModal={closeModal}>
-      <div className="flex flex-col gap-10 w-[688px] h-[620px] rounded-2xl bg-white p-5">
+    <ModalContainer
+      className="mobile:w-[688px] mobile:h-[620px] w-full h-full"
+      closeModal={closeModal}
+    >
+      <div className="flex flex-col gap-10 mobile:w-[688px] mobile:h-[620px] w-full h-full rounded-2xl bg-white p-5">
         <div
           className="overflow-y-auto scrollbar-hide"
           style={{ scrollbarWidth: "none" }}
@@ -29,6 +33,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
             <SillageSection />
             <GenderToneSection />
             <SeasonalSection />
+            <TimeSection />
             <PriceSection />
             <DetailReviewSection />
           </div>

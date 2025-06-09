@@ -9,11 +9,11 @@ export const PriceSection = () => {
   return (
     <div className="flex flex-col gap-5">
       <SubTitle>가격은 어떤가요?</SubTitle>
-      <div className="flex gap-4">
+      <div className="flex mobile:flex-row flex-col gap-4">
         {REVIEW_OPTIONS.price.map((option) => (
           <SelectButton
             key={option.key}
-            width="198px"
+            width="w-full mobile:w-[198px]"
             isSelected={selectedKey === option.key}
             onClick={() => setSelectedKey(option.key)}
           >

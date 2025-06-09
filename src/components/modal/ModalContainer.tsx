@@ -6,9 +6,14 @@ import { useEffect, useRef } from "react";
 interface ModalProps {
   children: React.ReactNode;
   closeModal: () => void;
+  className?: string;
 }
 
-export const ModalContainer = ({ children, closeModal }: ModalProps) => {
+export const ModalContainer = ({
+  children,
+  closeModal,
+  className,
+}: ModalProps) => {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -24,7 +29,7 @@ export const ModalContainer = ({ children, closeModal }: ModalProps) => {
       <div className="flex justify-center items-center w-full h-full fixed top-0 left-0 z-50 bg-black-300 bg-opacity-90">
         <div
           ref={ref}
-          className="flex flex-col justify-center items-center relative bg-white rounded-xl"
+          className={`flex flex-col justify-center items-center relative bg-white rounded-xl ${className}`}
         >
           <button onClick={closeModal}>
             <Image

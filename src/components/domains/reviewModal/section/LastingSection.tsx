@@ -11,7 +11,7 @@ export const LastingSection = () => {
   return (
     <div className="flex flex-col gap-5">
       <SubTitle>얼마나 지속되나요?</SubTitle>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="mobile:grid mobile:grid-cols-2 flex flex-col gap-4">
         {REVIEW_OPTIONS.lasting.map((option) => (
           <SelectButton
             key={option.key}
