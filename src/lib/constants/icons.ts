@@ -2,6 +2,7 @@ import {
   ArrowDownGray,
   ArrowDownPrimary,
   CheckGray,
+  CheckPrimary,
   Close,
   BookmarkOutlined,
   Pen,
@@ -21,6 +22,18 @@ import {
   ArrowRightGray,
   GlobePrimary,
   Reply,
+  DislikeGray,
+  DislikePrimary,
+  BadGray,
+  BadPrimary,
+  NeutralGray,
+  NeutralPrimary,
+  GoodGray,
+  GoodPrimary,
+  BestGray,
+  BestPrimary,
+  RadioGray,
+  RadioPrimary,
 } from "../../../public/icons";
 
 export type TIcon = {
@@ -33,6 +46,7 @@ const ICONS: { [key: string]: TIcon } = {
   ArrowDownPrimary: { src: ArrowDownPrimary, alt: "arrow" },
   ArrowRightGray: { src: ArrowRightGray, alt: "arrow" },
   CheckGray: { src: CheckGray, alt: "check" },
+  CheckPrimary: { src: CheckPrimary, alt: "check" },
   Close: { src: Close, alt: "close" },
   BookmarkOutlined: { src: BookmarkOutlined, alt: "bookmark" },
   Pen: { src: Pen, alt: "write" },
@@ -51,6 +65,18 @@ const ICONS: { [key: string]: TIcon } = {
   View: { src: View, alt: "view" },
   CloseCircle: { src: CloseCircle, alt: "close" },
   Reply: { src: Reply, alt: "reply" },
+  DislikeGray: { src: DislikeGray, alt: "dislike" },
+  DislikePrimary: { src: DislikePrimary, alt: "dislike" },
+  BadGray: { src: BadGray, alt: "bad" },
+  BadPrimary: { src: BadPrimary, alt: "bad" },
+  NeutralGray: { src: NeutralGray, alt: "neutral" },
+  NeutralPrimary: { src: NeutralPrimary, alt: "neutral" },
+  GoodGray: { src: GoodGray, alt: "good" },
+  GoodPrimary: { src: GoodPrimary, alt: "good" },
+  BestGray: { src: BestGray, alt: "best" },
+  BestPrimary: { src: BestPrimary, alt: "best" },
+  RadioGray: { src: RadioGray, alt: "radio" },
+  RadioPrimary: { src: RadioPrimary, alt: "radio" },
 };
 
 export default ICONS;
