@@ -5,23 +5,28 @@ import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
 import FilterList from "./FilterList";
+import { usePathname } from "next/navigation";
 
 export default function PerFumeFilter({
   brands,
   notes,
   accords,
 }: {
-  brands: brands[];
+  brands?: brands[];
   notes: perfume_notes[];
   accords: perfume_accords[];
 }) {
+  const pathname = usePathname();
+  const isBrandPage = pathname.includes("brand");
+
   const filterOptions = useMemo(
     () => ({
       gender: GENDER_OPTIONS.map(toOption),
-      brand: brands.map(toOption),
+      ...(!isBrandPage && { brand: brands?.map(toOption) }),
       notes: notes.map(toOption),
       accords: accords.map(toOption),
     }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [brands, notes, accords]
   );
 
@@ -34,7 +39,7 @@ export default function PerFumeFilter({
             key={category}
             category={category}
             label={getLabel(category)}
-            options={filterOptions[category]}
+            options={filterOptions[category] ?? []}
           />
         ))}
       </div>
