@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import FilterItem from "./FilterItem";
-import { brands, perfume_accords, perfume_notes } from "@prisma/client";
+import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
@@ -12,9 +12,9 @@ export default function PerFumeFilter({
   notes,
   accords,
 }: {
-  brands?: brands[];
-  notes: perfume_notes[];
-  accords: perfume_accords[];
+  brands?: Brand[];
+  notes: PerfumeNote[];
+  accords: PerfumeAccord[];
 }) {
   const pathname = usePathname();
   const isBrandPage = pathname.includes("brand");
@@ -22,9 +22,20 @@ export default function PerFumeFilter({
   const filterOptions = useMemo(
     () => ({
       gender: GENDER_OPTIONS.map(toOption),
-      ...(!isBrandPage && { brand: brands?.map(toOption) }),
-      notes: notes.map(toOption),
-      accords: accords.map(toOption),
+      ...(!isBrandPage && {
+        brand: brands?.map((item) => ({
+          label: item.nameKo ?? item.nameEn,
+          value: item.id,
+        })),
+      }),
+      notes: notes.map((item) => ({
+        label: item.nameKo ?? item.nameEn,
+        value: item.id,
+      })),
+      accords: accords.map((item) => ({
+        label: item.nameKo ?? item.nameEn,
+        value: item.id,
+      })),
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [brands, notes, accords]

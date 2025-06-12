@@ -11,10 +11,10 @@ import {
   CollectionItem,
   TabData,
 } from "./sections/sections.type";
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 
 interface PageClientProps {
-  pageOwner: users;
+  pageOwner: User;
   isMe: boolean;
   tap: TabData["tap"];
   data: TabData["data"];
@@ -50,7 +50,7 @@ export default function ClientComponent({
   function isProfileData(
     data: TabData["data"],
     tap: TabData["tap"]
-  ): data is users {
+  ): data is User {
     return tap === "profile";
   }
   return (

@@ -5,7 +5,7 @@ import Dropdown from "@/components/commons/dropdown/DropdownBase";
 import InputBase from "@/components/commons/input";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 
 const ProfileRow = ({
   label,
@@ -31,7 +31,7 @@ const ProfileRow = ({
   </>
 );
 
-export const ProfileSection = ({ data }: { data: users }) => {
+export const ProfileSection = ({ data }: { data: User }) => {
   const [name, setName] = useState<string>(data.name || "");
   const [nickname, setNickname] = useState<string>(data.nickname || "");
   const [age, setAge] = useState<number>(data.age || 0);

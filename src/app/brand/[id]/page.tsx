@@ -18,8 +18,8 @@ export default async function BrandDetailPage() {
   ];
 
   const [notes, accords] = await Promise.all([
-    prisma.perfume_notes.findMany(),
-    prisma.perfume_accords.findMany(),
+    prisma.perfumeNote.findMany(),
+    prisma.perfumeAccord.findMany(),
   ]);
 
   return (

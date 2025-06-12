@@ -24,16 +24,20 @@ export function mapPerfumeDetail(raw: TPerfumeDetailRaw): TPerfumeDetail {
   return {
     id: raw.id,
     name: getLocalized(raw.name),
-    brand: getLocalized(raw.brands.name),
-    imageUrl: raw.image_url ?? "",
-    officialUrl: raw.official_url ?? null,
-    notes: raw.perfumes_notes_map.map((m) => ({
-      id: m.perfume_notes.id,
-      name: getLocalized(m.perfume_notes.name),
-    })),
-    accords: raw.perfumes_accords_map.map((m) => ({
-      id: m.perfume_accords.id,
-      name: getLocalized(m.perfume_accords.name) as TAccords,
-    })),
+    brand: getLocalized(raw.brand.name),
+    imageUrl: raw.imageUrl ?? "",
+    officialUrl: raw.officialUrl ?? null,
+    notes: raw.noteMappings.map(
+      (m: { note: { id: string; name: JsonValue } }) => ({
+        id: m.note.id,
+        name: getLocalized(m.note.name),
+      })
+    ),
+    accords: raw.accordMappings.map(
+      (m: { accord: { id: string; name: JsonValue } }) => ({
+        id: m.accord.id,
+        name: getLocalized(m.accord.name) as TAccords,
+      })
+    ),
   };
 }
