@@ -6,6 +6,7 @@ import BookmarkOutlined from "./BookmarkOutlined.svg";
 
 import Close from "./Close.svg";
 import CheckGray from "./CheckGray.svg";
+import CheckPrimary from "./CheckPrimary.svg";
 import Pen from "./Pen.svg";
 import FilterGray from "./FilterGray.svg";
 import FilterPrimary from "./FilterPrimary.svg";
@@ -27,6 +28,21 @@ import View from "./meta/View.svg";
 import CloseCircle from "./CloseCircle.svg";
 import Reply from "./Reply.svg";
 
+import DislikeGray from "./review/DislikeGray.svg";
+import DislikePrimary from "./review/DislikePrimary.svg";
+import BadGray from "./review/BadGray.svg";
+import BadPrimary from "./review/BadPrimary.svg";
+import NeutralGray from "./review/NeutralGray.svg";
+import NeutralPrimary from "./review/NeutralPrimary.svg";
+import GoodGray from "./review/GoodGray.svg";
+import GoodPrimary from "./review/GoodPrimary.svg";
+import BestGray from "./review/BestGray.svg";
+import BestPrimary from "./review/BestPrimary.svg";
+import RadioGray from "./review/RadioGray.svg";
+import RadioPrimary from "./review/RadioPrimary.svg";
+import SwiperLeftButton from "./SwiperLeftButton.svg";
+import SwiperRightButton from "./SwiperRightButton.svg";
+
 export {
   ArrowDownGray,
   ArrowDownPrimary,
@@ -36,6 +52,7 @@ export {
   BookmarkOutlined,
   Close,
   CheckGray,
+  CheckPrimary,
   Pen,
   Link,
   Pin,
@@ -50,4 +67,18 @@ export {
   View,
   CloseCircle,
   Reply,
+  DislikeGray,
+  DislikePrimary,
+  BadGray,
+  BadPrimary,
+  NeutralGray,
+  NeutralPrimary,
+  GoodGray,
+  GoodPrimary,
+  BestGray,
+  BestPrimary,
+  RadioGray,
+  RadioPrimary,
+  SwiperLeftButton,
+  SwiperRightButton,
 };

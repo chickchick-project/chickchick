@@ -1,3 +1,5 @@
+"use client";
+
 import { SearchBar } from "@/components/commons/search/SearchBar";
 
 export const MainSearchBar = () => {

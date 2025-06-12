@@ -1,0 +1,49 @@
+:root {
+  --ck-color-focus-border: #a47764;
+  --ck-font-size-base: 14px;
+  --ck-border-radius: 0.5rem;
+  --ck-custom-border: #a8a8a8;
+}
+
+.main-container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ck-content {
+  line-height: 1.6;
+  min-height: 600px;
+  word-break: break-word;
+}
+
+.ck-content h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 1.5em 0 1em;
+}
+
+.ck-content h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 1.2em 0 0.8em;
+}
+
+.ck-content h3 {
+  font-size: 16px;
+  font-weight: bold;
+}
+.editor-container_classic-editor .editor-container__editor {
+  width: 100%;
+  min-height: 640px;
+  border-radius: 8px;
+}
+.main-container .ck-editor__editable {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.ck.ck-editor__editable > .ck-placeholder::before {
+  color: #a8a8a8;
+  font-size: 15px;
+}
