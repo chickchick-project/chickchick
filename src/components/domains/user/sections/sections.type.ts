@@ -1,4 +1,4 @@
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 
 export type PerfumeBookmark = {
   id: number;
@@ -54,5 +54,5 @@ export type TabData =
     }
   | {
       tap: "profile";
-      data: users;
+      data: User;
     };

@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FormEvent } from "react";
-import { brands, perfume_accords, perfume_notes } from "@prisma/client";
+import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import PerFumeFilter from "@/components/domains/perfumes/filter";
 
@@ -7,9 +7,9 @@ interface SearchHeaderProps {
   inputValue?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubmit?: (e?: FormEvent) => void;
-  brands?: brands[];
-  notes: perfume_notes[];
-  accords: perfume_accords[];
+  brands?: Brand[];
+  notes: PerfumeNote[];
+  accords: PerfumeAccord[];
   isSearch?: boolean;
 }
 

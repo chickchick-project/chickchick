@@ -2,7 +2,7 @@
 
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { PerfumeSection } from "../../perfumes/section/PerfumeSection";
-import { perfume_accords, perfume_notes } from "@prisma/client";
+import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { useEffect, useMemo } from "react";
 import {
   adaptedFetchPerfumes,
@@ -21,8 +21,8 @@ export const BrandPerfumes = ({
   notes,
   accords,
 }: {
-  notes: perfume_notes[];
-  accords: perfume_accords[];
+  notes: PerfumeNote[];
+  accords: PerfumeAccord[];
 }) => {
   const memoizedNotes = useMemo(() => notes, [notes]);
   const memoizedAccords = useMemo(() => accords, [accords]);

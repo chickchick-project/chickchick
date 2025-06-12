@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, FormEvent, useState, useMemo, useEffect } from "react";
-import { brands, perfume_accords, perfume_notes } from "@prisma/client";
+import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { Perfume } from "@/app/api/search/route";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
@@ -27,9 +27,9 @@ export default function PageClient({
   notes,
   accords,
 }: {
-  brands: brands[];
-  notes: perfume_notes[];
-  accords: perfume_accords[];
+  brands: Brand[];
+  notes: PerfumeNote[];
+  accords: PerfumeAccord[];
 }) {
   const memoizedBrands = useMemo(() => brands, [brands]);
   const memoizedNotes = useMemo(() => notes, [notes]);
@@ -77,10 +77,10 @@ export default function PageClient({
   useEffect(() => {
     const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
     const match = memoizedBrands.find((brand) => {
-      const brandName = brand.name as BrandName;
-      return keywordWords.includes(brandName.en.toLowerCase());
+      const brandName = brand.nameEn;
+      setMatchedBrand(match ? brandName : null);
+      return keywordWords.includes(brandName.toLowerCase());
     });
-    setMatchedBrand(match ? (match.name as BrandName).en : null);
   }, [searchKeyword, memoizedBrands]);
 
   const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);

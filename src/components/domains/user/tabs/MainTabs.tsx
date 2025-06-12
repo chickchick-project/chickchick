@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getRenderableTabItems } from "./tabs.helper";
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 
 const MainTabs = ({
   tab,
@@ -10,7 +10,7 @@ const MainTabs = ({
 }: {
   tab: string;
   isMe?: boolean;
-  pageOwner: users;
+  pageOwner: User;
 }) => {
   const tabItems = getRenderableTabItems(isMe, pageOwner.nickname);
 

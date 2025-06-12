@@ -26,20 +26,11 @@ export default {
       },
       defaultValue: "홈",
     },
-    onLogin: { action: "" },
   },
 } satisfies Meta<NavBarProps>;
 
 const NavBarWrapper = (args: NavBarProps) => {
-  // const [isLoggedIn, setIsLoggedIn] = useState(args.isLoggedIn);
-
-  return (
-    <NavBar
-      {...args}
-      // isLoggedIn={isLoggedIn}
-      // onLogin={() => setIsLoggedIn(true)}
-    />
-  );
+  return <NavBar {...args} />;
 };
 
 const Template = (args: NavBarProps) => <NavBar {...args} />;
