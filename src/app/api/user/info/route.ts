@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { fetchUserInfo } from "@/lib/queries/userQueries";
+import { fetchCurrentUserInfo } from "@/lib/queries/userQueries";
 
 export async function GET() {
   try {
-    const user = await fetchUserInfo();
+    const user = await fetchCurrentUserInfo();
     return NextResponse.json(user);
   } catch (error) {
     return NextResponse.json(

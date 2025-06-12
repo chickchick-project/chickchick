@@ -22,12 +22,12 @@ export default async function UserPage({
   const session = await getSession(); //user id
   let user: User | null = null;
   try {
-    user = await fetchUserById(pageOwnerId);
-    if (
-      !user ||
-      typeof user.id !== "string" ||
-      !/^[0-9a-fA-F-]{36}$/.test(user.id)
-    ) {
+    const userResult = await fetchUserById(pageOwnerId);
+    if (!userResult.success || !userResult.data) {
+      return notFound();
+    }
+    user = userResult.data;
+    if (typeof user.id !== "string" || !/^[0-9a-fA-F-]{36}$/.test(user.id)) {
       return notFound();
     }
   } catch (error) {

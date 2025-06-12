@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import {
-  fetchUserInfo,
+  fetchCurrentUserInfo,
   fetchUserBookmarks,
   addUserBookmark,
 } from "@/lib/queries/userQueries";
 
 export async function GET() {
   try {
-    const user = await fetchUserInfo();
-    const data = await fetchUserBookmarks(user.id);
+    const user = await fetchCurrentUserInfo();
+    const data = await fetchUserBookmarks(user.data!.id);
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
@@ -20,9 +20,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const user = await fetchUserInfo();
+    const user = await fetchCurrentUserInfo();
     const { item_id, item_type } = await req.json();
-    const response = await addUserBookmark(user.id, item_id, item_type);
+    const response = await addUserBookmark(user.data!.id, item_id, item_type);
     return NextResponse.json(response);
   } catch (error) {
     return NextResponse.json(
