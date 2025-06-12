@@ -31,6 +31,7 @@ import {
 } from "ckeditor5";
 
 import translations from "ckeditor5/translations/ko.js";
+import supabaseUploadPlugin from "@/lib/ckeditor/supabaseUploadPlugin";
 
 const LICENSE_KEY = "GPL";
 
@@ -110,6 +111,7 @@ export default function CkEditor5({
           Strikethrough,
           Underline,
         ],
+        extraPlugins: [supabaseUploadPlugin],
         balloonToolbar: ["bold", "italic", "|", "link"],
         heading: {
           options: [
