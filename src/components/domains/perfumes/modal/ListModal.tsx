@@ -8,7 +8,7 @@ import { Option } from "@/lib/constants/options";
 
 type FilterOptions = {
   gender: Option[];
-  brand: Option[];
+  brand?: Option[];
   notes: Option[];
   accords: Option[];
 };
@@ -38,7 +38,7 @@ export default function ListModal({
 
   const getName = (key: keyof FilterOptions, id: string): string => {
     const options = filterOptions[key];
-    return options.find((opt) => opt.value === id)?.label ?? id;
+    return options?.find((opt) => opt.value === id)?.label ?? id;
   };
 
   return (

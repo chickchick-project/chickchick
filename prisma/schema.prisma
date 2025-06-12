@@ -41,6 +41,7 @@ model perfumes {
   description                String?
   created_at                 DateTime                     @default(now()) @db.Timestamptz(6)
   official_url               String?
+  perfume_search_index       perfume_search_index[]
   brands                     brands                       @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfumes_accords_map       perfumes_accords_map[]
   perfumes_notes_map         perfumes_notes_map[]
@@ -71,16 +72,14 @@ model perfumes_notes_map {
 }
 
 model raw_perfumes {
-  id              Int       @id @default(autoincrement())
-  perfume_name    String
-  brand_name      String
-  page_url        String    @unique
-  image_url       String?
-  description     String?
-  accords         String[]
-  notes           Json?
-  add_description String?
-  created_at      DateTime? @default(now()) @db.Timestamp(6)
+  id           Int       @id @default(autoincrement())
+  perfume_name String
+  brand_name   String
+  page_url     String    @unique
+  image_url    String?
+  accords      String[]
+  notes        Json?
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
 }
 
 model temp_brand_official_urls {
@@ -153,4 +152,13 @@ model users {
   user_activity    user_activity[]
   user_bookmarks   user_bookmarks[]
   user_collections user_collections[]
+}
+
+model perfume_search_index {
+  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  perfume_id    String?                  @db.Uuid
+  search_vector Unsupported("tsvector")?
+  type          String?
+  priority      Int?
+  perfumes      perfumes?                @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }

@@ -1,6 +1,7 @@
 import NavBarWrapper from "@/components/commons/navBar/Wrapper";
 import "./globals.css";
 import localFont from "next/font/local";
+import { BodyWrapper } from "@/components/commons/bodyWrapper/BodyWrapper";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -16,11 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="kr">
-      <body
-        className={`${pretendard.variable} font-pretendard max-w-[1200px] mx-auto`}
-      >
+      <body className={`${pretendard.variable} font-pretendard`}>
         <NavBarWrapper />
-        {children}
+        <BodyWrapper>{children}</BodyWrapper>
         <div id="modal"></div>
       </body>
     </html>

@@ -40,6 +40,8 @@ import BestGray from "./review/BestGray.svg";
 import BestPrimary from "./review/BestPrimary.svg";
 import RadioGray from "./review/RadioGray.svg";
 import RadioPrimary from "./review/RadioPrimary.svg";
+import SwiperLeftButton from "./SwiperLeftButton.svg";
+import SwiperRightButton from "./SwiperRightButton.svg";
 
 export {
   ArrowDownGray,
@@ -77,4 +79,6 @@ export {
   BestPrimary,
   RadioGray,
   RadioPrimary,
+  SwiperLeftButton,
+  SwiperRightButton,
 };

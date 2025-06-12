@@ -34,6 +34,8 @@ import {
   BestPrimary,
   RadioGray,
   RadioPrimary,
+  SwiperLeftButton,
+  SwiperRightButton,
 } from "../../../public/icons";
 
 export type TIcon = {
@@ -77,6 +79,8 @@ const ICONS: { [key: string]: TIcon } = {
   BestPrimary: { src: BestPrimary, alt: "best" },
   RadioGray: { src: RadioGray, alt: "radio" },
   RadioPrimary: { src: RadioPrimary, alt: "radio" },
+  SwiperLeftButton: { src: SwiperLeftButton, alt: "swiper left" },
+  SwiperRightButton: { src: SwiperRightButton, alt: "swiper right" },
 };
 
 export default ICONS;
