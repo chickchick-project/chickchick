@@ -23,9 +23,7 @@ export async function getPostImageUrl(file: File) {
   const safeName = file.name.replace(/[^\w.-]/gi, "_");
   const filePath = `${Date.now()}_${safeName}`;
 
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(filePath, file);
+  const { error } = await supabase.storage.from(bucket).upload(filePath, file);
 
   if (error) {
     throw new Error(error.message);
@@ -34,5 +32,6 @@ export async function getPostImageUrl(file: File) {
   const { data: urlData } = supabase.storage
     .from(bucket)
     .getPublicUrl(filePath);
+
   return urlData.publicUrl;
 }
