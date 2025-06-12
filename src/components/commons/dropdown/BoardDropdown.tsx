@@ -7,12 +7,14 @@ interface IBoardDropdownProps {
   currentOption?: string;
   id: string;
   ariaLabelledBy?: string;
+  onChange?: (category: string) => void;
 }
 
 export default function BoardDropdown({
   currentOption,
   id,
   ariaLabelledBy,
+  onChange,
 }: IBoardDropdownProps) {
   const [selectedOption, setSelectedOption] = useState<Option>(
     () =>
@@ -22,6 +24,7 @@ export default function BoardDropdown({
 
   const handleSortChange = (option: Option) => {
     setSelectedOption(option);
+    onChange?.(option.value);
   };
 
   return (

@@ -4,8 +4,12 @@ import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOu
 export default function PostFormActions() {
   return (
     <div className="flex justify-center gap-2 w-full tablet:w-[432px]">
-      <ButtonOutlinedPrimaryLFull>임시 저장</ButtonOutlinedPrimaryLFull>
-      <ButtonFilledPrimaryLFull>작성 완료</ButtonFilledPrimaryLFull>
+      <ButtonOutlinedPrimaryLFull type="button">
+        임시 저장
+      </ButtonOutlinedPrimaryLFull>
+      <ButtonFilledPrimaryLFull type="submit">
+        작성 완료
+      </ButtonFilledPrimaryLFull>
     </div>
   );
 }

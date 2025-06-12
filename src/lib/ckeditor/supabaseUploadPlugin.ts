@@ -1,5 +1,5 @@
 import { Editor, FileLoader } from "ckeditor5";
-import { getPostImageUrl } from "../supabase/query/posts";
+import { getPostImageUrl } from "../supabase/query/posts/postsImageUrl";
 
 class SupabaseUploadAdapter {
   loader: FileLoader;
