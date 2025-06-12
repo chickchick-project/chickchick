@@ -12,6 +12,8 @@ interface IFilterDropdownProps {
   options: Option[];
   currentOption?: string;
   handleChangeOption: (option: Option) => void;
+  ariaLabelledBy?: string;
+  width?: string;
 }
 
 export default function Dropdown({
@@ -20,6 +22,8 @@ export default function Dropdown({
   options,
   currentOption,
   handleChangeOption,
+  ariaLabelledBy,
+  width,
 }: IFilterDropdownProps) {
   const [isSelected, setIsSelected] = useState(!!currentOption);
   const isOpen = useVisibilityStore((state) => state.isOpen(id));
@@ -38,7 +42,12 @@ export default function Dropdown({
 
   return (
     <div className="relative inline-block">
-      <DropdownButton onClick={() => toggle(id)} isSelected={isSelected} className="tablet:w-[117px]">
+      <DropdownButton
+        onClick={() => toggle(id)}
+        isSelected={isSelected}
+        className={width ? width : `tablet:min-w-[117px]`}
+        {...(ariaLabelledBy ? { "aria-labelledby": ariaLabelledBy } : {})}
+      >
         {selectedOption.label}
         <Image
           src={arrowIcon.src}
@@ -48,7 +57,12 @@ export default function Dropdown({
           className="w-3 h-3 tablet:w-4 tablet:h-4"
         />
       </DropdownButton>
-      {isOpen && <DropdownMenu handleSelectOption={handleSelectOption} options={options} />}
+      {isOpen && (
+        <DropdownMenu
+          handleSelectOption={handleSelectOption}
+          options={options}
+        />
+      )}
     </div>
   );
 }

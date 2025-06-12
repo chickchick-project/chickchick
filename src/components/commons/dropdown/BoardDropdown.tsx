@@ -5,9 +5,15 @@ import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/lib/constants/options";
 
 interface IBoardDropdownProps {
   currentOption?: string;
+  id: string;
+  ariaLabelledBy?: string;
 }
 
-export default function BoardDropdown({ currentOption }: IBoardDropdownProps) {
+export default function BoardDropdown({
+  currentOption,
+  id,
+  ariaLabelledBy,
+}: IBoardDropdownProps) {
   const [selectedOption, setSelectedOption] = useState<Option>(
     () =>
       BOARD_OPTIONS.find((option) => option.value === currentOption) ||
@@ -21,11 +27,13 @@ export default function BoardDropdown({ currentOption }: IBoardDropdownProps) {
   return (
     <>
       <Dropdown
-        id={""}
+        id={id}
         selectedOption={selectedOption}
         currentOption={currentOption}
         options={BOARD_OPTIONS}
         handleChangeOption={handleSortChange}
+        ariaLabelledBy={ariaLabelledBy}
+        width="tablet:w-[128px]"
       />
     </>
   );
