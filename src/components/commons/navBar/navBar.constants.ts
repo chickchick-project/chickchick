@@ -1,7 +1,4 @@
 import ICONS from "@/lib/constants/icons";
-import { logout } from "@/lib/database/action/login";
-
-type ButtonType = "button" | "reset" | "submit" | undefined;
 
 export const NAV_PATHS = {
   HOME: "/",
@@ -44,22 +41,3 @@ export const getMyPageNavItems = (id: string) => [
     href: NAV_PATHS.USER.ACTIVITY(id),
   },
 ];
-
-export const NAV_ITEMS_FOOTER = [
-  {
-    label: "의견 보내기",
-    type: "button" as ButtonType,
-    onClick: () => {},
-  },
-  {
-    label: "로그아웃",
-    type: "submit" as ButtonType,
-    action: logout,
-  },
-];
-
-export const mockUserInfo = {
-  id: "test-user2",
-  nickname: "테스트유저",
-  level: 1,
-};

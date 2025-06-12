@@ -1,15 +1,14 @@
 import { supabase } from "@/lib/supabase/init";
+import { prisma } from "@/lib/prisma";
 
 /**
  * 모든 브랜드 목록 조회
  */
 export async function fetchAllBrands() {
-  const { data, error } = await supabase
-    .from("brands")
-    .select("id, name, description");
+  const data = await prisma.brand.findMany();
 
-  if (error) {
-    throw new Error(error.message);
+  if (!data) {
+    throw new Error("브랜드를 찾을 수 없습니다.");
   }
 
   return data;

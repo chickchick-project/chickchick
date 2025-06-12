@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchPerfumesWithBanner } from "@/lib/supabase/query/perfumes";
+import { fetchPerfumesWithBanner } from "@/lib/queries/perfumeQueries";
 
 // TODO: 각 주제에 맞는 필터 적용 필요
 export async function GET(req: Request) {

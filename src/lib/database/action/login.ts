@@ -16,5 +16,5 @@ export const kakaoLogin = async () => {
 };
 
 export const logout = async () => {
-  await signOut({ redirect: true, redirectTo: "/" });
+  await signOut({ redirect: true });
 };

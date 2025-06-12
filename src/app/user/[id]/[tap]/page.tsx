@@ -9,9 +9,9 @@ import {
   fetchMockBookmarksData,
   fetchMockCollectionData,
 } from "@/lib/mocks/fetchUser";
-import { users } from "@prisma/client";
+import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
-import { fetchUserById } from "@/lib/supabase/query/user";
+import { fetchUserById } from "@/lib/queries/userQueries";
 
 export default async function UserPage({
   params,
@@ -20,7 +20,7 @@ export default async function UserPage({
 }) {
   const { tap, id: pageOwnerId } = await params; //pageowner id
   const session = await getSession(); //user id
-  let user: users | null = null;
+  let user: User | null = null;
   try {
     user = await fetchUserById(pageOwnerId);
     if (

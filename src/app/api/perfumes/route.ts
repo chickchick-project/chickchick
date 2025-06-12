@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchPerfumesWithPagination } from "@/lib/supabase/query/perfumes";
+import { fetchPerfumesWithPagination } from "@/lib/queries/perfumeQueries";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);

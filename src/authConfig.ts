@@ -1,6 +1,49 @@
 import { Account, NextAuthConfig, User } from "next-auth";
-import { supabase } from "./lib/supabase/init";
 import { v4 as uuidv4 } from "uuid";
+import { prisma } from "./lib/prisma";
+
+interface UserData {
+  name: string;
+  nickname: string;
+  email?: string;
+  imageUrl?: string;
+  provider: string;
+}
+
+const findOrCreateUser = async (providerData: UserData) => {
+  const { name, nickname, email, imageUrl, provider } = providerData;
+  let dbUser;
+
+  if (email) {
+    dbUser = await prisma.user.findUnique({ where: { email } });
+    if (dbUser) {
+      return dbUser;
+    }
+  }
+
+  if (!dbUser && provider === "kakao" && name) {
+    dbUser = await prisma.user.findFirst({ where: { nickname: name } });
+    if (dbUser) {
+      console.log(
+        `${provider} OAuth: Existing user found by nickname:`,
+        dbUser
+      );
+      return dbUser;
+    }
+  }
+
+  const newUser = await prisma.user.create({
+    data: {
+      authId: uuidv4(),
+      name: name || "",
+      nickname: nickname || name || "",
+      email,
+      imageUrl,
+    },
+  });
+
+  return newUser;
+};
 
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
@@ -14,122 +57,23 @@ export const authConfig = {
     }) => {
       if (!account) return false;
 
-      // naver oAuth Login
-      if (account?.provider === "naver") {
-        const { name, email, image } = user;
-        const { data: existingUser, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("email", email)
-          .single();
+      const providerData = {
+        name: user.name || "",
+        nickname: user.name || "",
+        email: user.email ?? undefined,
+        imageUrl: user.image ?? undefined,
+        provider: account.provider,
+      };
 
-        if (error) console.error(error.message);
-
-        if (!existingUser) {
-          const auth_id = uuidv4();
-          const { data: newUser, error: insertError } = await supabase
-            .from("users")
-            .insert([
-              {
-                name,
-                auth_id,
-                email,
-                image_url: image,
-                nickname: name,
-              },
-            ])
-            .select()
-            .single();
-
-          if (insertError) {
-            console.error("naver", insertError.message);
-            return false;
-          }
-
-          user.id = newUser.id;
-        } else {
-          user.id = existingUser.id;
-        }
+      try {
+        const dbUser = await findOrCreateUser(providerData);
+        if (!dbUser) return false;
+        user.id = dbUser.id;
         return true;
+      } catch (err) {
+        console.error(`${account.provider} OAuth error:`, err);
+        return false;
       }
-
-      // google oAuth Login
-      if (account?.provider === "google") {
-        const { name, email, image } = user;
-        const { data: existingUser, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("email", email)
-          .single();
-
-        if (error) console.error(error.message);
-
-        if (!existingUser) {
-          const auth_id = uuidv4();
-          const { data: newUser, error: insertError } = await supabase
-            .from("users")
-            .insert([
-              {
-                name,
-                auth_id,
-                email,
-                image_url: image,
-                nickname: name,
-              },
-            ])
-            .select()
-            .single();
-
-          if (insertError) {
-            console.error("google", insertError.message);
-            return false;
-          }
-
-          user.id = newUser.id;
-        } else {
-          user.id = existingUser.id;
-        }
-        return true;
-      }
-
-      // TODO: kakao email 받아오는 권한 없음. 보류(임시로 기존회원 이름으로 구별)
-      if (account?.provider === "kakao") {
-        const { name, image } = user;
-        const { data: existingUser, error } = await supabase
-          .from("users")
-          .select("*")
-          .eq("name", name)
-          .single();
-
-        if (error) console.error(error.message);
-
-        if (!existingUser) {
-          const auth_id = uuidv4();
-          const { data: newUser, error: insertError } = await supabase
-            .from("users")
-            .insert([
-              {
-                name,
-                auth_id,
-                image_url: image,
-                nickname: name,
-              },
-            ])
-            .select()
-            .single();
-
-          if (insertError) {
-            console.error("kakao", insertError.message);
-            return false;
-          }
-
-          user.id = newUser.id;
-        } else {
-          user.id = existingUser.id;
-        }
-        return true;
-      }
-      return false;
     },
 
     async jwt({ token, user }) {

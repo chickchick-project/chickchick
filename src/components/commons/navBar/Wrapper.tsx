@@ -1,34 +1,27 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import NavBar from ".";
-import { LoginModal } from "@/components/modal/LoginModal";
 import { useUserStore } from "@/lib/stores/useUserStore";
 
-//NavBar로 전달된 클라이언트 설정 및 상태를 담은 Wrapper
 export default function NavBarWrapper() {
-  const [openModal, setOpenModal] = useState(false);
   const currentPath = usePathname();
 
-  const handleOpenModal = () => {
-    setOpenModal((prev) => !prev);
-  };
-
   useEffect(() => {
-    useUserStore.getState().fetchUser();
+    const { user, fetchUser, isLoading } = useUserStore.getState();
+    if (!user) {
+      fetchUser();
+    } else {
+      if (isLoading) {
+        useUserStore.setState({ isLoading: false });
+      }
+    }
   }, []);
 
   return (
     <>
-      <NavBar currentPath={currentPath} onLogin={handleOpenModal} />
-      {openModal && (
-        <LoginModal
-          closeModal={() => {
-            setOpenModal(false);
-          }}
-        />
-      )}
+      <NavBar currentPath={currentPath} />
     </>
   );
 }

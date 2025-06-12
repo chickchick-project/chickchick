@@ -1,25 +1,30 @@
 import { create } from "zustand";
-import { fetchUserInfo } from "../supabase/query/user";
-import { users } from "@prisma/client";
+import { fetchCurrentUserInfo } from "../queries/userQueries";
+import { User } from "@prisma/client";
 
 interface UserState {
-  user: users | null;
-  isHydrated: boolean;
+  user: User | null;
+  isLoading: boolean;
   fetchUser: () => Promise<void>;
-  setUser: (user: users) => void;
+  setUser: (user: User | null) => void;
   reset: () => void;
 }
 
 export const useUserStore = create<UserState>((set) => ({
   user: null,
-  isHydrated: false,
-  setUser: (user) => set({ user }),
+  isLoading: true,
+  setUser: (user) => set({ user, isLoading: false }),
   fetchUser: async () => {
+    set({ isLoading: true });
     try {
-      const data = await fetchUserInfo();
-      set({ user: data as users, isHydrated: true });
+      const data = await fetchCurrentUserInfo();
+      if (!data.success) {
+        set({ user: null, isLoading: false });
+        return;
+      }
+      set({ user: data.data as User, isLoading: false });
     } catch {
-      set({ user: null });
+      set({ user: null, isLoading: false });
     }
   },
   reset: () => set({ user: null }),

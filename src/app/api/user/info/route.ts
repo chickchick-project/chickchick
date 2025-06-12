@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchUserInfo } from "@/lib/supabase/query/user";
+import { fetchUserInfo } from "@/lib/queries/userQueries";
 
 export async function GET() {
   try {

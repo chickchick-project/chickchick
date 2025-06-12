@@ -1,14 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { createPortal } from "react-dom";
 import LevelChip from "../chip/LevelChip";
-import {
-  mockUserInfo,
-  NAV_ITEMS_FOOTER,
-  getMyPageNavItems,
-} from "./navBar.constants";
+import { getMyPageNavItems } from "./navBar.constants";
 import { useUserStore } from "@/lib/stores/useUserStore";
+import { logout } from "@/lib/database/action/login";
+import { useRouter } from "next/navigation";
 
 interface DropdownProps {
   onClose: () => void;
@@ -17,12 +15,44 @@ interface DropdownProps {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
-  const { user } = useUserStore();
+  const { user, reset } = useUserStore();
+  const router = useRouter();
 
   if (!parentRef.current) return null;
 
   const headerRect = parentRef.current.getBoundingClientRect();
   const navItems = getMyPageNavItems(user!.id);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      reset();
+      router.push("/");
+      onClose();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const NAV_ITEMS_FOOTER: {
+    label: string;
+    type: ButtonHTMLAttributes<HTMLButtonElement>["type"];
+    onClick?: () => void;
+    action?: () => void;
+  }[] = [
+    {
+      label: "의견 보내기",
+      type: "button",
+      onClick: () => {
+        console.log("의견 보내기");
+      },
+    },
+    {
+      label: "로그아웃",
+      type: "submit",
+      onClick: handleLogout,
+    },
+  ];
 
   return createPortal(
     <div
@@ -36,13 +66,13 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         {/* 프로필 */}
         <div className="flex flex-col items-center gap-2">
           <Image
-            src={user?.image_url ? user.image_url : "/images/profile.svg"}
+            src={user?.imageUrl ? user.imageUrl : "/images/profile.svg"}
             className="rounded-full"
             width={80}
             height={80}
             alt="프로필"
           />
-          <LevelChip level={mockUserInfo.level} />
+          <LevelChip level={1} />
           <span className="text-title-2 font-semibold text-black-100">
             {user?.nickname}
           </span>
@@ -57,10 +87,9 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         <div className="flex items-center justify-center py-5 border-t border-gray-200 w-[400px]">
           {NAV_ITEMS_FOOTER.map((item, index) => (
             <React.Fragment key={item.label}>
-              <form action={item.action}>
+              <form onSubmit={item.onClick}>
                 <button
                   className="text-body-2 font-medium text-black-300 cursor-pointer"
-                  onClick={item.onClick}
                   type={item.type}
                 >
                   {item.label}
