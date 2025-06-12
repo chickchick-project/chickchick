@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.8.0",
+    "@ckeditor/ckeditor5-react": "^9.5.0",
     "@prisma/client": "^6.5.0",
     "@supabase/supabase-js": "^2.46.2",
     "chart.js": "^4.4.9",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "ckeditor5": "^45.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
