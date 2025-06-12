@@ -1,7 +1,9 @@
+import PageClient from "@/components/domains/post/PageClient";
+
 export default function page() {
   return (
     <>
-      <h1>커뮤니티 글작성</h1>
+      <PageClient />
     </>
   );
 }

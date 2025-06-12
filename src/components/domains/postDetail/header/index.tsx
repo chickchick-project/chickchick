@@ -25,7 +25,7 @@ const authorInfo: TAuthorInfo = {
   },
 };
 
-export default function PostHeader() {
+export default function PostDetailHeader() {
   return (
     <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
