@@ -36,7 +36,7 @@ export default function NavBar({ currentPath }: NavBarProps) {
 
         {/* 네비게이션 */}
         <nav>
-          <ul className="flex gap-4 items-center">
+          <ul className="flex gap-4 items-center tablet:text-label-1 text-body-2 tablet:font-semibold font-medium">
             <li className="divider-vertical">
               <Link
                 href={NAV_PATHS.PERFUMES}
