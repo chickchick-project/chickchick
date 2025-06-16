@@ -37,7 +37,7 @@ export default function NavBar({ currentPath }: NavBarProps) {
         {/* 네비게이션 */}
         <nav>
           <ul className="flex gap-4 items-center tablet:text-label-1 text-body-2 tablet:font-semibold font-medium">
-            <li className="divider-vertical">
+            <li className="tablet:divider-vertical">
               <Link
                 href={NAV_PATHS.PERFUMES}
                 className={selectedLink(NAV_PATHS.PERFUMES)}
@@ -45,7 +45,7 @@ export default function NavBar({ currentPath }: NavBarProps) {
                 {NAV_LABELS.PERFUMES}
               </Link>
             </li>
-            <li className="tablet:divider-vertical px-6">
+            <li className="tablet:divider-vertical">
               <Link
                 href={NAV_PATHS.COMMUNITY}
                 className={selectedLink(NAV_PATHS.COMMUNITY)}
