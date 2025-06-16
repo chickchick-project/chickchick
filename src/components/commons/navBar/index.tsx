@@ -18,17 +18,20 @@ export default function NavBar({ currentPath }: NavBarProps) {
       <header className="flex justify-between items-center py-5 px-7 w-full h-20 relative">
         {/* 로고 */}
         <div>
-          {currentPath !== NAV_PATHS.HOME && (
-            <Link href={NAV_PATHS.HOME}>
-              <Image
-                src={IMAGES.Logo.src}
-                width={108}
-                height={40}
-                alt="logo"
-                className="size-auto"
-              />
-            </Link>
-          )}
+          <Link
+            href={NAV_PATHS.HOME}
+            className={
+              currentPath === NAV_PATHS.HOME ? "block tablet:hidden" : ""
+            }
+          >
+            <Image
+              src={IMAGES.Logo.src}
+              width={108}
+              height={40}
+              alt="logo"
+              className="size-auto"
+            />
+          </Link>
         </div>
 
         {/* 네비게이션 */}
@@ -42,7 +45,7 @@ export default function NavBar({ currentPath }: NavBarProps) {
                 {NAV_LABELS.PERFUMES}
               </Link>
             </li>
-            <li className="divider-vertical">
+            <li className="tablet:divider-vertical px-6">
               <Link
                 href={NAV_PATHS.COMMUNITY}
                 className={selectedLink(NAV_PATHS.COMMUNITY)}
@@ -52,7 +55,9 @@ export default function NavBar({ currentPath }: NavBarProps) {
             </li>
 
             {/* 로그인 / 프로필 버튼 */}
-            <UserProfileSection />
+            <div className="tablet:block hidden">
+              <UserProfileSection />
+            </div>
           </ul>
         </nav>
       </header>
