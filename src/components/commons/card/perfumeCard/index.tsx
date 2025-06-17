@@ -32,8 +32,8 @@ export default function PerfumeCard({
 
       <figure className="relative aspect-square rounded-xl overflow-hidden shadow-card bg-white">
         <Image
-          src={perfumeImage}
-          alt={perfumeName}
+          src={perfumeImage ?? "/images/BlurShimmer.svg"}
+          alt={perfumeName || "Perfume Image"}
           fill
           sizes={`
             (max-width: 768px) 100vw, 
@@ -46,7 +46,7 @@ export default function PerfumeCard({
         />
       </figure>
 
-      <figcaption className="w-full text-left mt-2 space-y-1">
+      <figcaption className="w-full text-left tablet:mt-2 mt-1 tablet:space-y-1 space-y-0.5">
         <p
           className={`text-black-300 font-medium ${PERFUME_CARD_STYLES.brandName[cardType]} overflow-hidden whitespace-nowrap text-ellipsis`}
         >
