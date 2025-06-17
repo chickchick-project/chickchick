@@ -10,7 +10,7 @@ export const BottomNavBar = () => {
   const user = useUserStore((state) => state.user);
 
   return (
-    <div className="tablet:hidden block sticky bottom-0 left-0 w-full h-[50px] px-10 py-1 bg-white border-t border-gray300">
+    <div className="tablet:hidden block sticky bottom-0 left-0 w-full h-[50px] px-10 py-1 bg-white border-t border-gray300 z-50">
       <div className="flex justify-between items-center">
         {BOTTOM_NAV_BAR_ICONS(user?.id || "").map((icon) => {
           // 각 아이콘별 활성화 조건
