@@ -29,7 +29,7 @@ export default function NavBar({ currentPath }: NavBarProps) {
               width={108}
               height={40}
               alt="logo"
-              className="size-auto"
+              className="tablet:w-[108px] tablet:h-[40px] w-[80px] h-[32px]"
             />
           </Link>
         </div>
