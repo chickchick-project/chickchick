@@ -21,7 +21,7 @@ export const MainBannerPerfumeList = ({
   data,
 }: IMainBannerPerfumesListProps) => {
   return (
-    <>
+    <div className="overflow-hidden w-full">
       <style jsx global>{`
         @keyframes left-right {
           0% {
@@ -35,7 +35,6 @@ export const MainBannerPerfumeList = ({
           animation: left-right 10s linear infinite alternate;
         }
       `}</style>
-
       <div className="flex gap-5 w-full justify-between animate-left-right px-0.5">
         {data.map((item) => (
           <Link key={item.id} href={`/perfumes/${item.id}`}>
@@ -48,6 +47,6 @@ export const MainBannerPerfumeList = ({
           </Link>
         ))}
       </div>
-    </>
+    </div>
   );
 };
