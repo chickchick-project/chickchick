@@ -1,8 +1,17 @@
-import { Perfume } from "@/app/api/search/route";
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
 
 interface IBannerProps {
-  data?: Perfume[];
+  data: {
+    id: string;
+    imageUrl: string | null;
+    brand: {
+      id: string;
+      nameKo: string | null;
+      nameEn: string;
+    };
+    nameKo: string | null;
+    nameEn: string;
+  }[];
 }
 
 export const MainBanner = ({ data }: IBannerProps) => {
