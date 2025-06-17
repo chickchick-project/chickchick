@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { boardDataMap } from "@/lib/mocks/communityPosts";
 import BoardTabBar from "@/components/commons/tabBar/BoardTabBar";
+import Link from "next/link";
 
 interface IMainContentCommunityList {
   size: "s" | "m";
@@ -40,13 +41,14 @@ export const MainContentCommunityList = ({
       </div>
       <div className="w-full">
         {boardDataMap[selectedTab].map((post) => (
-          <div
+          <Link
             key={post.id}
-            className="flex justify-between items-start w-full"
+            className="flex justify-between gap-3 w-full"
+            href={`/community/${post.id}`}
           >
-            <div className="text-black-100 tablet:text-body-2 text-label-2 font-medium py-2">
+            <h3 className="text-black-100 tablet:text-body-2 text-label-2 font-medium py-2 w-full overflow-hidden text-ellipsis whitespace-nowrap">
               {post.title}
-            </div>
+            </h3>
             <div className="flex items-center justify-end gap-0.5">
               <Image
                 src={ICONS.Comment.src}
@@ -58,7 +60,7 @@ export const MainContentCommunityList = ({
                 {post.commentCount > 1000 ? "999+" : post.commentCount}
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
