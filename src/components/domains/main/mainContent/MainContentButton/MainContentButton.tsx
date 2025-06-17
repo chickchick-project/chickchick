@@ -18,10 +18,10 @@ export const MainContentButton = ({
   return (
     <Link
       href={link}
-      className="tablet:w-[340px] w-full h-[200px] bg-neutral-100 rounded-xl inline-flex flex-col justify-start items-start gap-12 "
+      className="tablet:w-[340px] w-full tablet:h-[200px] h-[140px] bg-neutral-100 rounded-xl inline-flex flex-col justify-start items-start gap-12 "
     >
       <div
-        className="w-full h-full rounded-xl flex flex-col justify-between items-start flex-1 p-8 overflow-hidden relative"
+        className="w-full h-full rounded-xl flex flex-col justify-between items-start flex-1 tablet:p-8 p-6 overflow-hidden relative"
         style={{
           backgroundImage: `url(${bgImage})`,
           backgroundSize: "cover",
@@ -29,10 +29,10 @@ export const MainContentButton = ({
         }}
       >
         <div className="w-full h-full absolute top-0 left-0 self-stretchs bg-gradient-to-l from-black-100/30 to-[#000]/50 rounded-xl" />
-        <div className=" text-white text-headline-2 font-semibold z-10 whitespace-pre-line">
+        <div className=" text-white tablet:text-headline-2 text-title-2 font-semibold z-10 whitespace-pre-line">
           {title}
         </div>
-        <div className="text-right  text-white font-semibold z-10">
+        <div className="text-right text-white tablet:text-body-1 text-label-2 font-semibold z-10">
           {linkText}
         </div>
       </div>
