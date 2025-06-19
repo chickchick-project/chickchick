@@ -26,7 +26,7 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
         type="button"
         disabled={!hasActiveFilters}
         onClick={() => open("list")}
-        className={`flex items-center gap-2 px-3 py-2 rounded-md border h-fit self-end  ${
+        className={`flex items-center gap-2 tablet:px-3 tablet:py-2 p-2 rounded-md border h-fit self-end  ${
           hasActiveFilters
             ? "border-primary-200 text-primary-200 hover:bg-gray-300"
             : "border-gray-100 text-gray-100"
@@ -37,9 +37,9 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
           alt={filterIcon.alt}
           width={20}
           height={20}
-          className="object-contain"
+          className="object-contain tablet:w-5 tablet:h-5 w-4 h-4"
         />
-        <span>필터 목록</span>
+        <span className="tablet:block hidden">필터 목록</span>
       </button>
       <ListModal
         visible={isOpen("list")}

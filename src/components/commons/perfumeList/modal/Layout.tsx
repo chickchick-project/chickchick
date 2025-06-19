@@ -21,7 +21,7 @@ export function FilterModalLayout({
   const totalCount = useTotalStore((state) => state.totalCount);
 
   return (
-    <section className="bg-white w-[640px] p-5 border rounded-xl">
+    <section className="bg-white tablet:w-[640px] w-full px-5 pb-5 rounded-xl">
       <header className="flex items-center mb-5 gap-1">
         <h2 className="text-title-1 font-semibold">{title}</h2>
         {note && (

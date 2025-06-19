@@ -37,7 +37,11 @@ const getUniquePerfumes = (perfumes: Perfume[]): Perfume[] => {
 
   perfumes.forEach((item) => {
     const existing = perfumeMap.get(item.perfume_id);
-    if (!existing || existing.priority < item.priority) {
+    if (
+      existing?.priority &&
+      item.priority &&
+      (!existing || existing.priority < item.priority)
+    ) {
       perfumeMap.set(item.perfume_id, item);
     }
   });

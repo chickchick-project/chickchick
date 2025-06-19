@@ -2,9 +2,9 @@ import { useEffect } from "react";
 import { Option } from "@/lib/constants/options";
 import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { getLabel } from "@/components/domains/perfumes/perfumes.helpers";
 import { ModalContainer } from "@/components/modal/ModalContainer";
-import { FilterModalLayout } from "@/components/domains/perfumes/modal/Layout";
+import { FilterModalLayout } from "./Layout";
+import { getLabel } from "../perfumes.helpers";
 
 interface IFilterDropdownProps {
   id: string;
@@ -31,7 +31,11 @@ export default function FilterItemModal({
   }, []);
 
   return (
-    <ModalContainer closeModal={() => close(id)}>
+    <ModalContainer
+      closeModal={() => close(id)}
+      className="w-full fixed bottom-0 left-0 rounded-t-xl rounded-b-none overflow-y-auto tablet:static tablet:w-auto tablet:rounded-xl"
+      overlayClassName="items-end tablet:items-center"
+    >
       <FilterModalLayout
         title={getLabel(id)}
         note="(중복 선택 가능)"
