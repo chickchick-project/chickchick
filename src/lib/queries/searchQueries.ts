@@ -17,19 +17,19 @@ export async function fetchSearch(params: SearchParams) {
   const { search_text, result_limit = 15, last_seen_id } = params;
 
   const rpcParams = {
-    p_search_text: search_text,
-    p_brand_filter: null,
-    p_notes_filter: null,
-    p_accords_filter: null,
-    p_last_seen_id: last_seen_id || null,
-    p_result_limit: result_limit,
+    search_text: search_text,
+    brand_filter: null,
+    notes_filter: null,
+    accords_filter: null,
+    last_seen_id: last_seen_id || null,
+    result_limit: result_limit,
   };
 
   const rpcParamsTotal = {
-    p_search_text: search_text,
-    p_brand_filter: null,
-    p_notes_filter: null,
-    p_accords_filter: null,
+    search_text: search_text,
+    brand_filter: null,
+    notes_filter: null,
+    accords_filter: null,
   };
 
   try {
@@ -69,19 +69,19 @@ export async function fetchSearchWithFilters(params: SearchParamsWithFilters) {
   const formattedBrandFilter = brand_filter ? [brand_filter] : null;
 
   const rpcParams = {
-    p_search_text: search_text,
-    p_brand_filter: formattedBrandFilter,
-    p_notes_filter: formattedNotes,
-    p_accords_filter: formattedAccords,
-    p_last_seen_id: last_seen_id || null,
-    p_result_limit: result_limit ?? 15,
+    search_text: search_text,
+    brand_filter: formattedBrandFilter,
+    notes_filter: formattedNotes,
+    accords_filter: formattedAccords,
+    last_seen_id: last_seen_id || null,
+    result_limit: result_limit ?? 15,
   };
 
   const rpcParamsTotal = {
-    p_search_text: search_text,
-    p_brand_filter: formattedBrandFilter,
-    p_notes_filter: formattedNotes,
-    p_accords_filter: formattedAccords,
+    search_text: search_text,
+    brand_filter: formattedBrandFilter,
+    notes_filter: formattedNotes,
+    accords_filter: formattedAccords,
   };
 
   try {
