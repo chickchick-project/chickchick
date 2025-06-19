@@ -4,20 +4,28 @@ export interface IBoardTabBarProps {
   handleTabClick: (key: string) => void;
 }
 
-export default function BoardTabBar({ boards, selectedTab, handleTabClick }: IBoardTabBarProps) {
+export default function BoardTabBar({
+  boards,
+  selectedTab,
+  handleTabClick,
+}: IBoardTabBarProps) {
   return (
-    <div className="flex justify-center items-center gap-12">
+    <div className="flex justify-between items-center w-full">
       {boards.map((board) => (
         <button
           onClick={() => handleTabClick(board.key)}
           key={board.key}
           className="flex flex-col justify-start items-center gap-2"
         >
-          <div className={`w-6 h-[3px] rounded-full ${selectedTab === board.key ? "bg-primary-200" : "bg-gray-200"}`} />
+          <div
+            className={`w-6 h-[3px] rounded-full ${
+              selectedTab === board.key ? "bg-primary-200" : "bg-gray-200"
+            }`}
+          />
           <div
             className={`justify-center ${
               selectedTab === board.key ? "font-semibold" : "font-normal"
-            } text-black-100 text-lg`}
+            } text-black-100 tablet:text-lg text-sm whitespace-nowrap`}
           >
             {board.label}
           </div>

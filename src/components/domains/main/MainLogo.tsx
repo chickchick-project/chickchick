@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export const MainLogo = () => {
   return (
-    <section className="w-full flex justify-center items-center py-10">
+    <section className="tablet:flex hidden w-full justify-center items-center py-10">
       <Image
         src={IMAGES.Logo.src}
         alt={IMAGES.Logo.alt}

@@ -43,6 +43,11 @@ import RadioPrimary from "./review/RadioPrimary.svg";
 import SwiperLeftButton from "./SwiperLeftButton.svg";
 import SwiperRightButton from "./SwiperRightButton.svg";
 
+import BottmNavBarHome from "./bottomNavBar/Home.svg";
+import BottmNavBarSearch from "./bottomNavBar/Search.svg";
+import BottmNavBarWriting from "./bottomNavBar/Writing.svg";
+import BottmNavBarMypage from "./bottomNavBar/Mypage.svg";
+
 export {
   ArrowDownGray,
   ArrowDownPrimary,
@@ -81,4 +86,8 @@ export {
   RadioPrimary,
   SwiperLeftButton,
   SwiperRightButton,
+  BottmNavBarHome,
+  BottmNavBarSearch,
+  BottmNavBarWriting,
+  BottmNavBarMypage,
 };
