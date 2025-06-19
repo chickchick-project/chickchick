@@ -22,7 +22,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
   const [isEnd, setIsEnd] = useState(false);
 
   return (
-    <div className="relative w-full tablet:h-[400px] h-fit">
+    <div className="relative w-full h-fit">
       <style jsx global>{`
         .swiper-button-next::after,
         .swiper-button-prev::after {
@@ -65,7 +65,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
         }}
       >
         {images.map((image) => (
-          <SwiperSlide key={image.order} className="tablet:px-0 px-5">
+          <SwiperSlide key={image.order} className="pc:px-0 px-5">
             <Image
               src={image.src}
               alt={image.alt}
@@ -74,7 +74,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
               quality={100}
               placeholder="blur"
               blurDataURL="/images/BlurShimmer.svg"
-              className="rounded-xl"
+              className="rounded-xl w-full h-fit"
             />
           </SwiperSlide>
         ))}
@@ -89,7 +89,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           alt={ICONS.SwiperLeftButton.alt}
           width={48}
           height={48}
-          className="tablet:w-12 tablet:h-12 w-6 h-6"
+          className="tablet:w-12 tablet:h-12 w-6 h-6 pc:m-0 m-3"
         />
       </div>
       <div
@@ -102,7 +102,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           alt={ICONS.SwiperRightButton.alt}
           width={48}
           height={48}
-          className="tablet:w-12 tablet:h-12 w-6 h-6"
+          className="tablet:w-12 tablet:h-12 w-6 h-6 pc:m-0 m-3"
         />
       </div>
     </div>
