@@ -1,34 +1,37 @@
 import { BrandDetailImage } from "@/components/domains/brandDetail/image";
 import { BrandDetailInfo } from "@/components/domains/brandDetail/info";
-import { BrandPerfumes } from "@/components/domains/brandDetail/perfumes";
+import { PageClient } from "@/components/domains/brandDetail/perfumes/PageClient";
 import { BrandDetailSearchBar } from "@/components/domains/brandDetail/searchBar";
 import { prisma } from "@/lib/prisma";
 
-// TODO: 크롤링 완료 후 데이터로 변경 필요, brand id 연결
 export default async function BrandDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ name: string }>;
 }) {
   const brandUrl = "https://www.jomalone.co.kr/";
   const brandStores = "https://www.naver.com/";
   const brandImages = [
-    { order: 1, src: "https://picsum.photos/1000/400", alt: "1" },
-    { order: 2, src: "https://picsum.photos/1000/400", alt: "2" },
-    { order: 3, src: "https://picsum.photos/1000/400", alt: "3" },
+    { order: 1, src: "https://picsum.photos/seed/picsum/1200/400", alt: "1" },
+    { order: 2, src: "https://picsum.photos/seed/picsum/1200/400", alt: "2" },
+    { order: 3, src: "https://picsum.photos/seed/picsum/1200/400", alt: "3" },
   ];
 
   const resolvedParams = await params;
-  const brandId = resolvedParams.id;
+  const brandName = decodeURIComponent(resolvedParams.name);
 
-  // TODO: 공식 사이트 컬럼 없음
+  // TODO: 공식 사이트 컬럼 없음, 위치
   const brandData = await prisma.brand.findUnique({
-    where: { id: brandId },
+    where: { nameEn: brandName },
     select: {
+      id: true,
       nameEn: true,
       nameKo: true,
       description: true,
       imageUrl: true,
+      mapLocation: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
 
@@ -47,7 +50,11 @@ export default async function BrandDetailPage({
         brandStores={brandStores}
       />
       <BrandDetailImage images={brandImages} />
-      <BrandPerfumes notes={notes} accords={accords} />
+      <PageClient
+        brandName={brandData?.nameEn ?? ""}
+        notes={notes}
+        accords={accords}
+      />
     </div>
   );
 }
