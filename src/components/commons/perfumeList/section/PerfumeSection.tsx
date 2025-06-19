@@ -9,6 +9,7 @@ interface PerfumeSectionProps {
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;
+  pageType?: "brandDetail" | "perfumes";
 }
 
 export function PerfumeSection({
@@ -16,23 +17,28 @@ export function PerfumeSection({
   isLoading,
   isIdle,
   moreRef,
+  pageType = "perfumes",
 }: PerfumeSectionProps) {
   return (
-    <section className="mt-10 px-4">
-      <h3 className="text-headline-3 font-semibold">향수</h3>
+    <section className="tablet:mt-10 mt-5 px-4 w-full">
+      {pageType === "perfumes" && (
+        <h3 className="tablet:text-headline-3 text-body-2 font-semibold">
+          향수
+        </h3>
+      )}
 
       {!isIdle && perfumes.length === 0 && !isLoading ? (
         <div className="flex justify-center items-center h-40">
           검색 결과가 없습니다.
         </div>
       ) : (
-        <div className="grid grid-cols-5 gap-x-[52px] gap-y-10 mt-5">
+        <div className="grid pc:grid-cols-5 tablet:grid-cols-4 mobile:grid-cols-3 grid-cols-2 pc:gap-x-[52px] mobile:gap-x-[24px] gap-x-[10px] mobile:gap-y-10 gap-y-5 mt-5">
           {perfumes.map((item) => (
             <Link key={item.perfume_id} href={`/perfumes/${item.perfume_id}`}>
               <PerfumeCard
-                perfumeImage={item.image_url}
-                brandName={item.brand_name.en}
-                perfumeName={item.perfume_name.en}
+                perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
+                brandName={item.brand_name_ko ?? item.brand_name_en}
+                perfumeName={item.perfume_name_ko ?? item.perfume_name_en}
               />
             </Link>
           ))}

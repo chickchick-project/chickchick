@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { ModalContainer } from "@/components/modal/ModalContainer";
-import { FilterModalLayout } from "../modal/Layout";
+import { FilterModalLayout } from "./Layout";
 import { getLabel } from "../perfumes.helpers";
 import ICONS from "@/lib/constants/icons";
 import { Option } from "@/lib/constants/options";

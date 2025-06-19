@@ -7,15 +7,14 @@ import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
+import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
+import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
+import { SearchHeader } from "@/components/commons/perfumeList/search";
 import {
-  getUniquePerfumes,
-  createQueryKey,
   adaptedFetchPerfumes,
-} from "./perfumes.helpers";
-
-import { PerfumeSection } from "./section/PerfumeSection";
-import { BrandSection } from "./section/BrandSection";
-import { SearchHeader } from "./search";
+  createQueryKey,
+  // getUniquePerfumes,
+} from "@/components/commons/perfumeList/perfumes.helpers";
 
 export type BrandName = {
   en: string;
@@ -76,14 +75,24 @@ export default function PageClient({
 
   useEffect(() => {
     const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
-    const match = memoizedBrands.find((brand) => {
-      const brandName = brand.nameEn;
-      setMatchedBrand(match ? brandName : null);
-      return keywordWords.includes(brandName.toLowerCase());
-    });
+    const match = memoizedBrands.find((brand) =>
+      keywordWords.includes(brand.nameEn.toLowerCase())
+    );
+    setMatchedBrand(match ? match.nameEn : null);
   }, [searchKeyword, memoizedBrands]);
 
-  const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
+  // const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
+
+  // 중복 아이디 제거
+  const uniquePerfumes = useMemo(() => {
+    const seen = new Set();
+    return data.filter((item) => {
+      if (seen.has(item.perfume_id)) return false;
+      seen.add(item.perfume_id);
+      return true;
+    });
+  }, [data]);
+
   return (
     <div className="flex flex-col items-center">
       <SearchHeader
@@ -97,7 +106,7 @@ export default function PageClient({
 
       <main className="w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-between items-center mb-5">
-          <span className="text-headline-2 font-semibold">
+          <span className="tablet:text-headline-2 text-title-2 font-semibold">
             {searchKeyword
               ? `'${searchKeyword}'에 대한 검색 결과`
               : "현재 인기있는 향수들이에요!"}

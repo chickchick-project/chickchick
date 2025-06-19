@@ -1,26 +1,28 @@
 "use client";
 
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { PerfumeSection } from "../../perfumes/section/PerfumeSection";
 import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { useEffect, useMemo } from "react";
-import {
-  adaptedFetchPerfumes,
-  createQueryKey,
-  getUniquePerfumes,
-} from "../../perfumes/perfumes.helpers";
+
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { Perfume } from "@/app/api/search/route";
 import { withCache } from "@/lib/utils/withCache";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
-import { SearchHeader } from "../../perfumes/search";
+import { SearchHeader } from "../../../commons/perfumeList/search";
+import { PerfumeSection } from "../../../commons/perfumeList/section/PerfumeSection";
+import {
+  adaptedFetchPerfumes,
+  createQueryKey,
+  // getUniquePerfumes,
+} from "@/components/commons/perfumeList/perfumes.helpers";
 
-// TODO: 향수 리스트 페이지에서 사용되는 컴포넌트와 중복되는 부분이 많음, 공통 컴포넌트화 필요
-export const BrandPerfumes = ({
+export const PageClient = ({
+  brandName,
   notes,
   accords,
 }: {
+  brandName: string;
   notes: PerfumeNote[];
   accords: PerfumeAccord[];
 }) => {
@@ -31,27 +33,40 @@ export const BrandPerfumes = ({
   const setCount = useTotalStore((state) => state.setTotalCount);
 
   // 검색 파라미터 생성 (메모이제이션)
-  const query: string = useMemo(() => createQueryKey("", filters), [filters]);
+  const query: string = useMemo(
+    () => createQueryKey(brandName, filters),
+    [filters, brandName]
+  );
 
   // 무한 스크롤 훅 사용
   const fetcher = useMemo(
     () =>
       withCache((cursor: string | null) =>
-        adaptedFetchPerfumes(cursor, "", filters)
+        adaptedFetchPerfumes(cursor, brandName, filters)
       ),
-    [filters]
+    [filters, brandName]
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
     useInfiniteScroll<Perfume>(fetcher, query);
-
-  const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
       setCount(totalCount);
     }
   }, [totalCount, setCount]);
+
+  // const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
+
+  // 중복 아이디 제거
+  const uniquePerfumes = useMemo(() => {
+    const seen = new Set();
+    return data.filter((item) => {
+      if (seen.has(item.perfume_id)) return false;
+      seen.add(item.perfume_id);
+      return true;
+    });
+  }, [data]);
 
   return (
     <main className="w-full max-w-[1200px] px-4">
@@ -60,7 +75,7 @@ export const BrandPerfumes = ({
         accords={memoizedAccords}
         isSearch={false}
       />
-      <div className="w-full flex justify-end items-center mb-5 px-4">
+      <div className="w-full flex justify-end items-center mb-5 tablet:px-4 px-1">
         <SortDropdown type="perfume" />
       </div>
       <PerfumeSection
@@ -68,6 +83,7 @@ export const BrandPerfumes = ({
         isLoading={isLoading}
         isIdle={isIdle}
         moreRef={moreRef}
+        pageType="brandDetail"
       />
     </main>
   );

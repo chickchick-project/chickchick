@@ -7,12 +7,14 @@ import {
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 export interface Perfume {
-  perfume_id: string; // 향수의 고유 ID
-  perfume_name: { en: string; kr?: string }; // 다국어 향수명 (예: { en: "Rose", kr: "로즈" })
-  brand_id: string; // 브랜드 ID
-  brand_name: { en: string; kr?: string }; // 다국어 브랜드명 (예: { en: "Dior", kr: "디올" })
-  image_url: string; // 향수 이미지 URL
-  priority: number; // 검색 우선순위 (100: 향수 이름(Name), 80: 브랜드(Brand), 60: 노트(Note), 40: 계열(Accord))
+  perfume_id: string;
+  perfume_name_ko: string;
+  perfume_name_en: string;
+  image_url: string;
+  brand_id: string;
+  brand_name_ko: string;
+  brand_name_en: string;
+  priority: number;
 }
 
 /**

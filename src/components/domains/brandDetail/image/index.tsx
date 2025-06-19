@@ -22,22 +22,22 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
   const [isEnd, setIsEnd] = useState(false);
 
   return (
-    <div className="relative w-[1000px] h-[400px]">
+    <div className="relative w-full h-fit">
       <style jsx global>{`
         .swiper-button-next::after,
         .swiper-button-prev::after {
           display: none !important;
         }
         .swiper-pagination-bullet {
-          width: 8px;
-          height: 8px;
+          width: 4px;
+          height: 4px;
           background: rgba(255, 255, 255, 0.5);
           opacity: 1;
         }
         .swiper-pagination-bullet-active {
           background: #dbc0b0;
-          width: 16px;
-          height: 8px;
+          width: 8px;
+          height: 4px;
           border-radius: 10px;
         }
       `}</style>
@@ -65,7 +65,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
         }}
       >
         {images.map((image) => (
-          <SwiperSlide key={image.order}>
+          <SwiperSlide key={image.order} className="pc:px-0 px-5">
             <Image
               src={image.src}
               alt={image.alt}
@@ -74,12 +74,13 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
               quality={100}
               placeholder="blur"
               blurDataURL="/images/BlurShimmer.svg"
+              className="rounded-xl w-full h-fit"
             />
           </SwiperSlide>
         ))}
       </Swiper>
       <div
-        className={`custom-prev absolute left-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${
+        className={`custom-prev absolute tablet:left-4 left-6 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${
           isBeginning && "hidden"
         }`}
       >
@@ -88,10 +89,11 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           alt={ICONS.SwiperLeftButton.alt}
           width={48}
           height={48}
+          className="tablet:w-12 tablet:h-12 w-6 h-6 pc:m-0 m-3"
         />
       </div>
       <div
-        className={`custom-next absolute right-4 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${
+        className={`custom-next absolute tablet:right-4 right-6 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${
           isEnd && "hidden"
         }`}
       >
@@ -100,6 +102,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           alt={ICONS.SwiperRightButton.alt}
           width={48}
           height={48}
+          className="tablet:w-12 tablet:h-12 w-6 h-6 pc:m-0 m-3"
         />
       </div>
     </div>

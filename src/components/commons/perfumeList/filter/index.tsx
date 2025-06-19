@@ -43,7 +43,7 @@ export default function PerFumeFilter({
 
   return (
     <div className="flex justify-between">
-      <div className="flex gap-5">
+      <div className="flex tablet:gap-5 gap-2">
         {/* 필터 버튼 렌더링 */}
         {typedKeys(filterOptions).map((category) => (
           <FilterItem
