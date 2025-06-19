@@ -61,7 +61,7 @@ interface CurrentUserInfo {
   role: string | null;
 }
 
-async function validateUserSession(
+export async function validateUserSession(
   expectedUserId?: string
 ): Promise<SessionValidationResult> {
   const session = await getSession();

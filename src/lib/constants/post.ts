@@ -5,9 +5,9 @@ export const POST_CARD_TYPES = {
 } as const;
 
 export const CATEGORY_TYPES = {
-  QUESTION: "question",
-  FREEBOARD: "discussion",
-  RECOMMENDATION: "recommendation",
+  QUESTION: "QUESTION",
+  FREEBOARD: "FREEBOARD",
+  RECOMMENDATION: "RECOMMENDATION",
 } as const;
 
 export const CATEGORY_LABELS = {

@@ -1,9 +1,10 @@
 import BoardDropdown from "@/components/commons/dropdown/BoardDropdown";
 import SubTitleLabel from "./element/SubTitleLabel";
+import { TPostCategory } from "@/lib/queries/community/postQueries";
 
 interface IPostCategoryProps {
   value?: string;
-  onChange?: (category: string) => void;
+  onChange?: (category: TPostCategory) => void;
 }
 
 export default function PostCategory({ value, onChange }: IPostCategoryProps) {

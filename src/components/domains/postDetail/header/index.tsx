@@ -29,7 +29,7 @@ export default function PostDetailHeader() {
   return (
     <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
-        <BoardChip type="question" />
+        <BoardChip type="RECOMMENDATION" />
         <PostInteractions />
       </div>
       <h1 className="mt-5 mb-4 tablet:mb-5 text-title-1 tablet:text-headline-3 font-semibold text-black-100">
