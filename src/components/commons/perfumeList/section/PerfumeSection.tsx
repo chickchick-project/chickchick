@@ -19,15 +19,6 @@ export function PerfumeSection({
   moreRef,
   pageType = "perfumes",
 }: PerfumeSectionProps) {
-  const uniquePerfumes = React.useMemo(() => {
-    const seen = new Set();
-    return perfumes.filter((item) => {
-      if (seen.has(item.perfume_id)) return false;
-      seen.add(item.perfume_id);
-      return true;
-    });
-  }, [perfumes]);
-
   return (
     <section className="tablet:mt-10 mt-5 px-4 w-full">
       {pageType === "perfumes" && (
@@ -42,7 +33,7 @@ export function PerfumeSection({
         </div>
       ) : (
         <div className="grid pc:grid-cols-5 tablet:grid-cols-4 mobile:grid-cols-3 grid-cols-2 pc:gap-x-[52px] mobile:gap-x-[24px] gap-x-[10px] mobile:gap-y-10 gap-y-5 mt-5">
-          {uniquePerfumes.map((item) => (
+          {perfumes.map((item) => (
             <Link key={item.perfume_id} href={`/perfumes/${item.perfume_id}`}>
               <PerfumeCard
                 perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
