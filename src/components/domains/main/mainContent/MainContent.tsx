@@ -11,7 +11,7 @@ export const MainContent = () => {
           <MainContentButtons />
           <MainContentReview />
         </div>
-        <div className="pc:hidden flex flex-col items-center justify-center gap-10">
+        <div className="pc:hidden flex flex-col items-center justify-center gap-10 w-full">
           <MainContentButtonsSwiper />
           <MainContentReview />
         </div>

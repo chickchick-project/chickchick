@@ -29,7 +29,7 @@ export const MainContentCommunityList = ({
   return (
     <div
       className={`${
-        size === "m" ? "tablet:w-[460px] w-full" : "w-80"
+        size === "m" ? "pc:w-[460px] w-full" : "w-80"
       } p-6 bg-white rounded-xl shadow-[0px_4px_20px_0px_rgba(0,0,0,0.08)] flex flex-col justify-start items-center gap-2`}
     >
       <div className="px-10 py-3 rounded-3 flex flex-col justify-start items-start w-full">
