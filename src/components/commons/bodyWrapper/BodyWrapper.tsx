@@ -9,7 +9,11 @@ export const BodyWrapper = ({ children }: { children: React.ReactNode }) => {
   const isHome = pathname === "/";
 
   return (
-    <div className={`${isHome ? "" : "max-w-[1200px] mx-auto"} relative`}>
+    <div
+      className={`${
+        isHome ? "" : "max-w-[1200px] mx-auto"
+      } h-[calc(100%-130px)]`}
+    >
       {children}
       <BottomNavBar />
     </div>

@@ -41,7 +41,7 @@ export default async function BrandDetailPage({
   ]);
 
   return (
-    <div className="flex flex-col items-center justify-center py-10 w-full">
+    <div className="flex flex-col items-center justify-centers w-full">
       <BrandDetailSearchBar />
       <BrandDetailInfo
         brandName={brandData?.nameKo || brandData?.nameEn || "브랜드 이름"}

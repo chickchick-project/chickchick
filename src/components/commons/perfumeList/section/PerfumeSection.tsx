@@ -20,7 +20,7 @@ export function PerfumeSection({
   pageType = "perfumes",
 }: PerfumeSectionProps) {
   return (
-    <section className="tablet:mt-10 mt-5 px-4 w-full">
+    <section className="flex flex-col h-full">
       {pageType === "perfumes" && (
         <h3 className="tablet:text-headline-3 text-body-2 font-semibold">
           향수
@@ -28,7 +28,7 @@ export function PerfumeSection({
       )}
 
       {!isIdle && perfumes.length === 0 && !isLoading ? (
-        <div className="flex justify-center items-center h-40">
+        <div className="flex justify-center items-center flex-1">
           검색 결과가 없습니다.
         </div>
       ) : (
@@ -36,6 +36,14 @@ export function PerfumeSection({
           {perfumes.map((item) => (
             <Link key={item.perfume_id} href={`/perfumes/${item.perfume_id}`}>
               <PerfumeCard
+                className="tablet:block hidden"
+                perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
+                brandName={item.brand_name_ko ?? item.brand_name_en}
+                perfumeName={item.perfume_name_ko ?? item.perfume_name_en}
+              />
+              <PerfumeCard
+                className="tablet:hidden block"
+                cardType="smallSize"
                 perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
                 brandName={item.brand_name_ko ?? item.brand_name_en}
                 perfumeName={item.perfume_name_ko ?? item.perfume_name_en}
