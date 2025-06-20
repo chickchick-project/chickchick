@@ -10,6 +10,7 @@ interface PerfumeCardProps {
   perfumeName: string | null;
   onClick?: () => void;
   onClose?: () => void;
+  className?: string;
 }
 
 export type { PerfumeCardType, PerfumeCardProps };

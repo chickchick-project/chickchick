@@ -12,7 +12,7 @@ import "./MainContentButtonsSwiper.styles.css";
 // TODO: pagination bullet 스타일 수정 필요
 export const MainContentButtonsSwiper = () => {
   return (
-    <div className="relative w-[90vw]">
+    <div className="relative w-[96vw]">
       <Swiper
         spaceBetween={10}
         slidesPerView={1}

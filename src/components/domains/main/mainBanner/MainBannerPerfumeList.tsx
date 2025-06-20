@@ -2,43 +2,41 @@
 
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import Link from "next/link";
+import { BannerPerfumeCardType } from "./MainBanner.types";
 
 interface IMainBannerPerfumesListProps {
-  data: {
-    id: string;
-    imageUrl: string | null;
-    brand: {
-      id: string;
-      nameKo: string | null;
-      nameEn: string;
-    };
-    nameKo: string | null;
-    nameEn: string;
-  }[];
+  data: BannerPerfumeCardType[];
 }
 
 export const MainBannerPerfumeList = ({
   data,
 }: IMainBannerPerfumesListProps) => {
   return (
-    <div className="overflow-hidden w-full">
-      <style jsx global>{`
+    <div className="overflow-auto w-full">
+      {/* <style jsx global>{`
         @keyframes left-right {
           0% {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-40vw);
-          } /* 이동 거리 조정 */
+            transform: translateX(-20vw);
+          }
         }
         .animate-left-right {
-          animation: left-right 10s linear infinite alternate;
+          animation: left-right 1s linear infinite alternate;
         }
-      `}</style>
-      <div className="flex gap-5 w-full justify-between animate-left-right px-0.5">
+      `}</style> */}
+      <div className="flex gap-5 justify-between w-full px-5">
         {data.map((item) => (
           <Link key={item.id} href={`/perfumes/${item.id}`}>
             <PerfumeCard
+              className="mobile:block hidden tablet:w-[180px] w-auto"
+              perfumeImage={item.imageUrl || null}
+              brandName={item.brand.nameKo || item.brand.nameEn || null}
+              perfumeName={item.nameKo || item.nameEn || null}
+            />
+            <PerfumeCard
+              className="mobile:hidden block"
               cardType="smallSize"
               perfumeImage={item.imageUrl || null}
               brandName={item.brand.nameKo || item.brand.nameEn || null}

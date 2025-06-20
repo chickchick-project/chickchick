@@ -1,17 +1,8 @@
+import { BannerPerfumeCardType } from "./MainBanner.types";
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
 
 interface IBannerProps {
-  data: {
-    id: string;
-    imageUrl: string | null;
-    brand: {
-      id: string;
-      nameKo: string | null;
-      nameEn: string;
-    };
-    nameKo: string | null;
-    nameEn: string;
-  }[];
+  data: BannerPerfumeCardType[];
 }
 
 export const MainBanner = ({ data }: IBannerProps) => {
