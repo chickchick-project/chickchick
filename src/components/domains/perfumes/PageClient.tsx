@@ -104,7 +104,6 @@ export default function PageClient({
           notes={memoizedNotes}
           accords={memoizedAccords}
         />
-
         <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
           <div className="w-full flex justify-between items-center mb-5">
             <span className="tablet:text-headline-2 text-title-2 font-semibold">
