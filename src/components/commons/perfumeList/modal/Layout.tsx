@@ -1,7 +1,9 @@
 import { ReactNode } from "react";
-import { useTotalStore } from "@/lib/stores/useCountStore";
+// import { useTotalStore } from "@/lib/stores/useCountStore";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
+import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { getFilterCount, LABELS_TO_KEY } from "./modal.helper";
 
 interface FilterModalLayoutProps {
   title: string;
@@ -18,7 +20,11 @@ export function FilterModalLayout({
   onSubmit,
   children,
 }: FilterModalLayoutProps) {
-  const totalCount = useTotalStore((state) => state.totalCount);
+  // const totalCount = useTotalStore((state) => state.totalCount);
+  const filters = useFilterStore((state) => state.filters);
+
+  const filterKey = LABELS_TO_KEY[title];
+  const count = getFilterCount(filters, filterKey);
 
   return (
     <section className="bg-white tablet:w-[640px] w-full px-5 pb-5 rounded-xl">
@@ -36,7 +42,7 @@ export function FilterModalLayout({
           초기화
         </ButtonOutlinedPrimaryLFull>
         <ButtonFilledPrimaryLFull onClick={onSubmit}>
-          {`${totalCount}개 검색`}
+          {`${count}개 검색`}
         </ButtonFilledPrimaryLFull>
       </footer>
     </section>
