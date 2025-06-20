@@ -25,7 +25,7 @@ export const BOTTOM_NAV_BAR_ICONS = (userId: string) => {
         active: "/icons/bottomNavBar/writingActive.svg",
       },
       alt: "글쓰기",
-      href: "/writing",
+      href: "/community/post",
     },
     {
       key: "mypage",
