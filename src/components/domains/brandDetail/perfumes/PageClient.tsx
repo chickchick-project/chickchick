@@ -69,22 +69,24 @@ export const PageClient = ({
   }, [data]);
 
   return (
-    <main className="w-full max-w-[1200px] px-4">
+    <div className="flex flex-col items-center w-full h-full">
       <SearchHeader
         notes={memoizedNotes}
         accords={memoizedAccords}
         isSearch={false}
       />
-      <div className="w-full flex justify-end items-center mb-5 tablet:px-4 px-1">
-        <SortDropdown type="perfume" />
-      </div>
-      <PerfumeSection
-        perfumes={uniquePerfumes}
-        isLoading={isLoading}
-        isIdle={isIdle}
-        moreRef={moreRef}
-        pageType="brandDetail"
-      />
-    </main>
+      <main className="flex flex-col w-full max-w-[1200px] px-4">
+        <div className="w-full flex justify-end items-center mb-5">
+          <SortDropdown type="perfume" />
+        </div>
+        <PerfumeSection
+          perfumes={uniquePerfumes}
+          isLoading={isLoading}
+          isIdle={isIdle}
+          moreRef={moreRef}
+          pageType="brandDetail"
+        />
+      </main>
+    </div>
   );
 };

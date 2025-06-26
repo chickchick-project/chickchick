@@ -94,33 +94,34 @@ export default function PageClient({
   }, [data]);
 
   return (
-    <div className="flex flex-col items-center">
-      <SearchHeader
-        inputValue={inputValue}
-        onChange={handleChange}
-        onSubmit={handleSubmit}
-        brands={memoizedBrands}
-        notes={memoizedNotes}
-        accords={memoizedAccords}
-      />
-
-      <main className="w-full max-w-[1200px] px-4">
-        <div className="w-full flex justify-between items-center mb-5">
-          <span className="tablet:text-headline-2 text-title-2 font-semibold">
-            {searchKeyword
-              ? `'${searchKeyword}'에 대한 검색 결과`
-              : "현재 인기있는 향수들이에요!"}
-          </span>
-          <SortDropdown type="perfume" />
-        </div>
-        {matchedBrand && <BrandSection brandName={matchedBrand} />}
-        <PerfumeSection
-          perfumes={uniquePerfumes}
-          isLoading={isLoading}
-          isIdle={isIdle}
-          moreRef={moreRef}
+    <div>
+      <div className="flex flex-col items-center h-full">
+        <SearchHeader
+          inputValue={inputValue}
+          onChange={handleChange}
+          onSubmit={handleSubmit}
+          brands={memoizedBrands}
+          notes={memoizedNotes}
+          accords={memoizedAccords}
         />
-      </main>
+        <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
+          <div className="w-full flex justify-between items-center mb-5">
+            <span className="tablet:text-headline-2 text-title-2 font-semibold">
+              {searchKeyword
+                ? `'${searchKeyword}'에 대한 검색 결과`
+                : "현재 인기있는 향수들이에요!"}
+            </span>
+            <SortDropdown type="perfume" />
+          </div>
+          {matchedBrand && <BrandSection brandName={matchedBrand} />}
+          <PerfumeSection
+            perfumes={uniquePerfumes}
+            isLoading={isLoading}
+            isIdle={isIdle}
+            moreRef={moreRef}
+          />
+        </main>
+      </div>
     </div>
   );
 }

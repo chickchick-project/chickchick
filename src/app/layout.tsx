@@ -16,8 +16,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="kr">
-      <body className={`${pretendard.variable} font-pretendard`}>
+    <html lang="kr" className="h-dvh">
+      <body className={`${pretendard.variable} font-pretendard h-full`}>
         <NavBarWrapper />
         <BodyWrapper>{children}</BodyWrapper>
         <div id="modal"></div>

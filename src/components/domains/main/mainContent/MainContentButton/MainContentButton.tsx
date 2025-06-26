@@ -18,7 +18,7 @@ export const MainContentButton = ({
   return (
     <Link
       href={link}
-      className="tablet:w-[340px] w-full tablet:h-[200px] h-[140px] bg-neutral-100 rounded-xl inline-flex flex-col justify-start items-start gap-12 "
+      className="pc:w-[340px] w-full tablet:h-[200px] h-[140px] bg-neutral-100 rounded-xl inline-flex flex-col justify-start items-start gap-12 "
     >
       <div
         className="w-full h-full rounded-xl flex flex-col justify-between items-start flex-1 tablet:p-8 p-6 overflow-hidden relative"

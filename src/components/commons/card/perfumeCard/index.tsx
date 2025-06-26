@@ -13,10 +13,11 @@ export default function PerfumeCard({
   perfumeName,
   onClick,
   onClose,
+  className,
 }: PerfumeCardProps) {
   return (
     <article
-      className={`relative ${PERFUME_CARD_STYLES.images[cardType]} ${PERFUME_CARD_STYLES.cursor[cardType]}`}
+      className={`relative ${PERFUME_CARD_STYLES.images[cardType]} ${PERFUME_CARD_STYLES.cursor[cardType]} ${className}`}
       onClick={onClick}
     >
       {cardType === PERFUME_CARD_TYPES.CLOSABLE && (

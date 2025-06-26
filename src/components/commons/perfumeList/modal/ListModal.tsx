@@ -42,7 +42,11 @@ export default function ListModal({
   };
 
   return (
-    <ModalContainer closeModal={close}>
+    <ModalContainer
+      closeModal={close}
+      className="w-full fixed bottom-0 left-0 rounded-t-xl rounded-b-none overflow-y-auto tablet:static tablet:w-auto tablet:rounded-xl"
+      overlayClassName="items-end tablet:items-center"
+    >
       <FilterModalLayout
         title={getLabel("list")}
         onReset={resetFilters}
@@ -62,7 +66,7 @@ export default function ListModal({
                 <h3 className="text-body-1 font-semibold">
                   {getLabel(typedKey)}
                 </h3>
-                <div className="flex gap-2 mt-3">
+                <div className="flex gap-2 mt-3 flex-wrap">
                   {[...value].map((id) => {
                     const name = getName(typedKey, id);
                     return (

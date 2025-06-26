@@ -23,8 +23,8 @@ export function SearchHeader({
   isSearch = true,
 }: SearchHeaderProps) {
   return (
-    <header className="w-full tablet:px-4 px-1">
-      <div className="flex flex-col items-center max-w-[1200px] mx-auto tablet:my-10 mt-3 mb-5">
+    <header className="w-full px-4">
+      <div className="flex flex-col items-center max-w-[1200px] mx-auto my-5">
         {isSearch && (
           <SearchBar
             value={inputValue}
