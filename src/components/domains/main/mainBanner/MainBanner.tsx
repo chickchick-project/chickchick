@@ -1,8 +1,8 @@
-import { BannerPerfumeCardType } from "./MainBanner.types";
+import { PerfumeCardType } from "./MainBanner.types";
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
 
 interface IBannerProps {
-  data: BannerPerfumeCardType[];
+  data: PerfumeCardType[];
 }
 
 export const MainBanner = ({ data }: IBannerProps) => {
