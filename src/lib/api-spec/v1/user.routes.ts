@@ -1,9 +1,9 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { CreateUserSchema, UserSchema } from "@/lib/schemas/user";
+import { CreateUserSchema, UserSchema } from "@/lib/schemas/user.schema";
 import {
   ErrorResponseSchema,
   SuccessResponseSchema,
-} from "@/lib/schemas/common";
+} from "@/lib/schemas/common.schema";
 
 export const createUserRoute = createRoute({
   method: "post",

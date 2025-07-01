@@ -1,6 +1,7 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 // import { swaggerUI } from "@hono/swagger-ui";
 import usersApi from "@/lib/routes/v1/users.route";
+import perfumesApi from "../routes/v1/perfumes.route";
 
 const app = new OpenAPIHono().basePath("/api");
 
@@ -16,7 +17,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 app.route("/v1", usersApi);
-
+app.route("/v1", perfumesApi);
 // app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
 
 export default app;

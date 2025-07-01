@@ -1,4 +1,4 @@
-import { User, CreateUser } from "@/lib/schemas/user";
+import { User, CreateUser } from "@/lib/schemas/user.schema";
 
 const fakeDb: User[] = [];
 
