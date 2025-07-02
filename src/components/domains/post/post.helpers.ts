@@ -1,23 +1,25 @@
 import { TPostFormData } from "@/lib/queries/community/postQueries";
 
-export async function submitNewPost(postFormData: TPostFormData) {
-  try {
-    const response = await fetch("/api/community/post", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ postFormData }),
-    });
+type TSubmitNewPostResponse = {
+  success: boolean;
+  postId?: string;
+  message?: string;
+};
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch data: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log("게시글 작성 성공:", data);
-    // 게시글 상세페이지로 리다이렉트 처리 필요
-    return data;
-  } catch (error) {
-    console.error("게시글 작성 에러:", error);
+export async function submitNewPost(
+  postFormData: TPostFormData
+): Promise<TSubmitNewPostResponse> {
+  const response = await fetch("/api/community/post", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(postFormData),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || `API Error: ${response.status}`);
   }
+
+  return { success: data.success, postId: data.post.id };
 }

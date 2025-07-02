@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import PostEditor from "./PostEditor";
 import PostFormActions from "./PostFormActions";
 import PostRelatedPerfume from "./PostRelatedPerfume";
@@ -13,7 +15,6 @@ import {
   TPostCategory,
 } from "@/lib/queries/community/postQueries";
 import PostCategory from "./PostCategory";
-
 import { submitNewPost } from "../post.helpers";
 import { postSchema } from "./postSchema";
 
@@ -23,6 +24,9 @@ interface IPostFormProps {
 }
 
 export default function PostForm({ type, initialData }: IPostFormProps) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  // const [serverError, setServerError] = useState<string | null>(null);
   // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
   const method = useForm<TPostInput>({
@@ -37,10 +41,12 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
   });
   const {
     handleSubmit,
-    formState: { isValid, isDirty, isSubmitting },
+    formState: { isValid, isDirty },
   } = method;
 
   const onSubmit = async (data: TPostInput) => {
+    setIsLoading(true);
+    // setServerError(null);
     const thumbnailUrl = extractFirstImageSrc(data.content);
 
     const postData: TPostFormData = {
@@ -49,9 +55,27 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
       thumbnailUrl,
     };
     if (type === "create") {
-      await submitNewPost(postData);
+      try {
+        const result = await submitNewPost(postData);
+        if (result.success && result.postId) {
+          router.push(`/community/post/${result.postId}`);
+        }
+        //  else {
+        //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
+        // }
+      } catch (error) {
+        // setServerError(
+        //   error instanceof Error
+        //     ? error.message
+        //     : "알 수 없는 오류가 발생했습니다."
+        // );
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
+
+  const disabled = !isDirty || !isValid || isLoading;
 
   return (
     <FormProvider {...method}>
@@ -65,7 +89,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
           <PostEditor />
           <PostRelatedPerfume />
         </div>
-        <PostFormActions disabled={!isDirty || !isValid || isSubmitting} />
+        <PostFormActions disabled={disabled} />
       </form>
     </FormProvider>
   );
