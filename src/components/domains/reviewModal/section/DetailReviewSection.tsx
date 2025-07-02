@@ -1,10 +1,12 @@
-import { useState } from "react";
+"use client";
+
+import { useFormContext } from "react-hook-form";
 import { SubTitle } from "../SubTitle";
 
 export const DetailReviewSection = () => {
-  const [text, setText] = useState("");
-
+  const { register, watch } = useFormContext();
   const MAX_LENGTH = 500;
+  const content = watch("content") || "";
 
   return (
     <div className="flex flex-col gap-5">
@@ -19,13 +21,12 @@ export const DetailReviewSection = () => {
           className="w-full rounded-xl border border-gray-200 bg-white p-5 text-[15px] resize-none focus:outline-none"
           placeholder="후기를 적어주세요 (선택 사항)"
           rows={5}
-          maxLength={500}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+          maxLength={MAX_LENGTH}
+          {...register("content")}
         />
         <div className="flex justify-end">
           <span className="text-sm text-gray-100">
-            {text.length}/{MAX_LENGTH}
+            {content.length}/{MAX_LENGTH}
           </span>
         </div>
       </div>
