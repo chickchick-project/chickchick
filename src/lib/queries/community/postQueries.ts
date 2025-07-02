@@ -1,15 +1,23 @@
 import { Post, PostCategory } from "@prisma/client";
 import { validateUserSession } from "../userQueries";
 import { prisma } from "@/lib/prisma";
-export type TPostCategory = PostCategory | "";
-export type TPostCreateInput = Pick<
+
+export type TPostCategory = PostCategory;
+
+export type TPostInput = {
+  category: PostCategory | "";
+  title: string;
+  content: string;
+  thumbnailUrl: string | null;
+};
+export type TPostFormData = Pick<
   Post,
   "content" | "title" | "category" | "thumbnailUrl"
 >;
 
 export async function createCommunityPost(
   userId: string,
-  postData: TPostCreateInput
+  postData: TPostFormData
 ) {
   const validation = await validateUserSession(userId);
   if (validation.errorResult) return validation.errorResult;

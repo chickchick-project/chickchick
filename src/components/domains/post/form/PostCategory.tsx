@@ -1,21 +1,24 @@
 import BoardDropdown from "@/components/commons/dropdown/BoardDropdown";
 import SubTitleLabel from "./element/SubTitleLabel";
-import { TPostCategory } from "@/lib/queries/community/postQueries";
+import { Controller, useFormContext } from "react-hook-form";
 
-interface IPostCategoryProps {
-  value?: string;
-  onChange?: (category: TPostCategory) => void;
-}
+export default function PostCategory() {
+  const { control } = useFormContext();
 
-export default function PostCategory({ value, onChange }: IPostCategoryProps) {
   return (
     <>
       <SubTitleLabel label="카테고리" id="community-category" isRequired />
-      <BoardDropdown
-        id="category"
-        ariaLabelledBy="community-category"
-        currentOption={value}
-        onChange={onChange}
+      <Controller
+        name="category"
+        control={control}
+        render={({ field }) => (
+          <BoardDropdown
+            id="category"
+            ariaLabelledBy="community-category"
+            currentOption={field.value}
+            onChange={field.onChange}
+          />
+        )}
       />
     </>
   );

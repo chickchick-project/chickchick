@@ -1,9 +1,8 @@
 import PageClient from "@/components/domains/post/PageClient";
-
-export default function page() {
+export default async function page() {
   return (
     <>
-      <PageClient />
+      <PageClient type="create" />
     </>
   );
 }

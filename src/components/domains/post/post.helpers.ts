@@ -1,6 +1,6 @@
-import { TPostCreateInput } from "@/lib/queries/community/postQueries";
+import { TPostFormData } from "@/lib/queries/community/postQueries";
 
-export async function submitPost(postFormData: TPostCreateInput) {
+export async function submitNewPost(postFormData: TPostFormData) {
   try {
     const response = await fetch("/api/community/post", {
       method: "POST",
