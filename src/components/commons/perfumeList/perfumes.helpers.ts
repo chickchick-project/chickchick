@@ -1,52 +1,102 @@
-import { Perfume } from "@/app/api/search/route";
-import { fetchPerfumes } from "@/lib/utils/fetchPerfumes";
 import { FILTER_LABELS } from "./filter/filter.constants";
+import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
+import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
+
+const API_BASE_URL = "/api/v1";
+
+const formatFilters = (filters: Map<string, Set<string>>) => {
+  const result: Record<string, string[]> = {};
+  for (const [key, values] of filters.entries()) {
+    if (values.size > 0) {
+      result[`${key}_filter`] = Array.from(values);
+    }
+  }
+  return result;
+};
+
+async function fetchPerfumes(
+  cursor: string | null,
+  searchText: string,
+  filters: Map<string, Set<string>>
+): Promise<SearchResponse<PerfumeSearchResult>> {
+  try {
+    let response: Response;
+    const formattedFilters = formatFilters(filters);
+
+    if (Object.keys(formattedFilters).length > 0) {
+      const requestBody = {
+        search_text: searchText || "",
+        last_seen_id: cursor || null,
+        result_limit: 15,
+        ...formattedFilters,
+      };
+      response = await fetch(`${API_BASE_URL}/search`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      });
+    } else {
+      // 필터가 없을 경우 GET으로 처리
+      const queryParams = new URLSearchParams();
+      if (searchText) queryParams.append("q", searchText);
+      if (cursor) queryParams.append("cursor", cursor);
+      queryParams.append("limit", "15");
+
+      response = await fetch(
+        `${API_BASE_URL}/search?${queryParams.toString()}`,
+        {
+          method: "GET",
+          next: { revalidate: 300 },
+        }
+      );
+    }
+
+    if (!response.ok) {
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: "알 수 없는 에러" }));
+      throw new Error(
+        errorData.error || `Failed to fetch data: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+    return {
+      data: result.data,
+      nextCursor: result.nextCursor,
+      totalCount: result.totalCount,
+    };
+  } catch (error) {
+    console.error("fetchPerfumes 오류:", error);
+    return { data: [], nextCursor: null, totalCount: 0 };
+  }
+}
 
 const getLabel = (key: string) =>
   FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
 
-const adaptedFetchPerfumes = async (
-  cursor: string | null,
-  searchText: string,
-  filters: Map<string, Set<string>>
-) => {
-  try {
-    const result = await fetchPerfumes(cursor, searchText, filters);
-    return {
-      data: result.data || [],
-      nextCursor: result.nextCursor ?? null,
-      totalCount: result.totalCount,
-    };
-  } catch (error) {
-    console.error("adaptedFetchPerfumes 오류:", error);
-    return { data: [], nextCursor: null };
-  }
-};
-
-const createQueryKey = (keyword: string, filters: Map<string, Set<string>>) => {
-  const searchParams = new URLSearchParams();
-  searchParams.append("q", keyword);
-  filters.forEach((values, key) => {
-    values.forEach((value) => searchParams.append(key, value));
-  });
-  return searchParams.toString();
-};
-
-const getUniquePerfumes = (perfumes: Perfume[]): Perfume[] => {
-  const perfumeMap = new Map<string, Perfume>();
+const getUniquePerfumes = (
+  perfumes: PerfumeSearchResult[]
+): PerfumeSearchResult[] => {
+  const perfumeMap = new Map<string, PerfumeSearchResult>();
 
   perfumes.forEach((item) => {
-    const existing = perfumeMap.get(item.perfume_id);
-    if (
-      existing?.priority &&
-      item.priority &&
-      (!existing || existing.priority < item.priority)
-    ) {
-      perfumeMap.set(item.perfume_id, item);
+    const existing = perfumeMap.get(item.id);
+    if (!existing || existing.priority < item.priority) {
+      perfumeMap.set(item.id, item);
     }
   });
 
   return Array.from(perfumeMap.values());
 };
 
-export { getLabel, adaptedFetchPerfumes, createQueryKey, getUniquePerfumes };
+// const createQueryKey = (keyword: string, filters: Map<string, Set<string>>) => {
+//   const searchParams = new URLSearchParams();
+//   searchParams.append("q", keyword);
+//   filters.forEach((values, key) => {
+//     values.forEach((value) => searchParams.append(key, value));
+//   });
+//   return searchParams.toString();
+// };
+
+export { fetchPerfumes, getLabel, getUniquePerfumes };

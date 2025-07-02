@@ -14,6 +14,7 @@ export const getPerfumesListRoute = createRoute({
   method: "get",
   path: "/perfumes",
   summary: "모든 향수 목록 조회",
+  description: "등록된 모든 향수 데이터를 조회합니다. (확인용)",
   responses: {
     200: {
       content: {
@@ -44,6 +45,7 @@ export const getPerfumeByIdRoute = createRoute({
   method: "get",
   path: "/perfumes/{id}",
   summary: "특정 향수 조회",
+  description: "요청된 향수 ID에 해당하는 단일 향수 정보 조회",
   request: {
     params: z.object({
       id: z

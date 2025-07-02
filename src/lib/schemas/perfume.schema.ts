@@ -37,13 +37,9 @@ export const PerfumeSearchResultSchema = z
       description: "향수 이미지 URL",
       example: "https://example.com/perfume.jpg",
     }),
-    reviewsCount: z.number().int().min(0).openapi({
-      description: "리뷰 개수",
-      example: 42,
-    }),
-    bookmarksCount: z.number().int().min(0).openapi({
-      description: "북마크 개수",
-      example: 15,
+    priority: z.number().int().min(0).openapi({
+      description: "우선순위",
+      example: 1,
     }),
   })
   .openapi("PerfumeSearchResult", {
@@ -71,21 +67,6 @@ export const PerfumeDetailResponseSchema = z
     data: PerfumeSchema,
   })
   .openapi("PerfumeDetailResponse");
-
-/**
- * 검색 결과 응답 스키마
- */
-export const SearchResponseSchema = z
-  .object({
-    success: z.boolean(),
-    message: z.string(),
-    data: z.object({
-      items: z.array(PerfumeSearchResultSchema),
-      nextCursor: z.string().nullable(),
-      totalCount: z.number().optional(),
-    }),
-  })
-  .openapi("SearchResponse");
 
 // 타입 추출
 export type Perfume = z.infer<typeof PerfumeSchema>;

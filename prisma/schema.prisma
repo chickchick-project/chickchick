@@ -63,7 +63,6 @@ model Perfume {
   accordMappings       PerfumeAccordMapping[] @relation("PerfumeToAccordMappings")
   bookmarks            PerfumeBookmark[]      @relation("PerfumeToBookmarks")
   noteMappings         PerfumeNoteMapping[]   @relation("PerfumeToNoteMappings")
-  perfume_search_index perfume_search_index[]
   brand                Brand                  @relation("BrandToPerfumes", fields: [brandId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   reviews              Review[]               @relation("PerfumeToReviews")
   collectedByUsers     UserCollection[]       @relation("PerfumeToUserCollections")
@@ -231,15 +230,6 @@ model Comment {
   @@index([targetType, targetId, createdAt])
   @@index([parentId, createdAt])
   @@map("comments")
-}
-
-model perfume_search_index {
-  id            String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  perfume_id    String?                  @db.Uuid
-  search_vector Unsupported("tsvector")?
-  type          String?
-  priority      Int?
-  perfumes      Perfume?                 @relation(fields: [perfume_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model PerfumeImage {
