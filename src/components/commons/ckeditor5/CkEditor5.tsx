@@ -38,11 +38,9 @@ const LICENSE_KEY = "GPL";
 export default function CkEditor5({
   content,
   onChange,
-  id,
 }: {
   content?: string;
   onChange: (newContent: string) => void;
-  id: string;
 }) {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
@@ -111,6 +109,7 @@ export default function CkEditor5({
           Strikethrough,
           Underline,
         ],
+
         extraPlugins: [supabaseUploadPlugin],
         balloonToolbar: ["bold", "italic", "|", "link"],
         heading: {
@@ -168,6 +167,7 @@ export default function CkEditor5({
             },
           },
         },
+
         placeholder: "글 내용을 작성해 주세요.",
         translations: [translations],
       },
@@ -186,7 +186,6 @@ export default function CkEditor5({
               <CKEditor
                 editor={ClassicEditor}
                 config={editorConfig}
-                id={id}
                 onChange={(event, editor) => {
                   if (!editor) return;
                   const data = editor.getData?.() ?? "";
