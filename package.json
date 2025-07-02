@@ -13,6 +13,7 @@
   "dependencies": {
     "@auth/supabase-adapter": "^1.8.0",
     "@ckeditor/ckeditor5-react": "^9.5.0",
+    "@hookform/resolvers": "^5.1.1",
     "@prisma/client": "^6.5.0",
     "@supabase/supabase-js": "^2.46.2",
     "chart.js": "^4.4.9",
@@ -33,7 +34,7 @@
     "tailwind-scrollbar-hide": "^2.0.0",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "zod": "^3.23.8",
+    "zod": "^3.25.67",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
