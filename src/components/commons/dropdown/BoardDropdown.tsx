@@ -27,9 +27,10 @@ export default function BoardDropdown({
     setSelectedOption(option);
     onChange?.(option.value as TPostCategory);
   };
+  const width = "tablet:w-[128px]";
 
   return (
-    <>
+    <div className={width}>
       <Dropdown
         id={id}
         selectedOption={selectedOption}
@@ -37,8 +38,8 @@ export default function BoardDropdown({
         options={BOARD_OPTIONS}
         handleChangeOption={handleSortChange}
         ariaLabelledBy={ariaLabelledBy}
-        width="tablet:w-[128px]"
+        width={width}
       />
-    </>
+    </div>
   );
 }
