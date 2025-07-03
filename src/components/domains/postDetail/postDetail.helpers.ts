@@ -12,9 +12,14 @@ type TPostDetailApiResponse = {
 export async function getPostDetailById(
   postId: string
 ): Promise<TPostDetailApiResponse> {
+  const cookieStore = await cookies();
+
   try {
     const response = await fetch(`${API_BASE_URL}/community/post/${postId}`, {
       cache: "no-store",
+      headers: {
+        Cookie: cookieStore.toString(),
+      },
     });
 
     const data = await response.json();
