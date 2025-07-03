@@ -32,7 +32,7 @@ export const Board: BoardChipStory = {
   },
   args: {
     size: "m",
-    type: "question" as CategoryType,
+    type: "QUESTION" as CategoryType,
   },
 };
 

@@ -60,7 +60,7 @@ const COMMON_ARGS: Partial<PostCardProps> = {
   createdAt: COMMON_TEXT.createdAt,
   meta: COMMON_META,
   profileImage: COMMON_IMAGES.profile,
-  categoryType: "question",
+  categoryType: "QUESTION",
 };
 
 export const Default = {

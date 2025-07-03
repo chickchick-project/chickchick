@@ -11,9 +11,9 @@ const THUMBNAIL_SIZES = {
 } as const;
 
 const CATEGORY_TYPES = {
-  QUESTION: "question",
-  FREEBOARD: "discussion",
-  RECOMMENDATION: "recommendation",
+  QUESTION: "QUESTION",
+  FREEBOARD: "FREEBOARD",
+  RECOMMENDATION: "RECOMMENDATION",
 } as const;
 
 const CATEGORY_LABELS = {

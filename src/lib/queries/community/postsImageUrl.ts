@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase/init";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 
-const MAX_SIZE = 5 * 1024 * 1024;
+export const POST_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
 
 const bucket = process.env.NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET;
 
@@ -16,7 +16,7 @@ export async function getPostImageUrl(file: File) {
     return;
   }
 
-  if (file.size > MAX_SIZE) {
+  if (file.size > POST_IMAGE_MAX_SIZE) {
     alert("5MB 이하 파일만 업로드할 수 있습니다.");
     return;
   }

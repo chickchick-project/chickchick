@@ -54,6 +54,7 @@ interface CurrentUserInfo {
   nickname: string;
   role: string | null;
 }
+
 async function validateUserSession(
   expectedUserId?: string
 ): Promise<SessionValidationResult> {

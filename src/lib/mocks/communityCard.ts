@@ -18,7 +18,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "따뜻한 봄날에 잘 어울리는 플로럴 계열 향수를 추천해요.",
     author: "향기로운나",
     createdAt: "2025-04-25 09:12:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 12 },
       { type: "Comment", count: 3 },
@@ -31,7 +31,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "처음 향수를 사려는데 어떤 제품이 좋을까요?",
     author: "퍼퓸초보",
     createdAt: "2025-04-24 14:30:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 5 },
       { type: "Comment", count: 7 },
@@ -44,7 +44,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 외에도 다양한 이야기를 나눠요! 오늘 날씨 너무 좋네요.",
     author: "자유인",
     createdAt: "2025-04-23 18:45:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 9 },
       { type: "Comment", count: 2 },
@@ -57,7 +57,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "여름에 어울리는 시트러스 계열 향수 추천 부탁드려요.",
     author: "시원한향기",
     createdAt: "2025-04-22 11:20:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 15 },
       { type: "Comment", count: 4 },
@@ -70,7 +70,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "20대 여성에게 어울리는 향수 추천해주세요.",
     author: "추천요정",
     createdAt: "2025-04-21 20:05:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 8 },
       { type: "Comment", count: 6 },
@@ -83,7 +83,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "오늘 하루도 모두 힘내세요! 자유게시판에서 소통해요.",
     author: "오늘도자유",
     createdAt: "2025-04-20 08:55:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 6 },
       { type: "Comment", count: 1 },
@@ -96,7 +96,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "겨울에는 머스크나 우디 계열이 잘 어울리는 것 같아요.",
     author: "겨울향기",
     createdAt: "2025-04-19 17:40:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 11 },
       { type: "Comment", count: 2 },
@@ -109,7 +109,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "두 가지 이상의 향수를 섞어 쓰는 방법이 궁금합니다.",
     author: "레이어링초보",
     createdAt: "2025-04-18 13:15:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 7 },
       { type: "Comment", count: 5 },
@@ -122,7 +122,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "자유롭게 글을 남겨주세요. 규칙만 지켜주시면 됩니다!",
     author: "운영자",
     createdAt: "2025-04-17 10:10:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 10 },
       { type: "Comment", count: 0 },
@@ -135,7 +135,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "가격대비 만족도가 높은 향수 리스트 공유합니다.",
     author: "가성비퍼퓸",
     createdAt: "2025-04-16 19:30:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 13 },
       { type: "Comment", count: 3 },
@@ -148,7 +148,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "드디어 향수 공병이 나왔어요! 다 쓰고 나니 뿌듯하네요.",
     author: "공병부자",
     createdAt: "2025-04-15 08:55:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 5 },
       { type: "Comment", count: 1 },
@@ -161,7 +161,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 고를 때 가장 중요하게 생각하는 기준이 뭔가요?",
     author: "선택장애",
     createdAt: "2025-04-14 09:00:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 4 },
       { type: "Comment", count: 2 },
@@ -174,7 +174,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "남자들이 많이 쓰는 향수 베스트 3를 정리해봤어요. 참고하세요!",
     author: "향수남",
     createdAt: "2025-04-13 20:05:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 14 },
       { type: "Comment", count: 4 },
@@ -187,7 +187,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수는 어디에 보관하는 게 가장 좋은가요?",
     author: "보관왕",
     createdAt: "2025-04-12 14:20:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 3 },
       { type: "Comment", count: 3 },
@@ -200,7 +200,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "오늘 하루 있었던 일 자유롭게 이야기해요.",
     author: "소통왕",
     createdAt: "2025-04-11 13:45:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 8 },
       { type: "Comment", count: 1 },
@@ -213,7 +213,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "봄에 뿌리기 좋은 향수 리스트를 정리해봤어요.",
     author: "봄향기",
     createdAt: "2025-04-10 11:20:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 10 },
       { type: "Comment", count: 2 },
@@ -226,7 +226,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 샘플을 쉽게 구할 수 있는 곳이 있을까요?",
     author: "샘플러",
     createdAt: "2025-04-09 10:30:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 6 },
       { type: "Comment", count: 2 },
@@ -239,7 +239,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "자유롭게 이야기 나누는 공간입니다. 모두 환영해요!",
     author: "수다쟁이",
     createdAt: "2025-04-08 18:45:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 7 },
       { type: "Comment", count: 0 },
@@ -252,7 +252,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "여름철에 상쾌하게 쓸 수 있는 향수 추천해요.",
     author: "여름남",
     createdAt: "2025-04-07 09:12:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 13 },
       { type: "Comment", count: 5 },
@@ -265,7 +265,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 때문에 알레르기 반응이 생길 수 있나요?",
     author: "알레르기맨",
     createdAt: "2025-04-06 14:30:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 2 },
       { type: "Comment", count: 1 },
@@ -278,7 +278,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "오늘 하루도 모두 힘내세요! 자유게시판에서 소통해요.",
     author: "오늘도자유",
     createdAt: "2025-04-05 08:55:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 5 },
       { type: "Comment", count: 0 },
@@ -291,7 +291,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "겨울에는 머스크나 우디 계열이 잘 어울리는 것 같아요.",
     author: "겨울향기",
     createdAt: "2025-04-04 17:40:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 12 },
       { type: "Comment", count: 3 },
@@ -304,7 +304,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "두 가지 이상의 향수를 섞어 쓰는 방법이 궁금합니다.",
     author: "레이어링초보",
     createdAt: "2025-04-03 13:15:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 4 },
       { type: "Comment", count: 1 },
@@ -317,7 +317,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "자유롭게 글을 남겨주세요. 규칙만 지켜주시면 됩니다!",
     author: "운영자",
     createdAt: "2025-04-02 10:10:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 6 },
       { type: "Comment", count: 1 },
@@ -330,7 +330,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "가격대비 만족도가 높은 향수 리스트 공유합니다.",
     author: "가성비퍼퓸",
     createdAt: "2025-04-01 19:30:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 11 },
       { type: "Comment", count: 3 },
@@ -343,7 +343,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "드디어 향수 공병이 나왔어요! 다 쓰고 나니 뿌듯하네요.",
     author: "공병부자",
     createdAt: "2025-03-31 08:55:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 3 },
       { type: "Comment", count: 0 },
@@ -356,7 +356,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 고를 때 가장 중요하게 생각하는 기준이 뭔가요?",
     author: "선택장애",
     createdAt: "2025-03-30 09:00:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 2 },
       { type: "Comment", count: 2 },
@@ -369,7 +369,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "남자들이 많이 쓰는 향수 리스트를 정리해봤어요.",
     author: "향수남",
     createdAt: "2025-03-29 20:05:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 13 },
       { type: "Comment", count: 4 },
@@ -382,7 +382,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수는 어디에 보관하는 게 가장 좋은가요?",
     author: "보관왕",
     createdAt: "2025-03-28 14:20:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 2 },
       { type: "Comment", count: 1 },
@@ -395,7 +395,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "오늘 하루 있었던 일 자유롭게 이야기해요.",
     author: "소통왕",
     createdAt: "2025-03-27 13:45:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 7 },
       { type: "Comment", count: 2 },
@@ -408,7 +408,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "봄에 뿌리기 좋은 향수 리스트를 정리해봤어요.",
     author: "봄향기",
     createdAt: "2025-03-26 11:20:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 12 },
       { type: "Comment", count: 3 },
@@ -421,7 +421,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 샘플을 쉽게 구할 수 있는 곳이 있을까요?",
     author: "샘플러",
     createdAt: "2025-03-25 10:30:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 4 },
       { type: "Comment", count: 1 },
@@ -434,7 +434,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "자유롭게 이야기 나누는 공간입니다. 모두 환영해요!",
     author: "수다쟁이",
     createdAt: "2025-03-24 18:45:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 6 },
       { type: "Comment", count: 1 },
@@ -447,7 +447,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "여름철에 상쾌하게 쓸 수 있는 향수 추천해요.",
     author: "여름남",
     createdAt: "2025-03-23 09:12:00",
-    categoryType: "recommendation",
+    categoryType: "RECOMMENDATION",
     meta: [
       { type: "Like", count: 11 },
       { type: "Comment", count: 2 },
@@ -460,7 +460,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "향수 때문에 알레르기 반응이 생길 수 있나요?",
     author: "알레르기맨",
     createdAt: "2025-03-22 14:30:00",
-    categoryType: "question",
+    categoryType: "QUESTION",
     meta: [
       { type: "Like", count: 1 },
       { type: "Comment", count: 0 },
@@ -473,7 +473,7 @@ export const mockCommunityPostData: TCommunityPost[] = [
     content: "오늘 하루도 모두 힘내세요! 자유게시판에서 소통해요.",
     author: "오늘도자유",
     createdAt: "2025-03-21 08:55:00",
-    categoryType: "discussion",
+    categoryType: "FREEBOARD",
     meta: [
       { type: "Like", count: 4 },
       { type: "Comment", count: 1 },

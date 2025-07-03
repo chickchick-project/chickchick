@@ -52,7 +52,7 @@ export const mockFreePosts: CommunityPost[] = [
 ];
 
 export const boardDataMap: { [key: string]: CommunityPost[] } = {
-  question: mockQuestionPosts,
-  recommendation: mockRecommendPosts,
-  discussion: mockFreePosts,
+  QUESTION: mockQuestionPosts,
+  RECOMMENDATION: mockRecommendPosts,
+  FREEBOARD: mockFreePosts,
 };

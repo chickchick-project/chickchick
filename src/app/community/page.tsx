@@ -1,6 +1,6 @@
 import PageClient from "@/components/domains/community/PageClient";
 
-export default function page() {
+export default function Page() {
   return (
     <>
       <PageClient />

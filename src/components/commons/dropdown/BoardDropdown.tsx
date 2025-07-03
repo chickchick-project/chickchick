@@ -2,12 +2,13 @@
 import { useState } from "react";
 import Dropdown from "./DropdownBase";
 import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/lib/constants/options";
+import { TPostCategory } from "@/lib/queries/community/postQueries";
 
 interface IBoardDropdownProps {
   currentOption?: string;
   id: string;
   ariaLabelledBy?: string;
-  onChange?: (category: string) => void;
+  onChange?: (category: TPostCategory) => void;
 }
 
 export default function BoardDropdown({
@@ -24,11 +25,12 @@ export default function BoardDropdown({
 
   const handleSortChange = (option: Option) => {
     setSelectedOption(option);
-    onChange?.(option.value);
+    onChange?.(option.value as TPostCategory);
   };
+  const width = "tablet:w-[128px]";
 
   return (
-    <>
+    <div className={width}>
       <Dropdown
         id={id}
         selectedOption={selectedOption}
@@ -36,8 +38,8 @@ export default function BoardDropdown({
         options={BOARD_OPTIONS}
         handleChangeOption={handleSortChange}
         ariaLabelledBy={ariaLabelledBy}
-        width="tablet:w-[128px]"
+        width={width}
       />
-    </>
+    </div>
   );
 }
