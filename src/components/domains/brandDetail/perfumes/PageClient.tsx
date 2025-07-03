@@ -5,17 +5,16 @@ import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { useEffect, useMemo } from "react";
 
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
-import { Perfume } from "@/app/api/search/route";
 import { withCache } from "@/lib/utils/withCache";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { SearchHeader } from "../../../commons/perfumeList/search";
 import { PerfumeSection } from "../../../commons/perfumeList/section/PerfumeSection";
 import {
-  adaptedFetchPerfumes,
-  createQueryKey,
-  // getUniquePerfumes,
+  fetchPerfumes,
+  getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
+import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
 
 export const PageClient = ({
   brandName,
@@ -32,23 +31,17 @@ export const PageClient = ({
   const filters = useFilterStore((state) => state.filters);
   const setCount = useTotalStore((state) => state.setTotalCount);
 
-  // 검색 파라미터 생성 (메모이제이션)
-  const query: string = useMemo(
-    () => createQueryKey(brandName, filters),
-    [filters, brandName]
-  );
-
   // 무한 스크롤 훅 사용
   const fetcher = useMemo(
     () =>
       withCache((cursor: string | null) =>
-        adaptedFetchPerfumes(cursor, brandName, filters)
+        fetchPerfumes(cursor, brandName, filters)
       ),
     [filters, brandName]
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<Perfume>(fetcher, query);
+    useInfiniteScroll<PerfumeSearchResult>(fetcher);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
@@ -56,17 +49,8 @@ export const PageClient = ({
     }
   }, [totalCount, setCount]);
 
-  // const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
-
   // 중복 아이디 제거
-  const uniquePerfumes = useMemo(() => {
-    const seen = new Set();
-    return data.filter((item) => {
-      if (seen.has(item.perfume_id)) return false;
-      seen.add(item.perfume_id);
-      return true;
-    });
-  }, [data]);
+  const uniquePerfumes = getUniquePerfumes(data);
 
   return (
     <div className="flex flex-col items-center w-full h-full">
