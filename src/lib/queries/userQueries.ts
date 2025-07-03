@@ -2,39 +2,35 @@
 
 import { getSession } from "@/lib/database/getSession";
 import { prisma } from "@/lib/prisma";
-import { User, Prisma, BookmarkItemType, Post, Perfume } from "@prisma/client";
+import { User, BookmarkItemType, Post } from "@prisma/client";
 import { Session } from "next-auth";
 
-type UserCollectionWithDetails = Prisma.UserCollectionGetPayload<{
-  perfumeId: true;
-  select: {
-    perfumeId: true;
-    perfume: {
-      select: {
-        id: true;
-        nameKo: true;
-        nameEn: true;
-        imageUrl: true;
-        brand: {
-          select: {
-            nameEn: true;
-            nameKo: true;
-          };
-        };
-      };
+type UserCollectionItem = {
+  perfumeId: string;
+  perfume: {
+    id: string;
+    nameKo: string | null;
+    nameEn: string;
+    imageUrl: string | null;
+    brand: {
+      nameEn: string;
+      nameKo: string | null;
     };
   };
-}>;
+};
 
 type SessionValidationResult =
   | { session: ValidatedSession; errorResult?: null }
   | { session?: null; errorResult: { success: false; message: string } };
 
 type BookmarkedPostInfo = Pick<Post, "id" | "title" | "thumbnailUrl">;
-type BookmarkedPerfumeInfo = Pick<
-  Perfume,
-  "id" | "nameKo" | "nameEn" | "imageUrl"
->;
+
+type BookmarkedPerfumeInfo = {
+  id: string;
+  nameKo: string | null;
+  nameEn: string;
+  imageUrl: string | null;
+};
 
 type UserBookmarksGrouped = {
   posts: BookmarkedPostInfo[];
@@ -47,11 +43,9 @@ interface ActionResult<T = null> {
   data?: T;
 }
 
-// 유저 세션 검증 유틸리티 함수
 interface ValidatedSession extends Session {
   user: User & { id: string };
 }
-
 interface CurrentUserInfo {
   id: string;
   imageUrl: string | null;
@@ -61,50 +55,26 @@ interface CurrentUserInfo {
   role: string | null;
 }
 
-export async function validateUserSession(
+async function validateUserSession(
   expectedUserId?: string
 ): Promise<SessionValidationResult> {
   const session = await getSession();
-
-  // 세션 자체가 없는 경우 (로그인 안 함)
-  if (!session) {
-    return { errorResult: { success: false, message: "로그인이 필요합니다." } };
+  if (!session || !session.user || !session.user.id) {
+    const message = !session
+      ? "로그인이 필요합니다."
+      : !session.user
+      ? "세션 정보가 올바르지 않습니다."
+      : "사용자 ID를 확인할 수 없습니다.";
+    return { errorResult: { success: false, message } };
   }
-
-  // 세션은 있지만 user 객체가 없는 경우 (타입 에러 방지)
-  if (!session.user) {
-    return {
-      errorResult: {
-        success: false,
-        message: "세션 정보가 올바르지 않습니다.",
-      },
-    };
-  }
-
-  // user 객체는 있지만 user.id가 없는 경우 (NextAuth 설정 오류 또는 비정상적 상황)
-  if (!session.user.id) {
-    return {
-      errorResult: {
-        success: false,
-        message: "사용자 ID를 확인할 수 없습니다.",
-      },
-    };
-  }
-
   const currentUserId = session.user.id;
-
-  // 특정 사용자 ID와 일치하는지 확인 (선택적)
   if (expectedUserId && currentUserId !== expectedUserId) {
     return {
       errorResult: { success: false, message: "요청 권한이 없습니다." },
     };
   }
-
   return { session: session as ValidatedSession };
 }
-/**
- * 현재 로그인한 사용자 정보 가져오기
- */
 export async function fetchCurrentUserInfo(): Promise<
   ActionResult<CurrentUserInfo>
 > {
@@ -140,9 +110,6 @@ export async function fetchCurrentUserInfo(): Promise<
   }
 }
 
-/**
- * 특정 사용자 정보 조회
- */
 export async function fetchUserById(
   userId: string
 ): Promise<ActionResult<User>> {
@@ -167,10 +134,9 @@ export async function fetchUserById(
 /**
  * 사용자 향수 컬렉션 조회
  */
-
 export async function fetchUserCollection(
   userId: string
-): Promise<ActionResult<UserCollectionWithDetails[]>> {
+): Promise<ActionResult<UserCollectionItem[]>> {
   try {
     const data = await prisma.userCollection.findMany({
       where: {
@@ -183,8 +149,12 @@ export async function fetchUserCollection(
             id: true,
             nameKo: true,
             nameEn: true,
-            imageUrl: true,
             brand: { select: { nameEn: true, nameKo: true } },
+            perfumeImage: {
+              select: {
+                image_url: true,
+              },
+            },
           },
         },
       },
@@ -193,15 +163,22 @@ export async function fetchUserCollection(
     if (!data) {
       return { success: false, message: "컬렉션을 찾을 수 없습니다." };
     }
-    return { success: true, data };
+
+    const formattedData = data.map((item) => ({
+      perfumeId: item.perfumeId,
+      perfume: {
+        ...item.perfume,
+        imageUrl: item.perfume.perfumeImage?.image_url || null,
+      },
+    }));
+
+    return { success: true, data: formattedData };
   } catch (error) {
     console.error("[UserQuery] fetchUserCollection:", error);
     return { success: false, message: "컬렉션 조회에 실패했습니다." };
   }
 }
-/**
- * 향수 컬렉션에 추가
- */
+
 export async function addUserCollection(userId: string, perfumeId: string) {
   const validation = await validateUserSession(userId);
   if (validation.errorResult) return validation.errorResult;
@@ -251,16 +228,26 @@ export async function fetchUserBookmarks(
               id: true,
               nameKo: true,
               nameEn: true,
-              imageUrl: true,
+              perfumeImage: {
+                select: {
+                  image_url: true,
+                },
+              },
             },
           },
         },
       }),
     ]);
 
+    // [수정됨] 반환 데이터 구조를 가공합니다.
+    const formattedPerfumes = perfumeBookmarks.map((b) => ({
+      ...b.perfume,
+      imageUrl: b.perfume.perfumeImage?.image_url || null,
+    }));
+
     return {
       posts: postBookmarks.map((b) => b.post),
-      perfumes: perfumeBookmarks.map((b) => b.perfume),
+      perfumes: formattedPerfumes,
     };
   } catch (error) {
     console.error("[UserQuery] fetchUserBookmarks:", error);
@@ -268,9 +255,6 @@ export async function fetchUserBookmarks(
   }
 }
 
-/**
- * 북마크 추가
- */
 export async function addUserBookmark(
   userId: string,
   itemId: string,

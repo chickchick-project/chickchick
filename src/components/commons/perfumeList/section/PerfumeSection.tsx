@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
-import { Perfume } from "@/app/api/search/route";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
-  perfumes: Perfume[];
+  perfumes: PerfumeSearchResult[];
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;
@@ -34,19 +34,19 @@ export function PerfumeSection({
       ) : (
         <div className="grid pc:grid-cols-5 tablet:grid-cols-4 mobile:grid-cols-3 grid-cols-2 pc:gap-x-[52px] mobile:gap-x-[24px] gap-x-[10px] mobile:gap-y-10 gap-y-5 mt-5">
           {perfumes.map((item) => (
-            <Link key={item.perfume_id} href={`/perfumes/${item.perfume_id}`}>
+            <Link key={item.id} href={`/perfumes/${item.id}`}>
               <PerfumeCard
                 className="tablet:block hidden"
-                perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
-                brandName={item.brand_name_ko ?? item.brand_name_en}
-                perfumeName={item.perfume_name_ko ?? item.perfume_name_en}
+                perfumeImage={item.imageUrl ?? "/images/BlurShimmer.svg"}
+                brandName={item.brandNameKo ?? item.brandNameEn}
+                perfumeName={item.nameKo ?? item.nameEn}
               />
               <PerfumeCard
                 className="tablet:hidden block"
                 cardType="smallSize"
-                perfumeImage={item.image_url ?? "/images/BlurShimmer.svg"}
-                brandName={item.brand_name_ko ?? item.brand_name_en}
-                perfumeName={item.perfume_name_ko ?? item.perfume_name_en}
+                perfumeImage={item.imageUrl ?? "/images/BlurShimmer.svg"}
+                brandName={item.brandNameKo ?? item.brandNameEn}
+                perfumeName={item.nameKo ?? item.nameEn}
               />
             </Link>
           ))}

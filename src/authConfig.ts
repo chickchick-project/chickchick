@@ -53,7 +53,7 @@ export const authConfig = {
       account,
     }: {
       user: User;
-      account: Account | null;
+      account?: Account | null;
     }) => {
       if (!account) return false;
 

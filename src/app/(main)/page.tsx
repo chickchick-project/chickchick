@@ -11,12 +11,16 @@ export default async function Home() {
       id: true,
       nameKo: true,
       nameEn: true,
-      imageUrl: true,
       brand: {
         select: {
           id: true,
           nameKo: true,
           nameEn: true,
+        },
+      },
+      perfumeImage: {
+        select: {
+          image_url: true,
         },
       },
     },

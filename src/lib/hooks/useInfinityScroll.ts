@@ -3,6 +3,13 @@
 import { useEffect, useRef, useReducer, useCallback } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
 
+/**
+ * 검색 API 응답 데이터
+ *
+ * @property {T[]} data - 검색된 목록
+ * @property {string | null} nextCursor - 다음 페이지를 위한 커서 (없으면 null)
+ * @property {number | null} [totalCount] - (optional) 총 항목 수 (없으면 null)
+ */
 export interface SearchResponse<T> {
   data: T[]; // 검색된 목록
   nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
@@ -72,24 +79,20 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
 }
 
 export function useInfiniteScroll<T>(
-  fetchFunction: (
-    cursor: string | null,
-    query: string
-  ) => Promise<SearchResponse<T>>,
-  query: string
+  fetchFunction: (cursor: string | null) => Promise<SearchResponse<T>>
 ) {
   const moreRef = useRef<HTMLDivElement>(null);
   const isIntersecting = useIntersectionObserver(moreRef);
 
   const [state, dispatch] = useReducer(reducer<T>, undefined, initialState);
   const { data, totalCount, cursor, isLoading, hasMore, error, isIdle } = state;
-
   const fetchData = useCallback(
-    async (cursorToUse: string | null) => {
+  
+    async (currentCursor: string | null) => {
       dispatch({ type: "FETCH_START" });
 
       try {
-        const res = await fetchFunction(cursorToUse, query);
+        const res = await fetchFunction(currentCursor);
         if (!Array.isArray(res.data)) {
           throw new Error("데이터 형식이 잘못되었습니다.");
         }
@@ -105,21 +108,21 @@ export function useInfiniteScroll<T>(
         });
       }
     },
-    [fetchFunction, query]
+    [fetchFunction]
   );
 
   // 초기화 및 첫 fetch
   useEffect(() => {
     dispatch({ type: "RESET" });
     fetchData(null);
-  }, [query, fetchData]);
+  }, [fetchData]);
 
   // Intersection 감지 시 추가 fetch
   useEffect(() => {
-    if (isIntersecting && hasMore && !isLoading) {
+    if (isIntersecting && hasMore && !isLoading && !isIdle) {
       fetchData(cursor);
     }
-  }, [isIntersecting, hasMore, isLoading, cursor, fetchData]);
+  }, [isIntersecting, hasMore, isLoading, cursor, fetchData, isIdle]);
 
   // 수동 refetch
   const refetch = useCallback(() => {

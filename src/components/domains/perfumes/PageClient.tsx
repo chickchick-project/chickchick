@@ -2,7 +2,6 @@
 
 import { ChangeEvent, FormEvent, useState, useMemo, useEffect } from "react";
 import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
-import { Perfume } from "@/app/api/search/route";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
@@ -11,10 +10,11 @@ import { BrandSection } from "@/components/commons/perfumeList/section/BrandSect
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
 import {
-  adaptedFetchPerfumes,
-  createQueryKey,
-  // getUniquePerfumes,
+  fetchPerfumes,
+  getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
+import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
+import { withCache } from "@/lib/utils/withCache";
 
 export type BrandName = {
   en: string;
@@ -51,21 +51,16 @@ export default function PageClient({
     setInputValue(e.target.value);
   };
 
-  // 검색 파라미터 생성 (메모이제이션)
-  const query: string = useMemo(
-    () => createQueryKey(searchKeyword, filters),
-    [searchKeyword, filters]
-  );
-
-  // 무한 스크롤 훅 사용
   const fetcher = useMemo(
-    () => (cursor: string | null) =>
-      adaptedFetchPerfumes(cursor, searchKeyword, filters),
+    () =>
+      withCache((cursor: string | null) =>
+        fetchPerfumes(cursor, searchKeyword, filters)
+      ),
     [searchKeyword, filters]
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<Perfume>(fetcher, query);
+    useInfiniteScroll<PerfumeSearchResult>(fetcher);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
@@ -81,17 +76,8 @@ export default function PageClient({
     setMatchedBrand(match ? match.nameEn : null);
   }, [searchKeyword, memoizedBrands]);
 
-  // const uniquePerfumes = useMemo(() => getUniquePerfumes(data), [data]);
-
   // 중복 아이디 제거
-  const uniquePerfumes = useMemo(() => {
-    const seen = new Set();
-    return data.filter((item) => {
-      if (seen.has(item.perfume_id)) return false;
-      seen.add(item.perfume_id);
-      return true;
-    });
-  }, [data]);
+  const uniquePerfumes = getUniquePerfumes(data);
 
   return (
     <div>

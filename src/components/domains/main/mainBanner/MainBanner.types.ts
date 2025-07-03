@@ -1,11 +1,13 @@
-export type BannerPerfumeCardType = {
+export type PerfumeCardType = {
   id: string;
-  imageUrl: string | null;
+  nameEn: string;
+  nameKo: string | null;
   brand: {
     id: string;
-    nameKo: string | null;
     nameEn: string;
+    nameKo: string | null;
   };
-  nameKo: string | null;
-  nameEn: string;
+  perfumeImage: {
+    image_url: string;
+  } | null;
 };
