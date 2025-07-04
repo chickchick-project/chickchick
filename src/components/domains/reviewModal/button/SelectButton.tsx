@@ -22,6 +22,7 @@ export const SelectButton = ({
           : "border-gray-100 bg-white text-black-200"
       } hover:bg-primary-600 font-medium text-[15px] leading-normal`}
       onClick={onClick}
+      type="button"
     >
       {children}
       {isSelected ? (

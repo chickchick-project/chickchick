@@ -2,9 +2,9 @@ import ICONS from "@/lib/constants/icons";
 
 export const REVIEW_OPTIONS = {
   status: [
-    { key: "OWN", label: "지금 갖고 있어요" },
-    { key: "USED", label: "써봤어요" },
-    { key: "WANT", label: "갖고싶어요" },
+    { key: "NOT_USED_YET", label: "아직 안 써봤어요" },
+    { key: "CURRENTLY_USING", label: "지금 쓰고 있어요" },
+    { key: "USED_BEFORE", label: "써봤어요" },
   ],
   feeling: [
     {
@@ -66,7 +66,7 @@ export const REVIEW_OPTIONS = {
   ],
   gender_tone: [
     { key: "FEMININE", label: "여성적인" },
-    { key: "NEUTRAL", label: "중성적인" },
+    { key: "UNISEX", label: "중성적인" },
     { key: "MASCULINE", label: "남성적인" },
   ],
   seasonal: [
