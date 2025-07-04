@@ -1,4 +1,5 @@
 import { Review } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 export const createReview = async (props: Review) => {
   try {
@@ -6,7 +7,7 @@ export const createReview = async (props: Review) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        id: props.id,
+        id: uuidv4(),
         title: props.title,
         content: props.content,
         author_id: props.authorId,
