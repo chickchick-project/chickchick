@@ -1,5 +1,4 @@
 import { Post, PostCategory, Prisma } from "@prisma/client";
-import { validateUserSession } from "../userQueries";
 import { prisma } from "@/lib/prisma";
 
 export type TPostCategory = PostCategory;
@@ -33,8 +32,6 @@ export async function createCommunityPost(
   userId: string,
   postData: TPostFormData
 ) {
-  const validation = await validateUserSession(userId);
-  if (validation.errorResult) return validation.errorResult;
   try {
     const post = await prisma.post.create({
       data: { ...postData, userId },
@@ -83,9 +80,11 @@ export async function getPostDetailByIdService(
       return null;
     }
     const { post, likeActivity } = result;
-    const { bookmarks, userId: postUserId, ...postData } = post;
+    const { bookmarks, ...postData } = post;
     const isBookmarked = bookmarks.length > 0;
-    const isAuthor = userId === post.author.id;
+    const isAuthor = userId === post.userId;
+
+    console.log(userId, post.userId);
 
     return {
       ...postData,

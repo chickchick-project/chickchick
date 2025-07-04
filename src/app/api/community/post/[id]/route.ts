@@ -30,7 +30,7 @@ export async function GET(
     // 현재로그인한 유저 정보 조회 수정 예정(추후에 쿠키에서 토큰을 가져와서 처리 or 서버에서 세션을 가져와서 처리)
     const user = await fetchCurrentUserInfo();
     const userId = user?.data?.id ? user?.data?.id : null;
-
+    console.log("fetchCurrentUserInfo", userId, id);
     const postDetail = await getPostDetailByIdService(userId, id);
 
     if (!postDetail) {
