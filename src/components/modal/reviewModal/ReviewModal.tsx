@@ -12,8 +12,8 @@ import { StatusSection } from "../../domains/reviewModal/section/StatusSection";
 import { TimeSection } from "../../domains/reviewModal/section/TimeSection";
 import { SubmitButton } from "@/components/domains/reviewModal/button/SubmitButton";
 import { useInitialize } from "./form.initialize";
-import { reviewSchema } from "./form.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
+import { CreateReviewSchema } from "@/lib/schemas/review.schema";
 
 interface IReviewModalProps {
   closeModal: () => void;
@@ -38,7 +38,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
           style={{ scrollbarWidth: "none" }}
         >
           <Title>이 향수에 대한 리뷰를 남겨주세요</Title>
-          <Form schema={reviewSchema} useInitialize={useInitialize}>
+          <Form schema={CreateReviewSchema} useInitialize={useInitialize}>
             <div className="flex flex-col gap-10 p-5">
               <StatusSection />
               <FeelingSection />
