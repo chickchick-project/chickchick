@@ -3,48 +3,49 @@ import { InfoType } from "@/components/commons/author/author.types";
 import BoardChip from "@/components/commons/chip/BoardChip";
 import PostInteractions from "./PostInteractions";
 import PostActions from "./PostActions";
+import { TPostDetail } from "@/lib/queries/community/postQueries";
 
-type TAuthorInfo = {
-  author: string;
-  createdAt: string;
-  profileImage: string;
-  isAuthor: boolean;
-  info: InfoType;
-};
-const authorInfo: TAuthorInfo = {
-  author: "김철수",
-  createdAt: "2023-10-01",
-  profileImage: "",
-  isAuthor: true,
-  info: {
+interface IPostDetailHeaderProps extends Omit<TPostDetail, "content"> {}
+
+export default function PostDetailHeader(props: IPostDetailHeaderProps) {
+  const {
+    author,
+    title,
+    createdAt,
+    isAuthor,
+    isLiked,
+    bookmarkInfo,
+    category,
+    viewCount,
+    likeCount,
+    commentCount,
+  } = props;
+  const postReactionInfo: InfoType = {
     type: "post",
     item: [
-      { type: "Comment", count: 999 },
-      { type: "View", count: 999 },
+      { type: "View", count: viewCount },
+      { type: "Comment", count: commentCount },
+      { type: "Like", count: likeCount },
     ],
-  },
-};
-
-export default function PostDetailHeader() {
+  };
   return (
     <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
-        <BoardChip type="RECOMMENDATION" />
-        <PostInteractions />
+        <BoardChip type={category} />
+        <PostInteractions isLiked={isLiked} bookmarkInfo={bookmarkInfo} />
       </div>
       <h1 className="mt-5 mb-4 tablet:mb-5 text-title-1 tablet:text-headline-3 font-semibold text-black-100">
-        국무총리·국무위원 또는 정부위원은 국회나 그 위원회에 출석하여
-        국정처리상황을 보고하거나 의견을 진술하고 질문에 응답할 수 있다.
+        {title}
       </h1>
       <div className="flex items-center justify-between">
         <AuthorInfo
-          author={authorInfo.author}
-          createdAt={authorInfo.createdAt}
-          profileImage={authorInfo.profileImage}
+          author={author.nickname}
+          createdAt={createdAt}
+          profileImage={author.imageUrl || ""}
           isAuthor={false}
-          info={authorInfo.info}
+          info={postReactionInfo}
         />
-        {authorInfo.isAuthor && <PostActions section="header" />}
+        {isAuthor && <PostActions section="header" />}
       </div>
       <div className="divider-horizontal mt-4 tablet:mt-5 mb-10" />
     </header>

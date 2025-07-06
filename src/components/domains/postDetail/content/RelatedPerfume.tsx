@@ -10,7 +10,7 @@ type TPerfume = {
 };
 
 interface IRelatedPerfumeProps {
-  perfumes: TPerfume[];
+  perfumes: TPerfume[] | [];
 }
 
 export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {

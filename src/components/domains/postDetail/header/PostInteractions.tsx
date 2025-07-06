@@ -1,15 +1,21 @@
 "use client";
 import { useState } from "react";
-
 import { BookmarkIcon } from "@/components/commons/interactions/icons/BookmarkIcon";
 import { LikeIcon } from "@/components/commons/interactions/icons/LikeIcon";
 import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
 import { Interactions } from "@/components/commons/interactions";
+import { TPostDetail } from "@/lib/queries/community/postQueries";
 
-export default function PostInteractions() {
+interface IPostInteractionsProps
+  extends Pick<TPostDetail, "isLiked" | "bookmarkInfo"> {}
+
+export default function PostInteractions({
+  isLiked,
+  bookmarkInfo,
+}: IPostInteractionsProps) {
   const [activeStates, setActiveStates] = useState({
-    like: false,
-    bookmark: false,
+    like: isLiked,
+    bookmark: bookmarkInfo.isBookmarked,
   });
 
   const toggle = (key: keyof typeof activeStates) => {

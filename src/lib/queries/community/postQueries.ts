@@ -1,5 +1,5 @@
 import { Post, PostCategory, Prisma } from "@prisma/client";
-import { validateUserSession } from "../userQueries";
+// import { validateUserSession } from "../userQueries";
 import { prisma } from "@/lib/prisma";
 
 export type TPostCategory = PostCategory;
@@ -15,7 +15,10 @@ export type TPostFormData = Pick<
   "content" | "title" | "category" | "thumbnailUrl"
 >;
 
-export type TPostDetail = Omit<Post, "bookmarks" | "userId"> & {
+export type TPostDetail = Omit<
+  Post,
+  "bookmarks" | "userId" | "createdAt" | "updatedAt"
+> & {
   author: {
     id: string;
     nickname: string;
@@ -27,14 +30,16 @@ export type TPostDetail = Omit<Post, "bookmarks" | "userId"> & {
     isBookmarked: boolean;
     id: string | null;
   };
+  createdAt: string;
+  updatedAt: string | null;
 };
 
 export async function createCommunityPost(
   userId: string,
   postData: TPostFormData
 ) {
-  const validation = await validateUserSession(userId);
-  if (validation.errorResult) return validation.errorResult;
+  // const validation = await validateUserSession(userId);
+  // if (validation.errorResult) return validation.errorResult;
   try {
     const post = await prisma.post.create({
       data: { ...postData, userId },
@@ -95,6 +100,8 @@ export async function getPostDetailByIdService(
         isBookmarked,
         id: isBookmarked ? bookmarks[0].id : null,
       },
+      createdAt: postData.createdAt.toISOString(),
+      updatedAt: postData.updatedAt ? postData.updatedAt.toISOString() : null,
     };
   } catch (error) {
     if (
