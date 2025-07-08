@@ -1,19 +1,9 @@
 import { Post, PostCategory, Prisma } from "@prisma/client";
 // import { validateUserSession } from "../userQueries";
 import { prisma } from "@/lib/prisma";
+import { TPostFormData } from "@/components/domains/post/form/postSchema";
 
 export type TPostCategory = PostCategory;
-
-export type TPostInput = {
-  category: PostCategory | "";
-  title: string;
-  content: string;
-  thumbnailUrl: string | null;
-};
-export type TPostFormData = Pick<
-  Post,
-  "content" | "title" | "category" | "thumbnailUrl"
->;
 
 export type TPostDetail = Omit<
   Post,

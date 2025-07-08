@@ -1,9 +1,8 @@
 "use client";
 
 import PostForm from "./form";
+import { TPostFormData } from "./form/postSchema";
 import Header from "./header";
-
-import { TPostFormData } from "@/lib/queries/community/postQueries";
 
 interface IPostFormPageProps {
   type: "create" | "edit";

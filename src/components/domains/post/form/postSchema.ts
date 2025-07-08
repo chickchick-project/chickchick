@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { PostCategory } from "@prisma/client";
 
 export const postSchema = z.object({
-  category: z.enum(["QUESTION", "FREEBOARD", "RECOMMENDATION"], {
-    required_error: "카테고리를 선택해 주세요.",
+  category: z.nativeEnum(PostCategory, {
+    errorMap: () => ({ message: "카테고리를 선택해 주세요." }),
   }),
   title: z
     .string()
