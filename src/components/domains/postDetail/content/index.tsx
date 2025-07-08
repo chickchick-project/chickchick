@@ -1,8 +1,9 @@
+"use client";
+import { useState, useEffect } from "react";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 import PostNavigation from "./postNavigation";
-
-const relatedPerfumes = [];
+import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
 
 interface IPostContent {
   content: string;
@@ -15,12 +16,16 @@ export default function PostContent({
   isAuthor,
   relatedPerfumes = [],
 }: IPostContent) {
+  const sanitizedContent = useSanitizedHtml(content);
+
   return (
     <section>
       <div className="px-4">
-        <p className="text-body-2 font-medium text-black-100 leading-6 mb-10">
-          {content}
-        </p>
+        <div
+          className="ck-content text-body-2 font-medium text-black-100 leading-6 mb-10"
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
+
         <div className="flex justify-end pb-5 tablet:hidden">
           {isAuthor && <PostActions section="content" />}
         </div>

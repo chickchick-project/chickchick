@@ -1,3 +1,5 @@
+"use client";
+
 import AuthorInfo from "../../author/AuthorInfo";
 import BoardChip from "../../chip/BoardChip";
 import PostMeta from "../../author/PostMeta";
@@ -5,6 +7,7 @@ import Thumbnail from "./Thumbnail";
 
 import { POST_CARD_STYLES, POST_CARD_TYPES } from "./postCard.constants";
 import { PostCardProps } from "./postCard.types";
+import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
 
 export function PostCard({
   title,
@@ -22,7 +25,7 @@ export function PostCard({
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
   const cardStyle = POST_CARD_STYLES[cardType];
-
+  const previewContent = useSanitizedHtml(content, { preview: true });
   return (
     <article
       className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 h-full shadow-card ${cardStyle}`}
@@ -56,7 +59,9 @@ export function PostCard({
               : "items-center justify-between gap-3"
           }`}
         >
-          <p className={`text-gray-600 flex-1 ${contentClamp}`}>{content}</p>
+          <p className={`text-gray-600 flex-1 ${contentClamp}`}>
+            {previewContent}
+          </p>
           <Thumbnail thumbnail={thumbnail} cardType={cardType} />
         </div>
       </main>
