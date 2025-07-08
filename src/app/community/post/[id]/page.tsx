@@ -1,7 +1,5 @@
-import { auth } from "@/auth";
 import { getPostDetailById } from "@/components/domains/postDetail/postDetail.helpers";
 import PageClient from "@/components/domains/postDetail/PageClient";
-import { getSession } from "@/lib/database/getSession";
 
 export default async function Page({
   params: { id },
