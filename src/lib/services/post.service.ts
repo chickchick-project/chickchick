@@ -39,6 +39,7 @@ export async function getPaginatedPostListService(
         ? [
             { likeCount: sortOrder },
             { commentCount: sortOrder },
+            { viewCount: sortOrder },
             { createdAt: sortOrder },
           ]
         : { [sortBy]: sortOrder };
@@ -63,12 +64,12 @@ export async function getPaginatedPostListService(
 
     const hasMore = rawData.length > result_limit;
     const postsToReturn = hasMore ? rawData.slice(0, result_limit) : rawData;
-    const transformedPosts = rawData.map((post) => ({
+    const transformedPosts = postsToReturn.map((post) => ({
       id: post.id,
       category: post.category,
       title: post.title,
       content: post.content,
-      thumbnail_url: post.thumbnailUrl,
+      thumbnailUrl: post.thumbnailUrl,
       author: post.author,
       likeCount: post.likeCount,
       commentCount: post.commentCount,

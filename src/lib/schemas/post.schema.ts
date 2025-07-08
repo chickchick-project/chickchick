@@ -14,7 +14,7 @@ const PostListItemSchema = z.object({
   category: PostCategorySchema,
   title: z.string(),
   content: z.string(),
-  thumbnail_url: z.string().nullable(),
+  thumbnailUrl: z.string().nullable(),
   author: z.object({
     nickname: z.string(),
     imageUrl: z.string().nullable(),
