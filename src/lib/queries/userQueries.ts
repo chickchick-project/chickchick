@@ -239,7 +239,6 @@ export async function fetchUserBookmarks(
       }),
     ]);
 
-    // [수정됨] 반환 데이터 구조를 가공합니다.
     const formattedPerfumes = perfumeBookmarks.map((b) => ({
       ...b.perfume,
       imageUrl: b.perfume.perfumeImage?.image_url || null,

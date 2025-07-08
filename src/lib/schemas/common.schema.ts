@@ -1,12 +1,18 @@
 import { z } from "@hono/zod-openapi";
 
 export const PaginationSchema = z.object({
-  page: z.number().int().openapi({ example: 1, description: "페이지 번호" }),
-  limit: z
+  page: z.coerce
     .number()
     .int()
-    .openapi({ example: 10, description: "페이지 당 향수 수" }),
-  total: z.number().int().openapi({ example: 100, description: "총 향수 수" }),
+    .openapi({ example: 1, description: "페이지 번호" }),
+  limit: z.coerce
+    .number()
+    .int()
+    .openapi({ example: 10, description: "페이지 당 아이템 수" }),
+  total: z.coerce
+    .number()
+    .int()
+    .openapi({ example: 100, description: "총 아이템 수" }),
 });
 
 export const SuccessResponseSchema = (dataSchema: z.ZodType) =>

@@ -31,3 +31,5 @@ reviewsApi.openapi(
     }
   }
 );
+
+export default reviewsApi;

@@ -1,5 +1,5 @@
-import { PerfumeUsageStatusSchema } from "@prisma-zod/index";
-import { z } from "zod";
+import { z } from "@hono/zod-openapi";
+import PerfumeUsageStatusSchema from "@zod/inputTypeSchemas/PerfumeUsageStatusSchema";
 
 export const ReviewSchema = z.object({
   id: z.string().uuid(),

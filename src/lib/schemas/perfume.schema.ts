@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { PerfumeSchema as basePerfumeSchema } from "@prisma-zod/index";
+import { PerfumeSchema as basePerfumeSchema } from "@zod/modelSchema/PerfumeSchema";
 
 /**
  * 향수 상세 정보

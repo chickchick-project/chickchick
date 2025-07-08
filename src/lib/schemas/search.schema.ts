@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { PerfumeSchema } from "@prisma-zod/index";
+import { PerfumeSchema } from "@zod/modelSchema/PerfumeSchema";
 
 // GET 요청의 쿼리 파라미터 스키마
 export const SearchGetQuerySchema = z.object({
