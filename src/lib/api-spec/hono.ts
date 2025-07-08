@@ -3,6 +3,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import usersApi from "@/lib/routes/v1/users.handler";
 import perfumesApi from "@/lib/routes/v1/perfumes.handler";
 import searchApi from "@/lib/routes/v1/search.handler";
+import postApi from "../routes/v1/post.handler";
 
 const app = new OpenAPIHono().basePath("/api");
 
@@ -20,6 +21,7 @@ if (process.env.NODE_ENV === "development") {
 app.route("/v1", usersApi);
 app.route("/v1", perfumesApi);
 app.route("/v1", searchApi);
+app.route("/v1", postApi);
 // app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
 
 export default app;
