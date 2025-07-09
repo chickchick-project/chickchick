@@ -16,7 +16,7 @@ import {
 
 export const getPostListRoute = createRoute({
   method: "get",
-  path: "/post",
+  path: "/posts",
   summary: "게시글 목록 페이지네이션으로 가져오기",
   description: "요청된 검색어 및 게시판, 정렬 옵션에 해당하는 게시글 목록 조회",
   request: {
