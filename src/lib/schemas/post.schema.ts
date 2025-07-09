@@ -9,7 +9,7 @@ export const PaginatedPostListQuerySchema = z.object({
   limit: z.string().optional().default("12").transform(Number),
 });
 
-const PostListItemSchema = z.object({
+const PostListItemResultSchema = z.object({
   id: z.string().uuid(),
   category: PostCategorySchema,
   title: z.string(),
@@ -26,10 +26,11 @@ const PostListItemSchema = z.object({
 });
 
 export const PaginatedPostListResponseSchema = z.object({
-  data: z.array(PostListItemSchema),
+  data: z.array(PostListItemResultSchema),
   nextCursor: z.string().uuid().nullable(),
   totalCount: z.number().optional(),
 });
 
 export type GetPostListParams = z.infer<typeof PaginatedPostListQuerySchema>;
+export type PostListItemResult = z.infer<typeof PostListItemResultSchema>;
 export type PostListResponse = z.infer<typeof PaginatedPostListResponseSchema>;
