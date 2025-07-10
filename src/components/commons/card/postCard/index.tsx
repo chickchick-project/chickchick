@@ -26,9 +26,10 @@ export function PostCard({
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
   const cardStyle = POST_CARD_STYLES[cardType];
   const previewContent = useSanitizedHtml(content, { preview: true });
+
   return (
     <article
-      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 h-full shadow-card ${cardStyle}`}
+      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 tablet:max-w-full h-full shadow-card ${cardStyle}`}
     >
       {/* 헤더 */}
       {isCategory && (

@@ -24,7 +24,7 @@ const CATEGORY_LABELS = {
 
 const POST_CARD_STYLES = {
   [POST_CARD_TYPES.SMALL]: "w-[540px] h-[198px]",
-  [POST_CARD_TYPES.DEFAULT]: "w-[580px] h-[227px]",
+  [POST_CARD_TYPES.DEFAULT]: "tablet:w-[580px] h-[227px]",
   [POST_CARD_TYPES.DETAIL]: "w-[356px] h-[450px]",
 } as const;
 
