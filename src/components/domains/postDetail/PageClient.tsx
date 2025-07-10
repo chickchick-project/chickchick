@@ -12,7 +12,7 @@ export default function PageClient({ postDetail }: IPostDetailPageClientProps) {
   const { content, isAuthor, ...postDetailHeader } = postDetail;
 
   return (
-    <article className="w-full max-w-[1016px] mb-14 tablet:mb-[260px] ">
+    <article>
       <PostDetailHeader isAuthor={isAuthor} {...postDetailHeader} />
       <PostContent content={content} isAuthor={isAuthor} relatedPerfumes={[]} />
       <CommentSection />
