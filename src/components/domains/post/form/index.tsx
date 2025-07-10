@@ -29,7 +29,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     resolver: zodResolver(postSchema),
     mode: "onChange",
     defaultValues: {
-      category: initialData?.category ?? ("" as any as TPostCategory),
+      category: initialData?.category ?? ("" as unknown as TPostCategory),
       title: initialData?.title ?? "",
       content: initialData?.content ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
@@ -59,6 +59,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
         //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
         // }
       } catch (error) {
+        console.error("Error submitting new post:", error);
         // setServerError(
         //   error instanceof Error
         //     ? error.message

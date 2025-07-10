@@ -42,11 +42,13 @@ export function Header({
         />
       </header>
       <nav className="flex flex-col items-center gap-5 w-full max-w-[1200px]">
-        <BoardTabBar
-          boards={boards}
-          selectedTab={selectedTab}
-          handleTabClick={handleTabClick}
-        />
+        <div className="tablet:w-[460px]">
+          <BoardTabBar
+            boards={boards}
+            selectedTab={selectedTab}
+            handleTabClick={handleTabClick}
+          />
+        </div>
         <div
           className={`flex w-full items-center ${
             !isBestPostTab
