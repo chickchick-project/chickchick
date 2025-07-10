@@ -10,7 +10,7 @@ export default function BoardTabBar({
   handleTabClick,
 }: IBoardTabBarProps) {
   return (
-    <div className="flex justify-between items-center w-full">
+    <div className="flex justify-between items-center w-full tablet:w-[460px]">
       {boards.map((board) => (
         <button
           onClick={() => handleTabClick(board.key)}
