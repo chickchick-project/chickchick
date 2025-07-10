@@ -1,4 +1,4 @@
-import { CreateReview, Review } from "../schemas/review.schema";
+import { Review, CreateReview } from "../schemas/review.schema";
 
 const fakeDb: Review[] = [];
 

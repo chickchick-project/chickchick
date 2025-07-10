@@ -2,8 +2,8 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import {
   getSearchPerfumeListRoute,
   postSearchPerfumeListRoute,
-} from "@/lib/api-spec/v1/search.routes";
-import { getPaginatedPerfumesService } from "@/lib/services/search.service";
+} from "@/lib/hono/api-spec/v1/search.routes";
+import { getPaginatedPerfumesService } from "@/lib/hono/services/search.service";
 
 const searchApi = new OpenAPIHono();
 

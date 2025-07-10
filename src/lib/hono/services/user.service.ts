@@ -1,4 +1,4 @@
-import { User, CreateUser } from "@/lib/schemas/user.schema";
+import { User, CreateUser } from "@/lib/hono/schemas/user.schema";
 
 const fakeDb: User[] = [];
 

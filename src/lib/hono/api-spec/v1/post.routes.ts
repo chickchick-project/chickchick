@@ -2,11 +2,11 @@ import { createRoute } from "@hono/zod-openapi";
 import {
   PaginatedPostListQuerySchema,
   PaginatedPostListResponseSchema,
-} from "@/lib/schemas/post.schema";
+} from "@/lib/hono/schemas/post.schema";
 import {
   ErrorResponseSchema,
   SuccessResponseSchema,
-} from "@/lib/schemas/common.schema";
+} from "@/lib/hono/schemas/common.schema";
 
 /**
  * @method GET

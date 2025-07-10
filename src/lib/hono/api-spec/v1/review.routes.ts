@@ -1,8 +1,11 @@
 import {
   ErrorResponseSchema,
   SuccessResponseSchema,
-} from "@/lib/schemas/common.schema";
-import { CreateReviewSchema, ReviewSchema } from "@/lib/schemas/review.schema";
+} from "@/lib/hono/schemas/common.schema";
+import {
+  CreateReviewSchema,
+  ReviewSchema,
+} from "@/lib/hono/schemas/review.schema";
 import { createRoute, z } from "@hono/zod-openapi";
 
 export const createReviewRoute = createRoute({

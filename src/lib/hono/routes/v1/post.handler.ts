@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { getPostListRoute } from "@/lib/api-spec/v1/post.routes";
-import { getPaginatedPostListService } from "@/lib/services/post.service";
+import { getPostListRoute } from "@/lib/hono/api-spec/v1/post.routes";
+import { getPaginatedPostListService } from "@/lib/hono/services/post.service";
 
 const postApi = new OpenAPIHono();
 

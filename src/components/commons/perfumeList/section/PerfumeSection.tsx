@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
+import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
   perfumes: PerfumeSearchResult[];

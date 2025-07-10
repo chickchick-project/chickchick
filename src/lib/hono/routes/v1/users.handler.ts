@@ -1,6 +1,12 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { createUserRoute, getUserRoute } from "@/lib/api-spec/v1/user.routes";
-import { createUserService, getUserService } from "@/lib/services/user.service";
+import {
+  createUserRoute,
+  getUserRoute,
+} from "@/lib/hono/api-spec/v1/user.routes";
+import {
+  createUserService,
+  getUserService,
+} from "@/lib/hono/services/user.service";
 
 const usersApi = new OpenAPIHono();
 

@@ -79,8 +79,6 @@ export async function getPostDetailByIdService(
     const isBookmarked = bookmarks.length > 0;
     const isAuthor = userId === post.userId;
 
-    console.log(userId, post.userId);
-
     return {
       ...postData,
       isAuthor,

@@ -2,6 +2,7 @@ import { z } from "@hono/zod-openapi";
 import PostSchema from "@zod/modelSchema/PostSchema";
 import UserSchema from "@zod/modelSchema/UserSchema";
 import { PaginationSchema } from "./common.schema";
+import { PostCategory } from "@prisma/client";
 
 // API 응답용 스키마
 export const PostResponseSchema = PostSchema.extend({
@@ -15,27 +16,41 @@ export const PostResponseSchema = PostSchema.extend({
   published: true,
 });
 
+// 글 목록 조회 쿼리
+export const GetPostsQuerySchema = PaginationSchema.extend({
+  searchInput: z.string().optional(),
+  category: PostSchema.shape.category.optional(),
+});
+
 // 게시글 생성 요청 본문 스키마
 export const CreatePostRequestSchema = PostSchema.pick({
   title: true,
   content: true,
   category: true,
-}).extend({
-  title: z.string().min(2, "제목은 2자 이상이어야 합니다."),
-  content: z.string().min(10, "내용은 10자 이상 입력해주세요."),
+  thumbnailUrl: true,
+}).openapi({
+  example: {
+    title: "이건 첫 번째 레슨",
+    content: "좋은 건 너만 알기",
+    category: PostCategory.FREEBOARD,
+    thumbnailUrl: null,
+  },
 });
 
 // 게시글 수정 요청 본문 스키마
-export const UpdatePostRequestSchema = CreatePostRequestSchema.partial();
+export const UpdatePostRequestSchema =
+  CreatePostRequestSchema.partial().openapi({
+    example: {
+      title: "이건 두 번째 레슨",
+      content: "슬픔도 너만 알기",
+      category: PostCategory.FREEBOARD,
+      thumbnailUrl: null,
+    },
+  });
 
 // 경로 파라미터 (ID)
 export const PostIdParamSchema = z.object({
   id: PostSchema.shape.id,
-});
-
-// 목록 조회 쿼리
-export const GetPostsQuerySchema = PaginationSchema.extend({
-  category: PostSchema.shape.category.optional(),
 });
 
 // 타입 추론

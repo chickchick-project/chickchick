@@ -2,11 +2,11 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import {
   getPerfumesListRoute,
   getPerfumeByIdRoute,
-} from "@/lib/api-spec/v1/perfume.routes";
+} from "@/lib/hono/api-spec/v1/perfume.routes";
 import {
   getPerfumesListService,
   getPerfumeByIdService,
-} from "@/lib/services/perfume.service";
+} from "@/lib/hono/services/perfume.service";
 
 const perfumesApi = new OpenAPIHono();
 

@@ -1,9 +1,9 @@
-import { SuccessResponseSchema } from "@/lib/schemas/common.schema";
+import { SuccessResponseSchema } from "@/lib/hono/schemas/common.schema";
 import {
   PaginatedPerfumeResponseSchema,
   SearchGetQuerySchema,
   SearchPostBodySchema,
-} from "@/lib/schemas/search.schema";
+} from "@/lib/hono/schemas/search.schema";
 import { createRoute } from "@hono/zod-openapi";
 
 /**

@@ -1,9 +1,9 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { PerfumeSchema } from "@/lib/schemas/perfume.schema";
+import { PerfumeSchema } from "@/lib/hono/schemas/perfume.schema";
 import {
   SuccessResponseSchema,
   ErrorResponseSchema,
-} from "@/lib/schemas/common.schema";
+} from "@/lib/hono/schemas/common.schema";
 
 /**
  * @method GET

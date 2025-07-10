@@ -7,6 +7,9 @@ export async function POST(req: Request) {
     const user = await fetchCurrentUserInfo();
     const postFormData = await req.json();
 
+    console.log("user", user);
+    console.log("postFormData", postFormData);
+
     if (!user.data) {
       return NextResponse.json(
         { message: "로그인이 필요합니다." },

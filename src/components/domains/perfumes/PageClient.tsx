@@ -13,7 +13,7 @@ import {
   fetchPerfumes,
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
-import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
+import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 import { withCache } from "@/lib/utils/withCache";
 
 export type BrandName = {

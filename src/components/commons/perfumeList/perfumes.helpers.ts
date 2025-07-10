@@ -1,5 +1,5 @@
 import { FILTER_LABELS } from "./filter/filter.constants";
-import { PerfumeSearchResult } from "@/lib/schemas/perfume.schema";
+import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 const API_BASE_URL = "/api/v1";

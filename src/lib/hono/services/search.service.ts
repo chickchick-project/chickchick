@@ -1,6 +1,9 @@
 import { supabase } from "@/lib/supabase/init";
 import { prisma } from "@/lib/prisma";
-import { GetSearchParams, PostSearchParams } from "@/lib/schemas/search.schema";
+import {
+  GetSearchParams,
+  PostSearchParams,
+} from "@/lib/hono/schemas/search.schema";
 
 interface SearchPerfume {
   perfume_id: string;

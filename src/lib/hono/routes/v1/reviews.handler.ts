@@ -1,5 +1,5 @@
-import { createReviewRoute } from "@/lib/api-spec/v1/review.routes";
-import { createReviewService } from "@/lib/services/review.service";
+import { createReviewRoute } from "@/lib/hono/api-spec/v1/review.routes";
+import { createReviewService } from "@/lib/hono/services/review.service";
 import { OpenAPIHono } from "@hono/zod-openapi";
 
 const reviewsApi = new OpenAPIHono();
