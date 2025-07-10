@@ -7,6 +7,7 @@ export interface SearchBarProps {
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  buttonType?: "submit" | "button";
   [key: string]: unknown;
 }
 
@@ -15,7 +16,14 @@ export const SEARCHBAR_PLACEHOLDER_TEXT = {
   community: "관심있는 주제를 검색해보세요!",
 };
 
-export function SearchBar({ value, onChange, onClick, placeholder, ...rest }: SearchBarProps) {
+export function SearchBar({
+  value,
+  onChange,
+  onClick,
+  placeholder,
+  buttonType = "button",
+  ...rest
+}: SearchBarProps) {
   const baseStyle = `
     w-full max-w-[840px] max-h-10 tablet:h-12 tablet:max-h-[48px]
     rounded-lg px-5 py-3 border flex items-center
@@ -26,12 +34,16 @@ export function SearchBar({ value, onChange, onClick, placeholder, ...rest }: Se
     <div className="relative w-full max-w-[840px] flex items-center">
       <input
         className={`${baseStyle} pr-10`}
-        placeholder={placeholder ? SEARCHBAR_PLACEHOLDER_TEXT[placeholder] : SEARCHBAR_PLACEHOLDER_TEXT.perfume}
+        placeholder={
+          placeholder
+            ? SEARCHBAR_PLACEHOLDER_TEXT[placeholder]
+            : SEARCHBAR_PLACEHOLDER_TEXT.perfume
+        }
         value={value}
         onChange={onChange}
         {...rest}
       />
-      <button onClick={onClick}>
+      <button onClick={onClick} type={buttonType}>
         <Image
           src={ICONS.Search.src}
           alt="Search"

@@ -97,7 +97,7 @@ export default function PageClient({
                 ? `'${searchKeyword}'에 대한 검색 결과`
                 : "현재 인기있는 향수들이에요!"}
             </span>
-            <SortDropdown type="perfume" />
+            <SortDropdown type="perfume" onSortChange={() => {}} />
           </div>
           {matchedBrand && <BrandSection brandName={matchedBrand} />}
           <PerfumeSection

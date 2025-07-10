@@ -1,20 +1,13 @@
 import { Post, PostCategory, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
+import { TPostFormData } from "@/components/domains/post/form/postSchema";
 
 export type TPostCategory = PostCategory;
 
-export type TPostInput = {
-  category: PostCategory | "";
-  title: string;
-  content: string;
-  thumbnailUrl: string | null;
-};
-export type TPostFormData = Pick<
+export type TPostDetail = Omit<
   Post,
-  "content" | "title" | "category" | "thumbnailUrl"
->;
-
-export type TPostDetail = Omit<Post, "bookmarks" | "userId"> & {
+  "bookmarks" | "userId" | "createdAt" | "updatedAt"
+> & {
   author: {
     id: string;
     nickname: string;
@@ -26,6 +19,8 @@ export type TPostDetail = Omit<Post, "bookmarks" | "userId"> & {
     isBookmarked: boolean;
     id: string | null;
   };
+  createdAt: string;
+  updatedAt: string | null;
 };
 
 export async function createCommunityPost(
@@ -94,6 +89,8 @@ export async function getPostDetailByIdService(
         isBookmarked,
         id: isBookmarked ? bookmarks[0].id : null,
       },
+      createdAt: postData.createdAt.toISOString(),
+      updatedAt: postData.updatedAt ? postData.updatedAt.toISOString() : null,
     };
   } catch (error) {
     if (

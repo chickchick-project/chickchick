@@ -1,36 +1,77 @@
-import { PostCard } from "@/components/commons/card/postCard";
 import React from "react";
-import { TCommunityPost } from "@/lib/mocks/communityCard";
+import Link from "next/link";
+import { PostCard } from "@/components/commons/card/postCard";
+import { PostListItemResult } from "@/lib/schemas/post.schema";
+import { Spinner } from "@/components/commons/loading/Spinner";
 
 interface ICommunityCardsProps {
-  postData: TCommunityPost[];
+  postData: PostListItemResult[];
   selectedTab: string;
+  isLoading?: boolean;
+  isIdle?: boolean;
+  moreRef?: React.RefObject<HTMLDivElement>;
 }
 export default function CommunityCards({
   postData,
   selectedTab,
+  isLoading,
+  isIdle,
+  moreRef,
 }: ICommunityCardsProps) {
   return (
     <section className="w-full">
-      <div className="grid grid-col-1 tablet:grid-cols-2 tablet:gap-y-5 tablet:gap-x-10 max-w-[1200px]">
-        {postData &&
-          postData.map(
-            ({ id, title, content, author, createdAt, meta, categoryType }) => (
-              <PostCard
-                key={id}
-                id={id}
-                title={title}
-                content={content}
-                author={author}
-                createdAt={createdAt}
-                profileImage={""}
-                meta={meta}
-                categoryType={categoryType}
-                isCategory={selectedTab === "best"}
-                isAuthor={false}
-              />
-            )
-          )}
+      {!isIdle && postData.length === 0 && !isLoading ? (
+        <div className="flex justify-center items-center flex-1">
+          검색 결과가 없습니다.
+        </div>
+      ) : (
+        <div className="grid grid-col-1 tablet:grid-cols-2 tablet:gap-y-5 tablet:gap-x-5 pc:gap-x-10 max-w-[1200px]">
+          {postData.length > 0 &&
+            postData.map(
+              ({
+                id,
+                title,
+                content,
+                author,
+                createdAt,
+                category,
+                commentCount,
+                viewCount,
+                likeCount,
+                thumbnailUrl,
+              }) => (
+                <Link
+                  key={id}
+                  href={`/community/post/${id}?from=${selectedTab}`}
+                >
+                  <PostCard
+                    id={id}
+                    thumbnail={thumbnailUrl}
+                    title={title}
+                    content={content}
+                    author={author.nickname}
+                    createdAt={createdAt}
+                    profileImage={author.imageUrl}
+                    meta={[
+                      { type: "Like", count: likeCount },
+                      { type: "Comment", count: commentCount },
+                      { type: "View", count: viewCount },
+                    ]}
+                    categoryType={category}
+                    isCategory={selectedTab === "BEST"}
+                    isAuthor={false}
+                  />
+                </Link>
+              )
+            )}
+        </div>
+      )}
+      <div ref={moreRef} className="py-10 text-center">
+        {isLoading && (
+          <div className="flex justify-center items-center">
+            <Spinner />
+          </div>
+        )}
       </div>
     </section>
   );

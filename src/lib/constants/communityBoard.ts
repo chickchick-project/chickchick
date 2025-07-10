@@ -7,4 +7,4 @@ export const BOARD_TYPES = {
   FREEBOARD: "자유게시판",
 };
 
-export const COMMUNITY_BOARDS = { best: "베스트 게시글", ...BOARD_TYPES };
+export const COMMUNITY_BOARDS = { BEST: "베스트 게시글", ...BOARD_TYPES };

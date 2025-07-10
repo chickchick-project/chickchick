@@ -1,4 +1,4 @@
-import { TPostFormData } from "@/lib/queries/community/postQueries";
+import { TPostFormData } from "./form/postSchema";
 
 type TSubmitNewPostResponse = {
   success: boolean;

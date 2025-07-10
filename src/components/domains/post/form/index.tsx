@@ -9,14 +9,10 @@ import PostTitle from "./PostTitle";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  TPostInput,
-  TPostFormData,
-  TPostCategory,
-} from "@/lib/queries/community/postQueries";
+import { TPostCategory } from "@/lib/queries/community/postQueries";
 import PostCategory from "./PostCategory";
 import { submitNewPost } from "../post.helpers";
-import { postSchema } from "./postSchema";
+import { TPostFormData, postSchema } from "./postSchema";
 
 interface IPostFormProps {
   type: "create" | "edit";
@@ -29,11 +25,11 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
   // const [serverError, setServerError] = useState<string | null>(null);
   // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
-  const method = useForm<TPostInput>({
+  const method = useForm<TPostFormData>({
     resolver: zodResolver(postSchema),
     mode: "onChange",
     defaultValues: {
-      category: initialData?.category ?? "",
+      category: initialData?.category ?? ("" as unknown as TPostCategory),
       title: initialData?.title ?? "",
       content: initialData?.content ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
@@ -44,14 +40,13 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     formState: { isValid, isDirty },
   } = method;
 
-  const onSubmit = async (data: TPostInput) => {
+  const onSubmit = async (data: TPostFormData) => {
     setIsLoading(true);
     // setServerError(null);
     const thumbnailUrl = extractFirstImageSrc(data.content);
 
     const postData: TPostFormData = {
       ...data,
-      category: data.category as TPostCategory,
       thumbnailUrl,
     };
     if (type === "create") {
@@ -64,6 +59,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
         //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
         // }
       } catch (error) {
+        console.error("Error submitting new post:", error);
         // setServerError(
         //   error instanceof Error
         //     ? error.message

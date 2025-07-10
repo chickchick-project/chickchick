@@ -4,12 +4,19 @@ import { DEFAULT_PROFILE_IMAGE } from "./author.constants";
 
 interface AuthorProfileProps {
   name: string;
-  profileImage?: string;
+  profileImage?: string | null;
   size?: number;
 }
 
-export default function AuthorProfile({ name, profileImage, size = 28 }: AuthorProfileProps) {
-  const profileImageSrc = profileImage && profileImage.trim() !== "" ? profileImage : DEFAULT_PROFILE_IMAGE;
+export default function AuthorProfile({
+  name,
+  profileImage,
+  size = 28,
+}: AuthorProfileProps) {
+  const profileImageSrc =
+    profileImage && profileImage.trim() !== ""
+      ? profileImage
+      : DEFAULT_PROFILE_IMAGE;
   return (
     <div className="flex items-center gap-2">
       <Image

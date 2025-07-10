@@ -7,7 +7,7 @@ export type PostCardType =
 export type CategoryType = (typeof CATEGORY_TYPES)[keyof typeof CATEGORY_TYPES];
 
 export interface ThumbnailProps {
-  thumbnail?: string;
+  thumbnail?: string | null;
   cardType: PostCardType;
   isLoading?: boolean;
 }
@@ -19,10 +19,10 @@ export interface PostCardProps {
   author: string;
   createdAt: string;
   meta: PostMetaItem[];
-  thumbnail?: string;
+  thumbnail?: string | null;
   isCategory?: boolean;
   categoryType: CategoryType;
   cardType?: PostCardType;
-  profileImage?: string;
+  profileImage?: string | null;
   isAuthor: boolean;
 }

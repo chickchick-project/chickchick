@@ -5,7 +5,7 @@ import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/lib/constants/options";
 import { TPostCategory } from "@/lib/queries/community/postQueries";
 
 interface IBoardDropdownProps {
-  currentOption?: string;
+  currentOption?: string | null;
   id: string;
   ariaLabelledBy?: string;
   onChange?: (category: TPostCategory) => void;

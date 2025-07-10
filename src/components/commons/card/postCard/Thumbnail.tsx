@@ -17,17 +17,22 @@ export default function Thumbnail({
       />
     );
   }
-
+  const isValidSrc =
+    thumbnail &&
+    typeof thumbnail === "string" &&
+    thumbnail.startsWith("https://");
   return (
     <div className="relative">
-      {thumbnail ? (
-        <Image
-          src={thumbnail}
-          alt="게시글 썸네일"
-          width={width}
-          height={height}
-          className="object-cover rounded-md"
-        />
+      {isValidSrc ? (
+        <figure style={{ width, height, position: "relative" }}>
+          <Image
+            src={thumbnail}
+            alt="게시글 썸네일"
+            fill
+            className="object-cover rounded-md"
+            loading="lazy"
+          />
+        </figure>
       ) : (
         <div
           className="bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs"
