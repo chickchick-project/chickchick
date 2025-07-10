@@ -1,3 +1,8 @@
+import {
+  SORT_MAPPING_COMMUNITY_FOR_API,
+  TApiSortBy,
+  TSortBy,
+} from "@/lib/constants/options";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import {
   GetPostListParams,
@@ -6,8 +11,11 @@ import {
 
 const API_BASE_URL = "/api/v1";
 
-type FetchCommunityPostListParams = Omit<GetPostListParams, "limit" | "q"> & {
+type FetchCommunityPostListParams = {
+  category?: GetPostListParams["category"];
+  sortBy?: GetPostListParams["sortBy"];
   searchText?: string;
+  cursor?: string | null;
 };
 
 async function fetchCommunityPostList(
@@ -25,9 +33,11 @@ async function fetchCommunityPostList(
     if (params.searchText) {
       queryParams.append("q", params.searchText);
     }
+
     if (params.cursor) {
       queryParams.append("cursor", params.cursor);
     }
+
     queryParams.append("limit", "12");
 
     const response = await fetch(
@@ -54,4 +64,23 @@ async function fetchCommunityPostList(
   }
 }
 
-export { fetchCommunityPostList };
+const getUniquePostList = (postList: PostListItemResult[]) => {
+  const postMap = new Map<string, PostListItemResult>();
+  postList.forEach((post) => {
+    if (!postMap.has(post.id)) {
+      postMap.set(post.id, post);
+    }
+  });
+  return Array.from(postMap.values());
+};
+
+const getApiSortBy = (tab: string, sortFromUrl: TSortBy | null): TApiSortBy => {
+  if (tab === "BEST") {
+    return "popular";
+  }
+  return (
+    (sortFromUrl && SORT_MAPPING_COMMUNITY_FOR_API[sortFromUrl]) || "createdAt"
+  );
+};
+
+export { fetchCommunityPostList, getUniquePostList, getApiSortBy };
