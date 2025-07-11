@@ -13,7 +13,7 @@ const communityApi = new OpenAPIHono<AppContext>();
  * @path /posts
  * @summary 커뮤니티 게시글 목록 조회
  */
-const getPostsRoute = createRoute({
+const getPostListRoute = createRoute({
   method: "get",
   path: "/posts",
   summary: "커뮤니티 게시글 목록 조회",
@@ -43,10 +43,12 @@ const getPostsRoute = createRoute({
   tags: ["Community"],
 });
 
-communityApi.openapi(getPostsRoute, async (c) => {
+communityApi.openapi(getPostListRoute, async (c) => {
   const queryParams = c.req.valid("query");
 
-  const posts = await CommunityServices.getPostsService(queryParams);
+  const posts = await CommunityServices.getPaginatedPostListService(
+    queryParams
+  );
 
   if (!posts) {
     return c.json(

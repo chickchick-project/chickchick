@@ -1,5 +1,5 @@
 import { FILTER_LABELS } from "./filter/filter.constants";
-import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
+import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 const API_BASE_URL = "/api/v1";
@@ -18,7 +18,7 @@ async function fetchPerfumes(
   cursor: string | null,
   searchText: string,
   filters: Map<string, Set<string>>
-): Promise<SearchResponse<PerfumeSearchResult>> {
+): Promise<SearchResponse<GetPerfumeSearchResult>> {
   try {
     let response: Response;
     const formattedFilters = formatFilters(filters);
@@ -76,9 +76,9 @@ const getLabel = (key: string) =>
   FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
 
 const getUniquePerfumes = (
-  perfumes: PerfumeSearchResult[]
-): PerfumeSearchResult[] => {
-  const perfumeMap = new Map<string, PerfumeSearchResult>();
+  perfumes: GetPerfumeSearchResult[]
+): GetPerfumeSearchResult[] => {
+  const perfumeMap = new Map<string, GetPerfumeSearchResult>();
 
   perfumes.forEach((item) => {
     const existing = perfumeMap.get(item.id);

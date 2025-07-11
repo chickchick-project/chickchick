@@ -18,8 +18,13 @@ export const PostResponseSchema = PostSchema.extend({
 
 // 글 목록 조회 쿼리
 export const GetPostsQuerySchema = PaginationSchema.extend({
-  searchInput: z.string().optional(),
-  category: PostSchema.shape.category.optional(),
+  q: z.string().optional(),
+  category: PostSchema.shape.category
+    .default(PostCategory.FREEBOARD)
+    .optional(),
+  sortBy: z.enum(["createdAt", "popular"]).default("createdAt").optional(),
+  cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
+  limit: z.string().optional().default("12").transform(Number),
 });
 
 // 게시글 생성 요청 본문 스키마
@@ -53,6 +58,16 @@ export const PostIdParamSchema = z.object({
   id: PostSchema.shape.id,
 });
 
+export const PaginatedPostListResponseSchema = z.object({
+  data: z.array(PostResponseSchema),
+  nextCursor: z.string().uuid().nullable(),
+  totalCount: z.number().optional(),
+});
+
 // 타입 추론
+export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type PostResponse = z.infer<typeof PostResponseSchema>;
 export type CreatePostRequest = z.infer<typeof CreatePostRequestSchema>;
+export type PaginatedPostListResponse = z.infer<
+  typeof PaginatedPostListResponseSchema
+>;

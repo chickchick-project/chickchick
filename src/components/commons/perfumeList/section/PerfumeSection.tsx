@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
+import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
-  perfumes: PerfumeSearchResult[];
+  perfumes: GetPerfumeSearchResult[];
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;
@@ -37,15 +37,19 @@ export function PerfumeSection({
             <Link key={item.id} href={`/perfumes/${item.id}`}>
               <PerfumeCard
                 className="tablet:block hidden"
-                perfumeImage={item.imageUrl ?? "/images/BlurShimmer.svg"}
-                brandName={item.brandNameKo ?? item.brandNameEn}
+                perfumeImage={
+                  item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"
+                }
+                brandName={item.brand.nameKo ?? item.brand.nameEn}
                 perfumeName={item.nameKo ?? item.nameEn}
               />
               <PerfumeCard
                 className="tablet:hidden block"
                 cardType="smallSize"
-                perfumeImage={item.imageUrl ?? "/images/BlurShimmer.svg"}
-                brandName={item.brandNameKo ?? item.brandNameEn}
+                perfumeImage={
+                  item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"
+                }
+                brandName={item.brand.nameKo ?? item.brand.nameEn}
                 perfumeName={item.nameKo ?? item.nameEn}
               />
             </Link>

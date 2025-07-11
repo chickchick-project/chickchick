@@ -1,49 +1,26 @@
-import { z } from "@hono/zod-openapi";
+import { PostCategory, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { PostCategory, Prisma } from "@prisma/client";
-import PostScalarFieldEnumSchema from "@zod/inputTypeSchemas/PostScalarFieldEnumSchema";
-import { GetPostsQuerySchema } from "../schemas/community.schema";
+import * as CommunitySchemas from "../schemas/community.schema";
 
-type OrderablePostFields = z.infer<typeof PostScalarFieldEnumSchema>;
-type GetPostsParams = z.infer<typeof GetPostsQuerySchema>;
+const DEFAULT_POST_LIMIT = 12;
 
-async function fetchPosts({
-  searchInput,
-  order,
-  skip,
-  take,
-  category,
-}: {
-  searchInput: string;
-  order: OrderablePostFields;
-  skip: number;
+async function fetchPaginatedPosts(params: {
+  where: Prisma.PostWhereInput;
+  orderBy:
+    | Prisma.PostOrderByWithRelationInput
+    | Prisma.PostOrderByWithRelationInput[];
   take: number;
-  category?: PostCategory;
+  skip: number;
+  cursor?: { id: string };
 }) {
-  const where: Prisma.PostWhereInput =
-    searchInput && searchInput.trim() !== ""
-      ? {
-          AND: [
-            {
-              OR: [
-                { title: { contains: searchInput, mode: "insensitive" } },
-                { content: { contains: searchInput, mode: "insensitive" } },
-              ],
-            },
-            ...(category ? [{ category }] : []),
-          ],
-        }
-      : category
-      ? { category }
-      : {};
+  const { where, orderBy, take, skip, cursor } = params;
 
-  return prisma.post.findMany({
+  return await prisma.post.findMany({
     where,
-    orderBy: {
-      [order]: "desc",
-    },
-    skip,
+    orderBy,
     take,
+    skip,
+    cursor,
     include: {
       author: {
         select: {
@@ -56,8 +33,12 @@ async function fetchPosts({
   });
 }
 
+async function fetchPostCount(where: Prisma.PostWhereInput) {
+  return await prisma.post.count({ where });
+}
+
 async function fetchPostById(id: string) {
-  return prisma.post.findUnique({
+  return await prisma.post.findUnique({
     where: {
       id,
     },
@@ -90,19 +71,78 @@ async function createPost(postData: {
   });
 }
 
-export async function getPostsService(params: GetPostsParams) {
-  const { page, limit, searchInput, category } = params;
-  const skip = (page - 1) * limit;
-  const take = limit;
-  const order: OrderablePostFields = "createdAt";
-  const posts = await fetchPosts({
-    searchInput: searchInput ?? "",
-    order,
-    skip,
-    take,
-    category,
-  });
-  return posts;
+export async function getPaginatedPostListService(
+  params: CommunitySchemas.GetPostsQuery
+): Promise<CommunitySchemas.PaginatedPostListResponse> {
+  try {
+    const {
+      category,
+      sortBy = "createdAt",
+      q: search_text,
+      cursor: last_seen_id,
+      limit: result_limit = DEFAULT_POST_LIMIT,
+    } = params;
+
+    const sortOrder = "desc";
+    const fetchLimit = result_limit + 1;
+
+    const where: Prisma.PostWhereInput = {
+      published: true,
+    };
+    if (category) {
+      where.category = category;
+    }
+    if (search_text) {
+      where.OR = [
+        { title: { contains: search_text, mode: "insensitive" } },
+        { content: { contains: search_text, mode: "insensitive" } },
+      ];
+    }
+
+    const orderBy:
+      | Prisma.PostOrderByWithRelationInput
+      | Prisma.PostOrderByWithRelationInput[] =
+      sortBy === "popular"
+        ? [
+            { likeCount: sortOrder },
+            { commentCount: sortOrder },
+            { viewCount: sortOrder },
+            { createdAt: sortOrder },
+          ]
+        : { [sortBy]: sortOrder };
+
+    const [rawData, total] = await Promise.all([
+      fetchPaginatedPosts({
+        where,
+        orderBy,
+        take: fetchLimit,
+        skip: last_seen_id ? 1 : 0,
+        cursor: last_seen_id ? { id: last_seen_id } : undefined,
+      }),
+      fetchPostCount(where),
+    ]);
+
+    if (!rawData || rawData.length === 0) {
+      return { data: [], nextCursor: null, totalCount: 0 };
+    }
+
+    const hasMore = rawData.length > result_limit;
+    const postsToReturn = hasMore ? rawData.slice(0, result_limit) : rawData;
+
+    const nextCursor = hasMore
+      ? postsToReturn[postsToReturn.length - 1].id
+      : null;
+    const totalCount = typeof total === "number" ? total : 0;
+
+    return {
+      data: postsToReturn,
+      nextCursor,
+      totalCount,
+    };
+  } catch (error) {
+    console.error("Error in getPaginatedPostListService:", error);
+    throw new Error("게시글 목록을 가져오는데 실패했습니다.");
+  }
 }
 
 export async function getPostService(id: string) {

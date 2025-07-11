@@ -1,8 +1,8 @@
 "use client";
 
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { useEffect, useMemo } from "react";
+import { PerfumeAccord, PerfumeNote } from "@prisma/client";
+import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { withCache } from "@/lib/utils/withCache";
@@ -14,7 +14,7 @@ import {
   fetchPerfumes,
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
-import { PerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
+import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 
 export const PageClient = ({
   brandName,
@@ -41,7 +41,7 @@ export const PageClient = ({
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<PerfumeSearchResult>(fetcher);
+    useInfiniteScroll<GetPerfumeSearchResult>(fetcher);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
@@ -61,7 +61,7 @@ export const PageClient = ({
       />
       <main className="flex flex-col w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-end items-center mb-5">
-          <SortDropdown type="perfume" />
+          <SortDropdown type="perfume" onSortChange={() => {}} />
         </div>
         <PerfumeSection
           perfumes={uniquePerfumes}
