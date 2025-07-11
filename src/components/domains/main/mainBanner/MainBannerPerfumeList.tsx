@@ -2,10 +2,10 @@
 
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import Link from "next/link";
-import { PerfumeCardType } from "./MainBanner.types";
+import { PerfumeResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface IMainBannerPerfumesListProps {
-  data: PerfumeCardType[];
+  data: PerfumeResponse[];
 }
 
 export const MainBannerPerfumeList = ({
@@ -31,14 +31,14 @@ export const MainBannerPerfumeList = ({
           <Link key={item.id} href={`/perfumes/${item.id}`}>
             <PerfumeCard
               className="tablet:block hidden tablet:w-[180px] w-auto"
-              perfumeImage={item.perfumeImage?.image_url || null}
+              perfumeImage={item.perfumeImage.imageUrl || null}
               brandName={item.brand.nameKo || item.brand.nameEn || null}
               perfumeName={item.nameKo || item.nameEn || null}
             />
             <PerfumeCard
               className="tablet:hidden block w-[80px] mobile:w-auto"
               cardType="smallSize"
-              perfumeImage={item.perfumeImage?.image_url || null}
+              perfumeImage={item.perfumeImage.imageUrl || null}
               brandName={item.brand.nameKo || item.brand.nameEn || null}
               perfumeName={item.nameKo || item.nameEn || null}
             />

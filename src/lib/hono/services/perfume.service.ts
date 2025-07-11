@@ -1,7 +1,17 @@
 import { prisma } from "@/lib/prisma";
-import { Perfume } from "@prisma/client";
+import { PerfumeResponse } from "@/lib/hono/schemas/perfume.schema";
 
-export async function getPerfumesListService(): Promise<Perfume[]> {
+export function getPerfumesListService(): Promise<PerfumeResponse[]>;
+export function getPerfumesListService(
+  filter: unknown
+): Promise<PerfumeResponse[]>;
+
+export async function getPerfumesListService(
+  filter?: unknown
+): Promise<PerfumeResponse[]> {
+  // TODO: 배너에 보여줄 테마에 맞는 필터 적용 필요
+  //테마는 어떻게 구분할 것인가?
+  console.log(filter);
   try {
     const perfumes = await prisma.perfume.findMany({
       include: {
@@ -18,7 +28,7 @@ export async function getPerfumesListService(): Promise<Perfume[]> {
 
 export async function getPerfumeByIdService(
   id: string
-): Promise<Perfume | null> {
+): Promise<PerfumeResponse | null> {
   try {
     const rawPerfume = await prisma.perfume.findUnique({
       where: { id },
