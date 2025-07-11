@@ -237,8 +237,8 @@ model Comment {
 
 model PerfumeImage {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  image_url  String   @map("image_url")
-  created_at DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  imageUrl  String   @map("image_url")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   perfumeId  String   @unique @map("perfume_id") @db.Uuid 
   perfume    Perfume  @relation("PerfumeToImage", fields: [perfumeId], references: [id])
