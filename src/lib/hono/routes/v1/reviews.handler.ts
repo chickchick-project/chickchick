@@ -1,7 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import * as ReviewServices from "@/lib/hono/services/review.service";
 import * as ReviewSchemas from "@/lib/hono/schemas/review.schema";
-import * as CommonSchemas from "@/lib/hono/schemas/common.schema";
+import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 
 const reviewsApi = new OpenAPIHono();
 
@@ -18,26 +18,13 @@ const createReviewRoute = createRoute({
       description: "생성할 리뷰 정보",
     },
   },
-  responses: {
-    201: {
-      content: {
-        "application/json": {
-          schema: CommonSchemas.SuccessResponseSchema(
-            ReviewSchemas.ReviewSchema
-          ),
-        },
-      },
-      description: "성공적으로 리뷰를 생성함",
+  responses: createStandardApiResponses(
+    {
+      schema: ReviewSchemas.ReviewSchema,
+      description: "리뷰",
     },
-    400: {
-      description: "잘못된 요청 데이터",
-      content: {
-        "application/json": {
-          schema: CommonSchemas.ErrorResponseSchema,
-        },
-      },
-    },
-  },
+    ["400", "404"]
+  ),
   tags: ["Review"],
 });
 
@@ -49,7 +36,7 @@ reviewsApi.openapi(
     return c.json(
       {
         success: true,
-        message: "Review created successfully",
+        message: "리뷰를 성공적으로 생성했습니다.",
         data: createdReview,
       },
       201
@@ -60,7 +47,7 @@ reviewsApi.openapi(
       return c.json(
         {
           success: false,
-          message: "Review creation failed",
+          message: "리뷰 생성에 실패했습니다.",
           error: result.error,
         },
         400
@@ -85,37 +72,36 @@ const getReviewRoute = createRoute({
         }),
     }),
   },
-  responses: {
-    200: {
-      content: {
-        "application/json": {
-          schema: CommonSchemas.SuccessResponseSchema(
-            z.array(ReviewSchemas.ReviewSchema)
-          ),
-        },
-      },
-      description: "성공적으로 향수 리뷰를 조회함",
+  responses: createStandardApiResponses(
+    {
+      schema: z.array(ReviewSchemas.ReviewSchema),
+      description: "리뷰 목록",
     },
-    400: {
-      description: "잘못된 요청 데이터",
-      content: {
-        "application/json": {
-          schema: CommonSchemas.ErrorResponseSchema,
-        },
-      },
-    },
-  },
+    ["404"]
+  ),
   tags: ["Review"],
 });
 
 reviewsApi.openapi(getReviewRoute, async (c) => {
   const { id } = c.req.param();
   const reviews = await ReviewServices.getReviewService(id);
-  return c.json({
-    success: true,
-    message: "Reviews retrieved successfully",
-    data: reviews,
-  });
+  if (!reviews) {
+    return c.json(
+      {
+        success: false,
+        message: "리뷰를 찾을 수 없습니다.",
+      },
+      404
+    );
+  }
+  return c.json(
+    {
+      success: true,
+      message: "리뷰를 성공적으로 불러왔습니다.",
+      data: reviews,
+    },
+    200
+  );
 });
 
 export default reviewsApi;

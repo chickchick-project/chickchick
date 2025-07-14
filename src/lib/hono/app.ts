@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import type { Session, User } from "next-auth";
-import usersApi from "./routes/v1/users.handler";
+// import usersApi from "./routes/v1/users.handler";
 import perfumesApi from "./routes/v1/perfumes.handler";
 import searchApi from "./routes/v1/search.handler";
 import reviewsApi from "./routes/v1/reviews.handler";
@@ -34,7 +34,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const v1 = new OpenAPIHono<AppContext>();
-v1.route("/users", usersApi);
+// v1.route("/users", usersApi);
 v1.route("/perfumes", perfumesApi);
 v1.route("/search", searchApi);
 v1.route("/reviews", reviewsApi);

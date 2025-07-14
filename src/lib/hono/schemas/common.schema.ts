@@ -17,12 +17,32 @@ export const PaginationSchema = z.object({
 
 export const SuccessResponseSchema = (dataSchema: z.ZodType) =>
   z.object({
-    success: z.boolean().openapi({ example: true }),
-    message: z.string().openapi({ example: "성공" }),
-    data: dataSchema,
+    success: z.literal(true),
+    message: z.string(),
+    data: dataSchema || z.null(),
   });
 
 export const ErrorResponseSchema = z.object({
-  success: z.boolean().openapi({ example: false }),
-  message: z.string().openapi({ example: "에러 메시지" }),
+  success: z.literal(false),
+  message: z.string(),
 });
+
+export const BadRequestResponse = {
+  description: "잘못된 요청 데이터 (Bad Request)",
+  content: { "application/json": { schema: ErrorResponseSchema } },
+};
+
+export const UnauthorizedResponse = {
+  description: "인증되지 않은 사용자 (Unauthorized)",
+  content: { "application/json": { schema: ErrorResponseSchema } },
+};
+
+export const ForbiddenResponse = {
+  description: "접근 권한이 없습니다 (Forbidden)",
+  content: { "application/json": { schema: ErrorResponseSchema } },
+};
+
+export const NotFoundResponse = {
+  description: "리소스를 찾을 수 없습니다 (Not Found)",
+  content: { "application/json": { schema: ErrorResponseSchema } },
+};
