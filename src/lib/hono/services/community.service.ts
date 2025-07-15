@@ -1,4 +1,4 @@
-import { PostCategory, Prisma } from "@prisma/client";
+import { PostBookmark, PostCategory, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import * as CommunitySchemas from "../schemas/community.schema";
 
@@ -161,37 +161,94 @@ export async function createPostService(postData: {
   return post;
 }
 
-export async function likePostService(postId: string, userId: string) {
-  const [post, postLike] = await prisma.$transaction([
-    prisma.post.findUnique({ where: { id: postId } }),
-    prisma.postLike.findUnique({
+async function togglePostLike(postId: string, userId: string) {
+  return prisma.$transaction(async (tx) => {
+    const post = await tx.post.findUnique({ where: { id: postId } });
+    if (!post) {
+      return null;
+    }
+    const postLike = await tx.postLike.findUnique({
       where: { user_post_like_unique: { postId, userId } },
-    }),
-  ]);
-
-  if (!post) {
-    return null;
-  }
-
-  if (postLike) {
-    return await prisma.$transaction([
-      prisma.postLike.delete({
+    });
+    if (postLike) {
+      await tx.postLike.delete({
         where: { id: postLike.id },
-      }),
-      prisma.post.update({
+      });
+      return tx.post.update({
         where: { id: postId },
         data: { likeCount: { decrement: 1 } },
-      }),
-    ]);
-  } else {
-    return await prisma.$transaction([
-      prisma.postLike.create({
+      });
+    } else {
+      await tx.postLike.create({
         data: { postId, userId },
-      }),
-      prisma.post.update({
+      });
+      return tx.post.update({
         where: { id: postId },
         data: { likeCount: { increment: 1 } },
-      }),
-    ]);
+      });
+    }
+  });
+}
+
+async function togglePostBookmark(
+  postId: string,
+  userId: string
+): Promise<PostBookmark | null> {
+  return prisma.$transaction(async (tx) => {
+    const post = await tx.post.findUnique({ where: { id: postId } });
+    if (!post) {
+      return null;
+    }
+
+    const bookmark = await tx.postBookmark.findUnique({
+      where: { user_post_bookmark_unique: { postId, userId } },
+    });
+
+    if (bookmark) {
+      // 북마크가 있으면 삭제
+      return tx.postBookmark.delete({
+        where: { id: bookmark.id },
+      });
+    } else {
+      // 북마크가 없으면 생성
+      return tx.postBookmark.create({
+        data: { postId, userId },
+      });
+    }
+  });
+}
+
+export async function likePostService(postId: string, userId: string) {
+  try {
+    const updatedPost = await togglePostLike(postId, userId);
+    if (!updatedPost) {
+      return null;
+    }
+    return updatedPost;
+  } catch (error) {
+    console.error("Error in likePostService:", error);
+    throw new Error("게시글 좋아요를 추가하는데 실패했습니다.");
   }
+}
+
+export async function bookmarkPostService(postId: string, userId: string) {
+  try {
+    const updatedPost = await togglePostBookmark(postId, userId);
+    if (!updatedPost) {
+      return null;
+    }
+    return updatedPost;
+  } catch (error) {
+    console.error("Error in bookmarkPostService:", error);
+    throw new Error("게시글 북마크를 추가하는데 실패했습니다.");
+  }
+}
+
+export async function getBookmarkedPostService(userId: string) {
+  return await prisma.postBookmark.findMany({
+    where: { userId },
+    include: {
+      post: true,
+    },
+  });
 }

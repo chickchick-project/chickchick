@@ -177,7 +177,7 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
 /**
  * @method POST
  * @path /posts/{id}/like
- * @summary 커뮤니티 게시글 좋아요 추가
+ * @summary 커뮤니티 게시글 좋아요 추가 / 제거
  */
 const likePostRoute = createRoute({
   method: "post",
@@ -225,6 +225,63 @@ authenticatedApi.openapi(likePostRoute, async (c) => {
     {
       success: true,
       message: "게시글 좋아요를 성공적으로 추가했습니다.",
+      data: result,
+    },
+    200
+  );
+});
+
+/**
+ * @method POST
+ * @path /posts/{id}/bookmark
+ * @summary 커뮤니티 게시글 북마크 추가 / 제거
+ */
+const bookmarkPostRoute = createRoute({
+  method: "post",
+  path: "/posts/{id}/bookmark",
+  summary: "게시글 북마크",
+  description: "게시글 북마크 추가 한번 더 요청하면 자동으로 제거",
+  request: { params: CommunitySchemas.PostIdParamSchema },
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.PostResponseSchema,
+      description: "게시글",
+    },
+    ["401", "404"]
+  ),
+  tags: ["Community"],
+});
+
+authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = c.get("user");
+  if (!user) {
+    return c.json(
+      {
+        success: false,
+        message: "인증되지 않은 사용자 입니다.",
+      },
+      401
+    );
+  }
+  const result = await CommunityServices.bookmarkPostService(
+    id,
+    user!.id as string
+  );
+
+  if (!result) {
+    return c.json(
+      {
+        success: false,
+        message: "게시글을 찾을 수 없습니다.",
+      },
+      404
+    );
+  }
+  return c.json(
+    {
+      success: true,
+      message: "게시글 북마크를 성공적으로 추가했습니다.",
       data: result,
     },
     200

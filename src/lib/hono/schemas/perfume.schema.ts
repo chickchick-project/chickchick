@@ -55,6 +55,10 @@ export const PerfumeDetailResponseSchema = z
   })
   .openapi("PerfumeDetailResponse");
 
+export const PerfumeIdParamSchema = z.object({
+  id: PerfumeSchema.shape.id,
+});
+
 // 타입 추출
 export type PerfumeResponse = z.infer<typeof PerfumeResponseSchema>;
 export type GetPerfumeSearchResult = z.infer<

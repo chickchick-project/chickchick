@@ -1,10 +1,11 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import type { Session, User } from "next-auth";
-// import usersApi from "./routes/v1/users.handler";
-import perfumesApi from "./routes/v1/perfumes.handler";
+import usersApi from "./routes/v1/user.handler";
+import perfumesApi from "./routes/v1/perfume.handler";
 import searchApi from "./routes/v1/search.handler";
-import reviewsApi from "./routes/v1/reviews.handler";
+import reviewsApi from "./routes/v1/review.handler";
 import communityApi from "./routes/v1/community.handler";
+import meApi from "./routes/v1/me.handler";
 
 export type AuthenticatedUser = User;
 
@@ -34,11 +35,12 @@ if (process.env.NODE_ENV === "development") {
 }
 
 const v1 = new OpenAPIHono<AppContext>();
-// v1.route("/users", usersApi);
+v1.route("/users", usersApi);
 v1.route("/perfumes", perfumesApi);
 v1.route("/search", searchApi);
 v1.route("/reviews", reviewsApi);
 v1.route("/community", communityApi);
+v1.route("/me", meApi);
 
 app.route("/v1", v1);
 // app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
