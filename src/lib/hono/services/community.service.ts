@@ -160,3 +160,38 @@ export async function createPostService(postData: {
   const post = await createPost(postData);
   return post;
 }
+
+export async function likePostService(postId: string, userId: string) {
+  const [post, postLike] = await prisma.$transaction([
+    prisma.post.findUnique({ where: { id: postId } }),
+    prisma.postLike.findUnique({
+      where: { user_post_like_unique: { postId, userId } },
+    }),
+  ]);
+
+  if (!post) {
+    return null;
+  }
+
+  if (postLike) {
+    return await prisma.$transaction([
+      prisma.postLike.delete({
+        where: { id: postLike.id },
+      }),
+      prisma.post.update({
+        where: { id: postId },
+        data: { likeCount: { decrement: 1 } },
+      }),
+    ]);
+  } else {
+    return await prisma.$transaction([
+      prisma.postLike.create({
+        data: { postId, userId },
+      }),
+      prisma.post.update({
+        where: { id: postId },
+        data: { likeCount: { increment: 1 } },
+      }),
+    ]);
+  }
+}

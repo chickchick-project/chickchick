@@ -174,98 +174,62 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
   );
 });
 
-// /**
-//  * @method POST
-//  * @path /posts/{id}/like
-//  * @summary 커뮤니티 게시글 좋아요 추가
-//  */
-// const likePostRoute = createRoute({
-//   method: "post",
-//   path: "/posts/{id}/like",
-//   summary: "게시글 좋아요",
-//   request: { params: CommunitySchemas.PostIdParamSchema },
-//   responses: {
-//     200: {
-//       description: "좋아요 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             z.object({ likeCount: z.number() })
-//           ),
-//         },
-//       },
-//     },
-//     401: CommonSchemas.UnauthorizedResponse,
-//     404: CommonSchemas.NotFoundResponse,
-//   },
-//   tags: ["Community"],
-// });
+/**
+ * @method POST
+ * @path /posts/{id}/like
+ * @summary 커뮤니티 게시글 좋아요 추가
+ */
+const likePostRoute = createRoute({
+  method: "post",
+  path: "/posts/{id}/like",
+  summary: "게시글 좋아요",
+  description: "게시글 좋아요 추가 한번 더 요청하면 자동으로 제거",
+  request: { params: CommunitySchemas.PostIdParamSchema },
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.PostResponseSchema,
+      description: "게시글",
+    },
+    ["401", "404"]
+  ),
+  tags: ["Community"],
+});
 
-// authenticatedApi.openapi(likePostRoute, async (c) => {
-//   const { id } = c.req.valid("param");
-//   const user = c.get("user");
-//   const result = await CommunityServices.likePostService(id, user!.id);
-//   return c.json({
-//     success: true,
-//     message: "Post liked successfully",
-//     data: result,
-//   });
-// });
+authenticatedApi.openapi(likePostRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = c.get("user");
+  if (!user) {
+    return c.json(
+      {
+        success: false,
+        message: "인증되지 않은 사용자 입니다.",
+      },
+      401
+    );
+  }
+  const result = await CommunityServices.likePostService(
+    id,
+    user!.id as string
+  );
 
-// /**
-//  * @method DELETE
-//  * @path /posts/{id}/like
-//  * @summary 커뮤니티 게시글 좋아요 삭제
-//  */
-// const unlikePostRoute = createRoute({
-//   method: "delete",
-//   path: "/posts/{id}/like",
-//   summary: "게시글 좋아요 취소",
-//   request: { params: CommunitySchemas.PostIdParamSchema },
-//   responses: {
-//     200: {
-//       description: "좋아요 취소 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             z.object({ likeCount: z.number() })
-//           ),
-//         },
-//       },
-//     },
-//     401: {
-//       description: "인증되지 않은 사용자",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.UnauthorizedResponse,
-//         },
-//       },
-//     },
-//     404: {
-//       description: "게시글을 찾을 수 없음",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.NotFoundResponse,
-//         },
-//       },
-//     },
-//   },
-//   tags: ["Community"],
-// });
-
-// authenticatedApi.openapi(unlikePostRoute, async (c) => {
-//   const { id } = c.req.valid("param");
-//   const user = c.get("user");
-//   const result = await CommunityServices.unlikePostService(id, user!.id);
-//   return c.json(
-//     {
-//       success: true,
-//       message: "Post unliked successfully",
-//       data: result,
-//     },
-//     200
-//   );
-// });
+  if (!result) {
+    return c.json(
+      {
+        success: false,
+        message: "게시글을 찾을 수 없습니다.",
+      },
+      404
+    );
+  }
+  return c.json(
+    {
+      success: true,
+      message: "게시글 좋아요를 성공적으로 추가했습니다.",
+      data: result,
+    },
+    200
+  );
+});
 
 // /**
 //  * @method GET
@@ -494,5 +458,7 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
 //     200
 //   );
 // });
+
+communityApi.route("/", authenticatedApi);
 
 export default communityApi;
