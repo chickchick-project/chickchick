@@ -33,24 +33,28 @@ export const createCommentService = async (input: {
 };
 
 export const getCommentService = async (postId: string) => {
-  console.log(
-    `[SERVICE-DEBUG] getCommentService called with postId: ${postId}`
-  );
-
-  const post = await prisma.post.findUnique({ where: { id: postId } });
-  if (!post) {
-    console.log("게시글을 찾을 수 없습니다.");
-    return [];
-  }
-
   const comments = await prisma.comment.findMany({
     where: {
       postId,
+      parentId: null,
     },
     include: {
       author: {
         select: { id: true, nickname: true, imageUrl: true },
       },
+      replies: {
+        include: {
+          author: {
+            select: { id: true, nickname: true, imageUrl: true },
+          },
+        },
+        orderBy: {
+          createdAt: "asc",
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
     },
   });
 
