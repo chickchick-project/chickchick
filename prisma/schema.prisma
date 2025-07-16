@@ -74,7 +74,7 @@ model Perfume {
   updatedAt            DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
   nameEn               String                 @unique @map("name_en")
   nameKo               String?                @unique @map("name_ko")
-  perfumeImage         PerfumeImage?          @relation("PerfumeToImage")
+  perfumeImage         PerfumeImage?          @relation("PerfumeToImage", map: "perfume_image")
   accordMappings       PerfumeAccordMapping[] @relation("PerfumeToAccordMappings")
   bookmarks            PerfumeBookmark[]      @relation("PerfumeToBookmarks")
   noteMappings         PerfumeNoteMapping[]   @relation("PerfumeToNoteMappings")

@@ -4,17 +4,32 @@ import { PerfumeBookmark } from "@prisma/client";
 
 /**
  * 향수 목록 조회
- * @param filter
  * @description 향수 목록을 조회.
  * @returns 향수 목록
  */
-async function fetchPerfumesList(filter?: unknown) {
-  console.log(filter);
+async function fetchPerfumesList() {
   return await prisma.perfume.findMany({
     include: {
       brand: true,
       perfumeImage: true,
     },
+  });
+}
+
+/**
+ * 향수 목록 테마별 조회
+ * @param theme
+ * @description 향수 목록을 테마별로 조회. TODO: 테마별로 조회하는 로직 구현 필요
+ * @returns 향수 목록
+ */
+async function fetchPerfumesListByTheme(theme: string) {
+  console.log(theme);
+  return await prisma.perfume.findMany({
+    include: {
+      brand: true,
+      perfumeImage: true,
+    },
+    take: 5,
   });
 }
 
@@ -135,17 +150,26 @@ async function togglePerfumeBookmark(
   });
 }
 
-export async function getPerfumesListService(
-  filter?: unknown
-): Promise<PerfumeResponse[]> {
-  // TODO: 배너에 보여줄 테마에 맞는 필터 적용 필요
-  //테마는 어떻게 구분할 것인가?
-  console.log(filter);
+export async function getPerfumesListService(): Promise<PerfumeResponse[]> {
   try {
-    const perfumes = await fetchPerfumesList(filter);
+    const perfumes = await fetchPerfumesList();
     return perfumes;
   } catch (error) {
     console.error("Error fetching perfumes list:", error);
+    throw new Error("향수 목록을 가져오는데 실패했습니다.");
+  }
+}
+
+export async function getPerfumesListByThemeService(
+  theme: string
+): Promise<PerfumeResponse[]> {
+  // TODO: 배너에 보여줄 테마에 맞는 필터 적용 필요
+  //테마는 어떻게 구분할 것인가?
+  try {
+    const perfumes = await fetchPerfumesListByTheme(theme);
+    return perfumes;
+  } catch (error) {
+    console.error("Error fetching perfumes list by theme:", error);
     throw new Error("향수 목록을 가져오는데 실패했습니다.");
   }
 }

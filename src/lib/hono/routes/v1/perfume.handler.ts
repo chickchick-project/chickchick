@@ -55,6 +55,55 @@ perfumesApi.openapi(getPerfumesListRoute, async (c) => {
 
 /**
  * @method GET
+ * @path /perfumes/theme
+ * @description 향수 목록을 테마별로 조회합니다.
+ * @summary 향수 목록 테마별 조회
+ */
+const getPerfumesListByThemeRoute = createRoute({
+  method: "get",
+  path: "/theme",
+  summary: "향수 목록 테마별 조회",
+  description: "향수 목록을 테마별로 조회합니다.",
+  request: {
+    query: z.object({
+      q: z.string(),
+    }),
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: PerfumeSchemas.PerfumeListResponseSchema,
+      description: "향수 목록",
+    },
+    ["404"]
+  ),
+  tags: ["Perfume"],
+});
+
+perfumesApi.openapi(getPerfumesListByThemeRoute, async (c) => {
+  const theme = c.req.query("q") as string;
+  const perfumes = await PerfumeServices.getPerfumesListByThemeService(theme);
+
+  if (!perfumes) {
+    return c.json(
+      {
+        success: false,
+        message: "향수 목록을 찾을 수 없습니다.",
+      },
+      404
+    );
+  }
+  return c.json(
+    {
+      success: true,
+      message: "향수 목록을 성공적으로 불러왔습니다.",
+      data: perfumes,
+    },
+    200
+  );
+});
+
+/**
+ * @method GET
  * @path /perfumes/{id}
  * @description 요청된 향수 ID에 해당하는 단일 향수의 상세 정보를 조회합니다.
  * @summary 특정 향수 상세 조회

@@ -30,7 +30,7 @@ async function fetchPerfumes(
         result_limit: 15,
         ...formattedFilters,
       };
-      response = await fetch(`${API_BASE_URL}/search`, {
+      response = await fetch(`${API_BASE_URL}/search/perfumes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
@@ -43,7 +43,7 @@ async function fetchPerfumes(
       queryParams.append("limit", "15");
 
       response = await fetch(
-        `${API_BASE_URL}/search?${queryParams.toString()}`,
+        `${API_BASE_URL}/search/perfumes?${queryParams.toString()}`,
         {
           method: "GET",
           next: { revalidate: 300 },
@@ -62,9 +62,9 @@ async function fetchPerfumes(
 
     const result = await response.json();
     return {
-      data: result.data,
-      nextCursor: result.nextCursor,
-      totalCount: result.totalCount,
+      data: result.data.data,
+      nextCursor: result.data.nextCursor,
+      totalCount: result.data.totalCount,
     };
   } catch (error) {
     console.error("fetchPerfumes 오류:", error);

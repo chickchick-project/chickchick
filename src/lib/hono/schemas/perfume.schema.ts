@@ -20,7 +20,7 @@ export const PerfumeResponseSchema = PerfumeSchema.extend({
     officialUrl: true,
   })
   .openapi("PerfumeResponse", {
-    description: "향수 상세 정보",
+    description: "향수 응답 정보",
   });
 
 /**
@@ -42,7 +42,9 @@ export const PerfumeListResponseSchema = z
     message: z.string(),
     data: z.array(PerfumeResponseSchema),
   })
-  .openapi("PerfumeListResponse");
+  .openapi("PerfumeListResponse", {
+    description: "향수 목록",
+  });
 
 /**
  * 향수 상세 응답 스키마
@@ -53,7 +55,9 @@ export const PerfumeDetailResponseSchema = z
     message: z.string(),
     data: PerfumeResponseSchema,
   })
-  .openapi("PerfumeDetailResponse");
+  .openapi("PerfumeDetailResponse", {
+    description: "향수 상세 정보",
+  });
 
 export const PerfumeIdParamSchema = z.object({
   id: PerfumeSchema.shape.id,

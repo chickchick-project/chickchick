@@ -1,9 +1,10 @@
 import { supabase } from "@/lib/supabase/init";
 import { prisma } from "@/lib/prisma";
-import {
+import type {
   GetSearchParams,
   PostSearchParams,
 } from "@/lib/hono/schemas/search.schema";
+import type { GetPerfumeSearchResult } from "../schemas/perfume.schema";
 
 interface SearchPerfume {
   perfume_id: string;
@@ -148,16 +149,21 @@ export async function getPaginatedPerfumesService(
     return { data: [], nextCursor: null, totalCount: 0 };
   }
 
-  const transformedPerfumes = rawData.map((p: SearchPerfume) => ({
-    id: p.perfume_id,
-    nameEn: p.perfume_name_en,
-    nameKo: p.perfume_name_ko,
-    brandId: p.brand_id,
-    brandNameEn: p.brand_name_en,
-    brandNameKo: p.brand_name_ko,
-    imageUrl: p.image_url,
-    priority: p.priority,
-  }));
+  const transformedPerfumes: GetPerfumeSearchResult[] = rawData.map(
+    (p: SearchPerfume) => ({
+      id: p.perfume_id,
+      nameEn: p.perfume_name_en,
+      nameKo: p.perfume_name_ko,
+      brand: {
+        nameKo: p.brand_name_ko,
+        nameEn: p.brand_name_en,
+      },
+      perfumeImage: {
+        imageUrl: p.image_url,
+      },
+      priority: p.priority,
+    })
+  );
 
   const hasMore = transformedPerfumes.length > result_limit;
   const perfumesToReturn = hasMore
@@ -171,7 +177,7 @@ export async function getPaginatedPerfumesService(
   const totalCount = typeof total === "number" ? total : 0;
 
   return {
-    data: perfumesToReturn,
+    data: transformedPerfumes,
     nextCursor,
     totalCount,
   };

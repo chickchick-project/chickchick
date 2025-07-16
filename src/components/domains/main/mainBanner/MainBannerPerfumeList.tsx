@@ -31,14 +31,14 @@ export const MainBannerPerfumeList = ({
           <Link key={item.id} href={`/perfumes/${item.id}`}>
             <PerfumeCard
               className="tablet:block hidden tablet:w-[180px] w-auto"
-              perfumeImage={item.perfumeImage.imageUrl || null}
+              perfumeImage={item.perfumeImage?.imageUrl || null}
               brandName={item.brand.nameKo || item.brand.nameEn || null}
               perfumeName={item.nameKo || item.nameEn || null}
             />
             <PerfumeCard
               className="tablet:hidden block w-[80px] mobile:w-auto"
               cardType="smallSize"
-              perfumeImage={item.perfumeImage.imageUrl || null}
+              perfumeImage={item.perfumeImage?.imageUrl || null}
               brandName={item.brand.nameKo || item.brand.nameEn || null}
               perfumeName={item.nameKo || item.nameEn || null}
             />
