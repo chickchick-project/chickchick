@@ -230,7 +230,6 @@ model Review {
   updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   author      User               @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
   perfume     Perfume            @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
-  comments    Comment[]          @relation("ReviewToComments")
 
   @@map("reviews")
 }
@@ -239,25 +238,23 @@ model Comment {
   id         String            @id @default(uuid()) @db.Uuid
   content    String
   authorId   String            @map("author_id") @db.Uuid
-  targetType CommentTargetType @map("target_type")
-  targetId   String            @map("target_id") @db.Uuid
+  postId    String             @map("post_id") @db.Uuid
   parentId   String?           @map("parent_id") @db.Uuid
   createdAt  DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt  DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
 
-  post       Post?             @relation("PostToComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_post_target_id_fkey")
-  review     Review?           @relation("ReviewToComments", fields: [targetId], references: [id], onDelete: Cascade, map: "comments_review_target_id_fkey")
-  author     User              @relation("UserToComments", fields: [authorId], references: [id], onDelete: Cascade)
-  parent     Comment?          @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  author    User               @relation("UserToComments", fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post               @relation("PostToComments", fields: [postId], references: [id], onDelete: Cascade)
+  parent    Comment?           @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: NoAction)
   replies    Comment[]         @relation("CommentToReplies")
 
-  @@index([targetType, targetId, createdAt])
+  @@index([postId, createdAt])
   @@index([parentId, createdAt])
   @@map("comments")
 }
 
 model PerfumeImage {
-  id         String   @id @default(uuid()) @db.Uuid
+  id         String    @id @default(uuid()) @db.Uuid
   imageUrl  String   @map("image_url")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
@@ -307,9 +304,4 @@ enum PerfumeUsageStatus {
   CURRENTLY_USING
   USED_BEFORE
   NOT_USED_YET
-}
-
-enum CommentTargetType {
-  POST
-  REVIEW
 }
