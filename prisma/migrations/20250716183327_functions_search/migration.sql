@@ -194,8 +194,6 @@ filtered_results AS (
 SELECT COUNT(*)::INTEGER FROM filtered_results;
 $$;
 
-ALTER TABLE public.perfumes_image ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-
 CREATE OR REPLACE FUNCTION get_perfumes_without_image()
 RETURNS TABLE (
   id uuid,
@@ -211,6 +209,6 @@ BEGIN
   LEFT JOIN
     perfumes_image AS pi ON p.id = pi.perfume_id
   WHERE
-    pi.id IS NULL; -- 연결된 이미지가 없는 향수만 선택
+    pi.id IS NULL;
 END;
 $$ LANGUAGE plpgsql;

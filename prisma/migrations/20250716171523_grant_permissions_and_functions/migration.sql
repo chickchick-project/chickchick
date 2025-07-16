@@ -1,8 +1,3 @@
--- =================================================================
--- 1. 필수 확장 기능 활성화
--- =================================================================
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-CREATE EXTENSION IF NOT EXISTS "pg_net";
 
 
 -- =================================================================
@@ -81,3 +76,12 @@ ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public posts are viewable by everyone." ON public.posts;
 DROP POLICY IF EXISTS "Users can insert their own posts." ON public.posts;
 DROP POLICY IF EXISTS "Users can update or delete their own posts." ON public.posts;
+DROP POLICY IF EXISTS "Public comments are viewable by everyone." ON public.comments;
+DROP POLICY IF EXISTS "Users can insert their own comments." ON public.comments;
+DROP POLICY IF EXISTS "Users can update or delete their own comments." ON public.comments;
+
+-- 모든 사용자가 모든 댓글을 볼 수 있도록 허용하는 정책 생성
+CREATE POLICY "Public comments are viewable by everyone." 
+ON public.comments 
+FOR SELECT 
+USING (true);
