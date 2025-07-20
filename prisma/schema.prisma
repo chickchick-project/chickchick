@@ -217,13 +217,18 @@ model Post {
 
 model Review {
   id          String             @id @default(uuid()) @db.Uuid
-  title       String
-  content     String
   authorId    String             @map("author_id") @db.Uuid
   perfumeId   String             @map("perfume_id") @db.Uuid
+  title       String
+  content     String
   usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
-  tags        String[]
-  imageUrl    String?            @map("image_url")
+  rating      Int
+  longevity   Longevity @default(VERY_WEAK)
+  sillage     Sillage @default(INTIMATE)
+  genderProfile GenderProfile @default(UNISEX) @map("gender_profile")
+  season      Season[] @default([SPRING])
+  timeOfDay   TimeOfDay @default(DAY) @map("time_of_day")
+  pricePerception PricePerception @default(GOOD_VALUE) @map("price_perception")
   createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
   author      User               @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
@@ -300,4 +305,41 @@ enum PerfumeUsageStatus {
   CURRENTLY_USING
   USED_BEFORE
   NOT_USED_YET
+}
+
+enum Longevity {
+  VERY_WEAK
+  WEAK
+  MODERATE
+  LONG_LASTING
+}
+
+enum Sillage {
+  INTIMATE
+  MODERATE
+  STRONG
+}
+
+enum GenderProfile {
+  FEMININE
+  UNISEX
+  MASCULINE
+}
+
+enum Season {
+  SPRING
+  SUMMER
+  AUTUMN
+  WINTER
+}
+
+enum TimeOfDay {
+  DAY
+  NIGHT
+}
+
+enum PricePerception {
+  EXPENSIVE
+  REASONABLE
+  GOOD_VALUE
 }
