@@ -1,12 +1,12 @@
 import { createMiddleware } from "hono/factory";
 import { getSession } from "../../database/getSession";
-import { ApiResponse } from "../utils/errorHandling";
+import { apiUnauthorized } from "../utils/apiResponse.utils";
 import type { AppContext } from "../app";
 
 export const authMiddleware = createMiddleware<AppContext>(async (c, next) => {
   const session = await getSession();
   if (!session || !session.user) {
-    return ApiResponse.unauthorized(c);
+    return apiUnauthorized(c);
   }
   c.set("user", session.user);
   c.set("session", session);

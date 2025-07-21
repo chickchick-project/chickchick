@@ -1,38 +1,33 @@
 import { z } from "@hono/zod-openapi";
 import { CommentSchema, UserSchema } from "@zod/modelSchema";
 
-export const CreateCommentRequestSchema = CommentSchema.pick({
-  content: true,
-  parentId: true,
-}).openapi({
-  example: {
-    content: "이건 첫 번째 레슨",
-    parentId: null,
-  },
-});
-
-export const CommentResponseSchema = CommentSchema.extend({
+const ReplyResponseSchema = CommentSchema.extend({
   author: UserSchema.pick({
     id: true,
     nickname: true,
     imageUrl: true,
   }),
-}).omit({
-  authorId: true,
+}).omit({ authorId: true });
+
+export const CommentResponseSchema = ReplyResponseSchema.extend({
+  replies: z.array(ReplyResponseSchema),
 });
 
-export const CommentListResponseSchema = z
-  .object({
-    success: z.boolean(),
-    message: z.string(),
-    data: z.array(CommentResponseSchema),
-  })
-  .openapi("CommentListResponse", {
-    description: "댓글 목록",
-  });
+export const CreateCommentBodySchema = CommentSchema.pick({
+  content: true,
+}).extend({
+  parentId: z.string().uuid().nullable().optional(),
+});
 
-export const CommentPostIdParamSchema = z.object({
+export const CreateCommentPayloadSchema = CreateCommentBodySchema.extend({
+  authorId: z.string().uuid(),
+  postId: z.string().uuid(),
+});
+
+export const PostIdParamSchema = z.object({
   postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
 });
 
-export type CreateCommentService = z.infer<typeof CreateCommentRequestSchema>;
+export type CommentResponse = z.infer<typeof CommentResponseSchema>;
+export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
+export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;

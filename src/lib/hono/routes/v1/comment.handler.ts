@@ -6,25 +6,37 @@ import * as CommentSchemas from "@/lib/hono/schemas/comment.schema";
 import * as CommentServices from "@/lib/hono/services/comment.service";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import {
+  apiInternalError,
+  apiSuccess,
+  apiNotFound,
+  apiConflict,
+  apiBadRequest,
+  apiCreated,
+} from "../../utils/errorHandling";
 
 const commentsApi = new OpenAPIHono<AppContext>();
-commentsApi.use("*", authMiddleware);
+const authenticatedApi = new OpenAPIHono<AppContext>();
+
+authenticatedApi.use("*", authMiddleware);
+
 /**
  * @method GET
  * @path /{postId}
  * @summary 댓글 목록 조회
  */
+
 commentsApi.openapi(
   createRoute({
     method: "get",
     path: "/{postId}",
     summary: "댓글 목록 조회",
     request: {
-      params: CommentSchemas.CommentPostIdParamSchema,
+      params: CommentSchemas.PostIdParamSchema,
     },
     responses: createStandardApiResponses(
       {
-        schema: CommentSchemas.CommentListResponseSchema,
+        schema: CommentSchemas.CommentResponseSchema,
         description: "댓글 목록",
       },
       ["404"]
@@ -33,25 +45,14 @@ commentsApi.openapi(
   }),
   async (c) => {
     const { postId } = c.req.valid("param");
-    const comments = await CommentServices.getCommentService(postId);
-    if (!comments || comments.length === 0) {
-      return c.json(
-        {
-          success: true,
-          message: "댓글이 없습니다.",
-          data: [],
-        },
-        200
-      );
+    const result = await CommentServices.getCommentService(postId);
+    if (!result.success) {
+      if (result.error === "NOT_FOUND") {
+        return apiNotFound(c, result.message);
+      }
+      return apiInternalError(c, result.message);
     }
-    return c.json(
-      {
-        success: true,
-        message: "댓글 목록을 성공적으로 불러왔습니다.",
-        data: comments,
-      },
-      200
-    );
+    return apiSuccess(c, result.data, "댓글 목록을 성공적으로 불러왔습니다.");
   }
 );
 
@@ -66,11 +67,11 @@ const createCommentRoute = createRoute({
   summary: "댓글 생성",
   description: "댓글 생성",
   request: {
-    params: CommentSchemas.CommentPostIdParamSchema,
+    params: CommentSchemas.PostIdParamSchema,
     body: {
       content: {
         "application/json": {
-          schema: CommentSchemas.CreateCommentRequestSchema,
+          schema: CommentSchemas.CreateCommentBodySchema,
         },
       },
     },
@@ -81,7 +82,7 @@ const createCommentRoute = createRoute({
       schema: CommentSchemas.CommentResponseSchema,
       description: "댓글",
     },
-    ["400", "401"]
+    ["400", "401", "404", "409"]
   ),
   tags: ["Comment"],
 });
@@ -89,34 +90,34 @@ const createCommentRoute = createRoute({
 commentsApi.use(createCommentRoute.getRoutingPath(), authMiddleware);
 
 commentsApi.openapi(createCommentRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
   const { postId } = c.req.valid("param");
   const body = c.req.valid("json");
-  try {
-    const newComment = await CommentServices.createCommentService({
-      postId,
-      content: body.content,
-      parentId: body.parentId,
-      authorId: user.id,
-    });
+  const user = getAuthenticatedUser(c);
 
-    return c.json(
-      {
-        success: true,
-        message: "댓글을 성공적으로 생성했습니다.",
-        data: newComment,
-      },
-      201
-    );
-  } catch (error: unknown) {
-    console.error("Error creating comment:", error);
-    if (error instanceof Error) {
-      return c.json({ success: false, message: error.message }, 404);
+  const payload: CommentSchemas.CreateCommentPayload = {
+    ...body,
+    postId,
+    authorId: user.id,
+  };
+
+  const result = await CommentServices.createCommentService(payload);
+
+  if (!result.success) {
+    // 서비스가 반환한 에러 코드에 따라 적절한 HTTP 응답을 매핑
+    switch (result.error) {
+      case "NOT_FOUND":
+        return apiNotFound(c, result.message);
+      case "ALREADY_EXISTS":
+        return apiConflict(c, result.message);
+      case "BAD_REQUEST":
+        return apiBadRequest(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
     }
-    return c.json(
-      { success: false, message: "댓글 생성 중 오류가 발생했습니다." },
-      500
-    );
   }
+
+  return apiCreated(c, result.data, "댓글을 성공적으로 생성했습니다.");
 });
+commentsApi.route("/", authenticatedApi);
+
 export default commentsApi;

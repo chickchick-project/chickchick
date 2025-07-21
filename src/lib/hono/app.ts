@@ -7,17 +7,19 @@ import communityApi from "./routes/v1/community.handler";
 import meApi from "./routes/v1/me.handler";
 import usersApi from "./routes/v1/user.handler";
 import commentsApi from "./routes/v1/comment.handler";
+import { handleApiError } from "./utils/apiResponse.utils";
 
 export type AuthenticatedUser = User;
 
 export type AppContext = {
   Variables: {
-    user: AuthenticatedUser;
-    session: Session;
+    user?: AuthenticatedUser;
+    session?: Session;
   };
 };
 
 const app = new OpenAPIHono<AppContext>().basePath("/api");
+app.onError(handleApiError);
 
 if (process.env.NODE_ENV === "development") {
   app.doc("/doc", {
