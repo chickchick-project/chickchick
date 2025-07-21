@@ -1,248 +1,190 @@
-import { PostBookmark, PostCategory, Prisma } from "@prisma/client";
+import { PostBookmark, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import * as CommunitySchemas from "../schemas/community.schema";
-
-const DEFAULT_POST_LIMIT = 12;
+import { createCursorPaginationResult } from "../utils/pagination";
+import {
+  serviceInternalError,
+  ServiceResult,
+  serviceSuccess,
+  serviceNotFound,
+} from "../utils/serviceResult.utils";
+import { checkResourceExists } from "../utils/service.utils";
 
 // --- Prisma 쿼리 인자 및 타입 정의 ---
 const postIncludeArgs = {
   author: {
-    select: {
-      id: true,
-      nickname: true,
-      imageUrl: true,
-    },
+    select: { id: true, nickname: true, imageUrl: true },
   },
 } satisfies Prisma.PostInclude;
 
-const postWithAuthorArgs = {
-  include: postIncludeArgs,
-};
+const postWithAuthorArgs = { include: postIncludeArgs };
 
 export type PostWithAuthor = Prisma.PostGetPayload<typeof postWithAuthorArgs>;
-
-// --- Prisma 쿼리 함수들 ---
-async function findPaginatedPosts(params: {
-  where: Prisma.PostWhereInput;
-  orderBy:
-    | Prisma.PostOrderByWithRelationInput
-    | Prisma.PostOrderByWithRelationInput[];
-  take: number;
-  skip: number;
-  cursor?: { id: string };
-}) {
-  return await prisma.post.findMany({
-    ...params,
-    ...postWithAuthorArgs,
-  });
-}
-
-async function countPosts(where: Prisma.PostWhereInput) {
-  return await prisma.post.count({ where });
-}
-
-async function fetchPostById(id: string): Promise<PostWithAuthor | null> {
-  return await prisma.post.findUnique({
-    where: {
-      id,
-    },
-    ...postWithAuthorArgs,
-  });
-}
-
-async function createPost(postData: {
-  title: string;
-  content: string;
-  userId: string;
-  category: PostCategory;
-  thumbnailUrl?: string;
-}) {
-  return prisma.post.create({
-    data: {
-      ...postData,
-    },
-  });
-}
 
 // --- 서비스 함수들 ---
 export async function getPaginatedPostListService(
   params: CommunitySchemas.GetPostsQuery
-): Promise<CommunitySchemas.PaginatedPostListResponse> {
+): Promise<ServiceResult<CommunitySchemas.PaginatedPostListResponse>> {
   try {
-    const {
-      category,
-      sortBy = "createdAt",
-      q: search_text,
-      cursor: last_seen_id,
-      limit: result_limit = DEFAULT_POST_LIMIT,
-    } = params;
+    const { category, sortBy, q, cursor, limit } = params;
+    const fetchLimit = limit + 1;
 
-    const sortOrder = "desc";
-    const fetchLimit = result_limit + 1;
-
-    const where: Prisma.PostWhereInput = {
-      published: true,
-    };
-    if (category) {
-      where.category = category;
-    }
-    if (search_text) {
+    const where: Prisma.PostWhereInput = { published: true };
+    if (category) where.category = category;
+    if (q) {
       where.OR = [
-        { title: { contains: search_text, mode: "insensitive" } },
-        { content: { contains: search_text, mode: "insensitive" } },
+        { title: { contains: q, mode: "insensitive" } },
+        { content: { contains: q, mode: "insensitive" } },
       ];
     }
 
     const orderBy:
-      | Prisma.PostOrderByWithRelationInput
-      | Prisma.PostOrderByWithRelationInput[] =
+      | Prisma.PostOrderByWithRelationInput[]
+      | Prisma.PostOrderByWithRelationInput =
       sortBy === "popular"
-        ? [
-            { likeCount: sortOrder },
-            { commentCount: sortOrder },
-            { viewCount: sortOrder },
-            { createdAt: sortOrder },
-          ]
-        : { [sortBy]: sortOrder };
+        ? [{ likeCount: "desc" }, { createdAt: "desc" }]
+        : { createdAt: "desc" };
 
-    const [rawData, total] = await Promise.all([
-      findPaginatedPosts({
+    const [posts, totalCount] = await Promise.all([
+      prisma.post.findMany({
         where,
         orderBy,
         take: fetchLimit,
-        skip: last_seen_id ? 1 : 0,
-        cursor: last_seen_id ? { id: last_seen_id } : undefined,
+        cursor: cursor ? { id: cursor } : undefined,
+        ...postWithAuthorArgs,
       }),
-      countPosts(where),
+      prisma.post.count({ where }),
     ]);
 
-    if (!rawData || rawData.length === 0) {
-      return { data: [], nextCursor: null, totalCount: 0 };
-    }
-
-    const hasMore = rawData.length > result_limit;
-    const postsToReturn = hasMore ? rawData.slice(0, result_limit) : rawData;
-
-    const nextCursor = hasMore
-      ? postsToReturn[postsToReturn.length - 1].id
-      : null;
-    const totalCount = typeof total === "number" ? total : 0;
-
-    return {
-      data: postsToReturn,
-      nextCursor,
+    const paginatedResult = createCursorPaginationResult(
+      posts,
       totalCount,
-    };
+      limit
+    );
+    return serviceSuccess({
+      data: paginatedResult.data,
+      totalCount: paginatedResult.totalCount,
+      nextCursor: paginatedResult.nextCursor,
+    });
   } catch (error) {
-    console.error("Error in getPaginatedPostListService:", error);
-    throw new Error("게시글 목록을 가져오는데 실패했습니다.");
+    return serviceInternalError(error);
   }
 }
 
-export async function getPostService(id: string) {
-  const post = await fetchPostById(id);
-  return post;
-}
-
-export async function createPostService(postData: {
-  title: string;
-  content: string;
-  userId: string;
-  category: PostCategory;
-  thumbnailUrl?: string;
-}) {
-  const post = await createPost(postData);
-  return post;
-}
-
-async function togglePostLike(postId: string, userId: string) {
-  return prisma.$transaction(async (tx) => {
-    const post = await tx.post.findUnique({ where: { id: postId } });
-    if (!post) {
-      return null;
-    }
-    const postLike = await tx.postLike.findUnique({
-      where: { user_post_like_unique: { postId, userId } },
+export async function getPostByIdService(
+  id: string
+): Promise<ServiceResult<PostWithAuthor>> {
+  try {
+    const post = await prisma.post.findUnique({
+      where: { id },
+      ...postWithAuthorArgs,
     });
-    if (postLike) {
-      await tx.postLike.delete({
-        where: { id: postLike.id },
-      });
-      return tx.post.update({
-        where: { id: postId },
-        data: { likeCount: { decrement: 1 } },
-      });
-    } else {
-      await tx.postLike.create({
-        data: { postId, userId },
-      });
-      return tx.post.update({
-        where: { id: postId },
-        data: { likeCount: { increment: 1 } },
-      });
+
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
-  });
+    return serviceSuccess(post);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }
 
-async function togglePostBookmark(
+export async function createPostService(
+  payload: CommunitySchemas.CreatePostPayload
+): Promise<ServiceResult<PostWithAuthor>> {
+  try {
+    const userCheck = await checkResourceExists(
+      "user",
+      payload.authorId,
+      "사용자"
+    );
+    if (!userCheck.success) return userCheck;
+
+    const newPost = await prisma.post.create({
+      data: { ...payload, userId: payload.authorId },
+      ...postWithAuthorArgs,
+    });
+    return serviceSuccess(newPost);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+export async function togglePostLikeService(
   postId: string,
   userId: string
-): Promise<PostBookmark | null> {
-  return prisma.$transaction(async (tx) => {
-    const post = await tx.post.findUnique({ where: { id: postId } });
-    if (!post) {
-      return null;
-    }
-
-    const bookmark = await tx.postBookmark.findUnique({
-      where: { user_post_bookmark_unique: { postId, userId } },
-    });
-
-    if (bookmark) {
-      // 북마크가 있으면 삭제
-      return tx.postBookmark.delete({
-        where: { id: bookmark.id },
-      });
-    } else {
-      // 북마크가 없으면 생성
-      return tx.postBookmark.create({
-        data: { postId, userId },
-      });
-    }
-  });
-}
-
-export async function likePostService(postId: string, userId: string) {
+): Promise<ServiceResult<PostWithAuthor>> {
   try {
-    const updatedPost = await togglePostLike(postId, userId);
-    if (!updatedPost) {
-      return null;
-    }
-    return updatedPost;
+    const postCheck = await checkResourceExists("post", postId, "게시글");
+    if (!postCheck.success) return postCheck;
+
+    const updatedPost = await prisma.$transaction(async (tx) => {
+      const like = await tx.postLike.findUnique({
+        where: { user_post_like_unique: { postId, userId } },
+      });
+
+      if (like) {
+        await tx.postLike.delete({ where: { id: like.id } });
+        return tx.post.update({
+          where: { id: postId },
+          data: { likeCount: { decrement: 1 } },
+          ...postWithAuthorArgs,
+        });
+      } else {
+        await tx.postLike.create({ data: { postId, userId } });
+        return tx.post.update({
+          where: { id: postId },
+          data: { likeCount: { increment: 1 } },
+          ...postWithAuthorArgs,
+        });
+      }
+    });
+    return serviceSuccess(updatedPost);
   } catch (error) {
-    console.error("Error in likePostService:", error);
-    throw new Error("게시글 좋아요를 추가하는데 실패했습니다.");
+    return serviceInternalError(error);
   }
 }
 
-export async function bookmarkPostService(postId: string, userId: string) {
+export async function togglePostBookmarkService(
+  postId: string,
+  userId: string
+): Promise<ServiceResult<PostBookmark | null>> {
   try {
-    const updatedPost = await togglePostBookmark(postId, userId);
-    if (!updatedPost) {
-      return null;
-    }
-    return updatedPost;
+    const postCheck = await checkResourceExists("post", postId, "게시글");
+    if (!postCheck.success) return postCheck;
+
+    const updatedPost = await prisma.$transaction(async (tx) => {
+      const bookmark = await tx.postBookmark.findUnique({
+        where: { user_post_bookmark_unique: { postId, userId } },
+      });
+
+      if (bookmark) {
+        // 북마크가 있으면 삭제
+        return tx.postBookmark.delete({
+          where: { id: bookmark.id },
+        });
+      } else {
+        // 북마크가 없으면 생성
+        return tx.postBookmark.create({
+          data: { postId, userId },
+        });
+      }
+    });
+    return serviceSuccess(updatedPost);
   } catch (error) {
-    console.error("Error in bookmarkPostService:", error);
-    throw new Error("게시글 북마크를 추가하는데 실패했습니다.");
+    return serviceInternalError(error);
   }
 }
 
 export async function getBookmarkedPostService(userId: string) {
-  return await prisma.postBookmark.findMany({
-    where: { userId },
-    include: {
-      post: true,
-    },
-  });
+  try {
+    const bookmarkedPosts = await prisma.postBookmark.findMany({
+      where: { userId },
+      include: {
+        post: true,
+      },
+    });
+    return serviceSuccess(bookmarkedPosts);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }

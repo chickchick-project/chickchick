@@ -6,6 +6,13 @@ import * as CommunityServices from "@/lib/hono/services/community.service";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import {
+  apiBadRequest,
+  apiNotFound,
+  apiSuccess,
+  apiInternalError,
+  apiCreated,
+} from "../../utils/apiResponse.utils";
 
 const communityApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -36,28 +43,13 @@ const getPostListRoute = createRoute({
 
 communityApi.openapi(getPostListRoute, async (c) => {
   const queryParams = c.req.valid("query");
-
-  const posts = await CommunityServices.getPaginatedPostListService(
+  const result = await CommunityServices.getPaginatedPostListService(
     queryParams
   );
-
-  if (!posts) {
-    return c.json(
-      {
-        success: false,
-        message: "게시글 목록을 찾을 수 없습니다.",
-      },
-      404
-    );
+  if (!result.success) {
+    return apiBadRequest(c, result.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "게시글 목록을 성공적으로 불러왔습니다.",
-      data: posts,
-    },
-    200
-  );
+  return apiSuccess(c, result.data, "게시글 목록을 성공적으로 불러왔습니다.");
 });
 
 /**
@@ -85,24 +77,11 @@ const getPostRoute = createRoute({
 
 communityApi.openapi(getPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const post = await CommunityServices.getPostService(id);
-  if (!post) {
-    return c.json(
-      {
-        success: false,
-        message: "게시글을 찾을 수 없습니다.",
-      },
-      404
-    );
+  const post = await CommunityServices.getPostByIdService(id);
+  if (!post.success) {
+    return apiNotFound(c, post.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "게시글을 성공적으로 불러왔습니다.",
-      data: post,
-    },
-    200
-  );
+  return apiSuccess(c, post.data, "게시글을 성공적으로 불러왔습니다.");
 });
 
 /**
@@ -136,43 +115,21 @@ const createPostRoute = createRoute({
 });
 
 authenticatedApi.openapi(createPostRoute, async (c) => {
-  const user = c.get("user");
-  const content = c.req.valid("json");
-  const { thumbnailUrl, ...restContent } = content;
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
+  const user = await getAuthenticatedUser(c);
+
+  const body = c.req.valid("json");
+  const payload: CommunitySchemas.CreatePostPayload = {
+    ...body,
+    authorId: user.id,
+  };
+
+  const result = await CommunityServices.createPostService(payload);
+
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    return apiInternalError(c, result.message);
   }
-
-  const post = await CommunityServices.createPostService({
-    ...restContent,
-    thumbnailUrl: thumbnailUrl ?? undefined,
-    userId: user!.id as string,
-  });
-
-  if (!post) {
-    return c.json(
-      {
-        success: false,
-        message: "게시글을 생성할 수 없습니다.",
-      },
-      400
-    );
-  }
-
-  return c.json(
-    {
-      success: true,
-      message: "게시글을 성공적으로 생성했습니다.",
-      data: post,
-    },
-    201
-  );
+  return apiCreated(c, result.data, "게시글을 성공적으로 생성했습니다.");
 });
 
 /**
@@ -198,29 +155,13 @@ const likePostRoute = createRoute({
 
 authenticatedApi.openapi(likePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
-  const result = await CommunityServices.likePostService(
-    id,
-    user!.id as string
-  );
+  const user = await getAuthenticatedUser(c);
+  const result = await CommunityServices.togglePostLikeService(id, user.id);
 
-  if (!result) {
-    return c.json(
-      {
-        success: false,
-        message: "게시글을 찾을 수 없습니다.",
-      },
-      404
-    );
+  if (!result.success) {
+    return apiNotFound(c, result.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "게시글 좋아요를 성공적으로 추가했습니다.",
-      data: result,
-    },
-    200
-  );
+  return apiSuccess(c, result.data, "게시글 좋아요를 성공적으로 추가했습니다.");
 });
 
 /**
@@ -246,255 +187,14 @@ const bookmarkPostRoute = createRoute({
 
 authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
-  const result = await CommunityServices.bookmarkPostService(id, user.id);
+  const user = await getAuthenticatedUser(c);
+  const result = await CommunityServices.togglePostBookmarkService(id, user.id);
 
-  if (!result) {
-    return c.json(
-      {
-        success: false,
-        message: "게시글을 찾을 수 없습니다.",
-      },
-      404
-    );
+  if (!result.success) {
+    return apiNotFound(c, result.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "게시글 북마크를 성공적으로 추가했습니다.",
-      data: result,
-    },
-    200
-  );
+  return apiSuccess(c, result.data, "게시글 북마크를 성공적으로 추가했습니다.");
 });
-
-// /**
-//  * @method GET
-//  * @path /posts/{id}/comments
-//  * @summary 커뮤니티 게시글 댓글 조회
-//  */
-// const getPostCommentsRoute = createRoute({
-//   method: "get",
-//   path: "/posts/{id}/comments",
-// });
-
-// communityApi.use(getPostCommentsRoute.getRoutingPath(), authMiddleware);
-
-// const getPostCommentsRoute = createRoute({
-//   method: "get",
-//   path: "/posts/{id}/comments",
-//   summary: "게시글 댓글 목록 조회",
-//   request: { params: CommunitySchemas.PostIdParamSchema },
-//   responses: {
-//     200: {
-//       description: "댓글 목록 조회 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             z.array(CommunitySchemas.CommentResponseSchema)
-//           ),
-//         },
-//       },
-//     },
-//     404: {
-//       description: "게시글을 찾을 수 없음",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.NotFoundResponse,
-//         },
-//       },
-//     },
-//   },
-//   tags: ["Community"],
-// });
-
-// authenticatedApi.openapi(getPostCommentsRoute, async (c) => {
-//   const { id } = c.req.valid("param");
-//   const post = await CommunityServices.getPostCommentsService(id);
-//   return c.json(
-//     {
-//       success: true,
-//       message: "Post comments retrieved successfully",
-//       data: post,
-//     },
-//     200
-//   );
-// });
-
-// /**
-//  * @method POST
-//  * @path /posts/{id}/comments
-//  * @summary 커뮤니티 게시글 댓글 생성
-//  */
-// const createPostCommentRoute = createRoute({
-//   method: "post",
-//   path: "/posts/{id}/comments",
-//   summary: "게시글 댓글 생성",
-//   request: {
-//     params: CommunitySchemas.PostIdParamSchema,
-//     body: {
-//       content: {
-//         "application/json": {
-//           schema: CommunitySchemas.CreatePostCommentRequestSchema,
-//         },
-//       },
-//     },
-//   },
-//   responses: {
-//     201: {
-//       description: "댓글 생성 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             CommunitySchemas.CommentResponseSchema
-//           ),
-//         },
-//       },
-//     },
-//     401: {
-//       description: "인증되지 않은 사용자",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.UnauthorizedResponse,
-//         },
-//       },
-//     },
-//     404: {
-//       description: "게시글을 찾을 수 없음",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.NotFoundResponse,
-//         },
-//       },
-//     },
-//   },
-//   tags: ["Community"],
-// });
-
-// authenticatedApi.openapi(createPostCommentRoute, async (c) => {
-//   const { id } = c.req.valid("param");
-//   const post = await CommunityServices.createPostCommentService(id);
-//   return c.json(
-//     {
-//       success: true,
-//       message: "Post comment created successfully",
-//       data: post,
-//     },
-//     201
-//   );
-// });
-
-// /**
-//  * @method DELETE
-//  * @path /posts/{id}/comments/{commentId}
-//  * @summary 커뮤니티 게시글 댓글 삭제
-//  */
-// const deletePostCommentRoute = createRoute({
-//   method: "delete",
-//   path: "/posts/{id}/comments/{commentId}",
-//   summary: "게시글 댓글 삭제",
-//   request: {
-//     params: CommunitySchemas.PostIdParamSchema,
-//   },
-//   responses: {
-//     200: {
-//       description: "댓글 삭제 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             CommunitySchemas.CommentResponseSchema
-//           ),
-//         },
-//       },
-//     },
-//     401: {
-//       description: "인증되지 않은 사용자",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.UnauthorizedResponse,
-//         },
-//       },
-//     },
-//     404: {
-//       description: "게시글을 찾을 수 없음",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.NotFoundResponse,
-//         },
-//       },
-//     },
-//   },
-//   tags: ["Community"],
-// });
-
-// authenticatedApi.openapi(deletePostCommentRoute, async (c) => {
-//   const { id, commentId } = c.req.valid("param");
-//   const post = await CommunityServices.deletePostCommentService(id, commentId);
-//   return c.json(
-//     {
-//       success: true,
-//       message: "Post comment deleted successfully",
-//       data: post,
-//     },
-//     200
-//   );
-// });
-
-// /**
-//  * @method PUT
-//  * @path /posts/{id}/comments/{commentId}
-//  * @summary 커뮤니티 게시글 댓글 수정
-//  */
-// const updatePostCommentRoute = createRoute({
-//   method: "put",
-//   path: "/posts/{id}/comments/{commentId}",
-//   summary: "게시글 댓글 수정",
-//   request: {
-//     params: CommunitySchemas.PostIdParamSchema,
-//   },
-//   responses: {
-//     200: {
-//       description: "댓글 수정 성공",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.SuccessResponseSchema(
-//             CommunitySchemas.CommentResponseSchema
-//           ),
-//         },
-//       },
-//     },
-//     401: {
-//       description: "인증되지 않은 사용자",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.UnauthorizedResponse,
-//         },
-//       },
-//     },
-//     404: {
-//       description: "게시글을 찾을 수 없음",
-//       content: {
-//         "application/json": {
-//           schema: CommonSchemas.NotFoundResponse,
-//         },
-//       },
-//     },
-//   },
-//   tags: ["Community"],
-// });
-
-// authenticatedApi.openapi(updatePostCommentRoute, async (c) => {
-//   const { id, commentId } = c.req.valid("param");
-//   const post = await CommunityServices.updatePostCommentService(id, commentId);
-//   return c.json(
-//     {
-//       success: true,
-//       message: "Post comment updated successfully",
-//       data: post,
-//     },
-//     200
-//   );
-// });
 
 communityApi.route("/", authenticatedApi);
 

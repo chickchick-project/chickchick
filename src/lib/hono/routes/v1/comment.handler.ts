@@ -13,7 +13,7 @@ import {
   apiConflict,
   apiBadRequest,
   apiCreated,
-} from "../../utils/errorHandling";
+} from "../../utils/apiResponse.utils";
 
 const commentsApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();

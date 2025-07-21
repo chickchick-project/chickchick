@@ -5,11 +5,18 @@ import {
   CreateReviewSchema,
   CreateReviewBodySchema,
 } from "@/lib/hono/schemas/review.schema";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { AppContext } from "@/lib/hono/app";
+import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import { transformReviewToResponse } from "@/lib/hono/utils/transformReviewToResponse";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import {
+  apiBadRequest,
+  apiConflict,
+  apiCreated,
+  apiInternalError,
+  apiNotFound,
+} from "@/lib/hono/utils/apiResponse.utils";
 
 const reviewsApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -164,7 +171,6 @@ authenticatedApi.openapi(createReviewRoute, async (c) => {
   const bodyData = c.req.valid("json");
   const user = getAuthenticatedUser(c);
 
-  // Combine all data needed for review creation
   const payload = {
     ...queryData,
     ...bodyData,
@@ -175,27 +181,21 @@ authenticatedApi.openapi(createReviewRoute, async (c) => {
   const result = await ReviewServices.createReviewService(payload);
 
   if (!result.success) {
-    const statusCode = result.error === "NOT_FOUND" ? 404 : 400;
-    return c.json(
-      {
-        success: false,
-        error: result.error || "BAD_REQUEST",
-        message: result.message || "리뷰 작성에 실패했습니다.",
-      },
-      { status: statusCode }
-    );
+    switch (result.error) {
+      case "NOT_FOUND":
+        return apiNotFound(c, result.message);
+      case "ALREADY_EXISTS":
+        return apiConflict(c, result.message);
+      case "BAD_REQUEST":
+        return apiBadRequest(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
+    }
   }
 
   const responseData = transformReviewToResponse(result.data);
 
-  return c.json(
-    {
-      success: true,
-      data: responseData,
-      message: "리뷰가 성공적으로 작성되었습니다.",
-    } as const,
-    { status: 201 }
-  );
+  return apiCreated(c, responseData, "리뷰가 성공적으로 작성되었습니다.");
 });
 
 reviewsApi.route("/", authenticatedApi);
