@@ -5,6 +5,7 @@ import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as CommentSchemas from "@/lib/hono/schemas/comment.schema";
 import * as CommentServices from "@/lib/hono/services/comment.service";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const commentsApi = new OpenAPIHono<AppContext>();
 commentsApi.use("*", authMiddleware);
@@ -88,33 +89,15 @@ const createCommentRoute = createRoute({
 commentsApi.use(createCommentRoute.getRoutingPath(), authMiddleware);
 
 commentsApi.openapi(createCommentRoute, async (c) => {
-  const user = c.get("user");
+  const user = getAuthenticatedUser(c);
   const { postId } = c.req.valid("param");
   const body = c.req.valid("json");
-
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
-
-  console.log({
-    postId,
-    content: body.content,
-    parentId: body.parentId,
-    authorId: user.id as string,
-  });
-
   try {
     const newComment = await CommentServices.createCommentService({
       postId,
       content: body.content,
       parentId: body.parentId,
-      authorId: user.id as string,
+      authorId: user.id,
     });
 
     return c.json(

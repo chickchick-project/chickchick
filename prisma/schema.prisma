@@ -219,7 +219,6 @@ model Review {
   id          String             @id @default(uuid()) @db.Uuid
   authorId    String             @map("author_id") @db.Uuid
   perfumeId   String             @map("perfume_id") @db.Uuid
-  title       String
   content     String
   usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
   rating      Int

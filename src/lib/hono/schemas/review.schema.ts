@@ -1,33 +1,65 @@
 import { z } from "@hono/zod-openapi";
-import PerfumeUsageStatusSchema from "@zod/inputTypeSchemas/PerfumeUsageStatusSchema";
+import { Season } from "@prisma/client";
+import ReviewSchema from "@zod/modelSchema/ReviewSchema";
+import UserSchema from "@zod/modelSchema/UserSchema";
 
-export const ReviewSchema = z.object({
-  id: z.string().uuid(),
-  title: z.string(),
-  content: z
-    .string()
-    .max(500, { message: "500자 이내로 작성해 주세요." })
-    .nullable(),
-  authorId: z.string().uuid(),
-  perfumeId: z.string().uuid(),
-  usageStatus: PerfumeUsageStatusSchema,
-  tags: z.array(z.string()),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+const ReviewChipsSchema = ReviewSchema.pick({
+  rating: true,
+  longevity: true,
+  sillage: true,
+  genderProfile: true,
+  season: true,
+  timeOfDay: true,
+  pricePerception: true,
 });
 
-export const CreateReviewSchema = ReviewSchema.omit({
+export const ReviewResponseSchema = ReviewSchema.pick({
   id: true,
+  usageStatus: true,
+  content: true,
   createdAt: true,
-  updatedAt: true,
+}).extend({
+  author: UserSchema.pick({
+    id: true,
+    nickname: true,
+    imageUrl: true,
+  }),
+  chips: ReviewChipsSchema,
+});
+
+export const CreateReviewBodySchema = ReviewSchema.pick({ content: true });
+
+export const CreateReviewSchema = ReviewSchema.pick({
+  usageStatus: true,
+  rating: true,
+  longevity: true,
+  sillage: true,
+  genderProfile: true,
+  season: true,
+  timeOfDay: true,
+  pricePerception: true,
+}).extend({
+  rating: z.coerce.number().int().min(1).max(5),
+  season: z.preprocess(
+    (val) => (Array.isArray(val) ? val : [val]),
+    z.array(z.nativeEnum(Season))
+  ),
+});
+
+export const CreateReviewPayloadSchema = CreateReviewSchema.merge(
+  CreateReviewBodySchema
+).extend({
+  authorId: z.string().uuid(),
+  perfumeId: z.string().uuid(),
 });
 
 export const UpdateReviewSchema = ReviewSchema.omit({
   id: true,
-  title: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export type Review = z.infer<typeof ReviewSchema>;
+export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
 export type CreateReview = z.infer<typeof CreateReviewSchema>;
+export type CreateReviewPayload = z.infer<typeof CreateReviewPayloadSchema>;
+export type UpdateReview = z.infer<typeof UpdateReviewSchema>;

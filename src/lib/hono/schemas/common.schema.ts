@@ -25,6 +25,8 @@ export const SuccessResponseSchema = (dataSchema: z.ZodType) =>
 export const ErrorResponseSchema = z.object({
   success: z.literal(false),
   message: z.string(),
+  error: z.string().optional(),
+  details: z.unknown().optional(),
 });
 
 export const BadRequestResponse = {

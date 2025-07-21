@@ -5,6 +5,7 @@ import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as CommunityServices from "@/lib/hono/services/community.service";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const communityApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -118,7 +119,7 @@ const createPostRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: CommunitySchemas.CreatePostRequestSchema,
+          schema: CommunitySchemas.CreatePostPayloadSchema,
         },
       },
     },
@@ -197,16 +198,7 @@ const likePostRoute = createRoute({
 
 authenticatedApi.openapi(likePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = c.get("user");
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
+  const user = getAuthenticatedUser(c);
   const result = await CommunityServices.likePostService(
     id,
     user!.id as string
@@ -254,20 +246,8 @@ const bookmarkPostRoute = createRoute({
 
 authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = c.get("user");
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
-  const result = await CommunityServices.bookmarkPostService(
-    id,
-    user!.id as string
-  );
+  const user = getAuthenticatedUser(c);
+  const result = await CommunityServices.bookmarkPostService(id, user.id);
 
   if (!result) {
     return c.json(

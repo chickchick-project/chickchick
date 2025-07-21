@@ -6,6 +6,7 @@ import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
 import { createStandardApiResponses } from "../../utils/createStandardApiResponses";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import type { AppContext } from "@/lib/hono/app";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const usersApi = new OpenAPIHono<AppContext>();
 
@@ -39,18 +40,9 @@ const bookmarkPerfumeRoute = createRoute({
 
 usersApi.openapi(bookmarkPerfumeRoute, async (c) => {
   const { userId: targetUserId } = c.req.valid("param");
-  const user = c.get("user");
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
+  const user = getAuthenticatedUser(c);
   const result = await PerfumeServices.getBookmarkedPerfumesService(
-    user!.id as string,
+    user.id,
     targetUserId ?? null
   );
 

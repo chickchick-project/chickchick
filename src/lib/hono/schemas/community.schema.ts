@@ -19,41 +19,30 @@ export const PostResponseSchema = PostSchema.extend({
 // 글 목록 조회 쿼리
 export const GetPostsQuerySchema = PaginationSchema.extend({
   q: z.string().optional(),
-  category: PostSchema.shape.category
-    .default(PostCategory.FREEBOARD)
-    .optional(),
-  sortBy: z.enum(["createdAt", "popular"]).default("createdAt").optional(),
+  category: z.nativeEnum(PostCategory).default(PostCategory.FREEBOARD),
+  sortBy: z.enum(["createdAt", "popular"]).default("createdAt"),
   cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
-  limit: z.string().optional().default("12").transform(Number),
+  limit: z.coerce.number().int().positive().default(12),
 });
 
-// 게시글 생성 요청 본문 스키마
-export const CreatePostRequestSchema = PostSchema.pick({
+export const CreatePostBodySchema = PostSchema.pick({
   title: true,
   content: true,
   category: true,
   thumbnailUrl: true,
-}).openapi({
-  example: {
-    title: "이건 첫 번째 레슨",
-    content: "좋은 건 너만 알기",
-    category: PostCategory.FREEBOARD,
-    thumbnailUrl: null,
-  },
 });
 
-// 게시글 수정 요청 본문 스키마
-export const UpdatePostRequestSchema =
-  CreatePostRequestSchema.partial().openapi({
-    example: {
-      title: "이건 두 번째 레슨",
-      content: "슬픔도 너만 알기",
-      category: PostCategory.FREEBOARD,
-      thumbnailUrl: null,
-    },
-  });
+export const CreatePostPayloadSchema = CreatePostBodySchema.extend({
+  authorId: z.string().uuid(),
+});
 
-// 경로 파라미터 (ID)
+export const UpdatePostSchema = PostSchema.pick({
+  title: true,
+  content: true,
+  category: true,
+  thumbnailUrl: true,
+}).partial();
+
 export const PostIdParamSchema = z.object({
   id: PostSchema.shape.id,
 });
@@ -67,7 +56,10 @@ export const PaginatedPostListResponseSchema = z.object({
 // 타입 추론
 export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type PostResponse = z.infer<typeof PostResponseSchema>;
-export type CreatePostRequest = z.infer<typeof CreatePostRequestSchema>;
+export type CreatePost = z.infer<typeof CreatePostBodySchema>;
+export type CreatePostPayload = z.infer<typeof CreatePostPayloadSchema>;
+export type UpdatePost = z.infer<typeof UpdatePostSchema>;
+export type PostIdParam = z.infer<typeof PostIdParamSchema>;
 export type PaginatedPostListResponse = z.infer<
   typeof PaginatedPostListResponseSchema
 >;

@@ -4,7 +4,25 @@ import * as CommunitySchemas from "../schemas/community.schema";
 
 const DEFAULT_POST_LIMIT = 12;
 
-async function fetchPaginatedPosts(params: {
+// --- Prisma 쿼리 인자 및 타입 정의 ---
+const postIncludeArgs = {
+  author: {
+    select: {
+      id: true,
+      nickname: true,
+      imageUrl: true,
+    },
+  },
+} satisfies Prisma.PostInclude;
+
+const postWithAuthorArgs = {
+  include: postIncludeArgs,
+};
+
+export type PostWithAuthor = Prisma.PostGetPayload<typeof postWithAuthorArgs>;
+
+// --- Prisma 쿼리 함수들 ---
+async function findPaginatedPosts(params: {
   where: Prisma.PostWhereInput;
   orderBy:
     | Prisma.PostOrderByWithRelationInput
@@ -13,44 +31,22 @@ async function fetchPaginatedPosts(params: {
   skip: number;
   cursor?: { id: string };
 }) {
-  const { where, orderBy, take, skip, cursor } = params;
-
   return await prisma.post.findMany({
-    where,
-    orderBy,
-    take,
-    skip,
-    cursor,
-    include: {
-      author: {
-        select: {
-          id: true,
-          nickname: true,
-          imageUrl: true,
-        },
-      },
-    },
+    ...params,
+    ...postWithAuthorArgs,
   });
 }
 
-async function fetchPostCount(where: Prisma.PostWhereInput) {
+async function countPosts(where: Prisma.PostWhereInput) {
   return await prisma.post.count({ where });
 }
 
-async function fetchPostById(id: string) {
+async function fetchPostById(id: string): Promise<PostWithAuthor | null> {
   return await prisma.post.findUnique({
     where: {
       id,
     },
-    include: {
-      author: {
-        select: {
-          id: true,
-          nickname: true,
-          imageUrl: true,
-        },
-      },
-    },
+    ...postWithAuthorArgs,
   });
 }
 
@@ -61,16 +57,14 @@ async function createPost(postData: {
   category: PostCategory;
   thumbnailUrl?: string;
 }) {
-  const { userId, ...restOfPostData } = postData;
-
   return prisma.post.create({
     data: {
-      ...restOfPostData,
-      userId,
+      ...postData,
     },
   });
 }
 
+// --- 서비스 함수들 ---
 export async function getPaginatedPostListService(
   params: CommunitySchemas.GetPostsQuery
 ): Promise<CommunitySchemas.PaginatedPostListResponse> {
@@ -112,14 +106,14 @@ export async function getPaginatedPostListService(
         : { [sortBy]: sortOrder };
 
     const [rawData, total] = await Promise.all([
-      fetchPaginatedPosts({
+      findPaginatedPosts({
         where,
         orderBy,
         take: fetchLimit,
         skip: last_seen_id ? 1 : 0,
         cursor: last_seen_id ? { id: last_seen_id } : undefined,
       }),
-      fetchPostCount(where),
+      countPosts(where),
     ]);
 
     if (!rawData || rawData.length === 0) {

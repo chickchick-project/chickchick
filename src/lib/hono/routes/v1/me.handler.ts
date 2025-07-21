@@ -5,6 +5,7 @@ import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
 import * as MeServices from "@/lib/hono/services/me.service";
 import type { AppContext } from "@/lib/hono/app";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const meApi = new OpenAPIHono<AppContext>();
 
@@ -30,19 +31,9 @@ const bookmarkListRoute = createRoute({
 });
 
 meApi.openapi(bookmarkListRoute, async (c) => {
-  const user = c.get("user");
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
-  const bookmarks = await MeServices.getBookmarkedPostMeService(
-    user!.id as string
-  );
+  const user = getAuthenticatedUser(c);
+
+  const bookmarks = await MeServices.getBookmarkedPostMeService(user.id);
   if (!bookmarks) {
     return c.json(
       {
@@ -82,19 +73,9 @@ const bookmarkPerfumeListRoute = createRoute({
 });
 
 meApi.openapi(bookmarkPerfumeListRoute, async (c) => {
-  const user = c.get("user");
-  if (!user) {
-    return c.json(
-      {
-        success: false,
-        message: "인증되지 않은 사용자 입니다.",
-      },
-      401
-    );
-  }
-  const bookmarks = await MeServices.getBookmarkedPerfumeMeService(
-    user!.id as string
-  );
+  const user = getAuthenticatedUser(c);
+
+  const bookmarks = await MeServices.getBookmarkedPerfumeMeService(user.id);
   if (!bookmarks) {
     return c.json(
       {
