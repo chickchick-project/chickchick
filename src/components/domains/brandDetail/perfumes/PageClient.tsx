@@ -14,7 +14,6 @@ import {
   fetchPerfumes,
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
-import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
 
 export const PageClient = ({
   brandName,
@@ -41,7 +40,7 @@ export const PageClient = ({
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<GetPerfumeSearchResult>(fetcher);
+    useInfiniteScroll(fetcher);
 
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {

@@ -80,3 +80,5 @@ ALTER TABLE "user_collections" ALTER COLUMN "id" DROP DEFAULT;
 
 -- AlterTable
 ALTER TABLE "users" ALTER COLUMN "id" DROP DEFAULT;
+
+ALTER TABLE "reviews" DROP COLUMN "title";
