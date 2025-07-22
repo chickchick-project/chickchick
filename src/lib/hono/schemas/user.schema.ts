@@ -1,16 +1,21 @@
-// import { z } from "@hono/zod-openapi";
+// lib/hono/schemas/user.schema.ts
 
-// export const UserSchema = z.object({
-//   id: z.string().uuid(),
-//   name: z.string().min(2, { message: "이름은 2글자 이상이어야 합니다." }),
-//   email: z.string().email(),
-//   createdAt: z.date(),
-// });
+import { z } from "zod";
+import UserSchema from "@zod/modelSchema/UserSchema";
+// import { PostResponseSchema } from "./community.schema";
+// import { PerfumeBaseResponseSchema } from "./perfume.schema";
 
-// export const CreateUserSchema = UserSchema.omit({
-//   id: true,
-//   createdAt: true,
-// });
+export const UserProfileResponseSchema = UserSchema.pick({
+  id: true,
+  nickname: true,
+  imageUrl: true,
+});
 
-// export type User = z.infer<typeof UserSchema>;
-// export type CreateUser = z.infer<typeof CreateUserSchema>;
+export const UserIdParamSchema = z.object({
+  userId: UserSchema.shape.id.openapi({
+    param: { name: "userId", in: "path" },
+    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+  }),
+});
+
+export type UserProfileResponse = z.infer<typeof UserProfileResponseSchema>;

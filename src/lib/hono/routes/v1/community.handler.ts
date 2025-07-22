@@ -98,7 +98,7 @@ const createPostRoute = createRoute({
     body: {
       content: {
         "application/json": {
-          schema: CommunitySchemas.CreatePostPayloadSchema,
+          schema: CommunitySchemas.CreatePostBodySchema,
         },
       },
     },

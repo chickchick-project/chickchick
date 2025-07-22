@@ -1,11 +1,11 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import { createStandardApiResponses } from "../../utils/createStandardApiResponses";
-import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
-import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
 import * as MeServices from "@/lib/hono/services/me.service";
+import * as MeSchemas from "@/lib/hono/schemas/me.schema";
 import type { AppContext } from "@/lib/hono/app";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import { apiInternalError, apiSuccess } from "../../utils/apiResponse.utils";
+import { getAuthenticatedUser } from "../../utils/service.utils";
 
 const meApi = new OpenAPIHono<AppContext>();
 
@@ -16,40 +16,28 @@ meApi.use("*", authMiddleware);
  * @path /me/bookmarks/posts
  * @summary 내 북마크 게시글 목록 조회
  */
-const bookmarkListRoute = createRoute({
+const getMyBookmarkedPostsRoute = createRoute({
   method: "get",
   path: "/bookmarks/posts",
   summary: "내 북마크 게시글 목록 조회",
-  responses: createStandardApiResponses(
-    {
-      schema: CommunitySchemas.PaginatedPostListResponseSchema,
-      description: "게시글 목록",
-    },
-    ["404"]
-  ),
+  responses: createStandardApiResponses({
+    schema: MeSchemas.MyBookmarkedPostsResponseSchema,
+  }),
   tags: ["Me"],
 });
 
-meApi.openapi(bookmarkListRoute, async (c) => {
+meApi.openapi(getMyBookmarkedPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
-  const bookmarks = await MeServices.getBookmarkedPostMeService(user.id);
-  if (!bookmarks) {
-    return c.json(
-      {
-        success: false,
-        message: "북마크 목록을 찾을 수 없습니다.",
-      },
-      404
-    );
+  const result = await MeServices.getMyBookmarkedPostsService(user.id);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "북마크 목록을 성공적으로 불러왔습니다.",
-      data: bookmarks,
-    },
-    200
+  return apiSuccess(
+    c,
+    result.data,
+    "북마크한 게시글 목록을 성공적으로 불러왔습니다."
   );
 });
 
@@ -58,40 +46,28 @@ meApi.openapi(bookmarkListRoute, async (c) => {
  * @path /me/bookmarks/perfumes
  * @summary 내 북마크 향수 목록 조회
  */
-const bookmarkPerfumeListRoute = createRoute({
+const getMyBookmarkedPerfumesRoute = createRoute({
   method: "get",
   path: "/bookmarks/perfumes",
   summary: "내 북마크 향수 목록 조회",
-  responses: createStandardApiResponses(
-    {
-      schema: PerfumeSchemas.PerfumeListResponseSchema,
-      description: "향수 목록",
-    },
-    ["404"]
-  ),
+  responses: createStandardApiResponses({
+    schema: MeSchemas.MyBookmarkedPerfumesResponseSchema,
+  }),
   tags: ["Me"],
 });
 
-meApi.openapi(bookmarkPerfumeListRoute, async (c) => {
+meApi.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
-  const bookmarks = await MeServices.getBookmarkedPerfumeMeService(user.id);
-  if (!bookmarks) {
-    return c.json(
-      {
-        success: false,
-        message: "북마크 목록을 찾을 수 없습니다.",
-      },
-      404
-    );
+  const result = await MeServices.getMyBookmarkedPerfumesService(user.id);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
   }
-  return c.json(
-    {
-      success: true,
-      message: "북마크 목록을 성공적으로 불러왔습니다.",
-      data: bookmarks,
-    },
-    200
+  return apiSuccess(
+    c,
+    result.data,
+    "북마크한 향수 목록을 성공적으로 불러왔습니다."
   );
 });
 

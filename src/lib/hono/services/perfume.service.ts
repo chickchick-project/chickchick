@@ -117,13 +117,13 @@ export async function togglePerfumeBookmarkService(
   userId: string
 ): Promise<ServiceResult<{ bookmarked: boolean }>> {
   try {
-    const perfumeCheck = await checkResourceExists(
-      "perfume",
-      perfumeId,
-      "향수"
-    );
-    if (!perfumeCheck.success) return perfumeCheck;
-
+    const checks = await Promise.all([
+      checkResourceExists("perfume", perfumeId, "향수"),
+      checkResourceExists("user", userId, "사용자"),
+    ]);
+    for (const check of checks) {
+      if (!check.success) return check;
+    }
     const bookmark = await prisma.perfumeBookmark.findUnique({
       where: { user_perfume_bookmark_unique: { perfumeId, userId } },
     });
@@ -139,38 +139,3 @@ export async function togglePerfumeBookmarkService(
     return serviceInternalError(error);
   }
 }
-
-// /**
-//  * 사용자의 북마크 향수 목록 조회
-//  * @param targetUserId
-//  * @param viewerId
-//  * @description 사용자의 북마크 향수 목록을 조회.
-//  * @returns 사용자의 북마크 향수 목록
-//  */
-// export async function getBookmarkedPerfumesService(
-//   targetUserId: string,
-//   viewerId?: string
-// ): Promise<ServiceResult<PerfumeBaseResponse[]>> {
-//   if (!targetUserId) {
-//     return serviceNotFound("사용자를 찾을 수 없습니다.");
-//   }
-
-//   try {
-//     const where: Prisma.PerfumeBookmarkWhereInput = { userId: targetUserId };
-//     // 본인이 아닌 경우 공개된 북마크만 조회
-//     if (targetUserId !== viewerId) {
-//       where.isPublic = true;
-//     }
-
-//     const bookmarks = await prisma.perfumeBookmark.findMany({
-//       where,
-//       include: { perfume: { include: perfumeBaseInclude } },
-//       orderBy: { createdAt: "desc" },
-//     });
-
-//     const perfumes = bookmarks.map((b) => b.perfume);
-//     return serviceSuccess(perfumes);
-//   } catch (error) {
-//     return serviceInternalError(error);
-//   }
-// }

@@ -92,16 +92,13 @@ export async function getPostByIdService(
 export async function createPostService(
   payload: CommunitySchemas.CreatePostPayload
 ): Promise<ServiceResult<PostWithAuthor>> {
+  const { authorId, ...rest } = payload;
   try {
-    const userCheck = await checkResourceExists(
-      "user",
-      payload.authorId,
-      "사용자"
-    );
+    const userCheck = await checkResourceExists("user", authorId, "사용자");
     if (!userCheck.success) return userCheck;
 
     const newPost = await prisma.post.create({
-      data: { ...payload, userId: payload.authorId },
+      data: { ...rest, userId: authorId },
       ...postWithAuthorArgs,
     });
     return serviceSuccess(newPost);
@@ -109,6 +106,7 @@ export async function createPostService(
     return serviceInternalError(error);
   }
 }
+
 export async function togglePostLikeService(
   postId: string,
   userId: string
