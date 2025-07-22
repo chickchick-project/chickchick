@@ -1,19 +1,57 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { PerfumeResponse } from "@/lib/hono/schemas/perfume.schema";
-import { PerfumeBookmark } from "@prisma/client";
+import type {
+  PerfumeBaseResponse,
+  PerfumeDetailResponse,
+} from "../schemas/perfume.schema";
+import {
+  serviceInternalError,
+  serviceNotFound,
+  ServiceResult,
+  serviceSuccess,
+} from "../utils/serviceResult.utils";
+import { checkResourceExists } from "../utils/service.utils";
+
+const perfumeBaseInclude = {
+  brand: { select: { nameEn: true, nameKo: true } },
+  perfumeImage: { select: { imageUrl: true } },
+} satisfies Prisma.PerfumeInclude;
+
+const perfumeDetailInclude = {
+  ...perfumeBaseInclude,
+  accordMappings: { select: { accord: true } },
+  noteMappings: { select: { note: true, noteStage: true } },
+  reviews: {
+    select: {
+      id: true,
+      content: true,
+      author: { select: { id: true, nickname: true, imageUrl: true } },
+    },
+    orderBy: { createdAt: "desc" as const },
+    take: 5, // 최신 리뷰 5개만 포함
+  },
+  _count: {
+    select: { bookmarks: true, reviews: true, collectedByUsers: true },
+  },
+} satisfies Prisma.PerfumeInclude;
 
 /**
  * 향수 목록 조회
  * @description 향수 목록을 조회.
  * @returns 향수 목록
  */
-async function fetchPerfumesList() {
-  return await prisma.perfume.findMany({
-    include: {
-      brand: true,
-      perfumeImage: true,
-    },
-  });
+export async function getPerfumesListService(): Promise<
+  ServiceResult<PerfumeBaseResponse[]>
+> {
+  try {
+    const perfumes = await prisma.perfume.findMany({
+      include: perfumeBaseInclude,
+      orderBy: { nameKo: "asc" },
+    });
+    return serviceSuccess(perfumes);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }
 
 /**
@@ -22,15 +60,25 @@ async function fetchPerfumesList() {
  * @description 향수 목록을 테마별로 조회. TODO: 테마별로 조회하는 로직 구현 필요
  * @returns 향수 목록
  */
-async function fetchPerfumesListByTheme(theme: string) {
-  console.log(theme);
-  return await prisma.perfume.findMany({
-    include: {
-      brand: true,
-      perfumeImage: true,
-    },
-    take: 5,
-  });
+export async function getPerfumesListByThemeService(
+  theme: string
+): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+  try {
+    // TODO: 테마에 따른 필터링 로직 구현 (예: 특정 어코드나 노트를 포함하는 향수 검색)
+    const perfumes = await prisma.perfume.findMany({
+      where: {
+        // 예시: 'citrus' 어코드를 포함하는 향수
+        accordMappings: {
+          some: { accord: { nameEn: { equals: theme, mode: "insensitive" } } },
+        },
+      },
+      include: perfumeBaseInclude,
+      take: 10,
+    });
+    return serviceSuccess(perfumes);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }
 
 /**
@@ -39,80 +87,22 @@ async function fetchPerfumesListByTheme(theme: string) {
  * @description 향수 ID에 따른 향수 정보를 조회.
  * @returns 향수 정보
  */
-async function fetchPerfumeById(id: string): Promise<PerfumeResponse | null> {
-  return await prisma.perfume.findUnique({
-    where: { id },
-    include: {
-      brand: true,
-      perfumeImage: true,
-      accordMappings: {
-        select: { accord: true },
-      },
-      noteMappings: {
-        select: { note: true, noteStage: true },
-      },
-      reviews: {
-        select: {
-          id: true,
-          content: true,
-          author: { select: { id: true, nickname: true, imageUrl: true } },
-        },
-        orderBy: { createdAt: "desc" },
-      },
-      _count: {
-        select: { bookmarks: true, reviews: true, collectedByUsers: true },
-      },
-    },
-  });
-}
-/**
- * 내 북마크 향수 목록 조회
- * @param userId
- * @description 내 북마크 향수 목록을 조회.
- * @returns 내 북마크 향수 목록
- */
-async function fetchMyBookmarkedPerfumes(
-  userId: string
-): Promise<PerfumeResponse[]> {
-  const bookmarks = await prisma.perfumeBookmark.findMany({
-    where: { userId },
-    include: {
-      perfume: {
-        include: {
-          brand: true,
-          perfumeImage: true,
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-  return bookmarks.map((b) => b.perfume);
-}
+export async function getPerfumeByIdService(
+  id: string
+): Promise<ServiceResult<PerfumeDetailResponse>> {
+  try {
+    const perfume = await prisma.perfume.findUnique({
+      where: { id },
+      include: perfumeDetailInclude,
+    });
 
-/**
- * 사용자의 공개 북마크 향수 목록 조회
- * @param targetUserId
- * @returns
- */
-async function fetchUserPublicBookmarkedPerfumes(
-  targetUserId: string
-): Promise<PerfumeResponse[]> {
-  const bookmarks = await prisma.perfumeBookmark.findMany({
-    where: {
-      userId: targetUserId,
-      isPublic: true,
-    },
-    include: {
-      perfume: {
-        include: {
-          brand: true,
-          perfumeImage: true,
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-  return bookmarks.map((b) => b.perfume);
+    if (!perfume) {
+      return serviceNotFound("향수를 찾을 수 없습니다.");
+    }
+    return serviceSuccess(perfume);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }
 
 /**
@@ -122,100 +112,65 @@ async function fetchUserPublicBookmarkedPerfumes(
  * @description 향수 북마크 추가/삭제.
  * @returns 향수 북마크
  */
-async function togglePerfumeBookmark(
+export async function togglePerfumeBookmarkService(
   perfumeId: string,
   userId: string
-): Promise<PerfumeBookmark | null> {
-  return prisma.$transaction(async (tx) => {
-    const perfume = await tx.perfume.findUnique({
-      where: { id: perfumeId },
-    });
-    if (!perfume) {
-      return null;
-    }
+): Promise<ServiceResult<{ bookmarked: boolean }>> {
+  try {
+    const perfumeCheck = await checkResourceExists(
+      "perfume",
+      perfumeId,
+      "향수"
+    );
+    if (!perfumeCheck.success) return perfumeCheck;
 
-    const bookmark = await tx.perfumeBookmark.findUnique({
+    const bookmark = await prisma.perfumeBookmark.findUnique({
       where: { user_perfume_bookmark_unique: { perfumeId, userId } },
     });
 
     if (bookmark) {
-      return tx.perfumeBookmark.delete({
-        where: { id: bookmark.id },
-      });
+      await prisma.perfumeBookmark.delete({ where: { id: bookmark.id } });
+      return serviceSuccess({ bookmarked: false });
     } else {
-      return tx.perfumeBookmark.create({
-        data: { perfumeId, userId },
-      });
-    }
-  });
-}
-
-export async function getPerfumesListService(): Promise<PerfumeResponse[]> {
-  try {
-    const perfumes = await fetchPerfumesList();
-    return perfumes;
-  } catch (error) {
-    console.error("Error fetching perfumes list:", error);
-    throw new Error("향수 목록을 가져오는데 실패했습니다.");
-  }
-}
-
-export async function getPerfumesListByThemeService(
-  theme: string
-): Promise<PerfumeResponse[]> {
-  // TODO: 배너에 보여줄 테마에 맞는 필터 적용 필요
-  //테마는 어떻게 구분할 것인가?
-  try {
-    const perfumes = await fetchPerfumesListByTheme(theme);
-    return perfumes;
-  } catch (error) {
-    console.error("Error fetching perfumes list by theme:", error);
-    throw new Error("향수 목록을 가져오는데 실패했습니다.");
-  }
-}
-
-export async function getPerfumeByIdService(
-  id: string
-): Promise<PerfumeResponse | null> {
-  try {
-    return await fetchPerfumeById(id);
-  } catch (error) {
-    console.error("Error fetching perfume by id:", error);
-    throw new Error("향수 정보를 가져오는데 실패했습니다.");
-  }
-}
-
-export async function togglePerfumeBookmarkService(
-  perfumeId: string,
-  userId: string
-) {
-  try {
-    const updatedPerfume = await togglePerfumeBookmark(perfumeId, userId);
-    if (!updatedPerfume) {
-      return null;
-    }
-    return updatedPerfume;
-  } catch (error) {
-    console.error("Error in togglePerfumeBookmarkService:", error);
-    throw new Error("향수 북마크를 추가하는데 실패했습니다.");
-  }
-}
-
-export async function getBookmarkedPerfumesService(
-  targetUserId: string,
-  viewerId: string | null
-): Promise<PerfumeResponse[]> {
-  try {
-    if (viewerId && targetUserId === viewerId) {
-      return await fetchMyBookmarkedPerfumes(targetUserId);
-    } else {
-      return await fetchUserPublicBookmarkedPerfumes(targetUserId);
+      await prisma.perfumeBookmark.create({ data: { perfumeId, userId } });
+      return serviceSuccess({ bookmarked: true });
     }
   } catch (error) {
-    console.error(
-      `Error in getBookmarkedPerfumesService for user ${targetUserId}:`,
-      error
-    );
-    throw new Error("북마크된 향수 목록을 가져오는데 실패했습니다.");
+    return serviceInternalError(error);
   }
 }
+
+// /**
+//  * 사용자의 북마크 향수 목록 조회
+//  * @param targetUserId
+//  * @param viewerId
+//  * @description 사용자의 북마크 향수 목록을 조회.
+//  * @returns 사용자의 북마크 향수 목록
+//  */
+// export async function getBookmarkedPerfumesService(
+//   targetUserId: string,
+//   viewerId?: string
+// ): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+//   if (!targetUserId) {
+//     return serviceNotFound("사용자를 찾을 수 없습니다.");
+//   }
+
+//   try {
+//     const where: Prisma.PerfumeBookmarkWhereInput = { userId: targetUserId };
+//     // 본인이 아닌 경우 공개된 북마크만 조회
+//     if (targetUserId !== viewerId) {
+//       where.isPublic = true;
+//     }
+
+//     const bookmarks = await prisma.perfumeBookmark.findMany({
+//       where,
+//       include: { perfume: { include: perfumeBaseInclude } },
+//       orderBy: { createdAt: "desc" },
+//     });
+
+//     const perfumes = bookmarks.map((b) => b.perfume);
+//     return serviceSuccess(perfumes);
+//   } catch (error) {
+//     return serviceInternalError(error);
+//   }
+// }
