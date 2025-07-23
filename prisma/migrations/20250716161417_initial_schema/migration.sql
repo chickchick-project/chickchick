@@ -359,19 +359,3 @@ ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post
 -- AddForeignKey
 ALTER TABLE "perfumes_image" ADD CONSTRAINT "perfumes_image_perfume_id_fkey" FOREIGN KEY ("perfume_id") REFERENCES "perfumes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
-ALTER TABLE public.brands ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.comments ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfume_accord_mappings ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfume_accords ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfume_bookmarks ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfume_note_mappings ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfume_notes ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfumes ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.perfumes_image ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.post_bookmarks ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.post_likes ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.posts ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.reviews ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.user_activities ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.user_collections ALTER COLUMN id SET DEFAULT uuid_generate_v4();
-ALTER TABLE public.users ALTER COLUMN id SET DEFAULT uuid_generate_v4();

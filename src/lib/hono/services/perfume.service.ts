@@ -11,6 +11,7 @@ import {
   serviceSuccess,
 } from "../utils/serviceResult.utils";
 import { checkResourceExists } from "../utils/service.utils";
+import { PostWithAuthor } from "./community.service";
 
 const perfumeBaseInclude = {
   brand: { select: { nameEn: true, nameKo: true } },
@@ -100,6 +101,53 @@ export async function getPerfumeByIdService(
       return serviceNotFound("향수를 찾을 수 없습니다.");
     }
     return serviceSuccess(perfume);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 특정 향수가 태그된 게시글 목록 조회
+ * @param perfumeId - 조회할 향수의 ID
+ * @param options - 페이지네이션 옵션 (limit, cursor)
+ * @description 특정 향수가 태그된 게시글 목록을 조회.
+ * @returns 향수 태그된 게시글 목록
+ */
+export async function getPostsTaggedWithPerfumeService(
+  perfumeId: string,
+  options: { limit?: number; cursor?: string } = {}
+): Promise<ServiceResult<PostWithAuthor[]>> {
+  try {
+    const perfumeCheck = await checkResourceExists(
+      "perfume",
+      perfumeId,
+      "향수"
+    );
+    if (!perfumeCheck.success) return perfumeCheck;
+
+    const limit = options.limit ?? 10;
+    const fetchLimit = limit + 1;
+
+    const mappings = await prisma.postPerfumeMapping.findMany({
+      where: { perfumeId },
+      take: fetchLimit,
+      cursor: options.cursor ? { id: options.cursor } : undefined,
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        post: {
+          include: {
+            author: {
+              select: { id: true, nickname: true, imageUrl: true },
+            },
+          },
+        },
+      },
+    });
+
+    const posts: PostWithAuthor[] = mappings.map((mapping) => mapping.post);
+
+    return serviceSuccess(posts);
   } catch (error) {
     return serviceInternalError(error);
   }

@@ -30,18 +30,15 @@ export const CreatePostBodySchema = PostSchema.pick({
   content: true,
   category: true,
   thumbnailUrl: true,
+}).extend({
+  perfumeIds: z.array(z.string().uuid()).optional(),
 });
 
 export const CreatePostPayloadSchema = CreatePostBodySchema.extend({
   authorId: z.string().uuid(),
 });
 
-export const UpdatePostSchema = PostSchema.pick({
-  title: true,
-  content: true,
-  category: true,
-  thumbnailUrl: true,
-}).partial();
+export const UpdatePostSchema = CreatePostBodySchema.partial();
 
 export const PostIdParamSchema = z.object({
   id: PostSchema.shape.id,

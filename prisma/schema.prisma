@@ -81,6 +81,7 @@ model Perfume {
   perfumeImage     PerfumeImage?          @relation("PerfumeToImage")
   reviews          Review[]               @relation("PerfumeToReviews")
   collectedByUsers UserCollection[]       @relation("PerfumeToUserCollections")
+  perfumeMappings PostPerfumeMapping[] @relation("PerfumeToPostMappings")
 
   @@map("perfumes")
 }
@@ -171,6 +172,19 @@ model UserCollection {
   @@map("user_collections")
 }
 
+model PostPerfumeMapping {
+  id        String   @id @default(uuid()) @db.Uuid
+  postId    String   @map("post_id") @db.Uuid
+  perfumeId String   @map("perfume_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  post    Post    @relation("PostToPerfumeMappings", fields: [postId], references: [id], onDelete: Cascade)
+  perfume Perfume @relation("PerfumeToPostMappings", fields: [perfumeId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, perfumeId], name: "post_perfume_unique_constraint")
+  @@map("post_perfume_mappings")
+}
+
 model PostBookmark {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
@@ -211,6 +225,7 @@ model Post {
   bookmarks    PostBookmark[] @relation("PostToBookmarks")
   likes        PostLike[]     @relation("PostToLikes")
   author       User           @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
+  perfumeMappings PostPerfumeMapping[] @relation("PostToPerfumeMappings")
 
   @@map("posts")
 }

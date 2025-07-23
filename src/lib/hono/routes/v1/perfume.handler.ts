@@ -4,12 +4,14 @@ import type { AppContext } from "@/lib/hono/app";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
+
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
 } from "../../utils/apiResponse.utils";
+import { PostResponseSchema } from "../../schemas/community.schema";
 
 const perfumesApi = new OpenAPIHono();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -88,6 +90,44 @@ perfumesApi.openapi(getPerfumeByIdRoute, async (c) => {
     return apiInternalError(c, result.message);
   }
   return apiSuccess(c, result.data, "향수 정보를 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method GET
+ * @path /perfumes/{id}/posts
+ * @description 요청된 향수 ID에 해당하는 향수 태그된 게시글 목록을 페이지네이션하여 조회합니다.
+ * @summary 향수 태그된 게시글 목록 조회
+ */
+const getPerfumePostsRoute = createRoute({
+  method: "get",
+  path: "/{id}/posts",
+  summary: "특정 향수를 태그한 게시글 목록 조회",
+  request: {
+    params: PerfumeSchemas.PerfumeIdParamSchema,
+  },
+  responses: createStandardApiResponses({
+    schema: z.array(PostResponseSchema),
+  }),
+  tags: ["Perfume"],
+});
+
+perfumesApi.openapi(getPerfumePostsRoute, async (c) => {
+  const { id: perfumeId } = c.req.valid("param");
+
+  const result = await PerfumeServices.getPostsTaggedWithPerfumeService(
+    perfumeId
+  );
+
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+
+  return apiSuccess(
+    c,
+    result.data,
+    "향수 관련 게시글을 성공적으로 불러왔습니다."
+  );
 });
 
 /**

@@ -8,7 +8,7 @@ import {
   serviceSuccess,
   serviceNotFound,
 } from "../utils/serviceResult.utils";
-import { checkResourceExists } from "../utils/service.utils";
+import { checkResourceExists, validateUuid } from "../utils/service.utils";
 
 // --- Prisma 쿼리 인자 및 타입 정의 ---
 const postIncludeArgs = {
@@ -92,16 +92,72 @@ export async function getPostByIdService(
 export async function createPostService(
   payload: CommunitySchemas.CreatePostPayload
 ): Promise<ServiceResult<PostWithAuthor>> {
-  const { authorId, ...rest } = payload;
+  const { authorId, perfumeIds, ...rest } = payload;
   try {
     const userCheck = await checkResourceExists("user", authorId, "사용자");
+
     if (!userCheck.success) return userCheck;
 
     const newPost = await prisma.post.create({
-      data: { ...rest, userId: authorId },
+      data: {
+        ...rest,
+        userId: authorId,
+        perfumeMappings: perfumeIds
+          ? {
+              create: perfumeIds.map((perfumeId) => ({
+                perfume: { connect: { id: perfumeId } },
+              })),
+            }
+          : undefined,
+      },
       ...postWithAuthorArgs,
     });
     return serviceSuccess(newPost);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function updatePostService(
+  postId: string,
+  authorId: string,
+  updateData: CommunitySchemas.UpdatePost
+): Promise<ServiceResult<PostWithAuthor>> {
+  try {
+    const { perfumeIds, ...postUpdateData } = updateData;
+    const uuidValidation = validateUuid(postId, "게시글");
+    if (!uuidValidation.success) return uuidValidation;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId, author: { id: authorId } },
+    });
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없거나 수정 권한이 없습니다.");
+    }
+    const updatedPost = await prisma.$transaction(async (tx) => {
+      if (perfumeIds !== undefined) {
+        await tx.postPerfumeMapping.deleteMany({ where: { postId } });
+      }
+
+      const post = await tx.post.update({
+        where: { id: postId, author: { id: authorId } },
+        data: {
+          ...postUpdateData,
+          perfumeMappings:
+            perfumeIds && perfumeIds.length > 0
+              ? {
+                  create: perfumeIds.map((perfumeId) => ({
+                    perfume: { connect: { id: perfumeId } },
+                  })),
+                }
+              : undefined,
+        },
+        ...postWithAuthorArgs,
+      });
+      return post;
+    });
+
+    return serviceSuccess(updatedPost);
   } catch (error) {
     return serviceInternalError(error);
   }
