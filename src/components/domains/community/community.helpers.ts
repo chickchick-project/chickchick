@@ -3,24 +3,21 @@ import {
   TApiSortBy,
   TSortBy,
 } from "@/lib/constants/options";
+import { GetPostsQuery, PostResponse } from "@/lib/hono/schemas/post.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
-import {
-  GetPostListParams,
-  PostListItemResult,
-} from "@/lib/schemas/post.schema";
 
 const API_BASE_URL = "/api/v1";
 
 type FetchCommunityPostListParams = {
-  category?: GetPostListParams["category"];
-  sortBy?: GetPostListParams["sortBy"];
+  category?: GetPostsQuery["category"];
+  sortBy?: GetPostsQuery["sortBy"];
   searchText?: string;
   cursor?: string | null;
 };
 
 async function fetchCommunityPostList(
   params: FetchCommunityPostListParams
-): Promise<SearchResponse<PostListItemResult>> {
+): Promise<SearchResponse<PostResponse[]>> {
   try {
     const queryParams = new URLSearchParams();
 
@@ -64,8 +61,8 @@ async function fetchCommunityPostList(
   }
 }
 
-const getUniquePostList = (postList: PostListItemResult[]) => {
-  const postMap = new Map<string, PostListItemResult>();
+const getUniquePostList = (postList: PostResponse[]) => {
+  const postMap = new Map<string, PostResponse>();
   postList.forEach((post) => {
     if (!postMap.has(post.id)) {
       postMap.set(post.id, post);

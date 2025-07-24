@@ -13,7 +13,7 @@ import { TimeSection } from "../../domains/reviewModal/section/TimeSection";
 import { SubmitButton } from "@/components/domains/reviewModal/button/SubmitButton";
 import { useInitialize } from "./form.initialize";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { CreateReviewSchema } from "@/lib/schemas/review.schema";
+import { CreateReviewSchema } from "@/lib/hono/schemas/review.schema";
 
 interface IReviewModalProps {
   closeModal: () => void;

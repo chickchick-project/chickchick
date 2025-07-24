@@ -1,4 +1,4 @@
-import app from "@/lib/api-spec/hono";
+import app from "@/lib/hono/app";
 import { handle } from "hono/vercel";
 
 // export const runtime = "edge";
