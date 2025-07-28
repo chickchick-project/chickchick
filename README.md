@@ -214,9 +214,9 @@ API는 다음과 같은 엔드포인트를 제공합니다:
 
 ## 💡 기술적 도전 포인트
 
-• App Router 전환: 페이지 라우팅 및 서버 컴포넌트 기반 성능 개선.
-• 상태 관리 전략: Zustand + React Query 기반 데이터 관리.
-• 컴포넌트 문서화: Storybook으로 UI 테스트 및 관리.
+    • App Router 전환: 페이지 라우팅 및 서버 컴포넌트 기반 성능 개선.
+    • 상태 관리 전략: Zustand + React Query 기반 데이터 관리.
+    • 컴포넌트 문서화: Storybook으로 UI 테스트 및 관리.
 
 ## 📆 개발 로드맵
 
@@ -226,5 +226,5 @@ API는 다음과 같은 엔드포인트를 제공합니다:
 
 ## 🤝 팀 협업 & 코드 컨벤션
 
-• GitHub Actions + PR 리뷰 프로세스.
-• ESLint + Prettier를 통한 일관성 유지.
+    • GitHub Actions + PR 리뷰 프로세스.
+    • ESLint + Prettier를 통한 일관성 유지.
