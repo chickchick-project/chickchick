@@ -5,33 +5,39 @@
 ## ✨ 주요 기능
 
 ### 🔍 향수 탐색 및 검색
+
 - 브랜드별 향수 목록 조회
 - 향수 상세 정보 (노트, 어코드, 지속성, 실라주 등)
 - 고급 필터링 및 검색 기능
 
 ### 📝 리뷰 시스템
+
 - 향수 사용 후기 작성
 - 5점 평점 시스템
 - 지속성, 실라주, 계절감, 가격 대비 만족도 평가
 - 성별 프로필 및 사용 시간대 정보
 
 ### 👥 커뮤니티
+
 - 자유게시판, 질문, 추천 게시판
 - 향수 관련 게시글 작성 및 댓글
 - 게시글 좋아요 및 북마크 기능
 
 ### 📚 개인 컬렉션
+
 - 보유 향수 컬렉션 관리
 - 북마크 기능
 - 사용자 활동 기록
 
 ### 🔐 소셜 로그인
+
 - Google, Naver, Kakao 로그인 지원
 - NextAuth.js 기반 인증 시스템
 
 ## 🛠 기술 스택
 
 ### Frontend
+
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
@@ -41,6 +47,7 @@
 - **Rich Text Editor**: CKEditor 5
 
 ### Backend
+
 - **API Framework**: Hono
 - **Database**: PostgreSQL
 - **ORM**: Prisma
@@ -48,6 +55,7 @@
 - **File Storage**: Supabase
 
 ### Development Tools
+
 - **Package Manager**: Yarn
 - **Linting**: ESLint
 - **Component Development**: Storybook
@@ -56,22 +64,26 @@
 ## 📦 설치 및 실행
 
 ### 필수 요구사항
+
 - Node.js 18+
 - PostgreSQL
 - Yarn
 
 ### 1. 저장소 클론
+
 ```bash
 git clone <repository-url>
-cd perscent
+cd chickchick
 ```
 
 ### 2. 의존성 설치
+
 ```bash
 yarn install
 ```
 
 ### 3. 환경 변수 설정
+
 `.env.local` 파일을 생성하고 다음 변수들을 설정하세요:
 
 ```env
@@ -97,6 +109,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY="your-supabase-anon-key"
 ```
 
 ### 4. 데이터베이스 설정
+
 ```bash
 # Prisma 스키마 생성
 npx prisma generate
@@ -106,6 +119,7 @@ npx prisma migrate deploy
 ```
 
 ### 5. 개발 서버 실행
+
 ```bash
 yarn dev
 ```
@@ -124,14 +138,8 @@ yarn build
 # 프로덕션 서버 실행
 yarn start
 
-# 코드 린팅
-yarn lint
-
 # Storybook 실행
 yarn storybook
-
-# Storybook 빌드
-yarn build-storybook
 
 # Prisma Zod 스키마 생성
 yarn zod
@@ -174,6 +182,7 @@ src/
 ## 📊 데이터베이스 스키마
 
 주요 엔티티:
+
 - **User**: 사용자 정보
 - **Perfume**: 향수 정보
 - **Brand**: 브랜드 정보
@@ -188,52 +197,34 @@ src/
 ## 🔧 API 문서
 
 개발 모드에서 API 문서는 다음 URL에서 확인할 수 있습니다:
+
 - OpenAPI 스펙: `http://localhost:3000/api/doc`
 
 API는 다음과 같은 엔드포인트를 제공합니다:
+
 - `/api/v1/perfumes` - 향수 관련 API
 - `/api/v1/community` - 커뮤니티 API
 - `/api/v1/reviews` - 리뷰 API
 - `/api/v1/users` - 사용자 API
 - `/api/v1/search` - 검색 API
 
-## 🧪 테스트
+## 📸 미리보기
 
-컴포넌트 테스트는 Storybook을 통해 수행할 수 있습니다:
+![메인 페이지](./public/images/Preview.png)
 
-```bash
-yarn storybook
-```
+## 💡 기술적 도전 포인트
 
-## 📱 반응형 디자인
+• App Router 전환: 페이지 라우팅 및 서버 컴포넌트 기반 성능 개선.
+• 상태 관리 전략: Zustand + React Query 기반 데이터 관리.
+• 컴포넌트 문서화: Storybook으로 UI 테스트 및 관리.
 
-Perscent는 모바일 퍼스트 접근 방식으로 설계되었으며, 다양한 화면 크기에서 최적화된 사용자 경험을 제공합니다.
+## 📆 개발 로드맵
 
-## 🚀 배포
+    •	향수 추천 알고리즘 추가
+    •	다국어 지원 (i18n)
+    •	모바일 최적화 개선
 
-### Vercel 배포 (권장)
-1. Vercel에 프로젝트 연결
-2. 환경 변수 설정
-3. 자동 배포 완료
+## 🤝 팀 협업 & 코드 컨벤션
 
-### 수동 배포
-```bash
-yarn build
-yarn start
-```
-
-## 🤝 기여 가이드
-
-1. Fork 프로젝트
-2. Feature 브랜치 생성 (`git checkout -b feature/AmazingFeature`)
-3. 변경사항 커밋 (`git commit -m 'Add some AmazingFeature'`)
-4. 브랜치에 Push (`git push origin feature/AmazingFeature`)
-5. Pull Request 생성
-
-## 📄 라이선스
-
-이 프로젝트는 MIT 라이선스 하에 있습니다.
-
-## 📞 문의
-
-프로젝트에 관한 문의사항이 있으시면 Issue를 생성해 주세요.
+• GitHub Actions + PR 리뷰 프로세스.
+• ESLint + Prettier를 통한 일관성 유지.
