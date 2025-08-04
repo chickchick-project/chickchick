@@ -32,6 +32,8 @@ export default function Form<T extends FieldValues>({
     defaultValues,
   });
 
+  // console.log("Form Data:", method.watch());
+
   const { onSubmit, isLoaded = true } = useInitialize(method);
 
   return (

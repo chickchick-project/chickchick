@@ -28,12 +28,9 @@ export const useInitialize = (method: UseFormReturn<Review>) => {
 
   useEffect(() => {
     if (!perfumeId) return;
-
-
     method.setValue("authorId", user?.id || "");
     method.setValue("perfumeId", perfumeId);
     method.setValue("usageStatus", "NOT_USED_YET");
-
     setIsLoaded(true);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

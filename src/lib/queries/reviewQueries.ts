@@ -2,17 +2,17 @@ import { Review } from "@prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
 export const createReview = async (props: Review) => {
+  console.log("리뷰 생성:", props);
   try {
-    const response = await fetch(`/api/perfumes/${props.perfumeId}`, {
+    const response = await fetch(`/api/v1/reviews/${props.perfumeId}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: uuidv4(),
-
+        authorId: props.authorId,
+        perfumeId: props.perfumeId,
+        usageStatus: props.usageStatus,
         content: props.content,
-        author_id: props.authorId,
-        perfume_id: props.perfumeId,
-        usage_status: props.usageStatus,
       }),
     });
 

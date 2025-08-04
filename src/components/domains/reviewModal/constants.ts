@@ -53,35 +53,35 @@ export const REVIEW_OPTIONS = {
       },
     },
   ],
-  lasting: [
-    { key: "VERY_SHORT", label: "매우 짧음 (1시간 미만)" },
-    { key: "SHORT", label: "짧음 (1-3시간)" },
-    { key: "MEDIUM", label: "중간 (3-6시간)" },
-    { key: "LONG", label: "긴 지속력 (6시간 이상)" },
+  longevity: [
+    { key: "VERY_WEAK", label: "매우 짧음 (1시간 미만)" },
+    { key: "WEAK", label: "짧음 (1-3시간)" },
+    { key: "MODERATE", label: "중간 (3-6시간)" },
+    { key: "LONG_LASTING", label: "긴 지속력 (6시간 이상)" },
   ],
   sillage: [
-    { key: "LOW", label: "자신만 느낄 수 있는 정도" },
-    { key: "MEDIUM", label: "가까이 있는 사람이 느낄 수 있는 정도" },
-    { key: "HIGH", label: "주변 사람들이 쉽게 느낄 수 있는 정도" },
+    { key: "INTIMATE", label: "자신만 느낄 수 있는 정도" },
+    { key: "MODERATE", label: "가까이 있는 사람이 느낄 수 있는 정도" },
+    { key: "STRONG", label: "주변 사람들이 쉽게 느낄 수 있는 정도" },
   ],
   gender_tone: [
     { key: "FEMININE", label: "여성적인" },
     { key: "UNISEX", label: "중성적인" },
     { key: "MASCULINE", label: "남성적인" },
   ],
-  seasonal: [
+  season: [
     { key: "SPRING", label: "봄" },
     { key: "SUMMER", label: "여름" },
     { key: "FALL", label: "가을" },
     { key: "WINTER", label: "겨울" },
   ],
-  time: [
+  time_of_day: [
     { key: "DAY", label: "낮" },
     { key: "NIGHT", label: "밤" },
   ],
-  price: [
+  price_perception: [
     { key: "EXPENSIVE", label: "비싸요" },
     { key: "REASONABLE", label: "적당해요" },
-    { key: "VALUE", label: "가성비가 좋아요" },
+    { key: "GOOD_VALUE", label: "가성비가 좋아요" },
   ],
 };

@@ -4,7 +4,7 @@ import Form from "../../commons/form";
 import { DetailReviewSection } from "../../domains/reviewModal/section/DetailReviewSection";
 import { FeelingSection } from "../../domains/reviewModal/section/FeelingSection";
 import { GenderToneSection } from "../../domains/reviewModal/section/GenderToneSection";
-import { LastingSection } from "../../domains/reviewModal/section/LastingSection";
+import { LongevitySection } from "../../domains/reviewModal/section/LongevitySection";
 import { PriceSection } from "../../domains/reviewModal/section/PriceSection";
 import { SeasonalSection } from "../../domains/reviewModal/section/SeasonalSection";
 import { SillageSection } from "../../domains/reviewModal/section/SillageSection";
@@ -42,7 +42,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
             <div className="flex flex-col gap-10 p-5">
               <StatusSection />
               <FeelingSection />
-              <LastingSection />
+              <LongevitySection />
               <SillageSection />
               <GenderToneSection />
               <SeasonalSection />

@@ -2,15 +2,7 @@ import { Review } from "@prisma/client";
 import { useFormContext } from "react-hook-form";
 import { REVIEW_OPTIONS } from "./constants";
 
-type ReviewOptionKey =
-  | "status"
-  | "feeling"
-  | "lasting"
-  | "sillage"
-  | "gender_tone"
-  | "seasonal"
-  | "time"
-  | "price";
+type ReviewOptionKey = keyof typeof REVIEW_OPTIONS;
 
 export const useReviewModal = (optionKey: ReviewOptionKey) => {
   const { control } = useFormContext<Review>();
