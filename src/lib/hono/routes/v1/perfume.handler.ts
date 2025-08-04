@@ -56,8 +56,8 @@ const getPerfumesByThemeRoute = createRoute({
   tags: ["Perfume"],
 });
 perfumesApi.openapi(getPerfumesByThemeRoute, async (c) => {
-  const { theme } = c.req.valid("query");
-  const result = await PerfumeServices.getPerfumesListByThemeService(theme);
+  const { themeName } = c.req.valid("query");
+  const result = await PerfumeServices.getPerfumesListByThemeService(themeName);
   if (!result.success) return apiInternalError(c, result.message);
   return apiSuccess(
     c,

@@ -6,8 +6,7 @@ import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
 import { Interactions } from "@/components/commons/interactions";
 import { TPostDetail } from "@/lib/queries/community/postQueries";
 
-interface IPostInteractionsProps
-  extends Pick<TPostDetail, "isLiked" | "bookmarkInfo"> {}
+type IPostInteractionsProps = Pick<TPostDetail, "isLiked" | "bookmarkInfo">;
 
 export default function PostInteractions({
   isLiked,

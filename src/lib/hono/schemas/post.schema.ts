@@ -1,4 +1,4 @@
-// import { z } from "@hono/zod-openapi";
+// import { createRoute, z } from "@hono/zod-openapi";
 // import { PostCategory } from "@prisma/client";
 
 // export const PaginatedPostListQuerySchema = z.object({
@@ -31,6 +31,24 @@
 //   totalCount: z.number().optional(),
 // });
 
-// export type GetPostListParams = z.infer<typeof PaginatedPostListQuerySchema>;
-// export type PostListItemResult = z.infer<typeof PostListItemResultSchema>;
+// export const getPostListRoute = createRoute({
+//   method: "get",
+//   path: "/posts",
+//   request: {
+//     query: PaginatedPostListQuerySchema,
+//   },
+//   responses: {
+//     200: {
+//       content: {
+//         "application/json": {
+//           schema: PaginatedPostListResponseSchema,
+//         },
+//       },
+//       description: "게시글 목록을 조회합니다.",
+//     },
+//   },
+// });
+
+// export type GetPostsQuery = z.infer<typeof PaginatedPostListQuerySchema>;
+// export type PostResponse = z.infer<typeof PostListItemResultSchema>;
 // export type PostListResponse = z.infer<typeof PaginatedPostListResponseSchema>;

@@ -2,10 +2,11 @@ import { getPostDetailById } from "@/components/domains/postDetail/postDetail.he
 import PageClient from "@/components/domains/postDetail/PageClient";
 
 export default async function Page({
-  params: { id },
+  params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = await params;
   const result = await getPostDetailById(id);
 
   if (!result.success || !result.data) {

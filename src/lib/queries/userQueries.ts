@@ -152,7 +152,7 @@ export async function fetchUserCollection(
             brand: { select: { nameEn: true, nameKo: true } },
             perfumeImage: {
               select: {
-                image_url: true,
+                imageUrl: true,
               },
             },
           },
@@ -168,7 +168,7 @@ export async function fetchUserCollection(
       perfumeId: item.perfumeId,
       perfume: {
         ...item.perfume,
-        imageUrl: item.perfume.perfumeImage?.image_url || null,
+        imageUrl: item.perfume.perfumeImage?.imageUrl || null,
       },
     }));
 
@@ -230,7 +230,7 @@ export async function fetchUserBookmarks(
               nameEn: true,
               perfumeImage: {
                 select: {
-                  image_url: true,
+                  imageUrl: true,
                 },
               },
             },
@@ -241,7 +241,7 @@ export async function fetchUserBookmarks(
 
     const formattedPerfumes = perfumeBookmarks.map((b) => ({
       ...b.perfume,
-      imageUrl: b.perfume.perfumeImage?.image_url || null,
+      imageUrl: b.perfume.perfumeImage?.imageUrl || null,
     }));
 
     return {

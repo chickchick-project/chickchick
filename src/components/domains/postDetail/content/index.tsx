@@ -1,5 +1,4 @@
 "use client";
-import { useState, useEffect } from "react";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 import PostNavigation from "./postNavigation";

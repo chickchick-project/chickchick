@@ -51,8 +51,8 @@ export const PerfumeIdParamSchema = z.object({
  * TODO: 배너에서 사용할 향수 테마를 위한 쿼리 스키마
  */
 export const PerfumeThemeQuerySchema = z.object({
-  theme: z.string().openapi({
-    param: { name: "theme", in: "query" },
+  themeName: z.string().openapi({
+    param: { name: "themeName", in: "query" },
     example: "spring_breeze",
   }),
 });

@@ -3,7 +3,7 @@
 // import { createReviewService } from "@/lib/services/review.service";
 import { createReview } from "@/lib/queries/reviewQueries";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { Review } from "@prisma-zod/index";
+import { Review } from "@prisma/client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -29,7 +29,7 @@ export const useInitialize = (method: UseFormReturn<Review>) => {
   useEffect(() => {
     if (!perfumeId) return;
 
-    method.setValue("title", `${perfumeId} 리뷰`);
+
     method.setValue("authorId", user?.id || "");
     method.setValue("perfumeId", perfumeId);
     method.setValue("usageStatus", "NOT_USED_YET");

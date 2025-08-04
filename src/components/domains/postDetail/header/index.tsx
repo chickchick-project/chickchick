@@ -5,7 +5,7 @@ import PostInteractions from "./PostInteractions";
 import PostActions from "./PostActions";
 import { TPostDetail } from "@/lib/queries/community/postQueries";
 
-interface IPostDetailHeaderProps extends Omit<TPostDetail, "content"> {}
+type IPostDetailHeaderProps = Omit<TPostDetail, "content">;
 
 export default function PostDetailHeader(props: IPostDetailHeaderProps) {
   const {

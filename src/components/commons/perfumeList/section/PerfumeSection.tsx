@@ -2,10 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
-  perfumes: GetPerfumeSearchResult[];
+  perfumes: PerfumeBaseResponse[];
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;

@@ -57,24 +57,30 @@ export async function getPerfumesListService(): Promise<
 
 /**
  * 향수 목록 테마별 조회
- * @param theme
+ * @param themeName
  * @description 향수 목록을 테마별로 조회. TODO: 테마별로 조회하는 로직 구현 필요
  * @returns 향수 목록
  */
 export async function getPerfumesListByThemeService(
-  theme: string
+  themeName: string
 ): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+  console.log(themeName);
   try {
     // TODO: 테마에 따른 필터링 로직 구현 (예: 특정 어코드나 노트를 포함하는 향수 검색)
+    // const perfumes = await prisma.perfume.findMany({
+    //   where: {
+    //     // 예시: 'citrus' 어코드를 포함하는 향수
+    //     accordMappings: {
+    //       some: { accord: { nameEn: { equals: theme, mode: "insensitive" } } },
+    //     },
+    //   },
+    //   include: perfumeBaseInclude,
+    //   take: 5,
+    // });
     const perfumes = await prisma.perfume.findMany({
-      where: {
-        // 예시: 'citrus' 어코드를 포함하는 향수
-        accordMappings: {
-          some: { accord: { nameEn: { equals: theme, mode: "insensitive" } } },
-        },
-      },
       include: perfumeBaseInclude,
-      take: 10,
+      orderBy: { nameKo: "asc" },
+      take: 5,
     });
     return serviceSuccess(perfumes);
   } catch (error) {

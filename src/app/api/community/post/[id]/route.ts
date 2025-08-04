@@ -7,9 +7,10 @@ import { z } from "zod";
 const UuidSchema = z.string().uuid({ message: "유효하지 않은 ID 형식입니다." });
 //hono로 변경 예정
 export async function GET(
-  request: NextRequest,
-  { params: { id } }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   if (!id) {
     return NextResponse.json(
       { message: "게시글 ID가 필요합니다." },
