@@ -11,6 +11,8 @@ export const PostResponseSchema = PostSchema.extend({
     nickname: true,
     imageUrl: true,
   }),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().nullable(),
 }).omit({
   userId: true,
   published: true,
