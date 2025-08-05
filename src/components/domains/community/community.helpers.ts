@@ -20,7 +20,7 @@ type FetchCommunityPostListParams = {
 
 async function fetchCommunityPostList(
   params: FetchCommunityPostListParams
-): Promise<SearchResponse<PostResponse[]>> {
+): Promise<SearchResponse<PostResponse>> {
   try {
     const queryParams = new URLSearchParams();
 
@@ -41,9 +41,10 @@ async function fetchCommunityPostList(
     queryParams.append("limit", "12");
 
     const response = await fetch(
-      `${API_BASE_URL}/posts?${queryParams.toString()}`,
+      `${API_BASE_URL}/community/posts?${queryParams.toString()}`,
       { method: "GET", next: { revalidate: 300 } }
     );
+
     if (!response.ok) {
       const errorData = await response
         .json()
@@ -52,12 +53,8 @@ async function fetchCommunityPostList(
         errorData.message || `Failed to fetch data: ${response.status}`
       );
     }
-    const result = await response.json();
-    return {
-      data: result.data,
-      nextCursor: result.nextCursor,
-      totalCount: result.totalCount,
-    };
+    const { data } = await response.json();
+    return data;
   } catch (error) {
     console.error("Error fetching community post list:", error);
     throw error;

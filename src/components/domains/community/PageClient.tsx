@@ -11,9 +11,9 @@ import {
   getUniquePostList,
 } from "./community.helpers";
 import { TPostCategory } from "@/lib/queries/community/postQueries";
+import { PostResponse } from "@/lib/hono/schemas/community.schema";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { Option, TSortBy } from "@/lib/constants/options";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
 
 export default function PageClient() {
   const router = useRouter();
@@ -80,9 +80,8 @@ export default function PageClient() {
   }, [searchKeyword]);
 
   const { data, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<PostResponse[]>(fetcher);
-
-  const uniquePostData = useMemo(() => getUniquePostList(data.flat()), [data]);
+    useInfiniteScroll<PostResponse>(fetcher);
+  const uniquePostData = useMemo(() => getUniquePostList(data), [data]);
 
   return (
     <div className="px-4 w-full flex flex-col  gap-5">
