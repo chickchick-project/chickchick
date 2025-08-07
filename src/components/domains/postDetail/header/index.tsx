@@ -3,22 +3,24 @@ import { InfoType } from "@/components/commons/author/author.types";
 import BoardChip from "@/components/commons/chip/BoardChip";
 import PostInteractions from "./PostInteractions";
 import PostActions from "./PostActions";
-import { TPostDetail } from "@/lib/queries/community/postQueries";
+import {
+  PostDetailResponse,
+  PostStatusResponse,
+} from "@/lib/hono/schemas/community.schema";
 
-type IPostDetailHeaderProps = Omit<TPostDetail, "content">;
+type PostDetailHeaderProps = Omit<PostDetailResponse, "content"> & {
+  postStatus: PostStatusResponse;
+};
 
-export default function PostDetailHeader(props: IPostDetailHeaderProps) {
+export default function PostDetailHeader(props: PostDetailHeaderProps) {
   const {
     author,
     title,
     createdAt,
     isAuthor,
-    isLiked,
-    bookmarkInfo,
     category,
-    viewCount,
-    likeCount,
-    commentCount,
+    id: postId,
+    postStatus: { isLiked, viewCount, commentCount, likeCount, isBookmarked },
   } = props;
   const postReactionInfo: InfoType = {
     type: "post",
@@ -28,11 +30,16 @@ export default function PostDetailHeader(props: IPostDetailHeaderProps) {
       { type: "Like", count: likeCount },
     ],
   };
+  console.log(isAuthor);
   return (
     <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
         <BoardChip type={category} />
-        <PostInteractions isLiked={isLiked} bookmarkInfo={bookmarkInfo} />
+        <PostInteractions
+          initialIsLiked={isLiked}
+          initialIsBookmarked={isBookmarked}
+          postId={postId}
+        />
       </div>
       <h1 className="mt-5 mb-4 tablet:mb-5 text-title-1 tablet:text-headline-3 font-semibold text-black-100">
         {title}
