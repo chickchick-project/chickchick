@@ -5,38 +5,48 @@ import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOut
 import Comment from "@/components/commons/comment";
 import { useState } from "react";
 import { ICommentFormProps } from "./postComment.types";
+import { createNewComment } from "../comment.helper";
+import { useRouter } from "next/navigation";
 
 export default function CommentForm({
   type,
   value,
   commentId,
-  onSubmit,
+  onSuccess,
+  postId,
 }: ICommentFormProps) {
   const [inputValue, setInputValue] = useState(value || "");
-
+  const router = useRouter(); // 댓글api 커서 추가시 수정 예정.
   const onChange = (inputValue: string) => {
     setInputValue(inputValue);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
+    try {
+      switch (type) {
+        case "create":
+          await createNewComment(postId, { content: inputValue });
+          break;
+        case "reply":
+          await createNewComment(postId, {
+            content: inputValue,
+            parentId: commentId,
+          });
+          router.refresh();
+          break;
+        case "edit":
+          alert("댓글 id:" + commentId + "댓글 수정: " + inputValue);
+          break;
+      }
 
-    switch (type) {
-      case "create":
-        alert("댓글 작성: " + inputValue);
-
-        break;
-      case "reply":
-        alert("댓글 id:" + commentId + "답글 작성: " + inputValue);
-        onSubmit?.();
-        break;
-      case "edit":
-        alert("댓글 id:" + commentId + "댓글 수정: " + inputValue);
-        onSubmit?.();
-        break;
+      setInputValue("");
+      onSuccess?.();
+    } catch (error) {
+      console.error("댓글 작성 실패:", error);
+      alert("오류가 발생했습니다. 다시 시도해 주세요.");
     }
-    setInputValue("");
   };
 
   return (

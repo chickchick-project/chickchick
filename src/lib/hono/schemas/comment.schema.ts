@@ -7,6 +7,8 @@ const ReplyResponseSchema = CommentSchema.extend({
     nickname: true,
     imageUrl: true,
   }),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().nullable(),
 }).omit({ authorId: true });
 
 export const CommentResponseSchema = ReplyResponseSchema.extend({
@@ -28,6 +30,7 @@ export const PostIdParamSchema = z.object({
   postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
 });
 
+export type CommentReplyResponse = z.infer<typeof ReplyResponseSchema>;
 export type CommentResponse = z.infer<typeof CommentResponseSchema>;
 export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
 export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;

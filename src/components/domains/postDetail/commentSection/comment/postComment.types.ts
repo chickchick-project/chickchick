@@ -1,6 +1,8 @@
+import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+
 export interface ICommentAuthProfileProps {
   author: string;
-  profileImage?: string;
+  profileImage?: string | null;
 }
 
 export interface ICommentAuthInfoProps extends ICommentAuthProfileProps {
@@ -13,11 +15,11 @@ export type TComment = {
   content: string;
   createdAt: string;
   isAuthor: boolean;
-  replies?: TComment[];
+  replies?: CommentResponse[];
 };
 
 export interface ICommentIListProps {
-  commentList: TComment[];
+  commentList: CommentResponse[];
 }
 
 export interface ICommentFormProps {
@@ -25,7 +27,8 @@ export interface ICommentFormProps {
   value?: string;
   authInfo?: ICommentAuthInfoProps;
   commentId?: string;
-  onSubmit?: () => void;
+  postId: string;
+  onSuccess?: () => void;
   onCancel?: () => void;
 }
 

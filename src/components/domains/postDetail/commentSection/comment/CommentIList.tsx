@@ -1,12 +1,12 @@
 "use client";
 
 import { ButtonFilledGrayLFixed } from "@/components/commons/button/ButtonFilled";
-import CommentIListItem from "./CommentListItem";
+import CommentListItem from "./CommentListItem";
 import { ICommentIListProps, TCommentActionState } from "./postComment.types";
 import { useState } from "react";
 import ArrowIcon from "@/components/commons/icons/arrowIcon";
 
-export default function CommentIList({ commentList }: ICommentIListProps) {
+export default function CommentList({ commentList }: ICommentIListProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
     null
@@ -23,7 +23,7 @@ export default function CommentIList({ commentList }: ICommentIListProps) {
       <ul className="flex flex-col w-full">
         {commentList.length > 0 &&
           commentList.map((comment) => (
-            <CommentIListItem
+            <CommentListItem
               key={comment.id}
               commentActionState={commentActionState}
               comment={comment}
