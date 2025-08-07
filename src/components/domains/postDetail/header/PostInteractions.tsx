@@ -1,43 +1,79 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BookmarkIcon } from "@/components/commons/interactions/icons/BookmarkIcon";
 import { LikeIcon } from "@/components/commons/interactions/icons/LikeIcon";
 import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
 import { Interactions } from "@/components/commons/interactions";
-import { TPostDetail } from "@/lib/queries/community/postQueries";
+import { useRouter } from "next/navigation";
+import {
+  toggleLikedPostById,
+  toggleBookmarkedPostById,
+} from "../postDetail.helpers";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
-type IPostInteractionsProps = Pick<TPostDetail, "isLiked" | "bookmarkInfo">;
+interface IPostInteractionsProps {
+  initialIsLiked: boolean;
+  initialIsBookmarked: boolean;
+  postId: string;
+}
 
 export default function PostInteractions({
-  isLiked,
-  bookmarkInfo,
+  initialIsLiked,
+  initialIsBookmarked,
+  postId,
 }: IPostInteractionsProps) {
-  const [activeStates, setActiveStates] = useState({
-    like: isLiked,
-    bookmark: bookmarkInfo.isBookmarked,
-  });
+  const router = useRouter();
+  const { user, isLoading } = useUserStore();
 
-  const toggle = (key: keyof typeof activeStates) => {
-    setActiveStates((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+  const [isLiked, setIsLiked] = useState(initialIsLiked);
+  const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
+
+  const handleLikeToggle = async () => {
+    if (!user) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+    setIsLiked((prev) => !prev);
+    try {
+      await toggleLikedPostById(postId);
+      router.refresh();
+    } catch (error) {
+      setIsLiked((prev) => !prev);
+      alert("좋아요 처리실패.");
+      console.error("좋아요 처리 실패:", error);
+    }
+  };
+
+  const handleBookmarkToggle = async () => {
+    if (!user) {
+      alert("로그인이 필요한 기능입니다.");
+      return;
+    }
+    setIsBookmarked((prev) => !prev);
+    try {
+      await toggleBookmarkedPostById(postId);
+      router.refresh();
+    } catch (error) {
+      setIsBookmarked((prev) => !prev);
+      alert("북마크 처리 실패.");
+      console.error("북마크 처리 실패:", error);
+    }
   };
 
   const interactions = [
     {
       type: "like",
-      isActive: activeStates.like,
-      onClick: () => toggle("like"),
+      isActive: isLiked,
+      onClick: handleLikeToggle,
       label: "좋아요",
-      icon: <LikeIcon isActive={activeStates.like} />,
+      icon: <LikeIcon isActive={isLiked} />,
     },
     {
       type: "bookmark",
-      isActive: activeStates.bookmark,
-      onClick: () => toggle("bookmark"),
+      isActive: isBookmarked,
+      onClick: handleBookmarkToggle,
       label: "북마크",
-      icon: <BookmarkIcon isActive={activeStates.like} />,
+      icon: <BookmarkIcon isActive={isBookmarked} />,
     },
     {
       type: "share",
@@ -46,6 +82,13 @@ export default function PostInteractions({
       icon: <ShareIcon />,
     },
   ];
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      setIsLiked(false);
+      setIsBookmarked(false);
+    }
+  }, [user, isLoading]);
 
   return (
     <>

@@ -1,21 +1,38 @@
-import { TPostDetail } from "@/lib/queries/community/postQueries";
 import CommentSection from "./commentSection";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
+import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import {
+  PostDetailResponse,
+  PostStatusResponse,
+} from "@/lib/hono/schemas/community.schema";
 
 interface IPostDetailPageClientProps {
-  postDetail: TPostDetail;
+  postDetail: PostDetailResponse;
+  postStatus: PostStatusResponse;
+  initialComments: CommentResponse[] | [];
 }
 
-export default function PageClient({ postDetail }: IPostDetailPageClientProps) {
-  console.log("PostDetailPageClient", postDetail);
-  const { content, isAuthor, ...postDetailHeader } = postDetail;
+export default function PageClient({
+  postDetail,
+  postStatus,
+  initialComments,
+}: IPostDetailPageClientProps) {
+  const { content, ...postDetailHeader } = postDetail;
 
   return (
     <article>
-      <PostDetailHeader isAuthor={isAuthor} {...postDetailHeader} />
-      <PostContent content={content} isAuthor={isAuthor} relatedPerfumes={[]} />
-      <CommentSection />
+      <PostDetailHeader postStatus={postStatus} {...postDetailHeader} />
+      <PostContent
+        content={content}
+        isAuthor={postDetail.isAuthor}
+        relatedPerfumes={[]}
+      />
+      <CommentSection
+        postId={postDetail.id}
+        comments={initialComments}
+        totalCommentCount={postStatus.commentCount}
+      />
     </article>
   );
 }

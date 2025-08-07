@@ -29,7 +29,7 @@ export default function Comment({
         placeholder={placeholder || COMMENT_PLACEHOLDERS[type]}
         value={inputValue}
         onChange={handleChange}
-        rows={1}
+        rows={5}
       />
       <span
         className={`absolute bottom-5 right-5 text-xs ${

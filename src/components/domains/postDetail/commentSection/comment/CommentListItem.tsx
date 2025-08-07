@@ -1,16 +1,21 @@
 import { ActionItem, Actions } from "@/components/commons/actions";
 import { CommentAuthInfo, CommentUserProfile } from "./CommentAuthInfo";
-import { TComment, TCommentActionState } from "./postComment.types";
+import { TCommentActionState } from "./postComment.types";
 import CommentForm from "./CommentForm";
 import ReplyIcon from "./ReplyIcon";
+import {
+  CommentReplyResponse,
+  CommentResponse,
+} from "@/lib/hono/schemas/comment.schema";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
-export default function CommentIListItem({
+export default function CommentListItem({
   commentActionState,
   comment,
   isReplyType = false,
 }: {
   commentActionState: TCommentActionState;
-  comment: TComment;
+  comment: CommentResponse | CommentReplyResponse;
   isReplyType?: boolean;
 }) {
   const {
@@ -19,12 +24,23 @@ export default function CommentIListItem({
     replyingCommentId,
     setReplyingCommentId,
   } = commentActionState;
-
-  const { id, authInfo, isAuthor, createdAt, content, replies } = comment;
+  const { user } = useUserStore();
+  const { id, author, createdAt, content, postId } = comment;
+  const isAuthor = author.id === user?.id;
   const isEditing = editingCommentId === id;
   const isReplying = replyingCommentId === id;
   const isAnyCommentBeingEdited = editingCommentId !== null;
   const isAnyCommentBeingReplied = replyingCommentId !== null;
+  const userActions: ActionItem[] = [
+    {
+      type: "reply",
+      onClick: () => {
+        setEditingCommentId(null);
+        setReplyingCommentId(id);
+      },
+      disabled: isAnyCommentBeingEdited,
+    },
+  ];
 
   const authorActions: ActionItem[] = [
     {
@@ -42,17 +58,6 @@ export default function CommentIListItem({
     },
   ];
 
-  const userActions: ActionItem[] = [
-    {
-      type: "reply",
-      onClick: () => {
-        setEditingCommentId(null);
-        setReplyingCommentId(id);
-      },
-      disabled: isAnyCommentBeingEdited,
-    },
-  ];
-
   let actions: ActionItem[] = [];
 
   if (isEditing || isReplying) {
@@ -65,12 +70,15 @@ export default function CommentIListItem({
         },
       },
     ];
-  } else if (isAuthor) {
-    actions = authorActions;
-  } else if (!isReplyType) {
-    actions = userActions;
-  }
+  } else {
+    if (!isReplyType) {
+      actions.push(...userActions);
+    }
 
+    if (isAuthor) {
+      actions.push(...authorActions);
+    }
+  }
   return (
     <>
       <li>
@@ -79,8 +87,8 @@ export default function CommentIListItem({
           <article className="w-full flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <CommentAuthInfo
-                author={authInfo.author}
-                profileImage={authInfo.profileImage}
+                author={author.nickname}
+                profileImage={author.imageUrl}
                 createdAt={createdAt}
               />
               {actions.length > 0 && !isReplying && (
@@ -92,7 +100,8 @@ export default function CommentIListItem({
                 type="edit"
                 value={content}
                 commentId={editingCommentId}
-                onSubmit={() => {
+                postId={postId}
+                onSuccess={() => {
                   setEditingCommentId(null);
                 }}
               />
@@ -105,33 +114,36 @@ export default function CommentIListItem({
         </div>
         <div className="divider-horizontal" />
       </li>
-      {replies &&
-        replies.length > 0 &&
-        replies.map((reply) => (
+      {"replies" in comment &&
+        comment.replies &&
+        comment.replies.length > 0 &&
+        comment.replies.map((reply) => (
           <ul key={reply.id}>
-            <CommentIListItem
+            <CommentListItem
               commentActionState={commentActionState}
               comment={reply}
               isReplyType
             />
           </ul>
         ))}
-      {isReplying && (
+
+      {isReplying && user && (
         <>
           <section className="flex gap-5 py-5">
             <ReplyIcon />
             <div className="w-full">
               <div className="mb-3 flex items-center justify-between">
                 <CommentUserProfile
-                  author={"로그인한 유저 닉네임"}
-                  profileImage={""}
+                  author={user.nickname}
+                  profileImage={user.imageUrl}
                 />
                 <Actions actions={actions} />
               </div>
               <CommentForm
                 type="reply"
+                postId={postId}
                 commentId={replyingCommentId}
-                onSubmit={() => setReplyingCommentId(null)}
+                onSuccess={() => setReplyingCommentId(null)}
               />
             </div>
           </section>

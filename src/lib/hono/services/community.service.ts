@@ -56,8 +56,14 @@ export async function getPaginatedPostListService(
       prisma.post.count({ where }),
     ]);
 
+    const transformedPosts = posts.map((post) => ({
+      //논의 필요
+      ...post,
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt?.toISOString() || null,
+    }));
     const paginatedResult = createCursorPaginationResult(
-      posts,
+      transformedPosts,
       totalCount,
       limit
     );
@@ -72,8 +78,9 @@ export async function getPaginatedPostListService(
 }
 
 export async function getPostByIdService(
-  id: string
-): Promise<ServiceResult<PostWithAuthor>> {
+  id: string,
+  userId?: string | null
+): Promise<ServiceResult<CommunitySchemas.PostDetailResponse>> {
   try {
     const post = await prisma.post.findUnique({
       where: { id },
@@ -83,7 +90,54 @@ export async function getPostByIdService(
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
-    return serviceSuccess(post);
+
+    const isAuthor = post.userId === userId;
+    const result: CommunitySchemas.PostDetailResponse = {
+      ...post,
+      isAuthor,
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt?.toISOString() || null,
+    };
+    return serviceSuccess(result);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getPostStatusByIdService(
+  postId: string,
+  userId?: string | null
+): Promise<ServiceResult<CommunitySchemas.PostStatusResponse>> {
+  try {
+    const [postCounts, like, bookmark] = await Promise.all([
+      prisma.post.findUnique({
+        where: { id: postId },
+        select: { viewCount: true, likeCount: true, commentCount: true },
+      }),
+
+      userId
+        ? prisma.postLike.findUnique({
+            where: { user_post_like_unique: { postId, userId } },
+          })
+        : null,
+      userId
+        ? prisma.postBookmark.findUnique({
+            where: { user_post_bookmark_unique: { postId, userId } },
+          })
+        : null,
+    ]);
+
+    if (!postCounts) {
+      return serviceNotFound("게시글 상태 정보를 찾을 수 없습니다.");
+    }
+
+    const result: CommunitySchemas.PostStatusResponse = {
+      ...postCounts,
+      isLiked: !!like,
+      isBookmarked: !!bookmark,
+    };
+
+    return serviceSuccess(result);
   } catch (error) {
     return serviceInternalError(error);
   }

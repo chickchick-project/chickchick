@@ -15,6 +15,11 @@ export const PaginationSchema = z.object({
     .openapi({ example: 100, description: "총 아이템 수" }),
 });
 
+export const CursorPaginationSchema = z.object({
+  cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
+  limit: z.coerce.number().int().positive().default(12),
+});
+
 export const SuccessResponseSchema = (dataSchema: z.ZodType) =>
   z.object({
     success: z.literal(true),
