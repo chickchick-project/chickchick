@@ -28,8 +28,6 @@ export default function PostInteractions({
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [isBookmarked, setIsBookmarked] = useState(initialIsBookmarked);
 
-  console.log(initialIsBookmarked);
-
   const handleLikeToggle = async () => {
     if (!user) {
       alert("로그인이 필요한 기능입니다.");

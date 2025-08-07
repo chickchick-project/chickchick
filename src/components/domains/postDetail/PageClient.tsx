@@ -19,7 +19,7 @@ export default function PageClient({
   initialComments,
 }: IPostDetailPageClientProps) {
   const { content, ...postDetailHeader } = postDetail;
-  console.log(postDetail.isAuthor);
+
   return (
     <article>
       <PostDetailHeader postStatus={postStatus} {...postDetailHeader} />
