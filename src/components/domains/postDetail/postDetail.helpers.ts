@@ -1,43 +1,171 @@
-import { TPostDetail } from "@/lib/queries/community/postQueries";
-import { cookies } from "next/headers";
+import {
+  PostDetailResponse,
+  PostResponse,
+  PostStatusResponse,
+} from "@/lib/hono/schemas/community.schema";
+import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 const API_BASE_URL = "http://localhost:3000/api";
-
-type TPostDetailApiResponse = {
-  success: boolean;
-  data: TPostDetail | null;
-  message?: string;
-};
+const COMMUNITY_URL = `${API_BASE_URL}/v1/community/posts`;
 
 export async function getPostDetailById(
-  postId: string
-): Promise<TPostDetailApiResponse> {
-  const cookieStore = await cookies();
-
+  postId: string,
+  headers: HeadersInit
+): Promise<ApiSuccessResponse<PostDetailResponse>> {
   try {
-    const response = await fetch(`${API_BASE_URL}/community/post/${postId}`, {
-      cache: "no-store",
-      headers: {
-        Cookie: cookieStore.toString(),
-      },
+    const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
+      method: "GET",
+      next: { revalidate: 300 },
+      headers: headers,
     });
 
-    const data = await response.json();
     if (!response.ok) {
-      console.error(`Error fetching post ${postId}:`, data.message);
-      return {
-        data: null,
-        success: false,
-        message: data.message || "서버 내부 오류가 발생했습니다.",
-      };
+      const errorText = await response.text();
+      console.error("서버 응답 오류:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      throw new Error(
+        errorData.error || `Failed to fetch data: ${response.status}`
+      );
     }
-    return { data, success: response.ok };
+
+    const result = await response.json();
+    return result;
   } catch (error) {
     console.error(`Error fetching post ${postId}:`, error);
-    return {
-      data: null,
-      success: false,
-      message: "서버 내부 오류가 발생했습니다.",
-    };
+    throw error;
+  }
+}
+
+export async function getPostDetailStatusById(
+  postId: string,
+  headers: HeadersInit
+): Promise<ApiSuccessResponse<PostStatusResponse>> {
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${postId}/status`, {
+      method: "GET",
+      cache: "no-store",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("서버 응답 오류:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      throw new Error(
+        errorData.error || `Failed to fetch data: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching post status:", error);
+    throw error;
+  }
+}
+
+export async function toggleBookmarkedPostById(
+  postId: string
+): Promise<ApiSuccessResponse<PostResponse>> {
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${postId}/bookmark`, {
+      method: "POST",
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("서버 응답 오류:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      throw new Error(
+        errorData.error || `Failed to fetch data: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching bookmarked posts:", error);
+    throw error;
+  }
+}
+
+export async function toggleLikedPostById(
+  postId: string
+): Promise<ApiSuccessResponse<PostResponse>> {
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${postId}/like`, {
+      method: "POST",
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("서버 응답 오류:", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = {
+          error: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      throw new Error(
+        errorData.error || `Failed to fetch data: ${response.status}`
+      );
+    }
+
+    const result = await response.json();
+
+    return result;
+  } catch (error) {
+    console.error("Error fetching liked posts:", error);
+    throw error;
   }
 }
