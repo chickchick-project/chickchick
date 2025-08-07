@@ -4,7 +4,7 @@ import UserSchema from "@zod/modelSchema/UserSchema";
 import { CursorPaginationSchema } from "./common.schema";
 import { PostCategory } from "@prisma/client";
 
-// API 응답용 스키마
+// API 응답용 스키마 (목록용)
 export const PostResponseSchema = PostSchema.extend({
   author: UserSchema.pick({
     id: true,
@@ -16,6 +16,21 @@ export const PostResponseSchema = PostSchema.extend({
 }).omit({
   userId: true,
   published: true,
+});
+
+// 게시글 상세 조회 응답 스키마
+export const PostDetailResponseSchema = PostResponseSchema.extend({
+  isAuthor: z.boolean(),
+});
+
+// 게시글 상태 조회
+export const PostStatusResponseSchema = PostSchema.pick({
+  viewCount: true,
+  likeCount: true,
+  commentCount: true,
+}).extend({
+  isLiked: z.boolean(),
+  isBookmarked: z.boolean(),
 });
 
 // 글 목록 조회 쿼리
@@ -53,6 +68,8 @@ export const PaginatedPostListResponseSchema = z.object({
 // 타입 추론
 export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type PostResponse = z.infer<typeof PostResponseSchema>;
+export type PostDetailResponse = z.infer<typeof PostDetailResponseSchema>;
+export type PostStatusResponse = z.infer<typeof PostStatusResponseSchema>;
 export type CreatePost = z.infer<typeof CreatePostBodySchema>;
 export type CreatePostPayload = z.infer<typeof CreatePostPayloadSchema>;
 export type UpdatePost = z.infer<typeof UpdatePostSchema>;

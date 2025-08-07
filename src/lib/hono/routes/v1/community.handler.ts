@@ -1,7 +1,10 @@
 import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 
 import type { AppContext } from "@/lib/hono/app";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import {
+  authMiddleware,
+  optionalAuthMiddleware,
+} from "@/lib/hono/middleware/auth.middleware";
 import * as CommunityServices from "@/lib/hono/services/community.service";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
@@ -18,6 +21,8 @@ const communityApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
 
 authenticatedApi.use("*", authMiddleware);
+communityApi.use("/posts/:id", optionalAuthMiddleware);
+communityApi.use("/posts/:id/status", optionalAuthMiddleware);
 
 /**
  * @method GET
@@ -77,11 +82,51 @@ const getPostRoute = createRoute({
 
 communityApi.openapi(getPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const post = await CommunityServices.getPostByIdService(id);
+  const user = c.get("user");
+  const post = await CommunityServices.getPostByIdService(id, user?.id);
   if (!post.success) {
     return apiNotFound(c, post.message);
   }
   return apiSuccess(c, post.data, "게시글을 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method GET
+ * @path /posts/{id}/status
+ * @summary 커뮤니티 게시글 상태 정보 조회
+ */
+const getPostStatusRoute = createRoute({
+  method: "get",
+  path: "/posts/{id}/status",
+  summary: "게시글 상태 정보 조회",
+  description:
+    "게시글의 카운트 정보(조회수, 좋아요, 댓글)와 현재 사용자의 좋아요/북마크 여부를 조회합니다.",
+  request: {
+    params: CommunitySchemas.PostIdParamSchema,
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.PostStatusResponseSchema,
+      description: "게시글 상태 정보",
+    },
+    ["404"]
+  ),
+  tags: ["Community"],
+});
+
+communityApi.openapi(getPostStatusRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = c.get("user");
+  const result = await CommunityServices.getPostStatusByIdService(id, user?.id);
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(
+    c,
+    result.data,
+    "게시글 상태 정보를 성공적으로 불러왔습니다."
+  );
 });
 
 /**
