@@ -34,6 +34,7 @@ export default async function Page({
       </>
     );
   } catch (error) {
+    console.error("Error fetching post details:", error);
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         게시글을 불러오는 데 실패했거나, 존재하지 않는 게시글입니다.

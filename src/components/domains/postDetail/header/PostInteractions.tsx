@@ -40,6 +40,7 @@ export default function PostInteractions({
     } catch (error) {
       setIsLiked((prev) => !prev);
       alert("좋아요 처리실패.");
+      console.error("좋아요 처리 실패:", error);
     }
   };
 
@@ -55,6 +56,7 @@ export default function PostInteractions({
     } catch (error) {
       setIsBookmarked((prev) => !prev);
       alert("북마크 처리 실패.");
+      console.error("북마크 처리 실패:", error);
     }
   };
 

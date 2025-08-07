@@ -56,8 +56,14 @@ export async function getPaginatedPostListService(
       prisma.post.count({ where }),
     ]);
 
+    const transformedPosts = posts.map((post) => ({
+      //논의 필요
+      ...post,
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt?.toISOString() || null,
+    }));
     const paginatedResult = createCursorPaginationResult(
-      posts,
+      transformedPosts,
       totalCount,
       limit
     );
