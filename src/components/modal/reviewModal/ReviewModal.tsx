@@ -4,7 +4,7 @@ import Form from "../../commons/form";
 import { DetailReviewSection } from "../../domains/reviewModal/section/DetailReviewSection";
 import { FeelingSection } from "../../domains/reviewModal/section/FeelingSection";
 import { GenderToneSection } from "../../domains/reviewModal/section/GenderToneSection";
-import { LastingSection } from "../../domains/reviewModal/section/LastingSection";
+import { LongevitySection } from "../../domains/reviewModal/section/LongevitySection";
 import { PriceSection } from "../../domains/reviewModal/section/PriceSection";
 import { SeasonalSection } from "../../domains/reviewModal/section/SeasonalSection";
 import { SillageSection } from "../../domains/reviewModal/section/SillageSection";
@@ -13,7 +13,7 @@ import { TimeSection } from "../../domains/reviewModal/section/TimeSection";
 import { SubmitButton } from "@/components/domains/reviewModal/button/SubmitButton";
 import { useInitialize } from "./form.initialize";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { CreateReviewSchema } from "@/lib/hono/schemas/review.schema";
+import { CreateReviewPayloadSchema } from "@/lib/hono/schemas/review.schema";
 
 interface IReviewModalProps {
   closeModal: () => void;
@@ -38,11 +38,14 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
           style={{ scrollbarWidth: "none" }}
         >
           <Title>이 향수에 대한 리뷰를 남겨주세요</Title>
-          <Form schema={CreateReviewSchema} useInitialize={useInitialize}>
+          <Form
+            schema={CreateReviewPayloadSchema}
+            useInitialize={useInitialize}
+          >
             <div className="flex flex-col gap-10 p-5">
               <StatusSection />
               <FeelingSection />
-              <LastingSection />
+              <LongevitySection />
               <SillageSection />
               <GenderToneSection />
               <SeasonalSection />

@@ -1,8 +1,8 @@
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
-import { PerfumeResponse } from "@/lib/hono/schemas/perfume.schema";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface IBannerProps {
-  data: PerfumeResponse[];
+  data: PerfumeBaseResponse[];
 }
 
 export const MainBanner = ({ data }: IBannerProps) => {

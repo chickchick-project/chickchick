@@ -4,10 +4,10 @@ import ReviewSchema from "@zod/modelSchema/ReviewSchema";
 import UserSchema from "@zod/modelSchema/UserSchema";
 
 const ReviewChipsSchema = ReviewSchema.pick({
-  rating: true,
+  feeling: true,
   longevity: true,
   sillage: true,
-  genderProfile: true,
+  genderTone: true,
   season: true,
   timeOfDay: true,
   pricePerception: true,
@@ -31,15 +31,14 @@ export const CreateReviewBodySchema = ReviewSchema.pick({ content: true });
 
 export const CreateReviewSchema = ReviewSchema.pick({
   usageStatus: true,
-  rating: true,
+  feeling: true,
   longevity: true,
   sillage: true,
-  genderProfile: true,
+  genderTone: true,
   season: true,
   timeOfDay: true,
   pricePerception: true,
 }).extend({
-  rating: z.coerce.number().int().min(1).max(5),
   season: z.preprocess(
     (val) => (Array.isArray(val) ? val : [val]),
     z.array(z.nativeEnum(Season))

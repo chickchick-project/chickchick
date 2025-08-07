@@ -236,10 +236,10 @@ model Review {
   perfumeId   String             @map("perfume_id") @db.Uuid
   content     String
   usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
-  rating      Int
+  feeling     Feeling @default(DISLIKE)
   longevity   Longevity @default(VERY_WEAK)
   sillage     Sillage @default(INTIMATE)
-  genderProfile GenderProfile @default(UNISEX) @map("gender_profile")
+  genderTone GenderTone @default(UNISEX) @map("gender_tone")
   season      Season[] @default([SPRING])
   timeOfDay   TimeOfDay @default(DAY) @map("time_of_day")
   pricePerception PricePerception @default(GOOD_VALUE) @map("price_perception")
@@ -249,7 +249,7 @@ model Review {
   perfume     Perfume            @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
-}
+} 
 
 model Comment {
   id        String    @id @default(uuid()) @db.Uuid
@@ -321,10 +321,18 @@ enum PerfumeUsageStatus {
   NOT_USED_YET
 }
 
+enum Feeling {
+  DISLIKE
+  BAD
+  NEUTRAL
+  GOOD
+  BEST
+}
+
 enum Longevity {
   VERY_WEAK
   WEAK
-  MODERATE
+    
   LONG_LASTING
 }
 
@@ -334,7 +342,7 @@ enum Sillage {
   STRONG
 }
 
-enum GenderProfile {
+enum GenderTone {
   FEMININE
   UNISEX
   MASCULINE

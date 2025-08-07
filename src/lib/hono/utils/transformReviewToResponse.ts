@@ -19,10 +19,10 @@ export function transformReviewToResponse(
       imageUrl: review.author.imageUrl,
     },
     chips: {
-      rating: review.rating,
+      feeling: review.feeling,
       longevity: review.longevity,
       sillage: review.sillage,
-      genderProfile: review.genderProfile,
+      genderTone: review.genderTone,
       season: review.season,
       timeOfDay: review.timeOfDay,
       pricePerception: review.pricePerception,

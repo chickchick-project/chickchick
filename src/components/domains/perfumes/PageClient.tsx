@@ -13,7 +13,7 @@ import {
   fetchPerfumes,
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
-import { GetPerfumeSearchResult } from "@/lib/hono/schemas/perfume.schema";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import { withCache } from "@/lib/utils/withCache";
 
 export type BrandName = {
@@ -60,7 +60,7 @@ export default function PageClient({
   );
 
   const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<GetPerfumeSearchResult>(fetcher);
+    useInfiniteScroll<PerfumeBaseResponse>(fetcher);
   useEffect(() => {
     if (totalCount !== null && typeof totalCount === "number") {
       setCount(totalCount);

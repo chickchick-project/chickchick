@@ -3,7 +3,10 @@ import {
   TApiSortBy,
   TSortBy,
 } from "@/lib/constants/options";
-import { GetPostsQuery, PostResponse } from "@/lib/hono/schemas/post.schema";
+import {
+  GetPostsQuery,
+  PostResponse,
+} from "@/lib/hono/schemas/community.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 const API_BASE_URL = "/api/v1";

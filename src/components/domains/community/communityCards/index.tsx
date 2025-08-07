@@ -1,11 +1,11 @@
 import React from "react";
 import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
-import { PostListItemResult } from "@/lib/schemas/post.schema";
+import { PostResponse } from "@/lib/hono/schemas/community.schema";
 import { Spinner } from "@/components/commons/loading/Spinner";
 
 interface ICommunityCardsProps {
-  postData: PostListItemResult[];
+  postData: PostResponse[];
   selectedTab: string;
   isLoading?: boolean;
   isIdle?: boolean;
@@ -50,7 +50,7 @@ export default function CommunityCards({
                     title={title}
                     content={content}
                     author={author.nickname}
-                    createdAt={createdAt}
+                    createdAt={createdAt.toString()}
                     profileImage={author.imageUrl}
                     meta={[
                       { type: "Like", count: likeCount },

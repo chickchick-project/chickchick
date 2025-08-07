@@ -2,8 +2,7 @@ import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import * as ReviewServices from "@/lib/hono/services/review.service";
 import {
   ReviewResponseSchema,
-  CreateReviewSchema,
-  CreateReviewBodySchema,
+  CreateReviewPayloadSchema,
 } from "@/lib/hono/schemas/review.schema";
 import { AppContext } from "@/lib/hono/app";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
@@ -145,11 +144,10 @@ const createReviewRoute = createRoute({
           example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
         }),
     }),
-    query: CreateReviewSchema,
     body: {
       content: {
         "application/json": {
-          schema: CreateReviewBodySchema,
+          schema: CreateReviewPayloadSchema,
         },
       },
       description: "생성할 리뷰 정보",
@@ -167,16 +165,16 @@ const createReviewRoute = createRoute({
 
 authenticatedApi.openapi(createReviewRoute, async (c) => {
   const { perfumeId } = c.req.param();
-  const queryData = c.req.valid("query");
-  const bodyData = c.req.valid("json");
+  const validatedData = c.req.valid("json");
   const user = getAuthenticatedUser(c);
 
   const payload = {
-    ...queryData,
-    ...bodyData,
+    ...validatedData,
     perfumeId,
     authorId: user.id,
   } as const;
+
+  console.log("Validated payload from body:", payload);
 
   const result = await ReviewServices.createReviewService(payload);
 

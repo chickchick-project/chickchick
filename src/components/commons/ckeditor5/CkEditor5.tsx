@@ -172,6 +172,7 @@ export default function CkEditor5({
         translations: [translations],
       },
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLayoutReady]);
 
   return (
