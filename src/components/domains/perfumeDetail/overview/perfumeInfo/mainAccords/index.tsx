@@ -1,10 +1,9 @@
 import AccordChip from "@/components/commons/chip/AccordChip";
-import { TAccords } from "@/lib/constants/accords";
 
 interface PerfumeInfoMainAccordProps {
   accords: {
     id: string;
-    name: TAccords;
+    name: string;
   }[];
 }
 

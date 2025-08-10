@@ -6,6 +6,7 @@ import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { useState } from "react";
 import { ReviewModal } from "@/components/modal/reviewModal/ReviewModal";
+// import ReviewMobileSection from "./ReviewMobileSection";
 
 export const ReviewAnalytics = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -16,7 +17,9 @@ export const ReviewAnalytics = () => {
         <ReviewDoughnutSection />
         <ReviewBarSection />
       </section>
-      <section className="tablet:hidden"></section>
+      <section className="tablet:hidden">
+        {/* <ReviewMobileSection /> */}
+      </section>
       <section className="hidden tablet:block w-60 self-center">
         <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
           주현님의 소중한 의견을 나눠주세요!

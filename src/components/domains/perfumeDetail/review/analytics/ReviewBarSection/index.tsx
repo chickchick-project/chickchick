@@ -22,7 +22,7 @@ export const ReviewBarSection = () => {
     {
       title: "계절",
       items: [
-        { label: "      겨울", value: 1, color: "#6F4D3F" },
+        { label: "겨울", value: 1, color: "#6F4D3F" },
         { label: "가을", value: 2, color: "#A47764" },
         { label: "여름", value: 3, color: "#DBC0B0" },
         { label: "봄", value: 4, color: "#EAD8C4" },
@@ -31,7 +31,7 @@ export const ReviewBarSection = () => {
     {
       title: "시간",
       items: [
-        { label: "              밤", value: 500, color: "#6F4D3F" },
+        { label: "밤", value: 500, color: "#6F4D3F" },
         { label: "낮", value: 51, color: "#EAD8C4" },
       ],
     },
