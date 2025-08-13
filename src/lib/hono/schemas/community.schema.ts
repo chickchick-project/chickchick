@@ -43,6 +43,7 @@ export const GetPostsQuerySchema = CursorPaginationSchema.extend({
 export const CreatePostBodySchema = PostSchema.pick({
   title: true,
   content: true,
+  contentText: true,
   category: true,
   thumbnailUrl: true,
 }).extend({
