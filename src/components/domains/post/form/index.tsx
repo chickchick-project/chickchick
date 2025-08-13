@@ -26,7 +26,6 @@ interface IPostFormProps {
 export default function PostForm({ type, initialData }: IPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-
   // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
   const method = useForm<CreatePost>({
@@ -49,32 +48,26 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
   const onSubmit = async (data: CreatePost) => {
     setIsLoading(true);
 
-    const thumbnailUrl = extractFirstImageSrc(data.content);
-    const contentText = getPlainText(data.content);
-    const postData: CreatePost = {
-      ...data,
-      thumbnailUrl,
-      contentText,
-    };
-    if (type === "create") {
-      try {
+    try {
+      const thumbnailUrl = extractFirstImageSrc(data.content);
+      const contentText = getPlainText(data.content);
+      const postData: CreatePost = {
+        ...data,
+        thumbnailUrl,
+        contentText,
+      };
+
+      if (type === "create") {
         const result = await submitNewPost(postData);
         if (result.success && result.data) {
           router.push(`/community/post/${result.data.id}`);
         }
-        //  else {
-        //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
-        // }
-      } catch (error) {
-        console.error("Error submitting new post:", error);
-        // setServerError(
-        //   error instanceof Error
-        //     ? error.message
-        //     : "알 수 없는 오류가 발생했습니다."
-        // );
-      } finally {
-        setIsLoading(false);
       }
+      //게시글 수정 추가
+    } catch (error) {
+      console.error("Error submitting new post:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
