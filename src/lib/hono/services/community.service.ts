@@ -34,7 +34,7 @@ export async function getPaginatedPostListService(
     if (q) {
       where.OR = [
         { title: { contains: q, mode: "insensitive" } },
-        { content: { contains: q, mode: "insensitive" } },
+        { contentText: { contains: q, mode: "insensitive" } },
       ];
     }
 
