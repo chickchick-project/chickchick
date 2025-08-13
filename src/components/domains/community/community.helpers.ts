@@ -42,7 +42,7 @@ async function fetchCommunityPostList(
 
     const response = await fetch(
       `${API_BASE_URL}/community/posts?${queryParams.toString()}`,
-      { method: "GET", next: { revalidate: 300 } }
+      { method: "GET", next: { revalidate: 60 } }
     );
 
     if (!response.ok) {
