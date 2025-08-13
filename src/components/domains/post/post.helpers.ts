@@ -1,4 +1,6 @@
-import { TPostFormData } from "./form/postSchema";
+import { CreatePost, PostResponse } from "@/lib/hono/schemas/community.schema";
+import { COMMUNITY_URL } from "../postDetail/postDetail.helpers";
+import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 type TSubmitNewPostResponse = {
   success: boolean;
@@ -7,9 +9,9 @@ type TSubmitNewPostResponse = {
 };
 
 export async function submitNewPost(
-  postFormData: TPostFormData
-): Promise<TSubmitNewPostResponse> {
-  const response = await fetch("/api/community/post", {
+  postFormData: CreatePost
+): Promise<ApiSuccessResponse<PostResponse>> {
+  const response = await fetch(`${COMMUNITY_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -21,5 +23,5 @@ export async function submitNewPost(
     throw new Error(data.message || `API Error: ${response.status}`);
   }
 
-  return { success: data.success, postId: data.post.id };
+  return data;
 }

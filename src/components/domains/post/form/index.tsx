@@ -12,27 +12,33 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TPostCategory } from "@/lib/queries/community/postQueries";
 import PostCategory from "./PostCategory";
 import { submitNewPost } from "../post.helpers";
-import { TPostFormData, postSchema } from "./postSchema";
+import {
+  CreatePost,
+  CreatePostBodySchema,
+} from "@/lib/hono/schemas/community.schema";
+import { getPlainText } from "@/lib/utils/getPlainText";
 
 interface IPostFormProps {
   type: "create" | "edit";
-  initialData?: TPostFormData;
+  initialData?: CreatePost;
 }
 
 export default function PostForm({ type, initialData }: IPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  // const [serverError, setServerError] = useState<string | null>(null);
+
   // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
-  const method = useForm<TPostFormData>({
-    resolver: zodResolver(postSchema),
+  const method = useForm<CreatePost>({
+    resolver: zodResolver(CreatePostBodySchema),
     mode: "onChange",
     defaultValues: {
       category: initialData?.category ?? ("" as unknown as TPostCategory),
       title: initialData?.title ?? "",
       content: initialData?.content ?? "",
+      contentText: initialData?.contentText ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
+      perfumeIds: initialData?.perfumeIds,
     },
   });
   const {
@@ -40,20 +46,21 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     formState: { isValid, isDirty },
   } = method;
 
-  const onSubmit = async (data: TPostFormData) => {
+  const onSubmit = async (data: CreatePost) => {
     setIsLoading(true);
-    // setServerError(null);
-    const thumbnailUrl = extractFirstImageSrc(data.content);
 
-    const postData: TPostFormData = {
+    const thumbnailUrl = extractFirstImageSrc(data.content);
+    const contentText = getPlainText(data.content);
+    const postData: CreatePost = {
       ...data,
       thumbnailUrl,
+      contentText,
     };
     if (type === "create") {
       try {
         const result = await submitNewPost(postData);
-        if (result.success && result.postId) {
-          router.push(`/community/post/${result.postId}`);
+        if (result.success && result.data) {
+          router.push(`/community/post/${result.data.id}`);
         }
         //  else {
         //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
