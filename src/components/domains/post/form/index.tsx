@@ -9,7 +9,6 @@ import PostTitle from "./PostTitle";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TPostCategory } from "@/lib/queries/community/postQueries";
 import PostCategory from "./PostCategory";
 import { submitNewPost } from "../post.helpers";
 import {
@@ -17,6 +16,7 @@ import {
   CreatePostBodySchema,
 } from "@/lib/hono/schemas/community.schema";
 import { getPlainText } from "@/lib/utils/getPlainText";
+import { PostCategory as TPostCategory } from "@prisma/client";
 
 interface IPostFormProps {
   type: "create" | "edit";

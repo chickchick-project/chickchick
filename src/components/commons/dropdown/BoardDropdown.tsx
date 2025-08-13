@@ -2,13 +2,13 @@
 import { useState } from "react";
 import Dropdown from "./DropdownBase";
 import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/lib/constants/options";
-import { TPostCategory } from "@/lib/queries/community/postQueries";
+import { PostCategory } from "@prisma/client";
 
 interface IBoardDropdownProps {
   currentOption?: string | null;
   id: string;
   ariaLabelledBy?: string;
-  onChange?: (category: TPostCategory) => void;
+  onChange?: (category: PostCategory) => void;
 }
 
 export default function BoardDropdown({
@@ -25,7 +25,7 @@ export default function BoardDropdown({
 
   const handleSortChange = (option: Option) => {
     setSelectedOption(option);
-    onChange?.(option.value as TPostCategory);
+    onChange?.(option.value as PostCategory);
   };
   const width = "tablet:w-[128px]";
 
