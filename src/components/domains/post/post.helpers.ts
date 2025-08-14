@@ -2,12 +2,6 @@ import { CreatePost, PostResponse } from "@/lib/hono/schemas/community.schema";
 import { COMMUNITY_URL } from "../postDetail/postDetail.helpers";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
-type TSubmitNewPostResponse = {
-  success: boolean;
-  postId?: string;
-  message?: string;
-};
-
 export async function submitNewPost(
   postFormData: CreatePost
 ): Promise<ApiSuccessResponse<PostResponse>> {
