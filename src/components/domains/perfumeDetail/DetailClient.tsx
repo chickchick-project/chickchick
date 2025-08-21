@@ -9,14 +9,17 @@ import { PerfumeRecentViewList } from "./recentViewList";
 import { PerfumeReview } from "./review";
 import { PerfumeDetailSidebar } from "./sidebar";
 import { MobileSeparator } from "@/components/commons/mobileSeparator";
+import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
 
 export const DetailClient = ({
   perfumeDetail,
+  reviewData,
 }: {
   perfumeDetail: TPerfumeDetail;
+  reviewData: ReviewResponse[];
 }) => {
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
@@ -45,7 +48,7 @@ export const DetailClient = ({
       <MobileSeparator className="pc:h-px pc:bg-gray-200" mobileOnly={false} />
       <section className="w-full flex flex-col pc:flex-row pc:justify-between">
         <div className="flex flex-col pc:gap-[60px]">
-          <PerfumeReview />
+          <PerfumeReview data={reviewData} />
           <MobileSeparator />
           <PerfumeRecentViewList />
         </div>
