@@ -20,7 +20,7 @@ export default async function PerfumeDetailPage({
 
   return (
     <DetailClient
-      perfumeDetail={perfumeDetail}
+      perfumeDetail={perfumeDetailRaw}
       reviewData={perfumeReviewData}
     />
   );
