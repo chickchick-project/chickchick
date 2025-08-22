@@ -1,4 +1,5 @@
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
+import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
 import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
 import { getPerfumeById } from "@/lib/utils/getPerfumeById";
 import { mapPerfumeDetail } from "@/lib/utils/mapPerfumeDetail";
@@ -18,7 +19,14 @@ export default async function PerfumeDetailPage({
     return <div>향수 정보 매핑 실패</div>;
   }
 
-  return <DetailClient perfumeDetail={perfumeDetail} />;
+  const perfumeReviewData = await getReviewData(id);
+
+  return (
+    <DetailClient
+      perfumeDetail={perfumeDetail}
+      reviewData={perfumeReviewData}
+    />
+  );
 }
 
 // temp: SEO 개선 하기

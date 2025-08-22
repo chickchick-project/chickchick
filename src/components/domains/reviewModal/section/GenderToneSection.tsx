@@ -16,7 +16,7 @@ export const GenderToneSection = () => {
         control={control}
         render={({ field }) => (
           <div className="flex gap-[60px] justify-center items-center w-full">
-            {REVIEW_OPTIONS.gender_tone.map((option) => (
+            {REVIEW_OPTIONS.genderTone.map((option) => (
               <RadioButton
                 key={option.key}
                 isSelected={field.value === option.key}
