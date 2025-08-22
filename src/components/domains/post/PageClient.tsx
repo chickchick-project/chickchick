@@ -1,12 +1,12 @@
 "use client";
 
 import PostForm from "./form";
-import { TPostFormData } from "./form/postSchema";
 import Header from "./header";
+import { CreatePost } from "@/lib/hono/schemas/community.schema";
 
 interface IPostFormPageProps {
   type: "create" | "edit";
-  initialData?: TPostFormData;
+  initialData?: CreatePost;
 }
 
 export default function PageClient({ type, initialData }: IPostFormPageProps) {

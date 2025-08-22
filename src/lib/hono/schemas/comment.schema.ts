@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { CommentSchema, UserSchema } from "@zod/modelSchema";
+import { CursorPaginationSchema } from "./common.schema";
 
 const ReplyResponseSchema = CommentSchema.extend({
   author: UserSchema.pick({
@@ -30,7 +31,21 @@ export const PostIdParamSchema = z.object({
   postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
 });
 
+export const GetCommentQuerySchema = CursorPaginationSchema.extend({
+  postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
+});
+
+export const PaginatedCommentResponseSchema = z.object({
+  data: z.array(CommentResponseSchema),
+  nextCursor: z.string().uuid().nullable(),
+  totalCount: z.number().optional(),
+});
+
+export type GetCommentQuery = z.infer<typeof GetCommentQuerySchema>;
 export type CommentReplyResponse = z.infer<typeof ReplyResponseSchema>;
 export type CommentResponse = z.infer<typeof CommentResponseSchema>;
+export type PaginatedCommentResponse = z.infer<
+  typeof PaginatedCommentResponseSchema
+>;
 export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
 export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;

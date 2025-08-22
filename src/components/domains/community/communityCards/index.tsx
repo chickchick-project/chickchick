@@ -31,7 +31,7 @@ export default function CommunityCards({
               ({
                 id,
                 title,
-                content,
+                contentText,
                 author,
                 createdAt,
                 category,
@@ -48,7 +48,7 @@ export default function CommunityCards({
                     id={id}
                     thumbnail={thumbnailUrl}
                     title={title}
-                    content={content}
+                    content={contentText}
                     author={author.nickname}
                     createdAt={createdAt.toString()}
                     profileImage={author.imageUrl}

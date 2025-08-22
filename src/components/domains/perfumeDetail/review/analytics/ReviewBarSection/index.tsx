@@ -1,46 +1,68 @@
 import React from "react";
 import { BarChart } from "./BarChart";
+import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 
-export const ReviewBarSection = () => {
-  const mockData = [
+const CATEGORY_LABEL_MAP = {
+  genderTone: [
+    { key: "MASCULINE", label: "남성적인", color: "#6F4D3F" },
+    { key: "UNISEX", label: "중성적인", color: "#A47764" },
+    { key: "FEMININE", label: "여성적인", color: "#EAD8C4" },
+  ],
+
+  season: [
+    { key: "WINTER", label: "겨울", color: "#6F4D3F" },
+    { key: "AUTUMN", label: "가을", color: "#A47764" },
+    { key: "SUMMER", label: "여름", color: "#DBC0B0" },
+    { key: "SPRING", label: "봄", color: "#EAD8C4" },
+  ],
+  timeOfDay: [
+    { key: "NIGHT", label: "밤", color: "#6F4D3F" },
+    { key: "DAY", label: "낮", color: "#EAD8C4" },
+  ],
+};
+
+type SeasonKey = "AUTUMN" | "SPRING" | "SUMMER" | "WINTER";
+
+const reviewAnalytics = (data: ReviewResponse[]) => {
+  const countByCategory = (category: keyof typeof CATEGORY_LABEL_MAP) => {
+    return CATEGORY_LABEL_MAP[category].map(({ key, label, color }) => {
+      let count = 0;
+      const typedKey = key as SeasonKey;
+      data.forEach((r) => {
+        const value = r.chips[category];
+        if (category === "season") {
+          if (value.includes(typedKey)) count++;
+        } else {
+          if (value === key) {
+            count++;
+          }
+        }
+      });
+      return { label, count, color };
+    });
+  };
+
+  return [
     {
       title: "이미지",
-      items: [
-        { label: "남성적인", value: 1, color: "#6F4D3F" },
-        { label: "중성적인", value: 2, color: "#A47764" },
-        { label: "여성적인", value: 3, color: "#EAD8C4" },
-      ],
-    },
-    {
-      title: "연령",
-      items: [
-        { label: "모든 연령대", value: 1000, color: "#6F4D3F" },
-        { label: "성숙한 층", value: 181, color: "#A47764" },
-        { label: "젊은 층", value: 51, color: "#EAD8C4" },
-      ],
+      items: countByCategory("genderTone"),
     },
     {
       title: "계절",
-      items: [
-        { label: "겨울", value: 1, color: "#6F4D3F" },
-        { label: "가을", value: 2, color: "#A47764" },
-        { label: "여름", value: 3, color: "#DBC0B0" },
-        { label: "봄", value: 4, color: "#EAD8C4" },
-      ],
+      items: countByCategory("season"),
     },
     {
       title: "시간",
-      items: [
-        { label: "밤", value: 500, color: "#6F4D3F" },
-        { label: "낮", value: 51, color: "#EAD8C4" },
-      ],
+      items: countByCategory("timeOfDay"),
     },
   ];
+};
 
+export const ReviewBarSection = ({ data }: { data: ReviewResponse[] }) => {
   return (
     <section className="w-full p-9 pb-5 rounded-xl shadow-card">
       <ul className="grid grid-cols-2 gap-x-9 gap-y-5 w-full">
-        {mockData.map((block) => (
+        {reviewAnalytics(data).map((block) => (
           <li key={block.title}>
             <BarChart title={block.title} data={block.items} />
           </li>

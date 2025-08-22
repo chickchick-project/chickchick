@@ -27,6 +27,8 @@ export const useInitialize = (method: UseFormReturn<Review>) => {
       });
     } catch (error) {
       console.error(error);
+    } finally {
+      window.location.reload();
     }
   };
 

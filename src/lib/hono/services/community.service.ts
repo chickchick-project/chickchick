@@ -34,7 +34,7 @@ export async function getPaginatedPostListService(
     if (q) {
       where.OR = [
         { title: { contains: q, mode: "insensitive" } },
-        { content: { contains: q, mode: "insensitive" } },
+        { contentText: { contains: q, mode: "insensitive" } },
       ];
     }
 
@@ -82,9 +82,15 @@ export async function getPostByIdService(
   userId?: string | null
 ): Promise<ServiceResult<CommunitySchemas.PostDetailResponse>> {
   try {
-    const post = await prisma.post.findUnique({
-      where: { id },
-      ...postWithAuthorArgs,
+    const post = await prisma.$transaction(async (tx) => {
+      await tx.post.update({
+        where: { id },
+        data: { viewCount: { increment: 1 } }, //조회수 증가로직 게시글 조회 시 1 올릴지 따로 api를 만들지 논의 필요
+      });
+      return tx.post.findUnique({
+        where: { id },
+        ...postWithAuthorArgs,
+      });
     });
 
     if (!post) {

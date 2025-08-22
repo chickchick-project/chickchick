@@ -16,7 +16,7 @@ type BarChartProps = {
   title: string;
   data: {
     label: string;
-    value: number;
+    count: number;
     color: string;
   }[];
 };
@@ -26,7 +26,7 @@ export const BarChart = ({ title, data }: BarChartProps) => {
     labels: data.map((d) => d.label),
     datasets: [
       {
-        data: data.map((d) => d.value),
+        data: data.map((d) => d.count),
         backgroundColor: data.map((d) => d.color),
         hoverBackgroundColor: data.map((d) => d.color),
         borderRadius: 10,

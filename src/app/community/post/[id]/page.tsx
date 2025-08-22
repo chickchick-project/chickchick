@@ -12,11 +12,12 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
 
   const requestHeaders = {
     Cookie: cookieStore.toString(),
   };
+
   try {
     const [postResult, postStatusResult, commentsResult] = await Promise.all([
       getPostDetailById(id, requestHeaders),

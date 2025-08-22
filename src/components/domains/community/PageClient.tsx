@@ -10,10 +10,10 @@ import {
   getApiSortBy,
   getUniquePostList,
 } from "./community.helpers";
-import { TPostCategory } from "@/lib/queries/community/postQueries";
 import { PostResponse } from "@/lib/hono/schemas/community.schema";
 import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { Option, TSortBy } from "@/lib/constants/options";
+import { PostCategory } from "@prisma/client";
 
 export default function PageClient() {
   const router = useRouter();
@@ -68,7 +68,7 @@ export default function PageClient() {
           cursor,
           searchText: searchKeyword,
           category:
-            selectedTab === "BEST" ? undefined : (selectedTab as TPostCategory),
+            selectedTab === "BEST" ? undefined : (selectedTab as PostCategory),
           sortBy: sortByForApi,
         })
       ),

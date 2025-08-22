@@ -9,30 +9,35 @@ import PostTitle from "./PostTitle";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TPostCategory } from "@/lib/queries/community/postQueries";
 import PostCategory from "./PostCategory";
 import { submitNewPost } from "../post.helpers";
-import { TPostFormData, postSchema } from "./postSchema";
+import {
+  CreatePost,
+  CreatePostBodySchema,
+} from "@/lib/hono/schemas/community.schema";
+import { getPlainText } from "@/lib/utils/getPlainText";
+import { PostCategory as TPostCategory } from "@prisma/client";
 
 interface IPostFormProps {
   type: "create" | "edit";
-  initialData?: TPostFormData;
+  initialData?: CreatePost;
 }
 
 export default function PostForm({ type, initialData }: IPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  // const [serverError, setServerError] = useState<string | null>(null);
   // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
-  const method = useForm<TPostFormData>({
-    resolver: zodResolver(postSchema),
+  const method = useForm<CreatePost>({
+    resolver: zodResolver(CreatePostBodySchema),
     mode: "onChange",
     defaultValues: {
       category: initialData?.category ?? ("" as unknown as TPostCategory),
       title: initialData?.title ?? "",
       content: initialData?.content ?? "",
+      contentText: initialData?.contentText ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
+      perfumeIds: initialData?.perfumeIds,
     },
   });
   const {
@@ -40,34 +45,29 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     formState: { isValid, isDirty },
   } = method;
 
-  const onSubmit = async (data: TPostFormData) => {
+  const onSubmit = async (data: CreatePost) => {
     setIsLoading(true);
-    // setServerError(null);
-    const thumbnailUrl = extractFirstImageSrc(data.content);
 
-    const postData: TPostFormData = {
-      ...data,
-      thumbnailUrl,
-    };
-    if (type === "create") {
-      try {
+    try {
+      const thumbnailUrl = extractFirstImageSrc(data.content);
+      const contentText = getPlainText(data.content);
+      const postData: CreatePost = {
+        ...data,
+        thumbnailUrl,
+        contentText,
+      };
+
+      if (type === "create") {
         const result = await submitNewPost(postData);
-        if (result.success && result.postId) {
-          router.push(`/community/post/${result.postId}`);
+        if (result.success && result.data) {
+          router.push(`/community/post/${result.data.id}`);
         }
-        //  else {
-        //   setServerError(result?.message || "게시글 작성에 실패했습니다.");
-        // }
-      } catch (error) {
-        console.error("Error submitting new post:", error);
-        // setServerError(
-        //   error instanceof Error
-        //     ? error.message
-        //     : "알 수 없는 오류가 발생했습니다."
-        // );
-      } finally {
-        setIsLoading(false);
       }
+      //게시글 수정 추가
+    } catch (error) {
+      console.error("Error submitting new post:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

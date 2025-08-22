@@ -16,7 +16,7 @@ export const PriceSection = () => {
         control={control}
         render={({ field }) => (
           <div className="flex tablet:flex-row flex-col gap-4">
-            {REVIEW_OPTIONS.price_perception.map((option) => (
+            {REVIEW_OPTIONS.pricePerception.map((option) => (
               <SelectButton
                 key={option.key}
                 width="w-full tablet:w-[198px]"

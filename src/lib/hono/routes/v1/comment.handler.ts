@@ -57,6 +57,41 @@ commentsApi.openapi(
 );
 
 /**
+ * @method GET
+ * @path /{postId}/cursor
+ * @summary 댓글 목록 조회 (커서 기반)
+ */
+
+const getCommentCursorRoute = createRoute({
+  method: "get",
+  path: "/{postId}/cursor",
+  summary: "댓글 목록 조회 (커서 기반)",
+  request: {
+    query: CommentSchemas.GetCommentQuerySchema,
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: CommentSchemas.PaginatedCommentResponseSchema,
+      description: "댓글 목록",
+    },
+    ["404"]
+  ),
+  tags: ["Comment"],
+});
+
+commentsApi.openapi(getCommentCursorRoute, async (c) => {
+  const queryParams = c.req.valid("query");
+  const result = await CommentServices.getPaginatedCommentService(queryParams);
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") {
+      return apiNotFound(c, result.message);
+    }
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "댓글 목록을 성공적으로 불러왔습니다.");
+});
+
+/**
  * @method POST
  * @path /{postId}
  * @summary 댓글 생성

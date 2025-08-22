@@ -1,4 +1,5 @@
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
+import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
 import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
 import { getPerfumeDetailRaw } from "@/lib/utils/getPerfumeById";
 
@@ -15,7 +16,14 @@ export default async function PerfumeDetailPage({
     return <div>향수를 찾을 수 없습니다.</div>;
   }
 
-  return <DetailClient perfumeDetail={perfumeDetailRaw} />;
+  const perfumeReviewData = await getReviewData(id);
+
+  return (
+    <DetailClient
+      perfumeDetail={perfumeDetail}
+      reviewData={perfumeReviewData}
+    />
+  );
 }
 
 // temp: SEO 개선 하기

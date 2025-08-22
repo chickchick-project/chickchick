@@ -6,7 +6,7 @@ import {
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 const API_BASE_URL = "http://localhost:3000/api";
-const COMMUNITY_URL = `${API_BASE_URL}/v1/community/posts`;
+export const COMMUNITY_URL = `${API_BASE_URL}/v1/community/posts`;
 
 export async function getPostDetailById(
   postId: string,

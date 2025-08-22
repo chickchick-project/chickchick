@@ -16,7 +16,7 @@ export const TimeSection = () => {
         control={control}
         render={({ field }) => (
           <div className="flex gap-[120px] justify-center items-center w-full">
-            {REVIEW_OPTIONS.time_of_day.map((option) => (
+            {REVIEW_OPTIONS.timeOfDay.map((option) => (
               <RadioButton
                 key={option.key}
                 isSelected={field.value === option.key}
