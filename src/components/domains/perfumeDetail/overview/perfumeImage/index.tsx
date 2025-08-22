@@ -10,7 +10,7 @@ export const PerfumeImage = ({ src, alt }: PerfumeImageProps) => {
   return (
     <div className="relative w-full aspect-square shadow-card rounded-xl">
       <Image
-        src={src}
+        src={src || "/images/Logo_rectangle.svg"}
         alt={alt}
         fill
         sizes={`

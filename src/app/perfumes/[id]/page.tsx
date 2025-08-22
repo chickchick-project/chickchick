@@ -1,8 +1,7 @@
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
 import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
 import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
-import { getPerfumeById } from "@/lib/utils/getPerfumeById";
-import { mapPerfumeDetail } from "@/lib/utils/mapPerfumeDetail";
+import { getPerfumeDetailRaw } from "@/lib/utils/getPerfumeById";
 
 export default async function PerfumeDetailPage({
   params,
@@ -10,20 +9,18 @@ export default async function PerfumeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeById(id);
+  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeDetailRaw(
+    id
+  );
   if (!perfumeDetailRaw) {
     return <div>향수를 찾을 수 없습니다.</div>;
-  }
-  const perfumeDetail = mapPerfumeDetail(perfumeDetailRaw);
-  if (!perfumeDetail) {
-    return <div>향수 정보 매핑 실패</div>;
   }
 
   const perfumeReviewData = await getReviewData(id);
 
   return (
     <DetailClient
-      perfumeDetail={perfumeDetail}
+      perfumeDetail={perfumeDetailRaw}
       reviewData={perfumeReviewData}
     />
   );
