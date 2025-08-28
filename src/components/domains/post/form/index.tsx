@@ -14,7 +14,7 @@ import {
   CreatePost,
   CreatePostBodySchema,
 } from "@/lib/hono/schemas/community.schema";
-import { getPlainText } from "@/lib/utils/getPlainText";
+import getPlainText from "@/lib/utils/getPlainText";
 import { PostCategory as TPostCategory } from "@prisma/client";
 import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
 
