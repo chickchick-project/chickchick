@@ -18,7 +18,16 @@ export interface MutateApiOptions<RawData, TransformedData>
 }
 
 function objectToQueryString(params: Record<string, unknown>): string {
-  return new URLSearchParams(params as Record<string, string>).toString();
+  const entries = Object.entries(params);
+  const filteredEntries = entries.filter(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ([_key, value]) => value !== undefined && value !== null
+  );
+  const cleanedParams = Object.fromEntries(filteredEntries);
+
+  return new URLSearchParams(
+    cleanedParams as Record<string, string>
+  ).toString();
 }
 
 export function createHttpClient(config: LibraryConfig) {
