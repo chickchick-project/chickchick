@@ -42,7 +42,7 @@ export default function PostRelatedPerfume() {
 
   useEffect(() => {
     setValue("perfumeIds", selectedPerfumesIds);
-  }, [selectedPerfumes, setValue]);
+  }, [selectedPerfumes, setValue, selectedPerfumesIds]);
 
   useEffect(() => {
     const fetchAndSetResults = async () => {
@@ -66,7 +66,7 @@ export default function PostRelatedPerfume() {
     };
 
     fetchAndSetResults();
-  }, [debouncedSearchQuery, close, open, dropdownId]);
+  }, [debouncedSearchQuery, close, open, dropdownId, setSearchResults]);
 
   return (
     <>
