@@ -15,6 +15,7 @@ import {
   apiSuccess,
   apiInternalError,
   apiCreated,
+  apiForbidden,
 } from "../../utils/apiResponse.utils";
 
 const communityApi = new OpenAPIHono<AppContext>();
@@ -177,6 +178,38 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
   return apiCreated(c, result.data, "게시글을 성공적으로 생성했습니다.");
 });
 
+const deletePostRoute = createRoute({
+  method: "delete",
+  path: "/posts/{id}",
+  summary: "커뮤니티 게시글 삭제",
+  description: "커뮤니티 게시글 비공개 처리로 삭제",
+  request: {
+    params: CommunitySchemas.PostIdParamSchema,
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.PostResponseSchema,
+      description: "삭제된 게시글 정보",
+    },
+    ["400", "403", "404"]
+  ),
+  tags: ["Community"],
+});
+
+authenticatedApi.openapi(deletePostRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = await getAuthenticatedUser(c);
+  const result = await CommunityServices.deletePostService(id, user.id);
+
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "게시글을 성공적으로 삭제했습니다.");
+});
+
 /**
  * @method POST
  * @path /posts/{id}/like
@@ -193,7 +226,7 @@ const likePostRoute = createRoute({
       schema: CommunitySchemas.PostResponseSchema,
       description: "게시글",
     },
-    ["401", "404"]
+    ["401", "403", "404"]
   ),
   tags: ["Community"],
 });
