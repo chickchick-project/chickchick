@@ -2,7 +2,7 @@ import ButtonBase, { IButtonBaseProps } from "./ButtonBase";
 
 export type IButtonFilledProps = Omit<IButtonBaseProps, "bgColor">;
 
-export const buttonLargeHeight = "h-[33px] tablet:h-[43px]";
+export const buttonLargeHeight = "h-[43px]";
 export const buttonSmallHeight = "h-[33px]";
 const buttonFilledBase = `text-center rounded-full leading-none flex justify-center items-center `;
 

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import PostEditor from "./PostEditor";
 import PostFormActions from "./PostFormActions";
-import PostRelatedPerfume from "./PostRelatedPerfume";
 import PostTitle from "./PostTitle";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import { useForm, FormProvider } from "react-hook-form";
@@ -17,6 +16,7 @@ import {
 } from "@/lib/hono/schemas/community.schema";
 import { getPlainText } from "@/lib/utils/getPlainText";
 import { PostCategory as TPostCategory } from "@prisma/client";
+import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
 
 interface IPostFormProps {
   type: "create" | "edit";
@@ -26,7 +26,6 @@ interface IPostFormProps {
 export default function PostForm({ type, initialData }: IPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  // const [relatedPerfume, setRelatedPerfume] = useState<string | null>(null);
 
   const method = useForm<CreatePost>({
     resolver: zodResolver(CreatePostBodySchema),
@@ -79,7 +78,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
         className="w-full flex flex-col items-center gap-14"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <div className="w-full grid grid-cols-1 tablet:grid-cols-[85px_1fr] tablet:gap-x-[200px] gap-y-2 tablet:gap-y-14">
+        <div className="w-full grid grid-cols-1 tablet:grid-cols-[85px_1fr] tablet:gap-x-[30px] pc:gap-x-[200px] gap-y-2 tablet:gap-y-14">
           <PostCategory />
           <PostTitle />
           <PostEditor />
