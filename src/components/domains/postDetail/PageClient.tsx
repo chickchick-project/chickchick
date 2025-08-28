@@ -24,6 +24,7 @@ export default function PageClient({
     <article>
       <PostDetailHeader postStatus={postStatus} {...postDetailHeader} />
       <PostContent
+        postId={postDetail.id}
         content={content}
         isAuthor={postDetail.isAuthor}
         relatedPerfumes={[]}
