@@ -65,3 +65,12 @@ export function serviceInternalError(
       : "알 수 없는 내부 오류가 발생했습니다.";
   return { success: false, error: "INTERNAL_ERROR", message };
 }
+
+/**
+ * 'FORBIDDEN' 에러 결과 객체를 생성합니다.
+ */
+export function serviceForbidden(
+  message = "요청을 수행할 권한이 없습니다."
+): ServiceResult<never, "FORBIDDEN"> {
+  return { success: false, error: "FORBIDDEN", message };
+}

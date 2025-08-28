@@ -91,6 +91,26 @@ export async function getPostDetailStatusById(
   }
 }
 
+export async function deletePostById(
+  postId: string
+): Promise<ApiSuccessResponse<PostResponse>> {
+  try {
+    const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "게시글 삭제에 실패했습니다.");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("게시글 삭제 API 호출 실패:", error);
+    throw error;
+  }
+}
+
 export async function toggleBookmarkedPostById(
   postId: string
 ): Promise<ApiSuccessResponse<PostResponse>> {

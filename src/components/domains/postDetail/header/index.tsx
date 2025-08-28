@@ -52,7 +52,7 @@ export default function PostDetailHeader(props: PostDetailHeaderProps) {
           isAuthor={false}
           info={postReactionInfo}
         />
-        {isAuthor && <PostActions section="header" />}
+        {isAuthor && <PostActions section="header" postId={postId} />}
       </div>
       <div className="divider-horizontal mt-4 tablet:mt-5 mb-10" />
     </header>
