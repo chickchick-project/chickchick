@@ -1,6 +1,7 @@
 import { CreatePost, PostResponse } from "@/lib/hono/schemas/community.schema";
-import { COMMUNITY_URL } from "../postDetail/postDetail.helpers";
+import { API_BASE_URL, COMMUNITY_URL } from "../postDetail/postDetail.helpers";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export async function submitNewPost(
   postFormData: CreatePost
@@ -18,4 +19,27 @@ export async function submitNewPost(
   }
 
   return data;
+}
+
+export async function searchPerfumesByName(
+  searchText: string
+): Promise<ApiSuccessResponse<PerfumeBaseResponse[]>> {
+  try {
+    const queryParams = new URLSearchParams();
+    queryParams.append("q", searchText);
+    queryParams.append("limit", "50");
+    const response = await fetch(
+      `${API_BASE_URL}/search/perfumes?${queryParams.toString()}`
+    );
+    if (!response.ok) {
+      throw new Error("향수 검색에 실패했습니다.");
+    }
+
+    const result = await response.json();
+
+    return result.data;
+  } catch (error) {
+    console.error("searchPerfumesByName 오류:", error);
+    throw error;
+  }
 }
