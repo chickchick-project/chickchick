@@ -1,4 +1,5 @@
 import type { LibraryConfig } from "./config";
+import { manageTokenRefresh } from "./token";
 
 // --- 타입 정의 ---
 export interface CustomRequestInit extends RequestInit {
@@ -33,9 +34,6 @@ export class APIError extends Error {
 export function createCoreClient(config: LibraryConfig) {
   const requestInterceptors: RequestInterceptor[] = [];
   const responseInterceptors: ResponseInterceptor[] = [];
-
-  let isRefreshing = false;
-  let refreshPromise: Promise<void> | null = null;
 
   // 요청 인터셉터 함수
   const useRequestInterceptor = (interceptor: RequestInterceptor) => {
@@ -73,14 +71,7 @@ export function createCoreClient(config: LibraryConfig) {
     let response = await fetch(url, reqConfig);
 
     if (response.status === 401 && !options.isRetry && config.refreshToken) {
-      if (!isRefreshing) {
-        isRefreshing = true;
-        refreshPromise = config.refreshToken().finally(() => {
-          isRefreshing = false;
-        });
-      }
-
-      await refreshPromise;
+      await manageTokenRefresh(config.refreshToken);
       return await request({ ...originalOptions, isRetry: true });
     }
 
