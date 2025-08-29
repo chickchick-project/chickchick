@@ -56,6 +56,8 @@ export function createCoreClient(config: LibraryConfig) {
       reqConfig = await interceptor(reqConfig);
     }
 
+    const headers = new Headers(reqConfig.headers);
+
     if (config.debug) {
       console.log(`[Request] Calling fetch for URL: ${url}`);
       try {
@@ -68,7 +70,7 @@ export function createCoreClient(config: LibraryConfig) {
       }
     }
 
-    let response = await fetch(url, reqConfig);
+    let response = await fetch(url, { ...reqConfig, headers });
 
     if (response.status === 401 && !options.isRetry && config.refreshToken) {
       await manageTokenRefresh(config.refreshToken);

@@ -3,6 +3,7 @@ import type { LibraryConfig } from "./config";
 
 export interface BaseApiOptions {
   cache?: RequestCache;
+  headers?: HeadersInit;
 }
 
 export interface GetApiOptions<RawData, TransformedData>
@@ -13,7 +14,6 @@ export interface GetApiOptions<RawData, TransformedData>
 
 export interface MutateApiOptions<RawData, TransformedData>
   extends BaseApiOptions {
-  headers?: HeadersInit;
   transformResponse?: (response: RawData) => TransformedData;
 }
 
