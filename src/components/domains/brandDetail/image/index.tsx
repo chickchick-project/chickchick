@@ -8,13 +8,13 @@ import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import Image from "next/image";
 import { useState } from "react";
 import ICONS from "@/lib/constants/icons";
+import { BrandMap } from "../map";
 
 interface IBrandDetailImageProps {
   images: {
-    order: number;
     src: string;
     alt: string;
-  }[];
+  };
 }
 
 export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
@@ -64,20 +64,21 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           setIsEnd(swiper.isEnd);
         }}
       >
-        {images.map((image) => (
-          <SwiperSlide key={image.order} className="pc:px-0 px-5">
-            <Image
-              src={image.src}
-              alt={image.alt}
-              width={1000}
-              height={400}
-              quality={100}
-              placeholder="blur"
-              blurDataURL="/images/BlurShimmer.svg"
-              className="rounded-xl w-full h-fit"
-            />
-          </SwiperSlide>
-        ))}
+        <SwiperSlide className="pc:px-0 px-5">
+          <Image
+            src={images.src}
+            alt={images.alt}
+            width={1200}
+            height={400}
+            quality={100}
+            placeholder="blur"
+            blurDataURL="/images/BlurShimmer.svg"
+            className="rounded-xl"
+          />
+        </SwiperSlide>
+        <SwiperSlide className="pc:px-0 px-5">
+          <BrandMap />
+        </SwiperSlide>
       </Swiper>
       <div
         className={`custom-prev absolute tablet:left-4 left-6 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${

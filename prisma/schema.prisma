@@ -37,6 +37,7 @@ model Brand {
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   nameEn      String    @unique @map("name_en")
   nameKo      String?   @unique @map("name_ko")
+  brandUrl    String?   @map("brand_url")
   perfumes    Perfume[] @relation("BrandToPerfumes")
 
   @@map("brands")
@@ -79,9 +80,9 @@ model Perfume {
   noteMappings     PerfumeNoteMapping[]   @relation("PerfumeToNoteMappings")
   brand            Brand                  @relation("BrandToPerfumes", fields: [brandId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfumeImage     PerfumeImage?          @relation("PerfumeToImage")
+  perfumeMappings  PostPerfumeMapping[]   @relation("PerfumeToPostMappings")
   reviews          Review[]               @relation("PerfumeToReviews")
   collectedByUsers UserCollection[]       @relation("PerfumeToUserCollections")
-  perfumeMappings PostPerfumeMapping[] @relation("PerfumeToPostMappings")
 
   @@map("perfumes")
 }
@@ -177,9 +178,8 @@ model PostPerfumeMapping {
   postId    String   @map("post_id") @db.Uuid
   perfumeId String   @map("perfume_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-
-  post    Post    @relation("PostToPerfumeMappings", fields: [postId], references: [id], onDelete: Cascade)
-  perfume Perfume @relation("PerfumeToPostMappings", fields: [perfumeId], references: [id], onDelete: Cascade)
+  perfume   Perfume  @relation("PerfumeToPostMappings", fields: [perfumeId], references: [id], onDelete: Cascade)
+  post      Post     @relation("PostToPerfumeMappings", fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, perfumeId], name: "post_perfume_unique_constraint")
   @@map("post_perfume_mappings")
@@ -209,48 +209,48 @@ model PostLike {
 }
 
 model Post {
-  id           String         @id @default(uuid()) @db.Uuid
-  title        String
-  content      String
-  contentText  String
-  userId       String         @map("user_id") @db.Uuid
-  category     PostCategory   @default(FREEBOARD)
-  published    Boolean        @default(true)
-  viewCount    Int            @default(0) @map("view_count")
-  likeCount    Int            @default(0) @map("like_count")
-  commentCount Int            @default(0) @map("comment_count")
-  thumbnailUrl String?        @map("thumbnail_url")
-  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime?      @updatedAt @map("updated_at") @db.Timestamptz(6)
-  comments     Comment[]      @relation("PostToComments")
-  bookmarks    PostBookmark[] @relation("PostToBookmarks")
-  likes        PostLike[]     @relation("PostToLikes")
-  author       User           @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
+  id              String               @id @default(uuid()) @db.Uuid
+  title           String
+  content         String
+  userId          String               @map("user_id") @db.Uuid
+  category        PostCategory         @default(FREEBOARD)
+  published       Boolean              @default(true)
+  viewCount       Int                  @default(0) @map("view_count")
+  likeCount       Int                  @default(0) @map("like_count")
+  commentCount    Int                  @default(0) @map("comment_count")
+  thumbnailUrl    String?              @map("thumbnail_url")
+  createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime?            @updatedAt @map("updated_at") @db.Timestamptz(6)
+  contentText     String
+  comments        Comment[]            @relation("PostToComments")
+  bookmarks       PostBookmark[]       @relation("PostToBookmarks")
+  likes           PostLike[]           @relation("PostToLikes")
   perfumeMappings PostPerfumeMapping[] @relation("PostToPerfumeMappings")
+  author          User                 @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("posts")
 }
 
 model Review {
-  id          String             @id @default(uuid()) @db.Uuid
-  authorId    String             @map("author_id") @db.Uuid
-  perfumeId   String             @map("perfume_id") @db.Uuid
-  content     String
-  usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
-  feeling     Feeling @default(DISLIKE)
-  longevity   Longevity @default(VERY_WEAK)
-  sillage     Sillage @default(INTIMATE)
-  genderTone GenderTone @default(UNISEX) @map("gender_tone")
-  season      Season[] @default([SPRING])
-  timeOfDay   TimeOfDay @default(DAY) @map("time_of_day")
-  pricePerception PricePerception @default(GOOD_VALUE) @map("price_perception")
-  createdAt   DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  author      User               @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
-  perfume     Perfume            @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
+  id              String             @id @default(uuid()) @db.Uuid
+  content         String
+  authorId        String             @map("author_id") @db.Uuid
+  perfumeId       String             @map("perfume_id") @db.Uuid
+  usageStatus     PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
+  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
+  longevity       Longevity          @default(VERY_WEAK)
+  pricePerception PricePerception    @default(GOOD_VALUE) @map("price_perception")
+  season          Season[]           @default([SPRING])
+  sillage         Sillage            @default(INTIMATE)
+  timeOfDay       TimeOfDay          @default(DAY) @map("time_of_day")
+  feeling         Feeling            @default(DISLIKE)
+  genderTone      GenderTone         @default(UNISEX) @map("gender_tone")
+  author          User               @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  perfume         Perfume            @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
-} 
+}
 
 model Comment {
   id        String    @id @default(uuid()) @db.Uuid
@@ -333,7 +333,6 @@ enum Feeling {
 enum Longevity {
   VERY_WEAK
   WEAK
-    
   LONG_LASTING
 }
 
