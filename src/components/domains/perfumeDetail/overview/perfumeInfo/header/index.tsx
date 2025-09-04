@@ -29,7 +29,7 @@ export const PerfumeInfoHeader = ({
   return (
     <header className="flex justify-between">
       <div className="flex flex-col gap-1">
-        <Link href="#" className="flex items-center gap-1">
+        <Link href={`/brand/${brandName}`} className="flex items-center gap-1">
           <span className="text-label-1 tablet:text-body-2 font-medium text-black-200">
             {brandName}
           </span>
