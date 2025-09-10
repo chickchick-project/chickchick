@@ -31,9 +31,7 @@ export const PostIdParamSchema = z.object({
   postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
 });
 
-export const GetCommentQuerySchema = CursorPaginationSchema.extend({
-  postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
-});
+export const GetCommentQuerySchema = CursorPaginationSchema;
 
 export const PaginatedCommentResponseSchema = z.object({
   data: z.array(CommentResponseSchema),
