@@ -11,7 +11,7 @@ export default function CommentForm({
   type,
   value,
   commentId,
-  parentId,
+  // parentId, // 답글 수정시 필요
   onSuccess,
   postId,
 }: ICommentFormProps) {
