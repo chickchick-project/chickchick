@@ -8,14 +8,17 @@ import {
   CommentResponse,
 } from "@/lib/hono/schemas/comment.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
+import { CommentAction, DELETE_COMMENT } from "../comment.reducer";
 
 export default function CommentListItem({
   commentActionState,
   comment,
+  onAction,
   isReplyType = false,
 }: {
   commentActionState: TCommentActionState;
   comment: CommentResponse | CommentReplyResponse;
+  onAction: (action: CommentAction) => void;
   isReplyType?: boolean;
 }) {
   const {
@@ -25,7 +28,7 @@ export default function CommentListItem({
     setReplyingCommentId,
   } = commentActionState;
   const { user } = useUserStore();
-  const { id, author, createdAt, content, postId } = comment;
+  const { id, author, createdAt, content, postId, parentId } = comment;
   const isAuthor = author.id === user?.id;
   const isEditing = editingCommentId === id;
   const isReplying = replyingCommentId === id;
@@ -53,7 +56,12 @@ export default function CommentListItem({
     },
     {
       type: "delete",
-      onClick: () => alert("삭제"),
+      onClick: () => {
+        if (window.confirm("댓글을 삭제하시겠습니까?")) {
+          //삭제 api 구현 후 연동 필요
+          onAction({ type: DELETE_COMMENT, payload: { id, parentId } }); //삭제처리 답글이 있는 경우 고려 필요
+        }
+      },
       disabled: isAnyCommentBeingReplied || isAnyCommentBeingEdited,
     },
   ];
@@ -79,6 +87,17 @@ export default function CommentListItem({
       actions.push(...authorActions);
     }
   }
+
+  const onEditSuccess = (action: CommentAction) => {
+    onAction(action);
+    setEditingCommentId(null);
+  };
+
+  const onReplySuccess = (action: CommentAction) => {
+    onAction(action);
+    setReplyingCommentId(null);
+  };
+
   return (
     <>
       <li>
@@ -100,10 +119,9 @@ export default function CommentListItem({
                 type="edit"
                 value={content}
                 commentId={editingCommentId}
+                parentId={parentId}
                 postId={postId}
-                onSuccess={() => {
-                  setEditingCommentId(null);
-                }}
+                onSuccess={onEditSuccess}
               />
             ) : (
               <p className="px-5 text-body-2 font-medium text-black-100 leading-6">
@@ -123,6 +141,7 @@ export default function CommentListItem({
               commentActionState={commentActionState}
               comment={reply}
               isReplyType
+              onAction={onAction}
             />
           </ul>
         ))}
@@ -143,7 +162,7 @@ export default function CommentListItem({
                 type="reply"
                 postId={postId}
                 commentId={replyingCommentId}
-                onSuccess={() => setReplyingCommentId(null)}
+                onSuccess={onReplySuccess}
               />
             </div>
           </section>

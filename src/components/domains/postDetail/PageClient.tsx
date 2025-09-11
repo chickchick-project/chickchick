@@ -1,3 +1,6 @@
+"use client";
+
+import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import CommentSection from "./commentSection";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
@@ -6,23 +9,38 @@ import {
   PostDetailResponse,
   PostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
+import { useState } from "react";
 
 interface IPostDetailPageClientProps {
   postDetail: PostDetailResponse;
   postStatus: PostStatusResponse;
-  initialComments: CommentResponse[] | [];
+  initialCommentsResult: SearchResponse<CommentResponse>;
 }
 
 export default function PageClient({
   postDetail,
   postStatus,
-  initialComments,
+  initialCommentsResult,
 }: IPostDetailPageClientProps) {
   const { content, ...postDetailHeader } = postDetail;
 
+  const [totalCommentCount, setTotalCommentCount] = useState(
+    postStatus.commentCount || 0
+  );
+
+  const changeCommentCount = (change: 1 | -1) => {
+    setTotalCommentCount((prev) => {
+      const updated = prev + change;
+      return updated < 0 ? 0 : updated;
+    });
+  };
+
   return (
     <article>
-      <PostDetailHeader postStatus={postStatus} {...postDetailHeader} />
+      <PostDetailHeader
+        postStatus={{ ...postStatus, commentCount: totalCommentCount }}
+        {...postDetailHeader}
+      />
       <PostContent
         postId={postDetail.id}
         content={content}
@@ -31,8 +49,9 @@ export default function PageClient({
       />
       <CommentSection
         postId={postDetail.id}
-        comments={initialComments}
-        totalCommentCount={postStatus.commentCount}
+        initialCommentsResult={initialCommentsResult}
+        totalCommentCount={totalCommentCount}
+        changeCommentCount={changeCommentCount}
       />
     </article>
   );
