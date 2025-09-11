@@ -19,6 +19,8 @@ export default function PostContent({
 }: IPostContent) {
   const sanitizedContent = useSanitizedHtml(content);
 
+  const hasRelatedPerfumes = relatedPerfumes && relatedPerfumes.length > 0;
+
   return (
     <section>
       <div className="px-4">
@@ -31,11 +33,11 @@ export default function PostContent({
           {isAuthor && <PostActions section="content" postId={postId} />}
         </div>
       </div>
-      <div className="divider-horizontal-thick block tablet:hidden" />
+      {hasRelatedPerfumes && (
+        <div className="divider-horizontal-thick block tablet:hidden" />
+      )}
       <div className="px-4">
-        {relatedPerfumes.length > 0 && (
-          <RelatedPerfume perfumes={relatedPerfumes} />
-        )}
+        {hasRelatedPerfumes && <RelatedPerfume perfumes={relatedPerfumes} />}
         <PostNavigation />
       </div>
       <div className="divider-horizontal-thick block tablet:hidden mb-10" />
