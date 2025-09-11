@@ -67,6 +67,7 @@ const getCommentCursorRoute = createRoute({
   path: "/{postId}/cursor",
   summary: "댓글 목록 조회 (커서 기반)",
   request: {
+    params: CommentSchemas.PostIdParamSchema,
     query: CommentSchemas.GetCommentQuerySchema,
   },
   responses: createStandardApiResponses(
@@ -80,8 +81,12 @@ const getCommentCursorRoute = createRoute({
 });
 
 commentsApi.openapi(getCommentCursorRoute, async (c) => {
+  const { postId } = c.req.valid("param");
   const queryParams = c.req.valid("query");
-  const result = await CommentServices.getPaginatedCommentService(queryParams);
+  const result = await CommentServices.getPaginatedCommentService(
+    postId,
+    queryParams
+  );
   if (!result.success) {
     if (result.error === "NOT_FOUND") {
       return apiNotFound(c, result.message);

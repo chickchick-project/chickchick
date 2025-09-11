@@ -7,6 +7,8 @@ import {
   ServiceResult,
   serviceSuccess,
   serviceNotFound,
+  serviceBadRequest,
+  serviceForbidden,
 } from "../utils/serviceResult.utils";
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
 
@@ -218,6 +220,39 @@ export async function updatePostService(
     });
 
     return serviceSuccess(updatedPost);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function deletePostService(
+  postId: string,
+  authorId: string
+): Promise<ServiceResult<PostWithAuthor>> {
+  try {
+    const uuidValidation = validateUuid(postId, "게시글");
+    if (!uuidValidation.success) return uuidValidation;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+    });
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (post.userId !== authorId) {
+      return serviceForbidden("게시글 삭제 권한이 없습니다.");
+    }
+    if (!post.published) {
+      return serviceBadRequest("이미 삭제된 게시글입니다.");
+    }
+
+    const deletedPost = await prisma.post.update({
+      where: { id: postId },
+      data: { published: false },
+      ...postWithAuthorArgs,
+    });
+
+    return serviceSuccess(deletedPost);
   } catch (error) {
     return serviceInternalError(error);
   }

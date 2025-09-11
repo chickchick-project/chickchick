@@ -4,16 +4,18 @@ export interface InputBaseProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   isError: boolean;
   helperText?: string;
+  maxWidth?: string;
 }
 
 export default function InputBase({
   className,
   helperText,
   isError,
+  maxWidth = "400px",
   ...props
 }: InputBaseProps) {
   return (
-    <div className="w-full max-w-[400px] flex flex-col">
+    <div className={`w-full max-w-[${maxWidth}] flex flex-col`}>
       <input
         {...props}
         className={`

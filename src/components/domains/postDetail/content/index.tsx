@@ -8,14 +8,18 @@ interface IPostContent {
   content: string;
   isAuthor?: boolean;
   relatedPerfumes?: [];
+  postId: string;
 }
 
 export default function PostContent({
   content,
   isAuthor,
   relatedPerfumes = [],
+  postId,
 }: IPostContent) {
   const sanitizedContent = useSanitizedHtml(content);
+
+  const hasRelatedPerfumes = relatedPerfumes && relatedPerfumes.length > 0;
 
   return (
     <section>
@@ -26,14 +30,14 @@ export default function PostContent({
         />
 
         <div className="flex justify-end pb-5 tablet:hidden">
-          {isAuthor && <PostActions section="content" />}
+          {isAuthor && <PostActions section="content" postId={postId} />}
         </div>
       </div>
-      <div className="divider-horizontal-thick block tablet:hidden" />
+      {hasRelatedPerfumes && (
+        <div className="divider-horizontal-thick block tablet:hidden" />
+      )}
       <div className="px-4">
-        {relatedPerfumes.length > 0 && (
-          <RelatedPerfume perfumes={relatedPerfumes} />
-        )}
+        {hasRelatedPerfumes && <RelatedPerfume perfumes={relatedPerfumes} />}
         <PostNavigation />
       </div>
       <div className="divider-horizontal-thick block tablet:hidden mb-10" />

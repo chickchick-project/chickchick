@@ -30,7 +30,7 @@ export default async function Page({
         <PageClient
           postDetail={postResult.data}
           postStatus={postStatusResult.data}
-          initialComments={commentsResult.data || []}
+          initialCommentsResult={commentsResult.data}
         />
       </>
     );
