@@ -70,10 +70,11 @@ export const getCommentService = async (
  * @param limit - 페이지당 댓글 수
  */
 export const getPaginatedCommentService = async (
+  postId: string,
   params: GetCommentQuery
 ): Promise<ServiceResult<PaginatedCommentResponse>> => {
   try {
-    const { postId, cursor, limit } = params;
+    const { cursor, limit } = params;
     const postCheck = await checkResourceExists("post", postId, "게시글");
     if (!postCheck.success) return postCheck;
 
