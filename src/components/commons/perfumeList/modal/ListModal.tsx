@@ -16,7 +16,7 @@ type FilterOptions = {
 interface ListModalProps {
   visible: boolean;
   close: () => void;
-  filters: Map<string, Set<string>>;
+  filters: Record<string, string[]>;
   filterOptions: FilterOptions;
   closeFilter: (id: string) => void;
   resetFilters: () => void;
@@ -32,8 +32,8 @@ export default function ListModal({
 }: ListModalProps) {
   if (!visible) return null;
 
-  const visibleFilters = Array.from(filters.entries()).filter(
-    ([, value]) => value.size > 0
+  const visibleFilters = Object.entries(filters).filter(
+    ([, value]) => value.length > 0
   );
 
   const getName = (key: keyof FilterOptions, id: string): string => {

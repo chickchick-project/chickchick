@@ -19,7 +19,7 @@ const FilterItem = ({
 }) => {
   const EMPTY_SET = new Set<string>();
   const filterSet = useFilterStore(
-    (state) => state.filters.get(category) ?? EMPTY_SET
+    (state) => state.filters[category] ?? EMPTY_SET
   );
   const handleFilterChange = useFilterStore(
     (state) => state.handleFilterChange

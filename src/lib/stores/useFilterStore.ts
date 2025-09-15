@@ -1,42 +1,46 @@
 import { create } from "zustand";
 
 interface FilterStore {
-  filters: Map<string, Set<string>>;
+  filters: Record<string, string[]>;
   handleFilterChange: (category: string, value: string) => void;
   closeFilter: (id: string) => void;
   resetFilters: () => void;
 }
 
 export const useFilterStore = create<FilterStore>((set) => ({
-  filters: new Map(),
+  filters: {},
   handleFilterChange: (category, value) =>
     set((state) => {
-      const filters = new Map(state.filters);
-      const prevSet = filters.get(category) ?? new Set();
-      const nextSet = new Set(prevSet);
-      if (nextSet.has(value)) {
-        nextSet.delete(value);
+      const newFilters = { ...state.filters };
+      const prevArray = newFilters[category] ?? [];
+
+      const nextArray = prevArray.includes(value)
+        ? prevArray.filter((v) => v !== value)
+        : [...prevArray, value].sort();
+
+      if (nextArray.length === 0) {
+        delete newFilters[category];
       } else {
-        nextSet.add(value);
+        newFilters[category] = nextArray;
       }
-      filters.set(category, nextSet);
-      return { filters };
+
+      return { filters: newFilters };
     }),
   closeFilter: (id) =>
     set((state) => {
-      const filters = new Map(state.filters);
-      for (const [category, set] of filters.entries()) {
-        if (set.has(id)) {
-          const nextSet = new Set(set);
-          nextSet.delete(id);
-          if (nextSet.size > 0) {
-            filters.set(category, nextSet);
+      const newFilters = { ...state.filters };
+      for (const category in newFilters) {
+        const values = newFilters[category];
+        if (values.includes(id)) {
+          const nextArray = values.filter((v) => v !== id);
+          if (nextArray.length === 0) {
+            delete newFilters[category];
           } else {
-            filters.delete(category);
+            newFilters[category] = nextArray;
           }
         }
       }
-      return { filters };
+      return { filters: newFilters };
     }),
-  resetFilters: () => set({ filters: new Map() }),
+  resetFilters: () => set({ filters: {} }),
 }));

@@ -67,17 +67,6 @@ export default function PageClient({
     setInputValue(e.target.value);
   };
 
-  // const fetcher = useMemo(
-  //   () =>
-  //     withCache((cursor: string | null) =>
-  //       fetchPerfumes(cursor, searchKeyword, filters)
-  //     ),
-  //   [searchKeyword, filters]
-  // );
-
-  // const { data, totalCount, isLoading, moreRef, isIdle } =
-  //   useInfiniteScroll<PerfumeBaseResponse>(fetcher);
-
   const {
     data,
     isLoading,
