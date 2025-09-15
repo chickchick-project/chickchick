@@ -12,7 +12,6 @@ import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
-// import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
@@ -21,7 +20,6 @@ import {
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
-// import { withCache } from "@/lib/utils/withCache";
 import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
 import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
 
