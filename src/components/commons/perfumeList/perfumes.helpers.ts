@@ -22,7 +22,7 @@ const apiClient = createHttpClient({
 async function fetchPerfumesSearchData(
   cursor: string | null,
   searchText: string,
-  filters: Map<string, Set<string>>
+  filters: Record<string, string[]>
 ): Promise<SearchResponse<PerfumeBaseResponse>> {
   try {
     let result: SearchResponse<PerfumeBaseResponse> | null = null;
@@ -79,38 +79,20 @@ async function fetchPerfumesSearchData(
 }
 
 // 필터를 서버 스키마에 맞게 변환
-const formatFilters = (filters: Map<string, Set<string>>) => {
+const formatFilters = (filters: Record<string, string[]>) => {
   const result: {
     brandFilter?: string[];
     notesFilter?: string[];
     accordsFilter?: string[];
   } = {};
 
-  for (const [key, values] of filters.entries()) {
-    if (values.size > 0) {
-      const valueArray = Array.from(values);
-
-      // 키 이름을 서버 스키마에 맞게 매핑
-      switch (key) {
-        case "brand":
-          result.brandFilter = valueArray;
-          break;
-        case "notes":
-          result.notesFilter = valueArray;
-          break;
-        case "accords":
-          result.accordsFilter = valueArray;
-          break;
-        default:
-          console.warn(`알 수 없는 필터 키: ${key}`);
-          break;
-      }
-    }
-  }
+  // 키 이름을 서버 스키마에 맞게 매핑
+  if (filters.brand) result.brandFilter = filters.brand;
+  if (filters.notes) result.notesFilter = filters.notes;
+  if (filters.accords) result.accordsFilter = filters.accords;
 
   return result;
 };
-
 const getLabel = (key: string) =>
   FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
 

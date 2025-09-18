@@ -23,10 +23,10 @@ const toOption = (item: { id: string; name: JsonValue }) => {
 };
 
 const getFilterOptionMeta = (
-  filterSet: Set<string>,
+  filters: string[],
   label: string
 ): FilterOptionMeta => {
-  const selected = Array.from(filterSet);
+  const selected = Array.from(filters);
   return {
     selectedOption: {
       label: selected.length > 0 ? `${label} ${selected.length}` : label,

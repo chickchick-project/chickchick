@@ -16,7 +16,7 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
   const { filters, closeFilter, resetFilters } = useFilterStore();
   const { isOpen, open, close } = useVisibilityStore();
 
-  const hasActiveFilters = filters.size > 0;
+  const hasActiveFilters = Object.values(filters).some((set) => set.length > 0);
 
   const filterIcon = hasActiveFilters ? ICONS.FilterPrimary : ICONS.FilterGray;
 
