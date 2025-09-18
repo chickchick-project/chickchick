@@ -1,14 +1,17 @@
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import { createHttpClient } from "@/lib/utils/core-request";
 
+interface SearchResponse<T> {
+  data: T[];
+  nextCursor: string | null;
+  totalCount: number | null;
+}
+
 interface RawPerfumeResponse {
-  data: {
-    data: PerfumeBaseResponse[];
-    nextCursor: string | null;
-    totalCount: number;
-  };
+  data: PerfumeBaseResponse[];
+  nextCursor: string | null;
+  totalCount: number;
 }
 
 const apiClient = createHttpClient({
@@ -31,9 +34,9 @@ async function fetchPerfumesSearchData(
       response: RawPerfumeResponse
     ): SearchResponse<PerfumeBaseResponse> => {
       return {
-        data: response.data.data || [],
-        nextCursor: response.data.nextCursor || null,
-        totalCount: response.data.totalCount || 0,
+        data: response.data || [],
+        nextCursor: response.nextCursor || null,
+        totalCount: response.totalCount || 0,
       };
     };
 

@@ -1,17 +1,18 @@
 "use client";
-
+import React, { useState } from "react";
+import { User } from "@prisma/client";
 import { ActivitySection } from "./sections/ActivitySection";
 import { CollectionSection } from "./sections/CollectionSection";
 import { BookmarkSection } from "./sections/BookmarkSection";
 import { ProfileSection } from "./sections/ProfileSection";
 import MainTabs from "./tabs/MainTabs";
+import PhotoUploadModal from "@/components/modal/photoUploadModal";
 import {
   ActivityData,
   BookmarkData,
   CollectionItem,
   TabData,
 } from "./sections/sections.type";
-import { User } from "@prisma/client";
 
 interface PageClientProps {
   pageOwner: User;
@@ -26,6 +27,8 @@ export default function ClientComponent({
   tap,
   data,
 }: PageClientProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   function isCollectionData(
     data: TabData["data"],
     tap: TabData["tap"]
@@ -53,9 +56,19 @@ export default function ClientComponent({
   ): data is User {
     return tap === "profile";
   }
+
+  const handleUploadSuccess = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <>
-      <MainTabs isMe={isMe} pageOwner={pageOwner} tab={tap} />
+      <MainTabs
+        isMe={isMe}
+        pageOwner={pageOwner}
+        tab={tap}
+        onAddPhotoClick={() => setIsModalOpen(true)}
+      />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
         {isCollectionData(data, tap) && <CollectionSection data={data} />}
         {isBookmarkData(data, tap) && (
@@ -64,6 +77,11 @@ export default function ClientComponent({
         {isActivityData(data, tap) && <ActivitySection data={data} />}
         {isProfileData(data, tap) && <ProfileSection data={data} />}
       </div>
+      <PhotoUploadModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
+      />
     </>
   );
 }

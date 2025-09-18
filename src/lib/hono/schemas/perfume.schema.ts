@@ -19,6 +19,17 @@ export const PerfumeBaseResponseSchema = PerfumeSchema.extend({
 });
 
 /**
+ * 향수 간단 응답 스키마
+ */
+export const PerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
+  id: true,
+  nameEn: true,
+  nameKo: true,
+  brand: true,
+  perfumeImage: true,
+});
+
+/**
  * 향수 상세 응답 스키마
  */
 export const PerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
@@ -57,5 +68,6 @@ export const PerfumeThemeQuerySchema = z.object({
   }),
 });
 
+export type PerfumeSimpleResponse = z.infer<typeof PerfumeSimpleResponseSchema>;
 export type PerfumeBaseResponse = z.infer<typeof PerfumeBaseResponseSchema>;
 export type PerfumeDetailResponse = z.infer<typeof PerfumeDetailResponseSchema>;
