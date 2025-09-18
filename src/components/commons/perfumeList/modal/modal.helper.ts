@@ -16,19 +16,19 @@ export const FILTER_KEYS = Object.keys(FILTER_LABELS).filter(
 
 /**
  * 필터의 선택된 개수 반환
- * @param filters Map<string, Set<string>>
+ * @param filters Record<string, string[]>
  * @param filterKey string (예: "gender", "list" 등)
  * @returns number
  */
 export function getFilterCount(
-  filters: Map<string, Set<string>>,
+  filters: Record<string, string[]>,
   filterKey: string
 ): number {
   if (filterKey === "list") {
     return FILTER_KEYS.reduce(
-      (sum, key) => sum + (filters.get(key)?.size ?? 0),
+      (sum, key) => sum + (filters[key]?.length ?? 0),
       0
     );
   }
-  return filters.get(filterKey)?.size ?? 0;
+  return filters[filterKey]?.length ?? 0;
 }

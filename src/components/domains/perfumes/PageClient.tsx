@@ -1,11 +1,17 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState, useMemo, useEffect } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+} from "react";
 import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
-import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
@@ -14,7 +20,14 @@ import {
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
-import { withCache } from "@/lib/utils/withCache";
+import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
+import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
+
+export interface SearchResponse<T> {
+  data: T[]; // 검색된 목록
+  nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
+  totalCount?: number | null;
+}
 
 export type BrandName = {
   en: string;
@@ -39,6 +52,7 @@ export default function PageClient({
   const [matchedBrand, setMatchedBrand] = useState<string | null>(null);
   const filters = useFilterStore((state) => state.filters);
   const setCount = useTotalStore((state) => state.setTotalCount);
+  const moreRef = useRef<HTMLDivElement>(null);
 
   // 검색 제출 핸들러
   const handleSubmit = (e?: FormEvent) => {
@@ -51,21 +65,27 @@ export default function PageClient({
     setInputValue(e.target.value);
   };
 
-  const fetcher = useMemo(
-    () =>
-      withCache((cursor: string | null) =>
-        fetchPerfumes(cursor, searchKeyword, filters)
-      ),
-    [searchKeyword, filters]
-  );
-
-  const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll<PerfumeBaseResponse>(fetcher);
-  useEffect(() => {
-    if (totalCount !== null && typeof totalCount === "number") {
-      setCount(totalCount);
-    }
-  }, [totalCount, setCount]);
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<
+    SearchResponse<PerfumeBaseResponse>,
+    Error,
+    InfiniteData<SearchResponse<PerfumeBaseResponse>>,
+    (string | typeof filters)[],
+    string | null
+  >({
+    queryKey: ["perfumes", searchKeyword, filters],
+    queryFn: ({ pageParam }) =>
+      fetchPerfumes(pageParam, searchKeyword, filters),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: null,
+  });
 
   useEffect(() => {
     const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
@@ -76,7 +96,41 @@ export default function PageClient({
   }, [searchKeyword, memoizedBrands]);
 
   // 중복 아이디 제거
-  const uniquePerfumes = getUniquePerfumes(data);
+  const uniquePerfumes = useMemo(() => {
+    const allPerfumes = data?.pages.flatMap((page) => page.data) ?? [];
+    return getUniquePerfumes(allPerfumes);
+  }, [data]);
+
+  useEffect(() => {
+    if (data?.pages[0]?.totalCount) {
+      setCount(data.pages[0].totalCount);
+    }
+  }, [data, setCount]);
+
+  const isIntersecting = useIntersectionObserver(moreRef);
+
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  useEffect(() => {
+    const keywordWords = searchKeyword.trim().toLowerCase().split(" ");
+    const match = memoizedBrands.find((brand) =>
+      keywordWords.includes(brand.nameEn.toLowerCase())
+    );
+    setMatchedBrand(match ? match.nameEn : null);
+  }, [searchKeyword, memoizedBrands]);
+
+  if (isError) {
+    return (
+      <div>
+        에러가 발생했습니다:
+        {error instanceof Error ? error.message : "Unknown error"}
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -102,7 +156,7 @@ export default function PageClient({
           <PerfumeSection
             perfumes={uniquePerfumes}
             isLoading={isLoading}
-            isIdle={isIdle}
+            isIdle={!isLoading && uniquePerfumes.length === 0}
             moreRef={moreRef}
           />
         </main>

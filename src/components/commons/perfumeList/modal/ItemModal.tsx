@@ -21,7 +21,7 @@ export default function FilterItemModal({
   const close = useVisibilityStore((state) => state.close);
   const resets = useFilterStore((state) => state.resetFilters);
   const filters = useFilterStore((state) => state.filters);
-  const selectedSet = filters.get(id) ?? new Set();
+  const selectedSet = filters[id] ?? [];
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -43,7 +43,7 @@ export default function FilterItemModal({
         onSubmit={() => close(id)}
       >
         {options.map((option) => {
-          const isSelectedOption = selectedSet.has(option.value);
+          const isSelectedOption = selectedSet.includes(option.value);
           return (
             <button
               key={option.value}

@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 
-import { useInfiniteScroll } from "@/lib/hooks/useInfinityScroll";
-import { withCache } from "@/lib/utils/withCache";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { SearchHeader } from "../../../commons/perfumeList/search";
@@ -14,6 +12,14 @@ import {
   fetchPerfumes,
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+
+export interface SearchResponse<T> {
+  data: T[]; // 검색된 목록
+  nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
+  totalCount?: number | null;
+}
 
 export const PageClient = ({
   brandName,
@@ -29,27 +35,32 @@ export const PageClient = ({
 
   const filters = useFilterStore((state) => state.filters);
   const setCount = useTotalStore((state) => state.setTotalCount);
+  const moreRef = useRef<HTMLDivElement>(null);
 
-  // 무한 스크롤 훅 사용
-  const fetcher = useMemo(
-    () =>
-      withCache((cursor: string | null) =>
-        fetchPerfumes(cursor, brandName, filters)
-      ),
-    [filters, brandName]
-  );
-
-  const { data, totalCount, isLoading, moreRef, isIdle } =
-    useInfiniteScroll(fetcher);
+  const { data, isLoading } = useInfiniteQuery<
+    SearchResponse<PerfumeBaseResponse>,
+    Error,
+    InfiniteData<SearchResponse<PerfumeBaseResponse>>,
+    (string | typeof filters)[],
+    string | null
+  >({
+    queryKey: ["brandDetail", brandName, filters],
+    queryFn: ({ pageParam }) => fetchPerfumes(pageParam, brandName, filters),
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+    initialPageParam: null,
+  });
 
   useEffect(() => {
-    if (totalCount !== null && typeof totalCount === "number") {
-      setCount(totalCount);
+    if (data?.pages[0]?.totalCount) {
+      setCount(data.pages[0].totalCount);
     }
-  }, [totalCount, setCount]);
+  }, [data, setCount]);
 
   // 중복 아이디 제거
-  const uniquePerfumes = getUniquePerfumes(data);
+  const uniquePerfumes = useMemo(() => {
+    const allPerfumes = data?.pages.flatMap((page) => page.data) ?? [];
+    return getUniquePerfumes(allPerfumes);
+  }, [data]);
 
   return (
     <div className="flex flex-col items-center w-full h-full">
@@ -65,9 +76,8 @@ export const PageClient = ({
         <PerfumeSection
           perfumes={uniquePerfumes}
           isLoading={isLoading}
-          isIdle={isIdle}
+          isIdle={!isLoading && uniquePerfumes.length === 0}
           moreRef={moreRef}
-          pageType="brandDetail"
         />
       </main>
     </div>
