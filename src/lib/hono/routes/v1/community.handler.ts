@@ -73,7 +73,7 @@ const getPostRoute = createRoute({
   },
   responses: createStandardApiResponses(
     {
-      schema: CommunitySchemas.PostResponseSchema,
+      schema: CommunitySchemas.PostDetailResponseSchema,
       description: "게시글",
     },
     ["404"]

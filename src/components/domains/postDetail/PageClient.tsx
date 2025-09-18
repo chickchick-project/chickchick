@@ -45,7 +45,7 @@ export default function PageClient({
         postId={postDetail.id}
         content={content}
         isAuthor={postDetail.isAuthor}
-        relatedPerfumes={[]}
+        relatedPerfumes={postDetail.perfumes}
       />
       <CommentSection
         postId={postDetail.id}

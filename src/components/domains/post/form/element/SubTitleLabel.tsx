@@ -11,7 +11,8 @@ export default function SubTitleLabel({
   isRequired = false,
   id,
 }: ISubTitleLabelProps) {
-  const subTitleStyle = "text-black-100 text-title-1 font-semibold ";
+  const subTitleStyle =
+    "text-black-100 text-title-1 font-semibold mt-2 tablet:mt-0";
 
   return htmlFor ? (
     <label className={subTitleStyle} htmlFor={htmlFor}>
