@@ -13,7 +13,6 @@
 
 .ck-content {
   line-height: 1.6;
-  min-height: 600px;
   word-break: break-word;
 }
 
@@ -46,4 +45,16 @@
 .ck.ck-editor__editable > .ck-placeholder::before {
   color: #a8a8a8;
   font-size: 15px;
+}
+.editor-container_classic-editor .ck-content {
+  min-height: 600px;
+}
+
+@media (max-width: 767px) {
+  .editor-container_classic-editor .ck-content {
+    min-height: 400px;
+  }
+  .editor-container_classic-editor .editor-container__editor {
+    min-height: 440px;
+  }
 }
