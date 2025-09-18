@@ -1,16 +1,10 @@
 "use client";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-
-type TPerfume = {
-  perfume_id: number;
-  image_url: string;
-  brand_name: string;
-  brand_id: number;
-  perfume_name: string;
-};
+import { PostRelatedPerfumeResponse } from "@/lib/hono/schemas/community.schema";
+import Link from "next/link";
 
 interface IRelatedPerfumeProps {
-  perfumes: TPerfume[] | [];
+  perfumes: PostRelatedPerfumeResponse[];
 }
 
 export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {
@@ -19,14 +13,23 @@ export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {
       <h2 className="text-title-2 tablet:text-headline-3 font-semibold text-black-100">
         관련된 향수
       </h2>
-      <div className="flex items-center gap-5 mt-4">
-        {perfumes.map((item) => (
-          <PerfumeCard
-            key={item.perfume_id}
-            perfumeImage={item.image_url}
-            perfumeName={item.perfume_name}
-            brandName={item.brand_name}
-          />
+      <div className="grid tablet:grid-cols-5 grid-cols-3 tablet:gap-x-6 gap-x-4  mobile:gap-y-5 gap-y-4 mt-5">
+        {perfumes.map((item: PostRelatedPerfumeResponse) => (
+          <Link key={item.id} href={`/perfumes/${item.id}`}>
+            <PerfumeCard
+              className="tablet:block hidden"
+              perfumeImage={item.perfumeImage?.imageUrl ?? null}
+              perfumeName={item.nameKo ?? item.nameEn}
+              brandName={item.brand.nameKo ?? item.brand.nameEn}
+            />
+            <PerfumeCard
+              className="tablet:hidden block"
+              cardType="smallSize"
+              perfumeImage={item.perfumeImage?.imageUrl ?? null}
+              perfumeName={item.nameKo ?? item.nameEn}
+              brandName={item.brand.nameKo ?? item.brand.nameEn}
+            />
+          </Link>
         ))}
       </div>
     </section>

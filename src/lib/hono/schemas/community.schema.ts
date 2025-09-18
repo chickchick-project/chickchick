@@ -99,3 +99,4 @@ export type PostIdParam = z.infer<typeof PostIdParamSchema>;
 export type PaginatedPostListResponse = z.infer<
   typeof PaginatedPostListResponseSchema
 >;
+export type PostRelatedPerfumeResponse = z.infer<typeof PerfumeForPostSchema>;
