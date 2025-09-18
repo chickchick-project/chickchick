@@ -7,30 +7,47 @@ const MainTabs = ({
   tab,
   isMe,
   pageOwner,
+  onAddPhotoClick,
 }: {
   tab: string;
   isMe?: boolean;
   pageOwner: User;
+  onAddPhotoClick: () => void;
 }) => {
   const tabItems = getRenderableTabItems(isMe, pageOwner.nickname);
+  const showAddButton = isMe;
 
   return (
-    <div className="flex space-x-2 ml-10 mb-[-1px] z-10 relative h-[52px]">
-      {tabItems.map(({ label, value }) => {
-        return (
-          <Link
-            key={value}
-            href={`/user/${pageOwner.id}/${value}`}
-            className={`w-[140px] flex items-center justify-center rounded-t-md border transition-colors text-center ${
-              value === tab
-                ? "bg-white text-primary-200 border-b-white font-semibold"
-                : "bg-primary-200 text-white font-regular"
-            }`}
-          >
-            {label}
-          </Link>
-        );
-      })}
+    <div className="flex items-end w-full px-10 relative z-10 h-[52px]">
+      {/* 탭 그룹 */}
+      <div className="flex space-x-2 mb-[-1px]">
+        {tabItems.map(({ label, value }) => {
+          const isActive = value === tab;
+          return (
+            <Link
+              key={value}
+              href={`/user/${pageOwner.id}/${value}`}
+              className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
+                ${
+                  isActive
+                    ? "bg-white text-gray-800 border-b-white"
+                    : "bg-primary-200 text-white font-regular hover:bg-primary-300"
+                }`}
+            >
+              {label}
+            </Link>
+          );
+        })}
+      </div>
+
+      {showAddButton && (
+        <button
+          className="ml-auto mb-1 px-5 py-2.5 bg-primary-200 text-white rounded-lg font-regular hover:bg-primary-300 transition-colors"
+          onClick={onAddPhotoClick}
+        >
+          사진 추가하기
+        </button>
+      )}
     </div>
   );
 };

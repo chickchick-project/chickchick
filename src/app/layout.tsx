@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="kr" className="h-dvh">
+    <html lang="kr" className="h-dvh overflow-y-scroll">
       <body className={`${pretendard.variable} font-pretendard h-full`}>
         <Providers>
           <NavBarWrapper />

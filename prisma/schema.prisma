@@ -164,11 +164,12 @@ model UserCollection {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   perfumeId String   @map("perfume_id") @db.Uuid
+  comment   String? 
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   isPublic  Boolean  @default(true)
   perfume   Perfume  @relation("PerfumeToUserCollections", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user      User     @relation("UserToCollections", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
+  image     CollectionImage? @relation("CollectionToImage")
   @@unique([userId, perfumeId], name: "user_collection_unique_constraint")
   @@map("user_collections")
 }
@@ -278,6 +279,16 @@ model PerfumeImage {
   perfume   Perfume  @relation("PerfumeToImage", fields: [perfumeId], references: [id])
 
   @@map("perfumes_image")
+}
+
+model CollectionImage {
+  id        String   @id @default(uuid()) @db.Uuid
+  imageUrl  String   @map("image_url")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  collectionId String   @unique @map("collection_id") @db.Uuid
+  collection   UserCollection @relation("CollectionToImage", fields: [collectionId], references: [id])
+  @@map("collection_image")
+
 }
 
 enum Gender {
