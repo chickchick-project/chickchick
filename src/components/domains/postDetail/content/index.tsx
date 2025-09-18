@@ -1,13 +1,13 @@
 "use client";
+import { PostRelatedPerfumeResponse } from "@/lib/hono/schemas/community.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
-import PostNavigation from "./postNavigation";
 import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
 
 interface IPostContent {
   content: string;
   isAuthor?: boolean;
-  relatedPerfumes?: [];
+  relatedPerfumes: PostRelatedPerfumeResponse[] | [];
   postId: string;
 }
 
@@ -25,7 +25,7 @@ export default function PostContent({
     <section>
       <div className="px-4">
         <div
-          className="ck-content text-body-2 font-medium text-black-100 leading-6 mb-10"
+          className="ck-content text-body-1 font-medium text-black-100 leading-6 mb-40"
           dangerouslySetInnerHTML={{ __html: sanitizedContent }}
         />
 
@@ -36,9 +36,9 @@ export default function PostContent({
       {hasRelatedPerfumes && (
         <div className="divider-horizontal-thick block tablet:hidden" />
       )}
-      <div className="px-4">
+      <div className="px-4 tablet:mb-[60px]">
         {hasRelatedPerfumes && <RelatedPerfume perfumes={relatedPerfumes} />}
-        <PostNavigation />
+        {/* <PostNavigation /> */}
       </div>
       <div className="divider-horizontal-thick block tablet:hidden mb-10" />
     </section>

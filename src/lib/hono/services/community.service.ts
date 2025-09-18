@@ -23,6 +23,30 @@ const postWithAuthorArgs = { include: postIncludeArgs };
 
 export type PostWithAuthor = Prisma.PostGetPayload<typeof postWithAuthorArgs>;
 
+const postDetailArgs = {
+  include: {
+    ...postIncludeArgs,
+    perfumeMappings: {
+      select: {
+        perfume: {
+          select: {
+            id: true,
+            nameEn: true,
+            nameKo: true,
+            brand: {
+              select: {
+                nameEn: true,
+                nameKo: true,
+              },
+            },
+            perfumeImage: { select: { imageUrl: true } },
+          },
+        },
+      },
+    },
+  },
+};
+
 // --- 서비스 함수들 ---
 export async function getPaginatedPostListService(
   params: CommunitySchemas.GetPostsQuery
@@ -91,18 +115,19 @@ export async function getPostByIdService(
       });
       return tx.post.findUnique({
         where: { id },
-        ...postWithAuthorArgs,
+        ...postDetailArgs,
       });
     });
 
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
-
+    const { perfumeMappings, ...restOfPost } = post;
     const isAuthor = post.userId === userId;
     const result: CommunitySchemas.PostDetailResponse = {
-      ...post,
+      ...restOfPost,
       isAuthor,
+      perfumes: perfumeMappings.map((mapping) => mapping.perfume),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt?.toISOString() || null,
     };

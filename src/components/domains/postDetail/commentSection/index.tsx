@@ -63,7 +63,7 @@ export default function CommentSection({
 
   return (
     <section className="px-4">
-      <h2 className="text-title-2 tablet:text-headline-2 font-semibold text-black-100">
+      <h2 className="text-title-2 tablet:text-headline-3 font-semibold text-black-100">
         댓글 {totalCommentCount}
       </h2>
       <CommentForm
