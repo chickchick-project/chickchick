@@ -18,9 +18,30 @@ export const PostResponseSchema = PostSchema.extend({
   published: true,
 });
 
+// 게시글 상세 조회용 Brand 이름 스키마
+const BrandForPerfumeSchema = z.object({
+  nameEn: z.string(),
+  nameKo: z.string().nullable(),
+});
+
+// 게시글 상세 조회용 Perfume 이미지 스키마
+const PerfumeImageForPerfumeSchema = z.object({
+  imageUrl: z.string(),
+});
+
+// 게시글 상세에 포함될 Perfume 스키마
+const PerfumeForPostSchema = z.object({
+  id: z.string().uuid(),
+  nameEn: z.string(),
+  nameKo: z.string().nullable(),
+  brand: BrandForPerfumeSchema,
+  perfumeImage: PerfumeImageForPerfumeSchema.nullable(),
+});
+
 // 게시글 상세 조회 응답 스키마
 export const PostDetailResponseSchema = PostResponseSchema.extend({
   isAuthor: z.boolean(),
+  perfumes: z.array(PerfumeForPostSchema),
 });
 
 // 게시글 상태 조회
