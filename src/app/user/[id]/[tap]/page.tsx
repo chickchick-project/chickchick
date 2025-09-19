@@ -7,11 +7,11 @@ import { TAB_CONFIGS } from "@/components/domains/user/tabs/tabs.helper";
 import {
   fetchMockActivityData,
   fetchMockBookmarksData,
-  fetchMockCollectionData,
 } from "@/lib/mocks/fetchUser";
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
+import { fetchUserCollections } from "@/components/domains/user/user.hepler";
 
 export default async function UserPage({
   params,
@@ -38,7 +38,7 @@ export default async function UserPage({
   let tabData: TabData;
 
   if (tap === "collection") {
-    tabData = { tap, data: await fetchMockCollectionData(pageOwnerId) };
+    tabData = { tap, data: await fetchUserCollections(pageOwnerId) };
   } else if (tap === "bookmarks") {
     tabData = { tap, data: await fetchMockBookmarksData(pageOwnerId) };
   } else if (tap === "activity") {

@@ -71,4 +71,55 @@ meApi.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
   );
 });
 
+const postPhotoCollectionRoute = createRoute({
+  method: "post",
+  path: "/collections",
+  summary: "내 향수 컬렉션 등록",
+  requestBody: {
+    required: true,
+    content: {
+      "multipart/form-data": {
+        schema: {
+          type: "object",
+          properties: {
+            perfumeId: { type: "string" },
+            imageFile: { type: "string", format: "binary" },
+            comment: { type: "string" },
+          },
+          required: ["perfumeId", "imageFile"],
+        },
+      },
+    },
+  },
+  responses: createStandardApiResponses({
+    schema: MeSchemas.MyBookmarkedPerfumesResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(postPhotoCollectionRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const formData = await c.req.formData();
+
+  const perfumeId = formData.get("perfumeId");
+  const imageFile = formData.get("imageFile");
+  const comment = formData.get("comment");
+
+  const data = {
+    userId: user.id,
+    perfumeId,
+    imageFile,
+    comment,
+  };
+
+  // console.log(data);
+
+  const result = await MeServices.postPhotoCollectionService(data);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "향수 컬렉션을 성공적으로 등록했습니다.");
+});
+
 export default meApi;

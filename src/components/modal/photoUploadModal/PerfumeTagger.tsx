@@ -56,7 +56,6 @@ export function PerfumeTagger({
             )}
             {data &&
               data.map((perfume) => {
-                console.log("data", perfume);
                 return (
                   <li
                     key={perfume.id}
