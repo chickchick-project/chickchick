@@ -261,6 +261,7 @@ model Comment {
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   postId    String    @map("post_id") @db.Uuid
+  published Boolean   @default(true) 
   author    User      @relation("UserToComments", fields: [authorId], references: [id], onDelete: Cascade)
   parent    Comment?  @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: NoAction)
   replies   Comment[] @relation("CommentToReplies")
