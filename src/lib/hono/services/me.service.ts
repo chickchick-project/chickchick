@@ -1,4 +1,5 @@
-import { Prisma } from "@prisma/client";
+import sharp from "sharp";
+import { Prisma, ImageFormat } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   ServiceResult,
@@ -9,6 +10,12 @@ import {
 import { PostWithAuthor } from "./community.service";
 import { PerfumeBaseResponse } from "../schemas/perfume.schema";
 import { supabaseAdmin } from "@/lib/supabase/init";
+
+const bucketName = "collection_image";
+const filePath = (userId: string, file: File) =>
+  `collections/${userId}/${crypto.randomUUID()}-${file.name}`;
+
+let imageFormat: ImageFormat = ImageFormat.UNKNOWN;
 
 const postIncludeArgs = {
   author: {
@@ -94,10 +101,23 @@ export async function postPhotoCollectionService(payload: {
     return serviceInternalError("이미지 파일이 필요합니다.");
   }
   const file = payload.imageFile as File;
-  const filePath = `collections/${payload.userId}/${crypto.randomUUID()}-${
-    file.name
-  }`;
-  const bucketName = "collection_image";
+
+  const fileBuffer = await file.arrayBuffer();
+  const metadata = await sharp(fileBuffer).metadata();
+  // console.log(fileBuffer);
+  // console.log(metadata);
+  const formatString = metadata.format?.toUpperCase();
+
+  if (formatString === "JPEG" || formatString === "JPG") {
+    imageFormat = ImageFormat.JPEG;
+  } else if (formatString === "PNG") {
+    imageFormat = ImageFormat.PNG;
+  } else if (formatString === "WEBP") {
+    imageFormat = ImageFormat.WEBP;
+  } else if (formatString === "HEIF" || formatString === "HEIC") {
+    // HEIC 처리 추가
+    imageFormat = ImageFormat.HEIC;
+  }
   try {
     // 0. 중복 체크
     const existingCollection = await prisma.userCollection.findFirst({
@@ -111,35 +131,38 @@ export async function postPhotoCollectionService(payload: {
     }
 
     // 1. 파일 업로드
-
     const { error } = await supabaseAdmin.storage
       .from(bucketName)
-      .upload(filePath, file, { cacheControl: "3600", upsert: false });
+      .upload(filePath(payload.userId, file), fileBuffer, {
+        contentType: file.type,
+        cacheControl: "3600",
+        upsert: false,
+      });
     if (error) {
       return serviceInternalError(error.message);
     }
     // console.log("File uploaded successfully");
     // 2. 퍼블릭 URL 가져오기
-    const {
-      data: { publicUrl },
-    } = supabaseAdmin.storage.from(bucketName).getPublicUrl(filePath);
+    // const {
+    //   data: { publicUrl },
+    // } = supabaseAdmin.storage.from(bucketName).getPublicUrl(filePath);
     // console.log("Public URL:", publicUrl);
     // // 3. DB 저장
-    const collection = await prisma.userCollection.create({
-      data: {
-        userId: payload.userId,
-        perfumeId: payload.perfumeId as string,
-        comment: payload.comment as string | null,
-        image: {
-          create: {
-            imageUrl: publicUrl,
-          },
-        },
-      },
-      include: { image: true },
-    });
+    // const collection = await prisma.userCollection.create({
+    //   data: {
+    //     userId: payload.userId,
+    //     perfumeId: payload.perfumeId as string,
+    //     comment: payload.comment as string | null,
+    //     image: {
+    //       create: {
+    //         imageUrl: publicUrl,
+    //       },
+    //     },
+    //   },
+    //   include: { image: true },
+    // });
     // console.log("Collection created successfully:", collection);
-    return serviceSuccess(collection);
+    return serviceSuccess("collection");
   } catch (err: unknown) {
     if (err instanceof Error) {
       // console.error(
@@ -152,4 +175,42 @@ export async function postPhotoCollectionService(payload: {
     }
     return serviceInternalError("알 수 없는 오류가 발생했습니다.");
   }
+}
+
+export async function deletePhotoCollectionService(payload: {
+  userId: string;
+  collectionId: string;
+}) {
+  const { userId, collectionId } = payload;
+
+  const collection = await prisma.userCollection.findUnique({
+    where: {
+      id: collectionId,
+    },
+    include: {
+      image: true,
+    },
+  });
+
+  if (!collection || collection.userId !== userId) {
+    return serviceInternalError(
+      "해당 컬렐션을 찾을 수 없거나 삭제 권한이 없습니다."
+    );
+  }
+
+  if (collection.image) {
+    const imageUrl = collection.image.imageUrl;
+    const filePath = imageUrl.substring(
+      imageUrl.indexOf(bucketName) + bucketName.length + 1
+    );
+    await supabaseAdmin.storage.from(bucketName).remove([filePath]);
+  }
+
+  await prisma.userCollection.delete({
+    where: {
+      id: collectionId,
+    },
+  });
+
+  return serviceSuccess("컬렉션을 삭제했습니다.");
 }
