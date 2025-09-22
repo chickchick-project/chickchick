@@ -1,21 +1,21 @@
 import sharp from "sharp";
 import { Prisma, ImageFormat } from "@prisma/client";
+import { supabaseAdmin } from "@/lib/supabase/init";
 import { prisma } from "@/lib/prisma";
 import {
   ServiceResult,
   serviceSuccess,
   serviceInternalError,
-  serviceAlreadyExists,
 } from "../utils/serviceResult.utils";
 import { PostWithAuthor } from "./community.service";
 import { PerfumeBaseResponse } from "../schemas/perfume.schema";
-import { supabaseAdmin } from "@/lib/supabase/init";
+
+const UUID_REGEX =
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 const bucketName = "collection_image";
 const filePath = (userId: string, file: File) =>
   `collections/${userId}/${crypto.randomUUID()}-${file.name}`;
-
-let imageFormat: ImageFormat = ImageFormat.UNKNOWN;
 
 const postIncludeArgs = {
   author: {
@@ -94,83 +94,101 @@ export async function postPhotoCollectionService(payload: {
   imageFile: FormDataEntryValue | null;
   comment: FormDataEntryValue | null;
 }) {
-  if (!payload.perfumeId || typeof payload.perfumeId !== "string") {
-    return serviceInternalError("향수 ID가 올바르지 않습니다.");
+  let uploadedPath: string | null = null;
+
+  // 입력값 검증
+  if (
+    !payload.perfumeId ||
+    typeof payload.perfumeId !== "string" ||
+    !UUID_REGEX.test(payload.perfumeId)
+  ) {
+    return serviceInternalError(new Error("향수 ID가 올바르지 않습니다."));
   }
   if (!payload.imageFile || !(payload.imageFile instanceof File)) {
-    return serviceInternalError("이미지 파일이 필요합니다.");
+    return serviceInternalError(new Error("이미지 파일이 필요합니다."));
   }
-  const file = payload.imageFile as File;
 
-  const fileBuffer = await file.arrayBuffer();
-  const metadata = await sharp(fileBuffer).metadata();
-  // console.log(fileBuffer);
-  // console.log(metadata);
-  const formatString = metadata.format?.toUpperCase();
-
-  if (formatString === "JPEG" || formatString === "JPG") {
-    imageFormat = ImageFormat.JPEG;
-  } else if (formatString === "PNG") {
-    imageFormat = ImageFormat.PNG;
-  } else if (formatString === "WEBP") {
-    imageFormat = ImageFormat.WEBP;
-  } else if (formatString === "HEIF" || formatString === "HEIC") {
-    // HEIC 처리 추가
-    imageFormat = ImageFormat.HEIC;
-  }
   try {
     // 0. 중복 체크
-    const existingCollection = await prisma.userCollection.findFirst({
+    const existingCollection = await prisma.userCollection.findUnique({
       where: {
-        userId: payload.userId,
-        perfumeId: payload.perfumeId as string,
+        user_collection_unique_constraint: {
+          userId: payload.userId,
+          perfumeId: payload.perfumeId as string,
+        },
       },
+      include: { image: true },
     });
-    if (existingCollection) {
-      return serviceAlreadyExists("이미 컬렉션에 추가된 향수입니다.");
+    // console.log("existingCollection", existingCollection);
+    if (existingCollection?.image) {
+      const oldImageUrl = existingCollection.image.imageUrl;
+      const oldFilePath = oldImageUrl.substring(
+        oldImageUrl.indexOf(bucketName) + bucketName.length + 1
+      );
+      await supabaseAdmin.storage.from(bucketName).remove([oldFilePath]);
     }
 
+    const file = payload.imageFile as File;
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const metadata = await sharp(fileBuffer).metadata();
+    const imageFormat = getImageFormat(metadata.format);
+
+    const newFilePath = filePath(payload.userId, file);
+
     // 1. 파일 업로드
-    const { error } = await supabaseAdmin.storage
+    const { data, error } = await supabaseAdmin.storage
       .from(bucketName)
-      .upload(filePath(payload.userId, file), fileBuffer, {
+      .upload(newFilePath, fileBuffer, {
         contentType: file.type,
         cacheControl: "3600",
-        upsert: false,
       });
-    if (error) {
-      return serviceInternalError(error.message);
-    }
+
+    if (error) serviceInternalError(error.message);
+
     // console.log("File uploaded successfully");
+    uploadedPath = data!.path;
+    // console.log(uploadedPath);
     // 2. 퍼블릭 URL 가져오기
-    // const {
-    //   data: { publicUrl },
-    // } = supabaseAdmin.storage.from(bucketName).getPublicUrl(filePath);
+    const {
+      data: { publicUrl },
+    } = supabaseAdmin.storage.from(bucketName).getPublicUrl(uploadedPath);
     // console.log("Public URL:", publicUrl);
+
+    const newImageData = {
+      imageUrl: publicUrl,
+      width: metadata.width || 0,
+      height: metadata.height || 0,
+      format: imageFormat,
+    };
+
     // // 3. DB 저장
-    // const collection = await prisma.userCollection.create({
-    //   data: {
-    //     userId: payload.userId,
-    //     perfumeId: payload.perfumeId as string,
-    //     comment: payload.comment as string | null,
-    //     image: {
-    //       create: {
-    //         imageUrl: publicUrl,
-    //       },
-    //     },
-    //   },
-    //   include: { image: true },
-    // });
-    // console.log("Collection created successfully:", collection);
-    return serviceSuccess("collection");
+    const resultCollection = await prisma.userCollection.upsert({
+      where: {
+        user_collection_unique_constraint: {
+          userId: payload.userId,
+          perfumeId: payload.perfumeId,
+        },
+      },
+      create: {
+        userId: payload.userId,
+        perfumeId: payload.perfumeId,
+        comment: (payload.comment as string) || null,
+        image: { create: newImageData },
+      },
+      update: {
+        comment: (payload.comment as string) || null,
+        image: {
+          delete: existingCollection?.image ? true : false,
+          create: newImageData,
+        },
+      },
+      include: { image: true },
+    });
+
+    // console.log("Collection created successfully:", resultCollection);
+    return serviceSuccess(resultCollection);
   } catch (err: unknown) {
     if (err instanceof Error) {
-      // console.error(
-      //   "Caught an exception in postPhotoCollectionService:",
-      //   err.message
-      // );
-      // TODO: 파일 업로드 롤백 로직 추가
-      // await supabaseAdmin.storage.from(bucketName).remove([filePath]);
       return serviceInternalError(err.message);
     }
     return serviceInternalError("알 수 없는 오류가 발생했습니다.");
@@ -213,4 +231,13 @@ export async function deletePhotoCollectionService(payload: {
   });
 
   return serviceSuccess("컬렉션을 삭제했습니다.");
+}
+
+function getImageFormat(formatString?: string): ImageFormat {
+  const upperFormat = formatString?.toUpperCase();
+  if (upperFormat === "JPEG" || upperFormat === "JPG") return ImageFormat.JPEG;
+  if (upperFormat === "PNG") return ImageFormat.PNG;
+  if (upperFormat === "WEBP") return ImageFormat.WEBP;
+  if (upperFormat === "HEIF" || upperFormat === "HEIC") return ImageFormat.HEIC;
+  return ImageFormat.UNKNOWN;
 }
