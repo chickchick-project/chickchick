@@ -23,7 +23,6 @@ export function useSearchTag(query: string) {
         if (isActive) {
           const perfumeArray = response.data.data;
           setResults({ data: perfumeArray });
-          // ---------------------------
         }
       } catch (error) {
         console.error("검색 실패:", error);
