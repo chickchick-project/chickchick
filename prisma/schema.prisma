@@ -282,14 +282,27 @@ model PerfumeImage {
   @@map("perfumes_image")
 }
 
+
 model CollectionImage {
   id        String   @id @default(uuid()) @db.Uuid
   imageUrl  String   @map("image_url")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   collectionId String   @unique @map("collection_id") @db.Uuid
-  collection   UserCollection @relation("CollectionToImage", fields: [collectionId], references: [id])
-  @@map("collection_image")
+  collection   UserCollection @relation("CollectionToImage", fields: [collectionId], references: [id], onDelete: Cascade)
 
+  width        Int
+  height       Int
+  format       ImageFormat @default(UNKNOWN)
+  
+  @@map("collection_image")
+}
+
+enum ImageFormat {
+  JPEG
+  PNG
+  WEBP
+  HEIC
+  UNKNOWN
 }
 
 enum Gender {
