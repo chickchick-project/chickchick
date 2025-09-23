@@ -9,6 +9,8 @@ import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
 import TabContentLoader from "@/components/domains/user/tabs/TabLoader/ContentLoader";
 
+const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
+
 export default async function UserPage({
   params,
 }: {
@@ -23,7 +25,7 @@ export default async function UserPage({
       return notFound();
     }
     user = userResult.data;
-    if (typeof user.id !== "string" || !/^[0-9a-fA-F-]{36}$/.test(user.id)) {
+    if (typeof user.id !== "string" || !USER_REGEX.test(user.id)) {
       return notFound();
     }
   } catch (error) {

@@ -1,17 +1,15 @@
 import type { User } from "@prisma/client";
-import {
-  fetchMockActivityData,
-  fetchMockPerfumeBookmarksData,
-  MockPerfumeBookmark,
-} from "@/lib/mocks/fetchUser";
+import { fetchMockActivityData } from "@/lib/mocks/fetchUser";
 import {
   BookmarkSection,
   CollectionSection,
   ActivitySection,
   ProfileSection,
 } from "../../sections";
-import { fetchUserCollections } from "@/components/domains/user/user.helper";
-
+import {
+  fetchUserBookmarksPerfumes,
+  fetchUserCollections,
+} from "@/components/domains/user/user.helper";
 interface TabContentLoaderProps {
   tap: string;
   pageOwner: User;
@@ -24,21 +22,24 @@ export default async function TabContentLoader({
   isMe,
 }: TabContentLoaderProps) {
   if (tap === "collection") {
-    const result = await fetchUserCollections(pageOwner.id);
-    const data = result.success ? result.data || [] : [];
-    return <CollectionSection data={data} />;
+    const collections = await fetchUserCollections(pageOwner.id);
+    return <CollectionSection data={collections.data} />;
   }
 
   if (tap === "bookmarks") {
-    let initialPerfumeData: MockPerfumeBookmark[] | undefined = undefined;
-    if (!isMe) {
-      initialPerfumeData = await fetchMockPerfumeBookmarksData(pageOwner.id);
-    }
+    const response = await fetchUserBookmarksPerfumes(pageOwner.id);
+    const transformedData = response.data.map((perfume) => ({
+      id: perfume.id,
+      nameEn: perfume.nameEn,
+      nameKo: perfume.nameKo,
+      brand: perfume.brand,
+      perfumeImage: perfume.perfumeImage,
+    }));
     return (
       <BookmarkSection
         isMe={isMe}
         userId={pageOwner.id}
-        initialPerfumeData={initialPerfumeData}
+        initialPerfumeData={transformedData}
       />
     );
   }

@@ -1,26 +1,28 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
 import { CommunityBookmark } from "../sections.type";
 import { PostCard } from "@/components/commons/card/postCard";
 import { mockCommunityPostData } from "@/lib/mocks/communityCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
-import { MockPerfumeBookmark } from "@/lib/mocks/fetchUser";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
-const renderPerfumeBookmarks = (perfumes: MockPerfumeBookmark[]) => {
-  const itemsToRender = Array.from({ length: 10 }).flatMap(() => perfumes);
-
-  if (itemsToRender.length === 0) {
+const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
+  if (perfumes.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         북마크한 향수가 없습니다.
       </div>
     );
   }
-
+  // console.log(perfumes);
   return (
     <div className="grid grid-cols-5 gap-[52px]">
-      {itemsToRender.map((item, idx) => (
-        <PerfumeCard {...mockPerfumeCardData} key={`${item.id}-${idx}`} />
+      {perfumes.map((item, idx) => (
+        <PerfumeCard
+          key={`${item.id}-${idx}`}
+          perfumeImage={item.perfumeImage?.imageUrl || null}
+          brandName={item.brand.nameKo || item.brand.nameEn}
+          perfumeName={item.nameKo || item.nameEn}
+        />
       ))}
     </div>
   );

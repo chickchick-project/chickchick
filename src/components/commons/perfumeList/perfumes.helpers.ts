@@ -19,7 +19,7 @@ const apiClient = createHttpClient({
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
 });
 
-async function fetchPerfumesSearchData(
+async function fetchPerfumes(
   cursor: string | null,
   searchText: string,
   filters: Record<string, string[]>
@@ -96,23 +96,19 @@ const formatFilters = (filters: Record<string, string[]>) => {
 const getLabel = (key: string) =>
   FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
 
-const getUniquePerfumes = (
-  perfumes: PerfumeBaseResponse[]
-): PerfumeBaseResponse[] => {
-  const perfumeMap = new Map<string, PerfumeBaseResponse>();
+// const getUniquePerfumes = (
+//   perfumes: PerfumeBaseResponse[]
+// ): PerfumeBaseResponse[] => {
+//   const perfumeMap = new Map<string, PerfumeBaseResponse>();
 
-  perfumes.forEach((item) => {
-    const existing = perfumeMap.get(item.id);
-    if (!existing) {
-      perfumeMap.set(item.id, item);
-    }
-  });
+//   perfumes.forEach((item) => {
+//     const existing = perfumeMap.get(item.id);
+//     if (!existing) {
+//       perfumeMap.set(item.id, item);
+//     }
+//   });
 
-  return Array.from(perfumeMap.values());
-};
+//   return Array.from(perfumeMap.values());
+// };
 
-export {
-  fetchPerfumesSearchData as fetchPerfumes,
-  getLabel,
-  getUniquePerfumes,
-};
+export { fetchPerfumes, getLabel };

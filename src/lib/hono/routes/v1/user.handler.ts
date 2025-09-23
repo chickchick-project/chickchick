@@ -76,6 +76,8 @@ usersApi.openapi(getUserPerfumeBookmarksRoute, async (c) => {
   );
 });
 
+export default usersApi;
+
 /**
  * @method GET
  * @path /{userId}/collections
@@ -95,18 +97,14 @@ const getUserCollectionsRoute = createRoute({
 
 usersApi.openapi(getUserCollectionsRoute, async (c) => {
   const { userId } = c.req.valid("param");
-  console.log(userId);
-  // const result = await UserServices.getUserCollectionsService(userId);
+  const result = await UserServices.getUserCollectionsService(userId);
 
-  // if (!result.success) {
-  // return apiInternalError(c, result.message);
-  // }
-  // return apiSuccess(
-  // c,
-  // result.data,
-  // "사용자의 컬렉션 목록을 성공적으로 불러왔습니다.");
-  // );
-  return apiSuccess(c, [], "사용자의 컬렉션 목록을 성공적으로 불러왔습니다.");
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(
+    c,
+    result.data,
+    "사용자의 컬렉션 목록을 성공적으로 불러왔습니다."
+  );
 });
-
-export default usersApi;

@@ -1,13 +1,13 @@
-import { fetchMockPerfumeBookmarksData } from "@/lib/mocks/fetchUser";
 import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
+import { fetchUserBookmarksPerfumes } from "../../user.helper";
 
 export default async function PerfumeBookmarksLoader({
   userId,
 }: {
   userId: string;
 }) {
-  const data = await fetchMockPerfumeBookmarksData(userId);
-  const perfumeData = data;
+  const perfumes = await fetchUserBookmarksPerfumes(userId);
+  const perfumeData = perfumes.data;
 
   return renderPerfumeBookmarks(perfumeData);
 }

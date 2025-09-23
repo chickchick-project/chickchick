@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma, UserCollection } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { UserProfileResponse } from "../schemas/user.schema";
 import {
@@ -75,12 +75,33 @@ export async function getUserPublicBookmarkedPerfumesService(
         userId: targetUserId,
         isPublic: true, // 공개된 북마크만
       },
-      select: { perfume: { include: perfumeBaseInclude } },
+      include: { perfume: { include: perfumeBaseInclude } },
       orderBy: { createdAt: "desc" },
     });
 
     const perfumes = bookmarks.map((b) => b.perfume);
     return serviceSuccess(perfumes);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getUserCollectionsService(
+  targetUserId: string
+): Promise<ServiceResult<UserCollection[]>> {
+  try {
+    const userCheck = await checkResourceExists("user", targetUserId, "사용자");
+    if (!userCheck.success) return userCheck;
+
+    const collections = await prisma.userCollection.findMany({
+      where: {
+        userId: targetUserId,
+      },
+      include: {
+        image: true,
+      },
+    });
+    return serviceSuccess(collections);
   } catch (error) {
     return serviceInternalError(error);
   }
