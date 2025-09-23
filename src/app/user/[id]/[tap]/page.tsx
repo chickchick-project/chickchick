@@ -2,16 +2,12 @@ import { notFound } from "next/navigation";
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
-import { TabData } from "@/components/domains/user/sections/sections.type";
 import { TAB_CONFIGS } from "@/components/domains/user/tabs/tabs.helper";
-import {
-  fetchMockActivityData,
-  fetchMockBookmarksData,
-} from "@/lib/mocks/fetchUser";
+
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
-import { fetchUserCollections } from "@/components/domains/user/user.hepler";
+import TabContentLoader from "@/components/domains/user/tabs/TabLoader/ContentLoader";
 
 export default async function UserPage({
   params,
@@ -35,18 +31,6 @@ export default async function UserPage({
     return notFound();
   }
 
-  let tabData: TabData;
-
-  if (tap === "collection") {
-    tabData = { tap, data: await fetchUserCollections(pageOwnerId) };
-  } else if (tap === "bookmarks") {
-    tabData = { tap, data: await fetchMockBookmarksData(pageOwnerId) };
-  } else if (tap === "activity") {
-    tabData = { tap, data: await fetchMockActivityData(pageOwnerId) };
-  } else {
-    tabData = { tap: "profile", data: user };
-  }
-
   const isMe = session?.user?.id === pageOwnerId;
   const requestedTabConfig = TAB_CONFIGS.find((config) => config.value === tap);
 
@@ -56,7 +40,9 @@ export default async function UserPage({
   return (
     <>
       <UserHeader user={user} />
-      <PageClient pageOwner={user} isMe={isMe} {...tabData} />
+      <PageClient pageOwner={user} isMe={isMe} tap={tap}>
+        <TabContentLoader tap={tap} pageOwner={user} isMe={isMe} />
+      </PageClient>
       {tap !== "profile" && <UserFooter />}
     </>
   );

@@ -1,11 +1,12 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
-import { CommunityBookmark, PerfumeBookmark } from "../sections.type";
+import { CommunityBookmark } from "../sections.type";
 import { PostCard } from "@/components/commons/card/postCard";
 import { mockCommunityPostData } from "@/lib/mocks/communityCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
+import { MockPerfumeBookmark } from "@/lib/mocks/fetchUser";
 
-const renderPerfumeBookmarks = (perfumes: PerfumeBookmark[]) => {
+const renderPerfumeBookmarks = (perfumes: MockPerfumeBookmark[]) => {
   const itemsToRender = Array.from({ length: 10 }).flatMap(() => perfumes);
 
   if (itemsToRender.length === 0) {

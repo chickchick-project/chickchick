@@ -1,22 +1,24 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
-import { BookmarkData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
-import {
-  renderPerfumeBookmarks,
-  renderCommunityBookmarks,
-} from "./bookmarkSection.helper";
+import { SkeletonBookmark } from "./SkeletonBookmark";
+import PerfumeBookmarksLoader from "./PerfumeBookmarks";
+import CommunityBookmarksLoader from "./CommunityBookmarks";
+import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
+import { MockPerfumeBookmark } from "@/lib/mocks/fetchUser";
 
 export const BookmarkSection = ({
-  data,
   isMe,
+  userId,
+  initialPerfumeData,
 }: {
-  data: BookmarkData;
   isMe?: boolean;
+  userId: string;
+  initialPerfumeData?: MockPerfumeBookmark[];
 }) => {
   if (!isMe) {
     // 타인의 프로필: 향수만 표시
-    return renderPerfumeBookmarks(data.perfumes);
+    return renderPerfumeBookmarks(initialPerfumeData || []);
   }
 
   // 나의 프로필: 향수 및 커뮤니티 북마크를 탭으로 표시
@@ -24,12 +26,20 @@ export const BookmarkSection = ({
     {
       key: "bookmarksPerfumes",
       label: "향수",
-      content: renderPerfumeBookmarks(data.perfumes),
+      content: (
+        <Suspense fallback={<SkeletonBookmark />}>
+          <PerfumeBookmarksLoader userId={userId} />
+        </Suspense>
+      ),
     },
     {
       key: "bookmarksPosts",
       label: "커뮤니티",
-      content: renderCommunityBookmarks(data.community),
+      content: (
+        <Suspense fallback={<SkeletonBookmark />}>
+          <CommunityBookmarksLoader userId={userId} />
+        </Suspense>
+      ),
     },
   ];
 
