@@ -1,15 +1,44 @@
 "use client";
 
 import Image from "next/image";
-import { CollectionItem } from "../sections.type";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
+import { User } from "@prisma/client";
+import { CollectionItem } from "../sections.type";
+import { useUserCollections } from "./useUserCollections";
+import { SkeletonMasonry } from "./SkeletonMasonry";
 
-export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
+export const CollectionSection = ({ pageOwner }: { pageOwner: User }) => {
   const { isOpen, imageUrl, comment, openModal, closeModal, handleSave } =
     useImageDetailModal();
+  const {
+    data: collectionsData,
+    isLoading,
+    error,
+  } = useUserCollections(pageOwner.id);
 
-  if (data.length < 1) {
+  if (error) {
+    console.error("CollectionSection error:", error);
+    return (
+      <div className="flex justify-center items-center h-[200px]">
+        <p>컬렉션을 불러오는 중 오류가 발생했습니다.</p>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return <SkeletonMasonry />;
+  }
+
+  if (!collectionsData) {
+    return (
+      <div className="flex justify-center items-center h-[200px]">
+        <p>컬렉션 데이터를 불러올 수 없습니다.</p>
+      </div>
+    );
+  }
+
+  if (!collectionsData.data || collectionsData.data.length === 0) {
     return (
       <div className="flex justify-center items-center h-[200px]">
         <p>저장된 컬렉션이 없습니다.</p>
@@ -17,34 +46,59 @@ export const CollectionSection = ({ data }: { data: CollectionItem[] }) => {
     );
   }
 
+  const displayData = collectionsData.data;
+
   return (
     <>
       <div className="h-[800px] overflow-y-auto pr-1">
-        <div className="columns-4 gap-4">
-          {data.map((item, index) => (
-            <div
-              key={`${item.id}-${index}`}
-              className="break-inside-avoid mb-4 relative cursor-pointer"
-              style={{ height: "250px" }}
-              onClick={() => {
-                if (item.image?.imageUrl) {
-                  openModal(item.image.imageUrl, item.comment || "");
-                }
-              }}
-            >
-              {item.image?.imageUrl && (
-                <Image
-                  key={item.image.id}
-                  src={item.image.imageUrl}
-                  width={item.image.width}
-                  height={item.image.height}
-                  alt="collection image"
-                />
-              )}
-            </div>
-          ))}
+        <div className="columns-4 gap-4 space-y-4">
+          {displayData.map((item: CollectionItem, index: number) => {
+            if (!item.image?.width || !item.image.height) {
+              return null;
+            }
+
+            const aspectRatio = item.image.height / item.image.width;
+
+            return (
+              <div
+                key={`${item.id}-${index}`}
+                className="group rounded-lg bg-gray-100 overflow-hidden break-inside-avoid mb-4"
+                onClick={() => {
+                  if (item.image?.imageUrl) {
+                    openModal(item.image.imageUrl, item.comment || "");
+                  }
+                }}
+              >
+                <div
+                  className="relative w-full cursor-pointer"
+                  style={{
+                    aspectRatio,
+                  }}
+                >
+                  <Image
+                    src={item.image.imageUrl}
+                    width={item.image.width}
+                    height={item.image.height}
+                    sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    alt={item.comment || "collection image"}
+                    className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
+                    priority={index < 8}
+                  />
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200" />
+                  {item.comment && (
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <p className="text-white text-sm line-clamp-2">
+                        {item.comment}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
+
       {isOpen && (
         <ImageDetailModal
           imageUrl={imageUrl}

@@ -26,7 +26,7 @@ const MainTabs = ({
           return (
             <Link
               key={value}
-              href={`/user/${pageOwner.id}/${value}`}
+              href={`/user/${pageOwner.id}?tab=${value}`}
               className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
                 ${
                   isActive

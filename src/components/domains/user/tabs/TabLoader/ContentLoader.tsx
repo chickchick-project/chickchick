@@ -1,3 +1,8 @@
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from "@tanstack/react-query";
 import type { User } from "@prisma/client";
 import { fetchMockActivityData } from "@/lib/mocks/fetchUser";
 import {
@@ -21,9 +26,18 @@ export default async function TabContentLoader({
   pageOwner,
   isMe,
 }: TabContentLoaderProps) {
+  const queryClient = new QueryClient();
   if (tap === "collection") {
-    const collections = await fetchUserCollections(pageOwner.id);
-    return <CollectionSection data={collections.data} />;
+    await queryClient.prefetchQuery({
+      queryKey: ["collections", pageOwner.id],
+      queryFn: () => fetchUserCollections(pageOwner.id),
+    });
+    const dehydratedState = dehydrate(queryClient);
+    return (
+      <HydrationBoundary state={dehydratedState}>
+        <CollectionSection pageOwner={pageOwner} />
+      </HydrationBoundary>
+    );
   }
 
   if (tap === "bookmarks") {

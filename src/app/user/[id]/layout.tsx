@@ -2,22 +2,36 @@ import { notFound } from "next/navigation";
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
-import { TAB_CONFIGS } from "@/components/domains/user/tabs/tabs.helper";
-
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
-import TabContentLoader from "@/components/domains/user/tabs/TabLoader/ContentLoader";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 
-export default async function UserPage({
+interface LayoutProps {
+  children: React.ReactNode;
+  collection: React.ReactNode;
+  bookmarks: React.ReactNode;
+  activity: React.ReactNode;
+  profile: React.ReactNode;
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}
+
+export default async function UserLayout({
+  children,
+  collection,
+  bookmarks,
+  activity,
+  profile,
   params,
-}: {
-  params: Promise<{ id: string; tap: string }>;
-}) {
-  const { tap, id: pageOwnerId } = await params; //pageowner id
-  const session = await getSession(); //user id
+  searchParams,
+}: LayoutProps) {
+  const { id: pageOwnerId } = await params;
+  const searchParamsData = await searchParams;
+  const tab = searchParamsData?.tab || "collection";
+  const session = await getSession();
+
   let user: User | null = null;
   try {
     const userResult = await fetchUserById(pageOwnerId);
@@ -34,18 +48,18 @@ export default async function UserPage({
   }
 
   const isMe = session?.user?.id === pageOwnerId;
-  const requestedTabConfig = TAB_CONFIGS.find((config) => config.value === tap);
 
-  if (requestedTabConfig?.isMeOnly && !isMe) {
-    return notFound();
-  }
   return (
-    <>
+    <div className="w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
-      <PageClient pageOwner={user} isMe={isMe} tap={tap}>
-        <TabContentLoader tap={tap} pageOwner={user} isMe={isMe} />
+      <PageClient pageOwner={user} isMe={isMe} tap={tab}>
+        {children}
+        {collection}
+        {bookmarks}
+        {activity}
+        {profile}
       </PageClient>
-      {tap !== "profile" && <UserFooter />}
-    </>
+      {tab !== "profile" && <UserFooter />}
+    </div>
   );
 }

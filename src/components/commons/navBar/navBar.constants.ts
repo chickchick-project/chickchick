@@ -6,9 +6,9 @@ export const NAV_PATHS = {
   COMMUNITY: "/community",
   POST: "/community/post",
   USER: {
-    COLLECTION: (id: string) => `/user/${id}/collection`,
-    BOOKMARK: (id: string) => `/user/${id}/bookmarks`,
-    ACTIVITY: (id: string) => `/user/${id}/activity`,
+    COLLECTION: (id: string) => `/user/${id}`,
+    BOOKMARK: (id: string) => `/user/${id}?tab=bookmarks`,
+    ACTIVITY: (id: string) => `/user/${id}?tab=activity`,
   },
 } as const;
 
