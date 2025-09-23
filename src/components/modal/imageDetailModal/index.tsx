@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 interface ImageDetailModalProps {
   imageUrl: string;
   comment: string;
+  perfumeName?: string;
   onClose: () => void;
   onSave: (newComment: string) => void;
 }
@@ -12,6 +13,7 @@ interface ImageDetailModalProps {
 const ImageDetailModal = ({
   imageUrl,
   comment,
+  perfumeName,
   onClose,
   onSave,
 }: ImageDetailModalProps) => {
@@ -37,6 +39,11 @@ const ImageDetailModal = ({
           height={500}
           style={{ objectFit: "contain" }}
         />
+        {perfumeName && (
+          <div className="mt-4 w-full text-center">
+            <h3 className="text-lg font-semibold text-gray-800">{perfumeName}</h3>
+          </div>
+        )}
         <div className="mt-4 w-full text-center">
           {isEditing ? (
             <div className="flex flex-col items-center gap-2">
@@ -45,6 +52,7 @@ const ImageDetailModal = ({
                 value={editedComment}
                 onChange={(e) => setEditedComment(e.target.value)}
                 className="border rounded px-2 py-1 w-full max-w-sm"
+                placeholder="코멘트를 입력하세요"
               />
               <button
                 onClick={handleSave}
@@ -54,8 +62,11 @@ const ImageDetailModal = ({
               </button>
             </div>
           ) : (
-            <p onClick={() => setIsEditing(true)} className="cursor-pointer">
-              {comment}
+            <p
+              onClick={() => setIsEditing(true)}
+              className="cursor-pointer text-gray-600 hover:text-gray-800"
+            >
+              {comment || "클릭하여 코멘트를 추가하세요"}
             </p>
           )}
         </div>

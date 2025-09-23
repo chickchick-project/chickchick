@@ -99,6 +99,7 @@ export async function getUserCollectionsService(
       },
       include: {
         image: true,
+        perfume: true,
       },
     });
     return serviceSuccess(collections);
