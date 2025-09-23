@@ -1,6 +1,6 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import { createStandardApiResponses } from "../../utils/createStandardApiResponses";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import { optionalAuthMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import type { AppContext } from "@/lib/hono/app";
 import * as UserServices from "@/lib/hono/services/user.service";
 import * as UserSchemas from "@/lib/hono/schemas/user.schema";
@@ -14,7 +14,7 @@ import { UserCollectionSchema } from "@zod/modelSchema";
 
 const usersApi = new OpenAPIHono<AppContext>();
 
-usersApi.use("*", authMiddleware);
+usersApi.use("*", optionalAuthMiddleware);
 
 /**
  * @method GET

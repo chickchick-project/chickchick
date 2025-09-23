@@ -71,6 +71,11 @@ meApi.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
   );
 });
 
+/**
+ * @method POST
+ * @path /me/collections
+ * @summary 내 향수 컬렉션 등록
+ */
 const postPhotoCollectionRoute = createRoute({
   method: "post",
   path: "/collections",
@@ -111,8 +116,6 @@ meApi.openapi(postPhotoCollectionRoute, async (c) => {
     imageFile,
     comment,
   };
-
-  // console.log(data);
 
   const result = await MeServices.postPhotoCollectionService(data);
 
