@@ -1,3 +1,17 @@
+/**
+ * @deprecated 이 파일은 병렬 라우팅으로 마이그레이션되면서 더 이상 사용되지 않습니다.
+ *
+ * 병렬 라우팅 이전에는 이 컴포넌트가 탭별로 조건부 렌더링을 담당했지만,
+ * 이제 각 슬롯(@collection, @bookmarks, @activity, @profile)에서
+ * 직접 데이터 로딩과 렌더링을 처리합니다.
+ *
+ * 관련 파일:
+ * - src/app/user/[id]/@collection/page.tsx
+ * - src/app/user/[id]/@bookmarks/page.tsx
+ * - src/app/user/[id]/@activity/page.tsx
+ * - src/app/user/[id]/@profile/page.tsx
+ */
+
 import {
   dehydrate,
   HydrationBoundary,

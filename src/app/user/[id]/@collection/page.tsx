@@ -43,20 +43,16 @@ export default async function CollectionPage({
 
   const queryClient = new QueryClient();
 
-  console.log("Collection page - fetching data for user:", pageOwnerId);
-
   try {
     await queryClient.prefetchQuery({
       queryKey: ["collections", pageOwnerId],
       queryFn: () => fetchUserCollections(pageOwnerId),
     });
-    console.log("Collection data prefetched successfully");
   } catch (error) {
     console.error("Error prefetching collection data:", error);
   }
 
   const dehydratedState = dehydrate(queryClient);
-  console.log("Dehydrated state:", dehydratedState);
 
   return (
     <HydrationBoundary state={dehydratedState}>
