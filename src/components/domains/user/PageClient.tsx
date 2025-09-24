@@ -1,42 +1,40 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { useState } from "react";
 import { User } from "@prisma/client";
 import MainTabs from "./tabs/MainTabs";
 import PhotoUploadModal from "@/components/modal/photoUploadModal";
-import { SkeletonMasonry } from "./sections/CollectionSection/SkeletonMasonry";
-import { SkeletonBookmark } from "./sections/BookmarkSection/SkeletonBookmark";
+import { usePathname } from "next/navigation";
 
 interface PageClientProps {
   pageOwner: User;
   isMe: boolean;
-  tap: string;
   children: React.ReactNode;
 }
 
-export default function ClientComponent({
+export default function PageClient({
   pageOwner,
   isMe,
-  tap,
   children,
 }: PageClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleUploadSuccess = () => {
     setIsModalOpen(false);
   };
+
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "collection";
 
   return (
     <>
       <MainTabs
         isMe={isMe}
         pageOwner={pageOwner}
-        tab={tap}
+        tab={activeTab}
         onAddPhotoClick={() => setIsModalOpen(true)}
       />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
-        <Suspense fallback={<TabSkeletonSelector tap={tap} />}>
-          {children}
-        </Suspense>
+        {children}
       </div>
       <PhotoUploadModal
         isOpen={isModalOpen}
@@ -45,15 +43,4 @@ export default function ClientComponent({
       />
     </>
   );
-}
-
-function TabSkeletonSelector({ tap }: { tap: string }) {
-  switch (tap) {
-    case "collection":
-      return <SkeletonMasonry />;
-    case "bookmarks":
-      return <SkeletonBookmark />;
-    default:
-      return null;
-  }
 }

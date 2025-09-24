@@ -1,11 +1,9 @@
-import React, { Suspense } from "react";
+import React from "react";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
-import { SkeletonBookmark } from "./SkeletonBookmark";
 import PerfumeBookmarksLoader from "./PerfumeBookmarks";
 import CommunityBookmarksLoader from "./CommunityBookmarks";
 import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
-import { PostBookmark } from "@prisma/client";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export const BookmarkSection = ({
@@ -16,9 +14,7 @@ export const BookmarkSection = ({
   isMe?: boolean;
   userId: string;
   initialPerfumeData?: PerfumeBaseResponse[];
-  initialCommunityData?: PostBookmark[];
 }) => {
-  // console.log(initialPerfumeData);
   if (!isMe) {
     // 타인의 프로필: 향수만 표시
     return renderPerfumeBookmarks(initialPerfumeData || []);
@@ -29,23 +25,12 @@ export const BookmarkSection = ({
     {
       key: "bookmarksPerfumes",
       label: "향수",
-      content: (
-        <Suspense fallback={<SkeletonBookmark />}>
-          <PerfumeBookmarksLoader userId={userId} />
-        </Suspense>
-      ),
+      content: <PerfumeBookmarksLoader userId={userId} />,
     },
     {
       key: "bookmarksPosts",
       label: "커뮤니티",
-      content: (
-        <Suspense fallback={<SkeletonBookmark />}>
-          <CommunityBookmarksLoader
-            userId={userId}
-            // initialCommunityData={initialCommunityData}
-          />
-        </Suspense>
-      ),
+      content: <CommunityBookmarksLoader userId={userId} />,
     },
   ];
 

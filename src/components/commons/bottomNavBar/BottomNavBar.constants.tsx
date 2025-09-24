@@ -34,7 +34,7 @@ export const BOTTOM_NAV_BAR_ICONS = (userId: string) => {
         active: "/icons/bottomNavBar/mypageActive.svg",
       },
       alt: "마이페이지",
-      href: `${userId ? `/user/${userId}` : "/"}`,
+      href: `${userId ? `/user/${userId}/collection` : "/"}`,
     },
   ];
 };

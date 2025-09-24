@@ -6,7 +6,7 @@ import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImag
 import { User } from "@prisma/client";
 import type { CollectionItem } from "../sections.type";
 import { useUserCollections } from "./useUserCollections";
-import { SkeletonMasonry } from "./SkeletonMasonry";
+import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
 
 export const CollectionSection = ({ pageOwner }: { pageOwner: User }) => {
   const {

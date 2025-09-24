@@ -5,33 +5,19 @@ import PageClient from "@/components/domains/user/PageClient";
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
+import UserLayoutSuspense from "./UserLayoutSuspense";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 
 interface LayoutProps {
   children: React.ReactNode;
-  collection: React.ReactNode;
-  bookmarks: React.ReactNode;
-  activity: React.ReactNode;
-  profile: React.ReactNode;
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tab?: string }>;
 }
 
-export default async function UserLayout({
-  children,
-  collection,
-  bookmarks,
-  activity,
-  profile,
-  params,
-  searchParams,
-}: LayoutProps) {
+export default async function UserLayout({ children, params }: LayoutProps) {
   const { id: pageOwnerId } = await params;
-  const searchParamsData = await searchParams;
-  const tab = searchParamsData?.tab || "collection";
-  const session = await getSession();
 
+  const session = await getSession();
   let user: User | null = null;
   try {
     const userResult = await fetchUserById(pageOwnerId);
@@ -52,14 +38,13 @@ export default async function UserLayout({
   return (
     <div className="w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
-      <PageClient pageOwner={user} isMe={isMe} tap={tab}>
-        {children}
-        {collection}
-        {bookmarks}
-        {activity}
-        {profile}
+      <PageClient pageOwner={user} isMe={isMe}>
+        <UserLayoutSuspense>
+          {children}
+        </UserLayoutSuspense>
       </PageClient>
-      {tab !== "profile" && <UserFooter />}
+      <UserFooter />
     </div>
   );
 }
+

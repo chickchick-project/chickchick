@@ -1,27 +1,16 @@
 import type { User } from "@prisma/client";
 import { notFound } from "next/navigation";
-import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
-import { ProfileSection } from "@/components/domains/user/sections";
+import { CollectionSection } from "@/components/domains/user/sections";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 
-export default async function ProfilePage({
+export default async function UserPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ tab?: string }>;
 }) {
   const { id: pageOwnerId } = await params;
-  const searchParamsData = await searchParams;
-  const tab = searchParamsData?.tab || "collection";
-
-  if (tab !== "profile") {
-    return null;
-  }
-
-  const session = await getSession();
 
   let user: User | null = null;
   try {
@@ -38,11 +27,5 @@ export default async function ProfilePage({
     return notFound();
   }
 
-  const isMe = session?.user?.id === pageOwnerId;
-
-  if (!isMe) {
-    return notFound();
-  }
-
-  return <ProfileSection data={user} />;
+  return <CollectionSection pageOwner={user} />;
 }
