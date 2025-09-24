@@ -5,7 +5,6 @@ import PageClient from "@/components/domains/user/PageClient";
 import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
-import UserLayoutSuspense from "./UserLayoutSuspense";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 
@@ -39,12 +38,9 @@ export default async function UserLayout({ children, params }: LayoutProps) {
     <div className="w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
       <PageClient pageOwner={user} isMe={isMe}>
-        <UserLayoutSuspense>
-          {children}
-        </UserLayoutSuspense>
+        {children}
       </PageClient>
       <UserFooter />
     </div>
   );
 }
-

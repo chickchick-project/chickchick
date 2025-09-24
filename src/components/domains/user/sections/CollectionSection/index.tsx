@@ -8,7 +8,13 @@ import type { CollectionItem } from "../sections.type";
 import { useUserCollections } from "./useUserCollections";
 import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
 
-export const CollectionSection = ({ pageOwner }: { pageOwner: User }) => {
+export const CollectionSection = ({
+  pageOwner,
+  initialCollectionData,
+}: {
+  pageOwner: User;
+  initialCollectionData: CollectionItem[];
+}) => {
   const {
     isOpen,
     imageUrl,
@@ -22,7 +28,7 @@ export const CollectionSection = ({ pageOwner }: { pageOwner: User }) => {
     data: collectionsData,
     isLoading,
     error,
-  } = useUserCollections(pageOwner.id);
+  } = useUserCollections(pageOwner.id, initialCollectionData);
 
   if (error) {
     console.error("CollectionSection error:", error);
