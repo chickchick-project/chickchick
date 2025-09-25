@@ -22,6 +22,7 @@ export default function CommentForm({
   };
 
   const { uploadMutation } = useCommentMutation(postId);
+  const { isPending: isCreating } = uploadMutation;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,8 +69,7 @@ export default function CommentForm({
       {type === "create" && (
         <ButtonFilledPrimaryLFit
           colorNum="200"
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || isCreating}
           type="submit"
         >
           댓글 작성
@@ -77,19 +77,14 @@ export default function CommentForm({
       )}
       {type === "reply" && (
         <ButtonOutlinedPrimaryLFit
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || isCreating}
           type="submit"
         >
           답글 작성
         </ButtonOutlinedPrimaryLFit>
       )}
       {type === "edit" && (
-        <ButtonOutlinedPrimaryLFit
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
-          type="submit"
-        >
+        <ButtonOutlinedPrimaryLFit disabled={!inputValue.trim()} type="submit">
           댓글 수정
         </ButtonOutlinedPrimaryLFit>
       )}

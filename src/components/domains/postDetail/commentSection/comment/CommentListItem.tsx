@@ -39,7 +39,7 @@ export default function CommentListItem({
   const isAnyCommentBeingReplied = replyingCommentId !== null;
 
   const { deleteMutation } = useCommentMutation(postId);
-
+  const { isPending: isDeleting } = deleteMutation;
   const userActions: ActionItem[] = [
     {
       type: "reply",
@@ -67,7 +67,8 @@ export default function CommentListItem({
           deleteMutation.mutate(id);
         }
       },
-      disabled: isAnyCommentBeingReplied || isAnyCommentBeingEdited,
+      disabled:
+        isAnyCommentBeingReplied || isAnyCommentBeingEdited || isDeleting,
     },
   ];
 
