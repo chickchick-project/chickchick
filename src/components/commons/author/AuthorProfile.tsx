@@ -1,12 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import { DEFAULT_PROFILE_IMAGE } from "./author.constants";
-
-interface AuthorProfileProps {
-  name: string;
-  profileImage?: string | null;
-  size?: number;
-}
+import { AuthorProfileProps } from "./author.types";
 
 export default function AuthorProfile({
   name,
