@@ -8,17 +8,16 @@ import {
   CommentResponse,
 } from "@/lib/hono/schemas/comment.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { CommentAction, DELETE_COMMENT } from "../comment.reducer";
+import useCommentMutation from "../useCommentMutation";
 
 export default function CommentListItem({
   commentActionState,
   comment,
-  onAction,
+
   isReplyType = false,
 }: {
   commentActionState: TCommentActionState;
   comment: CommentResponse | CommentReplyResponse;
-  onAction: (action: CommentAction) => void;
   isReplyType?: boolean;
 }) {
   const {
@@ -34,6 +33,9 @@ export default function CommentListItem({
   const isReplying = replyingCommentId === id;
   const isAnyCommentBeingEdited = editingCommentId !== null;
   const isAnyCommentBeingReplied = replyingCommentId !== null;
+
+  const { deleteMutation } = useCommentMutation(postId);
+
   const userActions: ActionItem[] = [
     {
       type: "reply",
@@ -58,8 +60,7 @@ export default function CommentListItem({
       type: "delete",
       onClick: () => {
         if (window.confirm("댓글을 삭제하시겠습니까?")) {
-          //삭제 api 구현 후 연동 필요
-          onAction({ type: DELETE_COMMENT, payload: { id, parentId } }); //삭제처리 답글이 있는 경우 고려 필요
+          deleteMutation.mutate(id);
         }
       },
       disabled: isAnyCommentBeingReplied || isAnyCommentBeingEdited,
@@ -88,13 +89,11 @@ export default function CommentListItem({
     }
   }
 
-  const onEditSuccess = (action: CommentAction) => {
-    onAction(action);
+  const onEditSuccess = () => {
     setEditingCommentId(null);
   };
 
-  const onReplySuccess = (action: CommentAction) => {
-    onAction(action);
+  const onReplySuccess = () => {
     setReplyingCommentId(null);
   };
 
@@ -141,7 +140,7 @@ export default function CommentListItem({
               commentActionState={commentActionState}
               comment={reply}
               isReplyType
-              onAction={onAction}
+              // onAction={onAction}
             />
           </ul>
         ))}
