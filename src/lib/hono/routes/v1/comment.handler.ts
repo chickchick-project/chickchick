@@ -13,6 +13,7 @@ import {
   apiConflict,
   apiBadRequest,
   apiCreated,
+  apiForbidden,
 } from "../../utils/apiResponse.utils";
 
 const commentsApi = new OpenAPIHono<AppContext>();
@@ -161,3 +162,44 @@ commentsApi.openapi(createCommentRoute, async (c) => {
 commentsApi.route("/", authenticatedApi);
 
 export default commentsApi;
+
+/** * @method DELETE
+ * @path /{commentId}
+ * @summary 댓글 삭제
+ */
+const deleteCommentRoute = createRoute({
+  method: "delete",
+  path: "/{commentId}",
+  summary: "댓글 삭제 (Soft Delete)",
+  description: `댓글 또는 대댓글을 삭제합니다. 댓글 내용을 "삭제된 댓글 입니다."로 변경하고, published 필드를 false로 설정합니다.`,
+  request: {
+    params: CommentSchemas.CommentIdParamSchema,
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: CommentSchemas.DeleteCommentResponseSchema,
+      description: "댓글",
+    },
+    ["400", "401", "403", "404"]
+  ),
+  tags: ["Comment"],
+});
+
+commentsApi.use(deleteCommentRoute.getRoutingPath(), authMiddleware);
+
+commentsApi.openapi(deleteCommentRoute, async (c) => {
+  const { commentId } = c.req.valid("param");
+  const user = await getAuthenticatedUser(c);
+  const payload: CommentSchemas.DeleteCommentPayload = {
+    id: commentId,
+    authorId: user.id,
+  };
+  const result = await CommentServices.deleteCommentService(payload);
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "댓글을 성공적으로 삭제했습니다.");
+});

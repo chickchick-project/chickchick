@@ -39,6 +39,22 @@ export const PaginatedCommentResponseSchema = z.object({
   totalCount: z.number().optional(),
 });
 
+export const DeleteCommentPayloadSchema = CommentSchema.pick({
+  id: true,
+  authorId: true,
+});
+
+export const DELETED_COMMENT_MESSAGE_BY_USER = "삭제된 댓글입니다.";
+
+export const DeleteCommentResponseSchema = CommentResponseSchema.extend({
+  published: z.literal(false),
+  content: z.literal(DELETED_COMMENT_MESSAGE_BY_USER),
+});
+
+export const CommentIdParamSchema = z.object({
+  commentId: z.string().uuid("유효하지 않은 댓글 ID입니다."),
+});
+
 export type GetCommentQuery = z.infer<typeof GetCommentQuerySchema>;
 export type CommentReplyResponse = z.infer<typeof ReplyResponseSchema>;
 export type CommentResponse = z.infer<typeof CommentResponseSchema>;
@@ -47,3 +63,6 @@ export type PaginatedCommentResponse = z.infer<
 >;
 export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
 export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;
+
+export type DeleteCommentPayload = z.infer<typeof DeleteCommentPayloadSchema>;
+export type DeleteCommentResponse = z.infer<typeof DeleteCommentResponseSchema>;

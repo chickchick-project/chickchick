@@ -5,13 +5,14 @@ import CommentListItem from "./CommentListItem";
 import { ICommentIListProps, TCommentActionState } from "./postComment.types";
 import { useState } from "react";
 import ArrowIcon from "@/components/commons/icons/arrowIcon";
+import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
 
 export default function CommentList({
   commentList,
   onLoadMore,
-  onAction,
-  nextCursor,
+  hasNextCursor,
   isLoadingComments,
+  postAuthorId,
 }: ICommentIListProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
@@ -28,18 +29,18 @@ export default function CommentList({
     <section className="flex flex-col items-center">
       <ul className="flex flex-col w-full">
         {commentList.length > 0 &&
-          commentList.map((comment) => (
+          commentList.map((comment: CommentResponse) => (
             <CommentListItem
               key={comment.id}
+              postAuthorId={postAuthorId}
               commentActionState={commentActionState}
               comment={comment}
-              onAction={onAction}
             />
           ))}
       </ul>
-      {nextCursor && (
+      {hasNextCursor && (
         <ButtonFilledGrayLFixed
-          disabled={isLoadingComments || !nextCursor}
+          disabled={isLoadingComments || !hasNextCursor}
           onClick={onLoadMore}
           iconTrailing={
             <ArrowIcon color="gray-100" size="16" direction="down" />

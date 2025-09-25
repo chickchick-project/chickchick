@@ -1,11 +1,17 @@
 import {
   CommentResponse,
   CreateCommentBody,
+  DeleteCommentResponse,
 } from "@/lib/hono/schemas/comment.schema";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
+import { createHttpClient } from "@/lib/utils/core-request";
 
 const API_BASE_URL = "http://localhost:3000/api/v1";
+
+const apiClient = createHttpClient({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
+});
 
 export async function createNewComment(
   postId: string,
@@ -73,10 +79,17 @@ export async function getCommentsByPostId(
       );
     }
     const result = await response.json();
-
     return result;
   } catch (error) {
     console.error("Error fetching comments:", error);
     throw error;
   }
+}
+
+export async function deleteCommentById(
+  commentId: string
+): Promise<DeleteCommentResponse | null> {
+  return await apiClient.delete<DeleteCommentResponse>(
+    `/comments/${commentId}`
+  );
 }

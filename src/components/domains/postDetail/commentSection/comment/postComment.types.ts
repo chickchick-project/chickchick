@@ -1,18 +1,15 @@
 import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
-import { CommentAction } from "../comment.reducer";
 
-export interface ICommentAuthProfileProps {
+export interface ICommentAuthInfoProps {
   author: string;
   profileImage?: string | null;
-}
-
-export interface ICommentAuthInfoProps extends ICommentAuthProfileProps {
-  createdAt: string;
+  size?: number;
+  isPostAuthor?: boolean;
 }
 
 export type TComment = {
   id: string;
-  authInfo: ICommentAuthProfileProps;
+  authInfo: ICommentAuthInfoProps;
   content: string;
   createdAt: string;
   isAuthor: boolean;
@@ -22,9 +19,9 @@ export type TComment = {
 export interface ICommentIListProps {
   commentList: CommentResponse[];
   onLoadMore: () => void;
-  onAction: (action: CommentAction) => void;
-  nextCursor?: string | null;
+  hasNextCursor?: boolean;
   isLoadingComments?: boolean;
+  postAuthorId: string;
 }
 
 export interface ICommentFormProps {
@@ -34,7 +31,7 @@ export interface ICommentFormProps {
   commentId?: string;
   postId: string;
   parentId?: string | null;
-  onSuccess?: (action: CommentAction) => void;
+  onSuccess?: () => void;
   onCancel?: () => void;
 }
 

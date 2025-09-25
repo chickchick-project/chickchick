@@ -1,57 +1,45 @@
 "use client";
 
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import CommentSection from "./commentSection";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
-import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import { useQuery } from "@tanstack/react-query";
 import {
-  PostDetailResponse,
-  PostStatusResponse,
-} from "@/lib/hono/schemas/community.schema";
-import { useState } from "react";
+  getPostDetailById,
+  getPostDetailStatusById,
+} from "./postDetail.helpers";
 
-interface IPostDetailPageClientProps {
-  postDetail: PostDetailResponse;
-  postStatus: PostStatusResponse;
-  initialCommentsResult: SearchResponse<CommentResponse>;
-}
+export default function PageClient({ postId }: { postId: string }) {
+  const { data: postDetail } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPostDetailById(postId),
+    staleTime: 1000 * 60 * 5,
+  });
 
-export default function PageClient({
-  postDetail,
-  postStatus,
-  initialCommentsResult,
-}: IPostDetailPageClientProps) {
+  const { data: postStatus } = useQuery({
+    queryKey: ["post", postId, "status"],
+    queryFn: () => getPostDetailStatusById(postId),
+  });
+
+  if (!postDetail || !postStatus) {
+    return <div>Loading...</div>;
+  }
+
   const { content, ...postDetailHeader } = postDetail;
-
-  const [totalCommentCount, setTotalCommentCount] = useState(
-    postStatus.commentCount || 0
-  );
-
-  const changeCommentCount = (change: 1 | -1) => {
-    setTotalCommentCount((prev) => {
-      const updated = prev + change;
-      return updated < 0 ? 0 : updated;
-    });
-  };
 
   return (
     <article>
-      <PostDetailHeader
-        postStatus={{ ...postStatus, commentCount: totalCommentCount }}
-        {...postDetailHeader}
-      />
+      <PostDetailHeader postStatus={postStatus} {...postDetailHeader} />
       <PostContent
-        postId={postDetail.id}
+        postId={postId}
         content={content}
         isAuthor={postDetail.isAuthor}
         relatedPerfumes={postDetail.perfumes}
       />
       <CommentSection
-        postId={postDetail.id}
-        initialCommentsResult={initialCommentsResult}
-        totalCommentCount={totalCommentCount}
-        changeCommentCount={changeCommentCount}
+        postId={postId}
+        postAuthorId={postDetail.author.id}
+        totalCommentCount={postStatus.commentCount}
       />
     </article>
   );
