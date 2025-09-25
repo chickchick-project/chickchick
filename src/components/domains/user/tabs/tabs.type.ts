@@ -21,12 +21,12 @@ type SubTabKey =
 type SubTabItem = {
   key: SubTabKey;
   label: string;
-  content: React.ReactNode;
 };
 
-type SubTabSwitcherProps = {
+interface SubTabSwitcherProps {
   tabs: SubTabItem[];
-  defaultKey?: SubTabKey;
-};
+  activeTab: string;
+  onTabChange: (key: string) => void;
+}
 
-export type { TabItemConfig, User, SubTabItem, SubTabSwitcherProps };
+export type { TabItemConfig, User, SubTabItem, SubTabKey, SubTabSwitcherProps };

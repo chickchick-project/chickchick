@@ -46,9 +46,11 @@ export default function PostDetailHeader(props: PostDetailHeaderProps) {
       </h1>
       <div className="flex items-center justify-between">
         <AuthorInfo
-          author={author.nickname}
-          createdAt={createdAt}
-          profileImage={author.imageUrl || ""}
+          author={{
+            ...author,
+            imageUrl: author.imageUrl || "",
+          }}
+          createdAt={new Date(createdAt)}
           isAuthor={false}
           info={postReactionInfo}
         />

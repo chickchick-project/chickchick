@@ -15,8 +15,11 @@ export interface MockCommunityBookmark {
   category: string;
 }
 
-export interface MockBookmarksData {
+export interface MockPerfumeBookmarksData {
   perfumes: MockPerfumeBookmark[];
+}
+
+export interface MockCommunityBookmarksData {
   community: MockCommunityBookmark[];
 }
 
@@ -76,7 +79,7 @@ export interface MockProfileData {
 
 export type UserPageTapData =
   | MockCollectionItem[]
-  | MockBookmarksData
+  | MockPerfumeBookmarksData
   | MockActivityData
   | MockProfileData;
 
@@ -102,21 +105,26 @@ export async function fetchMockCollectionData(
   return generateMockCollection(12);
 }
 
-export async function fetchMockBookmarksData(
+export async function fetchMockPerfumeBookmarksData(
   userId: string
-): Promise<MockBookmarksData> {
+): Promise<MockPerfumeBookmark[]> {
   console.log(`Fetching bookmarks : ${userId}`);
   await new Promise((resolve) => setTimeout(resolve, 100));
-  return {
-    perfumes: [
-      { id: 3, name: "북마크 향수 1" },
-      { id: 4, name: "북마크 향수 2" },
-    ],
-    community: [
-      { id: 5, title: "향수 정보 공유", category: "자유 게시판" },
-      { id: 6, title: "리뷰 모음", category: "리뷰 게시판" },
-    ],
-  };
+  return [
+    { id: 3, name: "북마크 향수 1" },
+    { id: 4, name: "북마크 향수 2" },
+  ];
+}
+
+export async function fetchMockCommunityBookmarks(
+  userId: string
+): Promise<MockCommunityBookmark[]> {
+  console.log(`Fetching community bookmarks : ${userId}`);
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  return [
+    { id: 5, title: "향수 정보 공유", category: "자유 게시판" },
+    { id: 6, title: "리뷰 모음", category: "리뷰 게시판" },
+  ];
 }
 
 export async function fetchMockActivityData(

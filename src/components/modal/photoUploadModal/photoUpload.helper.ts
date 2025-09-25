@@ -32,10 +32,14 @@ export async function uploadPhotoCollection({
   const formData = new FormData();
   formData.append("imageFile", file);
   formData.append("comment", comment);
-  formData.append("perfumeIds", perfume.id);
+  formData.append("perfumeId", perfume.id);
 
   const response = await apiClient.post("/me/collections", formData);
-  return response;
+
+  if (response) {
+    const event = new CustomEvent("collection-updated");
+    window.dispatchEvent(event);
+  }
 }
 
 export async function searchPerfumes(

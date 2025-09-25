@@ -3,7 +3,7 @@ import ModalPortal from "@/lib/portal/ModalPortal";
 import { ModalContainer } from "../ModalContainer";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
-// import { uploadPhotoCollection } from "./photoUpload.helper";
+import { uploadPhotoCollection } from "./photoUpload.helper";
 import { PerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface PhotoUploadModalProps {
@@ -76,11 +76,12 @@ function PhotoUploadModal({
     setError(null);
 
     try {
-      // await uploadPhotoCollection({
-      //   file: selectedFile,
-      //   comment,
-      //   perfume: selectedPerfume,
-      // });
+      await uploadPhotoCollection({
+        file: selectedFile,
+        comment,
+        perfume: selectedPerfume,
+      });
+
       onUploadSuccess();
       onClose();
     } catch (err: unknown) {

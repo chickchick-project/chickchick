@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User, UserCollection, CollectionImage, Perfume } from "@prisma/client";
 
 export type PerfumeBookmark = {
   id: number;
@@ -11,10 +11,9 @@ export type CommunityBookmark = {
   category: string;
 };
 
-export type CollectionItem = {
-  id: string | number;
-  imageUrl: string;
-  title: string;
+export type CollectionItem = UserCollection & {
+  image?: CollectionImage;
+  perfume?: Perfume;
 };
 
 export type BookmarkData = {

@@ -1,22 +1,28 @@
-import React from "react";
+"use client";
+
+import React, { Suspense, useState } from "react";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
-import { BookmarkData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
-import {
-  renderPerfumeBookmarks,
-  renderCommunityBookmarks,
-} from "./bookmarkSection.helper";
+import PerfumeBookmarksLoader from "./PerfumeBookmarks";
+import CommunityBookmarksLoader from "./CommunityBookmarks";
+import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { SkeletonBookmark } from "../Skeleton";
 
 export const BookmarkSection = ({
-  data,
   isMe,
+  userId,
+  initialPerfumeData,
 }: {
-  data: BookmarkData;
   isMe?: boolean;
+  userId: string;
+  initialPerfumeData?: PerfumeBaseResponse[];
 }) => {
+  const [activeTab, setActiveTab] = useState("bookmarksPerfumes");
+
   if (!isMe) {
     // 타인의 프로필: 향수만 표시
-    return renderPerfumeBookmarks(data.perfumes);
+    return renderPerfumeBookmarks(initialPerfumeData || []);
   }
 
   // 나의 프로필: 향수 및 커뮤니티 북마크를 탭으로 표시
@@ -24,14 +30,39 @@ export const BookmarkSection = ({
     {
       key: "bookmarksPerfumes",
       label: "향수",
-      content: renderPerfumeBookmarks(data.perfumes),
     },
     {
       key: "bookmarksPosts",
       label: "커뮤니티",
-      content: renderCommunityBookmarks(data.community),
     },
   ];
 
-  return <SubTabSwitcher defaultKey="bookmarksPerfumes" tabs={tabsItem} />;
+  return (
+    <>
+      <SubTabSwitcher
+        activeTab={activeTab}
+        onTabChange={(key) => setActiveTab(key)}
+        tabs={tabsItem}
+      />
+
+      <div className="mt-6">
+        <Suspense fallback={<TabSkeletonSelector />}>
+          {activeTab === "bookmarksPerfumes" && (
+            <Suspense fallback={<SkeletonBookmark />}>
+              <PerfumeBookmarksLoader userId={userId} />
+            </Suspense>
+          )}
+          {activeTab === "bookmarksPosts" && (
+            <Suspense fallback={<SkeletonBookmark />}>
+              <CommunityBookmarksLoader userId={userId} />
+            </Suspense>
+          )}
+        </Suspense>
+      </div>
+    </>
+  );
 };
+
+function TabSkeletonSelector() {
+  return <SkeletonBookmark />;
+}

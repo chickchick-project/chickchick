@@ -2,7 +2,14 @@
  * 서비스 계층의 성공 또는 실패 결과를 나타내는 표준 타입.
  * 성공 시에는 `data`를, 실패 시에는 `error` 코드와 `message`를 포함합니다.
  */
-export type ServiceResult<T, E = string> =
+export type ServiceErrorCode =
+  | "NOT_FOUND"
+  | "ALREADY_EXISTS"
+  | "BAD_REQUEST"
+  | "INTERNAL_ERROR"
+  | "FORBIDDEN";
+
+export type ServiceResult<T, E extends ServiceErrorCode = ServiceErrorCode> =
   | { success: true; data: T }
   | { success: false; error: E; message?: string };
 
@@ -19,7 +26,7 @@ export function serviceSuccess<T>(data: T): ServiceResult<T> {
  * @param error - 에러를 식별하는 코드 또는 문자열
  * @param message - 클라이언트에게 보여줄 수 있는 에러 메시지
  */
-export function serviceError<E = string>(
+export function serviceError<E extends ServiceErrorCode>(
   error: E,
   message?: string
 ): ServiceResult<never, E> {
@@ -29,29 +36,25 @@ export function serviceError<E = string>(
 /**
  * 'NOT_FOUND' 에러 결과 객체를 생성합니다.
  */
-export function serviceNotFound(
-  message = "리소스를 찾을 수 없습니다."
-): ServiceResult<never, "NOT_FOUND"> {
-  return { success: false, error: "NOT_FOUND", message };
-}
-
+export const serviceNotFound = (message = "리소스를 찾을 수 없습니다.") =>
+  serviceError("NOT_FOUND", message);
 /**
  * 'ALREADY_EXISTS' 에러 결과 객체를 생성합니다.
  */
-export function serviceAlreadyExists(
-  message = "이미 존재하는 리소스입니다."
-): ServiceResult<never, "ALREADY_EXISTS"> {
-  return { success: false, error: "ALREADY_EXISTS", message };
-}
+export const serviceAlreadyExists = (message = "이미 존재하는 리소스입니다.") =>
+  serviceError("ALREADY_EXISTS", message);
 
 /**
  * 'BAD_REQUEST' 또는 유효성 검사 에러 결과 객체를 생성합니다.
  */
-export function serviceBadRequest(
-  message = "잘못된 요청입니다."
-): ServiceResult<never, "BAD_REQUEST"> {
-  return { success: false, error: "BAD_REQUEST", message };
-}
+export const serviceBadRequest = (message = "잘못된 요청입니다.") =>
+  serviceError("BAD_REQUEST", message);
+
+/**
+ * 'FORBIDDEN' 에러 결과 객체를 생성합니다.
+ */
+export const serviceForbidden = (message = "요청을 수행할 권한이 없습니다.") =>
+  serviceError("FORBIDDEN", message);
 
 /**
  * 예기치 않은 내부 서버 오류 결과 객체를 생성합니다.
@@ -59,18 +62,8 @@ export function serviceBadRequest(
 export function serviceInternalError(
   error: unknown
 ): ServiceResult<never, "INTERNAL_ERROR"> {
-  const message =
-    error instanceof Error
-      ? error.message
-      : "알 수 없는 내부 오류가 발생했습니다.";
+  const err = error instanceof Error ? error : new Error(String(error));
+  const message = err.message;
+  console.error("[INTERNAL_ERROR]", err);
   return { success: false, error: "INTERNAL_ERROR", message };
-}
-
-/**
- * 'FORBIDDEN' 에러 결과 객체를 생성합니다.
- */
-export function serviceForbidden(
-  message = "요청을 수행할 권한이 없습니다."
-): ServiceResult<never, "FORBIDDEN"> {
-  return { success: false, error: "FORBIDDEN", message };
 }

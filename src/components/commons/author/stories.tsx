@@ -4,16 +4,17 @@ import { REVIEW_STATUSES, SIZE_STATUSES } from "./author.constants";
 import { AuthorInfoProps } from "./author.types";
 
 const AUTHOR_INFO = {
-  author: "주현",
-  profileImage: undefined,
+  id: "test-user-id",
+  nickname: "주현",
+  imageUrl: "",
 } as const;
 
 const defaultProfileImage = "/images/Profile.svg";
 
 const TIMESTAMP = {
-  now: dayjs().subtract(1, "hour").toISOString(), // "1시간 전"
-  specificDate: dayjs("2024-12-19").toISOString(), // 특정 날짜
-  withTime: dayjs().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+  now: dayjs().subtract(1, "hour").toDate(), // "1시간 전"
+  specificDate: dayjs("2024-12-19").toDate(), // 특정 날짜
+  withTime: dayjs().toDate(),
 } as const;
 
 const INFO_OPTIONS = {
@@ -53,8 +54,8 @@ const Template = ({ displayType, ...args }: AuthorInfoProps & { displayType: str
     case INFO_OPTIONS.ProfileTime:
       modifiedArgs = {
         ...modifiedArgs,
+        author: { ...AUTHOR_INFO, imageUrl: defaultProfileImage },
         createdAt: TIMESTAMP.now,
-        profileImage: defaultProfileImage,
         info: { type: "basic" },
       };
       break;
@@ -62,6 +63,7 @@ const Template = ({ displayType, ...args }: AuthorInfoProps & { displayType: str
     case INFO_OPTIONS.DateReview:
       modifiedArgs = {
         ...modifiedArgs,
+        author: AUTHOR_INFO,
         createdAt: TIMESTAMP.specificDate,
         info: { type: "review", item: { status: REVIEW_STATUSES.WANT } },
       };
@@ -70,8 +72,8 @@ const Template = ({ displayType, ...args }: AuthorInfoProps & { displayType: str
     case INFO_OPTIONS.ProfileDateTime:
       modifiedArgs = {
         ...modifiedArgs,
+        author: { ...AUTHOR_INFO, imageUrl: defaultProfileImage },
         createdAt: TIMESTAMP.withTime,
-        profileImage: defaultProfileImage,
         info: { type: "comment" },
       };
       break;
@@ -79,8 +81,8 @@ const Template = ({ displayType, ...args }: AuthorInfoProps & { displayType: str
     case INFO_OPTIONS.ProfileDateState:
       modifiedArgs = {
         ...modifiedArgs,
+        author: { ...AUTHOR_INFO, imageUrl: defaultProfileImage },
         createdAt: TIMESTAMP.specificDate,
-        profileImage: defaultProfileImage,
         info: {
           type: "post",
           item: [
@@ -103,7 +105,7 @@ export const Default = {
   render: Template,
   args: {
     displayType: INFO_OPTIONS.ProfileTime,
-    ...AUTHOR_INFO,
+    author: AUTHOR_INFO,
     createdAt: TIMESTAMP.now,
     isAuthor: false,
     size: SIZE_STATUSES.DEFAULT,

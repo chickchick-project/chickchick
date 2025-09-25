@@ -29,6 +29,10 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-
+      - name: Install system dependencies for Sharp
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile

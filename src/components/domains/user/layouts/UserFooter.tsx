@@ -45,13 +45,30 @@ const UserFooter = () => {
   return (
     <div className="flex flex-col gap-y-16 mt-[60px]">
       <ScrollRowSection title="최근에 본 게시글 10">
-        {Array.from({ length: 2 }).map((_, idx) => (
-          <PostCard
-            key={idx}
-            {...mockCommunityPostData[idx]}
-            isAuthor={false}
-          />
-        ))}
+        {Array.from({ length: 2 }).map((_, idx) => {
+          const mockData = mockCommunityPostData[idx];
+          return (
+            <PostCard
+              key={idx}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              {...(mockData as any)}
+              author={{
+                id: "mock-id",
+                nickname: mockData.author,
+                imageUrl: "",
+              }}
+              createdAt={new Date(mockData.createdAt)}
+              updatedAt={new Date(mockData.createdAt)}
+              category={mockData.categoryType}
+              userId="mock-user-id"
+              published={true}
+              viewCount={0}
+              likeCount={0}
+              commentCount={0}
+              isAuthor={false}
+            />
+          );
+        })}
       </ScrollRowSection>
       <ScrollRowSection title="최근에 본 향수 10" gap="gap-x-[50px]">
         {Array.from({ length: 5 }).map((_, idx) => (
