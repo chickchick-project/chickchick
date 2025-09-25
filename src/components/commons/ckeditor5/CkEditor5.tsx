@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, MutableRefObject } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
   ClassicEditor,
@@ -31,26 +31,41 @@ import {
 } from "ckeditor5";
 
 import translations from "ckeditor5/translations/ko.js";
-import supabaseUploadPlugin from "@/lib/ckeditor/supabaseUploadPlugin";
+import makeLocalPreviewUploadPlugin, {
+  BlobRegistry,
+} from "@/lib/ckeditor/localPreviewUploadPlugin";
 
 const LICENSE_KEY = "GPL";
 
 export default function CkEditor5({
   content,
   onChange,
+  blobRegistryRef,
 }: {
   content?: string;
   onChange: (newContent: string) => void;
+  blobRegistryRef: MutableRefObject<BlobRegistry>;
 }) {
   const editorContainerRef = useRef(null);
   const editorRef = useRef(null);
   const [isLayoutReady, setIsLayoutReady] = useState(false);
 
+  const localPreviewPlugin = useMemo(
+    () => makeLocalPreviewUploadPlugin(blobRegistryRef.current),
+    [blobRegistryRef]
+  );
+
   useEffect(() => {
     setIsLayoutReady(true);
 
-    return () => setIsLayoutReady(false);
-  }, []);
+    return () => {
+      for (const url of blobRegistryRef.current.keys()) {
+        URL.revokeObjectURL(url);
+      }
+      blobRegistryRef.current.clear();
+      setIsLayoutReady(false);
+    };
+  }, [blobRegistryRef]);
 
   const { editorConfig } = useMemo(() => {
     if (!isLayoutReady) {
@@ -110,7 +125,7 @@ export default function CkEditor5({
           Underline,
         ],
 
-        extraPlugins: [supabaseUploadPlugin],
+        extraPlugins: [localPreviewPlugin],
         balloonToolbar: ["bold", "italic", "|", "link"],
         heading: {
           options: [

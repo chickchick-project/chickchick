@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import PostEditor from "./PostEditor";
 import PostFormActions from "./PostFormActions";
@@ -17,6 +17,8 @@ import {
 import getPlainText from "@/lib/utils/getPlainText";
 import { PostCategory as TPostCategory } from "@prisma/client";
 import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
+import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
+import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
 
 interface IPostFormProps {
   type: "create" | "edit";
@@ -26,6 +28,7 @@ interface IPostFormProps {
 export default function PostForm({ type, initialData }: IPostFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
   const method = useForm<CreatePost>({
     resolver: zodResolver(CreatePostBodySchema),
@@ -42,16 +45,23 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
   const {
     handleSubmit,
     formState: { isValid, isDirty },
+    setValue,
   } = method;
 
   const onSubmit = async (data: CreatePost) => {
     setIsLoading(true);
 
     try {
-      const thumbnailUrl = extractFirstImageSrc(data.content);
-      const contentText = getPlainText(data.content);
+      const finalizedContent = await finalizeWithBlobRegistry(
+        data.content,
+        blobRegistryRef.current
+      );
+      setValue("content", finalizedContent, { shouldDirty: true });
+      const thumbnailUrl = extractFirstImageSrc(finalizedContent);
+      const contentText = getPlainText(finalizedContent);
       const postData: CreatePost = {
         ...data,
+        content: finalizedContent,
         thumbnailUrl,
         contentText,
       };
@@ -81,7 +91,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
         <div className="w-full grid grid-cols-1 tablet:grid-cols-[85px_1fr] tablet:gap-x-[30px] pc:gap-x-[200px] gap-y-2 tablet:gap-y-14">
           <PostCategory />
           <PostTitle />
-          <PostEditor />
+          <PostEditor blobRegistryRef={blobRegistryRef} />
           <PostRelatedPerfume />
         </div>
         <PostFormActions disabled={disabled} />
