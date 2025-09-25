@@ -27,7 +27,6 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
 };
 
 const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
-  console.log("communityPosts", communityPosts);
   if (communityPosts.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">

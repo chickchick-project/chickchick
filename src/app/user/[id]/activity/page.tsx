@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import { getSession } from "@/lib/database/getSession";
 import { fetchMockActivityData } from "@/lib/mocks/fetchUser";
 import { ActivitySection } from "@/components/domains/user/sections";
+import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 
 export default async function ActivityPage({
   params,
@@ -10,8 +10,7 @@ export default async function ActivityPage({
 }) {
   const { id: pageOwnerId } = await params;
 
-  const session = await getSession();
-  const isMe = session?.user?.id === pageOwnerId;
+  const { isMe } = await getUserSessionInfo(pageOwnerId);
 
   if (!isMe) {
     return notFound();

@@ -1,3 +1,4 @@
+import React from "react";
 import type { User } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { fetchUserById } from "@/lib/queries/userQueries";

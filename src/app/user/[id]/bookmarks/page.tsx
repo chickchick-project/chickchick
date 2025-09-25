@@ -1,6 +1,6 @@
-import { getSession } from "@/lib/database/getSession";
 import { BookmarkSection } from "@/components/domains/user/sections";
 import { fetchUserBookmarksPerfumes } from "@/components/domains/user/user.helper";
+import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 
 export default async function BookmarksPage({
   params,
@@ -9,8 +9,7 @@ export default async function BookmarksPage({
 }) {
   const { id: pageOwnerId } = await params;
 
-  const session = await getSession();
-  const isMe = session?.user?.id === pageOwnerId;
+  const { isMe } = await getUserSessionInfo(pageOwnerId);
 
   const initialPerfume = !isMe
     ? await fetchUserBookmarksPerfumes(pageOwnerId)
