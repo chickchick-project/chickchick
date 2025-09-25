@@ -5,10 +5,10 @@ import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
-import { usePerfumeSearch } from "./usePerfumeSearch";
-import { useInfinitePerfumes } from "./useInfinitePerfumes";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
+import { useInfinitePerfumes } from "./hook/useInfinitePerfumes";
+import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
 
 export interface SearchResponse<T> {
   data: T[];
@@ -40,7 +40,7 @@ export default function PageClient({
     matchedBrand,
     handleChange,
     handleSubmit,
-  } = usePerfumeSearch(memoizedBrands);
+  } = usePerfumeSearchState(memoizedBrands);
 
   const {
     perfumes,

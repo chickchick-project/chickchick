@@ -3,7 +3,7 @@
 import { useState, useMemo, ChangeEvent, FormEvent } from "react";
 import { Brand } from "@prisma/client";
 
-export const usePerfumeSearch = (brands: Brand[]) => {
+export const usePerfumeSearchState = (brands: Brand[]) => {
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 
