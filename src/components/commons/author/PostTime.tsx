@@ -34,7 +34,7 @@ export default function PostTime({ time, type, size }: PostTimeProps) {
         size === SIZE_STATUSES.DEFAULT
           ? "text-label-4 tablet:text-label-2"
           : "text-body-1"
-      } font-medium text-black-300`}
+      } font-medium ${type === "comment" ? "text-gray-100" : "text-black-300"}`}
     >
       {formattedTime}
     </span>

@@ -1,13 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { checkResourceExists } from "../utils/service.utils";
+import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import {
+  serviceBadRequest,
+  serviceForbidden,
   serviceInternalError,
+  serviceNotFound,
   ServiceResult,
   serviceSuccess,
 } from "../utils/serviceResult.utils";
 import {
   CreateCommentPayload,
+  DeleteCommentPayload,
+  DELETED_COMMENT_MESSAGE_BY_USER,
   GetCommentQuery,
   PaginatedCommentResponse,
 } from "../schemas/comment.schema";
@@ -83,26 +88,52 @@ export const getPaginatedCommentService = async (
       parentId: null,
     };
 
-    const [comments, totalCount] = await Promise.all([
+    const [commentsFromDb, totalCount] = await Promise.all([
       prisma.comment.findMany({
         where,
         ...commentWithRepliesArgs,
         orderBy: {
           createdAt: "desc",
         },
-        cursor: cursor ? { id: cursor } : undefined,
+        ...(cursor && {
+          cursor: { id: cursor },
+          skip: 1,
+        }),
         take: limit + 1,
       }),
-      prisma.comment.count({ where }),
+      prisma.comment.count({ where: { ...where, published: true } }),
     ]);
 
     const paginatedResult = createCursorPaginationResult(
-      comments,
+      commentsFromDb,
       totalCount,
       limit
     );
 
-    const formattedData = paginatedResult.data.map((comment) => ({
+    const comments = paginatedResult.data
+      .map((comment) => {
+        const filteredReplies = comment.replies.filter(
+          (reply) => reply.published
+        );
+        comment.replies = filteredReplies;
+        if (comment.published) {
+          return comment;
+        }
+        if (!comment.published && comment.replies.length > 0) {
+          return {
+            ...comment,
+            author: {
+              id: comment.author.id,
+              nickname: "알 수 없음",
+              imageUrl: null,
+            },
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as CommentWithReplies[];
+
+    const formattedData = comments.map((comment) => ({
       ...comment,
       createdAt: comment.createdAt.toISOString(),
       updatedAt: comment.updatedAt?.toISOString() || null,
@@ -160,6 +191,65 @@ export const createCommentService = async (
     });
 
     return serviceSuccess(newComment);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/** * 댓글 또는 대댓글을 삭제합니다.(softDelete) 댓글 내용을 "삭제된 댓글 입니다."로 변경하고, published 필드를 false로 설정합니다.
+ * @param params - 삭제할 댓글의 ID와 작성자 ID
+ */
+export const deleteCommentService = async (
+  params: DeleteCommentPayload
+): Promise<ServiceResult<CommentWithReplies>> => {
+  try {
+    const { id: commentId, authorId } = params;
+    const uuidValidation = validateUuid(commentId, "댓글");
+    if (!uuidValidation.success) return uuidValidation;
+
+    const existenceCheck = await checkResourceExists(
+      "comment",
+      commentId,
+      "댓글"
+    );
+    if (!existenceCheck.success) return existenceCheck;
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { authorId: true, postId: true, published: true },
+    });
+    if (!comment || comment.authorId !== authorId) {
+      return serviceForbidden("댓글을 삭제할 권한이 없습니다.");
+    }
+    if (!comment.published) {
+      return serviceBadRequest("이미 삭제된 댓글입니다.");
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.comment.update({
+        where: { id: commentId },
+        data: {
+          published: false,
+          content: DELETED_COMMENT_MESSAGE_BY_USER,
+        },
+      });
+      await tx.post.update({
+        where: {
+          id: comment.postId,
+        },
+        data: {
+          commentCount: { decrement: 1 },
+        },
+      });
+    });
+    const deletedComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      ...commentWithRepliesArgs,
+    });
+    if (!deletedComment) {
+      return serviceNotFound("댓글을 찾을 수 없습니다.");
+    }
+
+    return serviceSuccess(deletedComment);
   } catch (error) {
     return serviceInternalError(error);
   }

@@ -5,7 +5,7 @@ import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOut
 import Comment from "@/components/commons/comment";
 import { useState } from "react";
 import { ICommentFormProps } from "./postComment.types";
-import { createNewComment } from "../comment.helper";
+import useCommentMutation from "../useCommentMutation";
 
 export default function CommentForm({
   type,
@@ -21,34 +21,30 @@ export default function CommentForm({
     setInputValue(inputValue);
   };
 
+  const { uploadMutation } = useCommentMutation(postId);
+  const { isPending: isCreating } = uploadMutation;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
     try {
-      let response;
       switch (type) {
         case "create":
-          response = await createNewComment(postId, {
-            content: inputValue,
-          });
-          if (response.success) {
-            setInputValue("");
-            onSuccess?.({ type: "ADD_NEW_COMMENT", payload: response.data });
-          }
-
+          uploadMutation.mutate(
+            { content: inputValue },
+            { onSuccess: () => setInputValue("") }
+          );
           break;
         case "reply":
-          response = await createNewComment(postId, {
-            content: inputValue,
-            parentId: commentId,
-          });
-          if (response.success) {
-            setInputValue("");
-            onSuccess?.({
-              type: "ADD_NEW_REPLY",
-              payload: response.data,
-            });
-          }
+          uploadMutation.mutate(
+            { content: inputValue, parentId: commentId },
+            {
+              onSuccess: () => {
+                setInputValue("");
+                onSuccess?.();
+              },
+            }
+          );
 
           break;
         case "edit":
@@ -56,8 +52,6 @@ export default function CommentForm({
           // onSuccess?.();
           break;
       }
-
-      setInputValue("");
     } catch (error) {
       console.error("댓글 작성 실패:", error);
       alert("오류가 발생했습니다. 다시 시도해 주세요.");
@@ -75,8 +69,7 @@ export default function CommentForm({
       {type === "create" && (
         <ButtonFilledPrimaryLFit
           colorNum="200"
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || isCreating}
           type="submit"
         >
           댓글 작성
@@ -84,19 +77,14 @@ export default function CommentForm({
       )}
       {type === "reply" && (
         <ButtonOutlinedPrimaryLFit
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
+          disabled={!inputValue.trim() || isCreating}
           type="submit"
         >
           답글 작성
         </ButtonOutlinedPrimaryLFit>
       )}
       {type === "edit" && (
-        <ButtonOutlinedPrimaryLFit
-          onClick={() => handleSubmit}
-          disabled={!inputValue.trim()}
-          type="submit"
-        >
+        <ButtonOutlinedPrimaryLFit disabled={!inputValue.trim()} type="submit">
           댓글 수정
         </ButtonOutlinedPrimaryLFit>
       )}

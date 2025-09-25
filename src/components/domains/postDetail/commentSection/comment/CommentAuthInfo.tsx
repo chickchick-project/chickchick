@@ -1,34 +1,20 @@
-import AuthorInfo from "@/components/commons/author/AuthorInfo";
-import {
-  ICommentAuthInfoProps,
-  ICommentAuthProfileProps,
-} from "./postComment.types";
+import { ICommentAuthInfoProps } from "./postComment.types";
 import AuthorProfile from "@/components/commons/author/AuthorProfile";
 
 export function CommentAuthInfo({
   author,
-  createdAt,
   profileImage,
+  size,
+  isPostAuthor,
 }: ICommentAuthInfoProps) {
   return (
-    <>
-      <AuthorInfo
-        info={{
-          type: "comment",
-        }}
-        author={author}
-        createdAt={createdAt}
-        profileImage={profileImage}
-        isAuthor={false}
-        // size="large"
-      />
-    </>
+    <div className="text-black-200 flex items-center justify-center gap-2">
+      <AuthorProfile name={author} profileImage={profileImage} size={size} />
+      {isPostAuthor && (
+        <div className="text-label-5 text-primary-100 border rounded-full px-1 border-primary-100 ">
+          작성자
+        </div>
+      )}
+    </div>
   );
-}
-
-export function CommentUserProfile({
-  author,
-  profileImage,
-}: ICommentAuthProfileProps) {
-  return <AuthorProfile name={author} profileImage={profileImage} size={36} />;
 }
