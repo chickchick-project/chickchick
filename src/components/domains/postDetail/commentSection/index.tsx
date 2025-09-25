@@ -9,10 +9,12 @@ import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 interface ICommentSectionProps {
   postId: string;
+  postAuthorId: string;
   totalCommentCount: number;
 }
 export default function CommentSection({
   postId,
+  postAuthorId,
   totalCommentCount,
 }: ICommentSectionProps) {
   const {
@@ -52,6 +54,7 @@ export default function CommentSection({
       <CommentForm type="create" postId={postId} />
       {!isLoading && commentList.length > 0 && (
         <CommentIList
+          postAuthorId={postAuthorId}
           isLoadingComments={isFetchingNextPage}
           hasNextCursor={hasNextPage}
           commentList={commentList}

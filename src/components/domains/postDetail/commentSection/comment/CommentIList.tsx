@@ -12,6 +12,7 @@ export default function CommentList({
   onLoadMore,
   hasNextCursor,
   isLoadingComments,
+  postAuthorId,
 }: ICommentIListProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
@@ -31,6 +32,7 @@ export default function CommentList({
           commentList.map((comment: CommentResponse) => (
             <CommentListItem
               key={comment.id}
+              postAuthorId={postAuthorId}
               commentActionState={commentActionState}
               comment={comment}
             />
