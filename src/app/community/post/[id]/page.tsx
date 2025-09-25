@@ -5,6 +5,8 @@ import {
 } from "@/components/domains/postDetail/postDetail.helpers";
 import PageClient from "@/components/domains/postDetail/PageClient";
 import { getCommentsByPostId } from "@/components/domains/postDetail/commentSection/comment.helper";
+import getQueryClient from "@/lib/hono/utils/getQueryClient";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function Page({
   params,
@@ -18,28 +20,29 @@ export default async function Page({
     Cookie: cookieStore.toString(),
   };
 
-  try {
-    const [postResult, postStatusResult, commentsResult] = await Promise.all([
-      getPostDetailById(id, requestHeaders),
-      getPostDetailStatusById(id, requestHeaders),
-      getCommentsByPostId(id),
-    ]);
+  const queryClient = getQueryClient();
 
-    return (
-      <>
-        <PageClient
-          postDetail={postResult.data}
-          postStatus={postStatusResult.data}
-          initialCommentsResult={commentsResult.data}
-        />
-      </>
-    );
-  } catch (error) {
-    console.error("Error fetching post details:", error);
-    return (
-      <div className="flex flex-col items-center justify-center h-screen">
-        게시글을 불러오는 데 실패했거나, 존재하지 않는 게시글입니다.
-      </div>
-    );
-  }
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ["post", id],
+      queryFn: () => getPostDetailById(id, requestHeaders),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ["post", id, "status"],
+      queryFn: () => getPostDetailStatusById(id, requestHeaders),
+    }),
+    queryClient.prefetchInfiniteQuery({
+      queryKey: ["post", id, "comments"],
+      queryFn: () => getCommentsByPostId(id),
+      initialPageParam: null,
+    }),
+  ]);
+
+  const dehydratedState = dehydrate(queryClient);
+
+  return (
+    <HydrationBoundary state={dehydratedState}>
+      <PageClient postId={id} />
+    </HydrationBoundary>
+  );
 }

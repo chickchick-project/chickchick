@@ -10,13 +10,12 @@ export const COMMUNITY_URL = `${API_BASE_URL}/community/posts`;
 
 export async function getPostDetailById(
   postId: string,
-  headers: HeadersInit
-): Promise<ApiSuccessResponse<PostDetailResponse>> {
+  headers?: HeadersInit
+): Promise<PostDetailResponse> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
       method: "GET",
-      next: { revalidate: 300 },
-      headers: headers,
+      ...(headers && { headers }),
     });
 
     if (!response.ok) {
@@ -42,7 +41,7 @@ export async function getPostDetailById(
     }
 
     const result = await response.json();
-    return result;
+    return result.data;
   } catch (error) {
     console.error(`Error fetching post ${postId}:`, error);
     throw error;
@@ -51,13 +50,13 @@ export async function getPostDetailById(
 
 export async function getPostDetailStatusById(
   postId: string,
-  headers: HeadersInit
-): Promise<ApiSuccessResponse<PostStatusResponse>> {
+  headers?: HeadersInit
+): Promise<PostStatusResponse> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}/status`, {
       method: "GET",
       cache: "no-store",
-      headers: headers,
+      ...(headers && { headers }),
     });
 
     if (!response.ok) {
@@ -84,7 +83,7 @@ export async function getPostDetailStatusById(
 
     const result = await response.json();
 
-    return result;
+    return result.data;
   } catch (error) {
     console.error("Error fetching post status:", error);
     throw error;
@@ -117,7 +116,6 @@ export async function toggleBookmarkedPostById(
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}/bookmark`, {
       method: "POST",
-      cache: "no-store",
     });
     if (!response.ok) {
       const errorText = await response.text();

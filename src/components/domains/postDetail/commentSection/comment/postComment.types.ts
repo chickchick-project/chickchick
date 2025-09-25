@@ -22,8 +22,8 @@ export type TComment = {
 export interface ICommentIListProps {
   commentList: CommentResponse[];
   onLoadMore: () => void;
-  onAction: (action: CommentAction) => void;
-  nextCursor?: string | null;
+  // onAction: (action: CommentAction) => void;
+  hasNextCursor?: boolean;
   isLoadingComments?: boolean;
 }
 
@@ -34,7 +34,7 @@ export interface ICommentFormProps {
   commentId?: string;
   postId: string;
   parentId?: string | null;
-  onSuccess?: (action: CommentAction) => void;
+  onSuccess?: () => void;
   onCancel?: () => void;
 }
 
