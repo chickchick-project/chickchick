@@ -38,9 +38,6 @@ export default function CommentListItem({
   const isAnyCommentBeingEdited = editingCommentId !== null;
   const isAnyCommentBeingReplied = replyingCommentId !== null;
 
-  console.log("authorId:", author.id, "postAuthorId:", postAuthorId);
-  console.log("isPostAuthor", isPostAuthor);
-
   const { deleteMutation } = useCommentMutation(postId);
 
   const userActions: ActionItem[] = [
