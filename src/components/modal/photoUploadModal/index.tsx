@@ -81,6 +81,7 @@ function PhotoUploadModal({
         comment,
         perfume: selectedPerfume,
       });
+
       onUploadSuccess();
       onClose();
     } catch (err: unknown) {

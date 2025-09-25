@@ -41,6 +41,7 @@ export async function uploadPhotoCollection({
     window.dispatchEvent(event);
   }
 
+  const response = await apiClient.post("/me/collections", formData);
   return response;
 }
 
