@@ -120,11 +120,17 @@ export default function PageClient() {
 
   const uniquePostData = useMemo(() => {
     const allPosts = data?.pages.flatMap((page) => page.data) ?? [];
-    return getUniquePostList(allPosts);
+    const uniquePosts = getUniquePostList(allPosts);
+    const postCardProps = uniquePosts.map((post) => ({
+      ...post,
+      isAuthor: false,
+      userId: post.author.id,
+      published: true,
+    }));
+    return postCardProps;
   }, [data]);
 
   const isIdle = !isLoading && uniquePostData.length === 0;
-
   return (
     <div className="px-4 w-full flex flex-col  gap-5">
       <Header

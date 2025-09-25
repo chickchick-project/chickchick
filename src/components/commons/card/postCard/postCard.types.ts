@@ -15,12 +15,13 @@ export interface ThumbnailProps {
 interface Author {
   id: string;
   nickname: string;
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
-export interface PostCardProps extends Post {
+export interface PostCardProps extends Omit<Post, "createdAt" | "updatedAt"> {
   author: Author;
-  createdAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string | null;
   thumbnail?: string | null;
   isCategory?: boolean;
   category: CategoryType;
