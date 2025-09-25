@@ -18,6 +18,5 @@ export default async function ActivityPage({
   }
 
   const data = await fetchMockActivityData(pageOwnerId);
-
   return <ActivitySection data={data} />;
 }
