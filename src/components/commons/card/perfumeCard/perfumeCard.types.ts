@@ -1,16 +1,13 @@
 import { PERFUME_CARD_TYPES } from "./perfumeCard.constants";
+import { SimpleCardProps, CardImageProps } from "../card.types";
 
-type PerfumeCardType =
+export type PerfumeCardType =
   (typeof PERFUME_CARD_TYPES)[keyof typeof PERFUME_CARD_TYPES];
 
-interface PerfumeCardProps {
-  cardType?: PerfumeCardType;
-  perfumeImage: string | null;
+export interface PerfumeCardProps
+  extends SimpleCardProps,
+    Pick<CardImageProps, "perfumeImage"> {
+  cardType: PerfumeCardType;
   brandName: string | null;
   perfumeName: string | null;
-  onClick?: () => void;
-  onClose?: () => void;
-  className?: string;
 }
-
-export type { PerfumeCardType, PerfumeCardProps };

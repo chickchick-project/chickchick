@@ -1,9 +1,9 @@
 import React from "react";
 import Image from "next/image";
-import PerfumeCard from "@/components/commons/card/perfumeCard";
+// import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { PostCard } from "@/components/commons/card/postCard";
 import ICONS from "@/lib/constants/icons";
-import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
+// import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
 import { mockCommunityPostData } from "@/lib/mocks/communityCard";
 
 const ScrollRowSection = ({
@@ -72,7 +72,7 @@ const UserFooter = () => {
       </ScrollRowSection>
       <ScrollRowSection title="최근에 본 향수 10" gap="gap-x-[50px]">
         {Array.from({ length: 5 }).map((_, idx) => (
-          <PerfumeCard key={idx} {...mockPerfumeCardData} />
+          <>{idx}</>
         ))}
       </ScrollRowSection>
     </div>

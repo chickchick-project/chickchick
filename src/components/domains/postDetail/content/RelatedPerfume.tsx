@@ -17,6 +17,7 @@ export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {
         {perfumes.map((item: PostRelatedPerfumeResponse) => (
           <Link key={item.id} href={`/perfumes/${item.id}`}>
             <PerfumeCard
+              cardType="default"
               className="tablet:block hidden"
               perfumeImage={item.perfumeImage?.imageUrl ?? null}
               perfumeName={item.nameKo ?? item.nameEn}

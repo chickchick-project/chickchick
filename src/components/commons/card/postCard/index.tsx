@@ -9,16 +9,12 @@ import { PostCardProps } from "./postCard.types";
 import { PostMetaItem } from "../../author/author.types";
 
 export function PostCard({
-  title,
-  contentText,
+  post,
   author,
   createdAt,
-  thumbnailUrl,
-  isCategory = false,
-  category,
-  cardType = POST_CARD_TYPES.DEFAULT,
   isAuthor = false,
-  ...rest
+  isCategory = false,
+  cardType = POST_CARD_TYPES.DEFAULT,
 }: PostCardProps) {
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
@@ -27,15 +23,15 @@ export function PostCard({
   const meta: PostMetaItem[] = [
     {
       type: "Like",
-      count: rest.likeCount as number,
+      count: post?.likeCount ?? 0,
     },
     {
       type: "Comment",
-      count: rest.commentCount as number,
+      count: post?.commentCount ?? 0,
     },
     {
       type: "View",
-      count: rest.viewCount as number,
+      count: post?.viewCount ?? 0,
     },
   ];
   return (
@@ -45,7 +41,7 @@ export function PostCard({
       {/* 헤더 */}
       {isCategory && (
         <header className="flex justify-between items-center">
-          <BoardChip type={category} />
+          <BoardChip type={post.category} />
         </header>
       )}
 
@@ -55,7 +51,9 @@ export function PostCard({
           cardType === POST_CARD_TYPES.DETAIL ? "gap-4" : "gap-2"
         }`}
       >
-        <h3 className="text-body-1 font-semibold line-clamp-1">{title}</h3>
+        <h3 className="text-body-1 font-semibold line-clamp-1">
+          {post?.title}
+        </h3>
 
         {cardType === POST_CARD_TYPES.DETAIL && (
           <div className="flex justify-end">
@@ -72,9 +70,9 @@ export function PostCard({
           }`}
         >
           <p className={`text-gray-600 flex-1 ${contentClamp}`}>
-            {contentText}
+            {post?.contentText}
           </p>
-          <Thumbnail thumbnail={thumbnailUrl} cardType={cardType} />
+          <Thumbnail thumbnail={post?.thumbnailUrl} cardType={cardType} />
         </div>
       </main>
 

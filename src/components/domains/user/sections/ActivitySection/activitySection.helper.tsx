@@ -65,7 +65,11 @@ export const renderLikedPerfumes = (likedPerfumes: any[]) =>
   likedPerfumes.length > 0 ? (
     <ul className="grid grid-cols-5 gap-4">
       {likedPerfumes.map((item) => (
-        <PerfumeCard key={item.id} {...mockPerfumeCardData} />
+        <PerfumeCard
+          cardType="default"
+          key={item.id}
+          {...mockPerfumeCardData}
+        />
       ))}
     </ul>
   ) : (
