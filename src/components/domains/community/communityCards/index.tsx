@@ -19,7 +19,6 @@ export default function CommunityCards({
   isIdle,
   moreRef,
 }: ICommunityCardsProps) {
-  console.log(postData);
   return (
     <section className="w-full">
       {!isIdle && postData.length === 0 && !isLoading ? (
@@ -31,11 +30,11 @@ export default function CommunityCards({
           {postData.length > 0 &&
             postData.map((item) => (
               <Link
-                key={item.post.id}
-                href={`/community/post/${item.post.id}?from=${selectedTab}`}
+                key={item.id}
+                href={`/community/post/${item.id}?from=${selectedTab}`}
               >
                 <PostCard
-                  key={item.post.id}
+                  key={item.id}
                   {...item}
                   isCategory={true}
                   cardType={POST_CARD_TYPES.SMALL}
