@@ -88,26 +88,52 @@ export const getPaginatedCommentService = async (
       parentId: null,
     };
 
-    const [comments, totalCount] = await Promise.all([
+    const [commentsFromDb, totalCount] = await Promise.all([
       prisma.comment.findMany({
         where,
         ...commentWithRepliesArgs,
         orderBy: {
           createdAt: "desc",
         },
-        cursor: cursor ? { id: cursor } : undefined,
+        ...(cursor && {
+          cursor: { id: cursor },
+          skip: 1,
+        }),
         take: limit + 1,
       }),
-      prisma.comment.count({ where }),
+      prisma.comment.count({ where: { ...where, published: true } }),
     ]);
 
     const paginatedResult = createCursorPaginationResult(
-      comments,
+      commentsFromDb,
       totalCount,
       limit
     );
 
-    const formattedData = paginatedResult.data.map((comment) => ({
+    const comments = paginatedResult.data
+      .map((comment) => {
+        const filteredReplies = comment.replies.filter(
+          (reply) => reply.published
+        );
+        comment.replies = filteredReplies;
+        if (comment.published) {
+          return comment;
+        }
+        if (!comment.published && comment.replies.length > 0) {
+          return {
+            ...comment,
+            author: {
+              id: comment.author.id,
+              nickname: "알 수 없음",
+              imageUrl: null,
+            },
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as CommentWithReplies[];
+
+    const formattedData = comments.map((comment) => ({
       ...comment,
       createdAt: comment.createdAt.toISOString(),
       updatedAt: comment.updatedAt?.toISOString() || null,
