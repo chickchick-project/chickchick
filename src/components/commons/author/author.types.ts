@@ -1,6 +1,12 @@
 import ICONS from "@/lib/constants/icons";
 import { REVIEW_STATUSES, SIZE_STATUSES } from "./author.constants";
 
+interface Author {
+  id: string;
+  nickname: string;
+  imageUrl: string;
+}
+
 export type ReviewStatusType =
   (typeof REVIEW_STATUSES)[keyof typeof REVIEW_STATUSES];
 export type SizeStatusType = (typeof SIZE_STATUSES)[keyof typeof SIZE_STATUSES];
@@ -23,9 +29,8 @@ export type InfoType = PostInfo | ReviewInfo | CommentInfo | BasicInfo;
 
 export interface AuthorInfoProps {
   size?: SizeStatusType;
-  author: string;
-  createdAt: string;
-  profileImage?: string | null;
+  author: Author;
+  createdAt: Date;
   isAuthor: boolean;
   info?: InfoType;
 }

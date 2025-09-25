@@ -1,13 +1,13 @@
-import { fetchMockCommunityBookmarks } from "@/lib/mocks/fetchUser";
-import { renderCommunityBookmarks } from "./bookmarkSection.helper";
+"use client";
 
-export default async function CommunityBookmarksLoader({
+import { renderCommunityBookmarks } from "./bookmarkSection.helper";
+import { useUserPostsBookmarks } from "./useUserBookmarks";
+
+export default function CommunityBookmarksLoader({
   userId,
 }: {
   userId: string;
 }) {
-  const data = await fetchMockCommunityBookmarks(userId);
-  const communityData = data;
-
-  return renderCommunityBookmarks(communityData);
+  const { data: communityData } = useUserPostsBookmarks(userId);
+  return renderCommunityBookmarks(communityData || []);
 }

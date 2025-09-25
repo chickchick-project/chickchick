@@ -12,13 +12,15 @@ export default async function BookmarksPage({
   const session = await getSession();
   const isMe = session?.user?.id === pageOwnerId;
 
-  const initialPerfume = await fetchUserBookmarksPerfumes(pageOwnerId);
+  const initialPerfume = !isMe
+    ? await fetchUserBookmarksPerfumes(pageOwnerId)
+    : null;
 
   return (
     <BookmarkSection
       isMe={isMe}
       userId={pageOwnerId}
-      initialPerfumeData={initialPerfume.data}
+      initialPerfumeData={initialPerfume?.data}
     />
   );
 }

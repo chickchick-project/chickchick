@@ -6,24 +6,38 @@ import PostMeta from "../../author/PostMeta";
 import Thumbnail from "./Thumbnail";
 import { POST_CARD_STYLES, POST_CARD_TYPES } from "./postCard.constants";
 import { PostCardProps } from "./postCard.types";
+import { PostMetaItem } from "../../author/author.types";
 
 export function PostCard({
   title,
-  content,
+  contentText,
   author,
   createdAt,
-  meta,
-  thumbnail,
+  thumbnailUrl,
   isCategory = false,
-  categoryType,
+  category,
   cardType = POST_CARD_TYPES.DEFAULT,
-  profileImage,
   isAuthor = false,
+  ...rest
 }: PostCardProps) {
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
   const cardStyle = POST_CARD_STYLES[cardType];
 
+  const meta: PostMetaItem[] = [
+    {
+      type: "Like",
+      count: rest.likeCount as number,
+    },
+    {
+      type: "Comment",
+      count: rest.commentCount as number,
+    },
+    {
+      type: "View",
+      count: rest.viewCount as number,
+    },
+  ];
   return (
     <article
       className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 tablet:max-w-full h-full shadow-card ${cardStyle}`}
@@ -31,7 +45,7 @@ export function PostCard({
       {/* 헤더 */}
       {isCategory && (
         <header className="flex justify-between items-center">
-          <BoardChip type={categoryType} />
+          <BoardChip type={category} />
         </header>
       )}
 
@@ -57,19 +71,16 @@ export function PostCard({
               : "items-center justify-between gap-3"
           }`}
         >
-          <p className={`text-gray-600 flex-1 ${contentClamp}`}>{content}</p>
-          <Thumbnail thumbnail={thumbnail} cardType={cardType} />
+          <p className={`text-gray-600 flex-1 ${contentClamp}`}>
+            {contentText}
+          </p>
+          <Thumbnail thumbnail={thumbnailUrl} cardType={cardType} />
         </div>
       </main>
 
       {/* 푸터 */}
       <footer className="w-full flex justify-between">
-        <AuthorInfo
-          author={author}
-          createdAt={createdAt}
-          profileImage={profileImage}
-          isAuthor={isAuthor}
-        />
+        <AuthorInfo author={author} createdAt={createdAt} isAuthor={isAuthor} />
         {cardType !== POST_CARD_TYPES.DETAIL && <PostMeta meta={meta} />}
       </footer>
     </article>

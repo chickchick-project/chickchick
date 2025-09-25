@@ -1,7 +1,6 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { CommunityBookmark } from "../sections.type";
 import { PostCard } from "@/components/commons/card/postCard";
-import { mockCommunityPostData } from "@/lib/mocks/communityCard";
+import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 
@@ -13,7 +12,6 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
       </div>
     );
   }
-  // console.log(perfumes);
   return (
     <div className="grid grid-cols-5 gap-[52px]">
       {perfumes.map((item, idx) => (
@@ -28,10 +26,9 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
   );
 };
 
-const renderCommunityBookmarks = (communityPosts: CommunityBookmark[]) => {
-  const itemsToRender = Array.from({ length: 2 }).flatMap(() => communityPosts);
-
-  if (itemsToRender.length === 0) {
+const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
+  console.log("communityPosts", communityPosts);
+  if (communityPosts.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
         북마크한 게시글이 없습니다.
@@ -40,10 +37,10 @@ const renderCommunityBookmarks = (communityPosts: CommunityBookmark[]) => {
   }
   return (
     <div className="grid grid-cols-2 gap-y-5">
-      {itemsToRender.map((item, idx) => (
+      {communityPosts.map((item, idx) => (
         <PostCard
           key={`${item.id}-${idx}`}
-          {...mockCommunityPostData[idx]}
+          {...item}
           cardType={POST_CARD_TYPES.SMALL}
           isCategory={true}
           isAuthor={false}

@@ -1,10 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { Suspense, useState } from "react";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
 import PerfumeBookmarksLoader from "./PerfumeBookmarks";
 import CommunityBookmarksLoader from "./CommunityBookmarks";
 import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { SkeletonBookmark } from "../Skeleton";
 
 export const BookmarkSection = ({
   isMe,
@@ -15,6 +18,8 @@ export const BookmarkSection = ({
   userId: string;
   initialPerfumeData?: PerfumeBaseResponse[];
 }) => {
+  const [activeTab, setActiveTab] = useState("bookmarksPerfumes");
+
   if (!isMe) {
     // 타인의 프로필: 향수만 표시
     return renderPerfumeBookmarks(initialPerfumeData || []);
@@ -25,14 +30,39 @@ export const BookmarkSection = ({
     {
       key: "bookmarksPerfumes",
       label: "향수",
-      content: <PerfumeBookmarksLoader userId={userId} />,
     },
     {
       key: "bookmarksPosts",
       label: "커뮤니티",
-      content: <CommunityBookmarksLoader userId={userId} />,
     },
   ];
 
-  return <SubTabSwitcher defaultKey="bookmarksPerfumes" tabs={tabsItem} />;
+  return (
+    <>
+      <SubTabSwitcher
+        activeTab={activeTab}
+        onTabChange={(key) => setActiveTab(key)}
+        tabs={tabsItem}
+      />
+
+      <div className="mt-6">
+        <Suspense fallback={<TabSkeletonSelector />}>
+          {activeTab === "bookmarksPerfumes" && (
+            <Suspense fallback={<SkeletonBookmark />}>
+              <PerfumeBookmarksLoader userId={userId} />
+            </Suspense>
+          )}
+          {activeTab === "bookmarksPosts" && (
+            <Suspense fallback={<SkeletonBookmark />}>
+              <CommunityBookmarksLoader userId={userId} />
+            </Suspense>
+          )}
+        </Suspense>
+      </div>
+    </>
+  );
 };
+
+function TabSkeletonSelector() {
+  return <SkeletonBookmark />;
+}

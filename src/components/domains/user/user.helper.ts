@@ -1,7 +1,8 @@
-import { PostBookmark, UserCollection } from "@prisma/client";
+import { UserCollection } from "@prisma/client";
 // import { createApiServerClient } from "@/lib/utils/core-request/serverClient";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
+import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
 const apiClient = createHttpClient({
   baseUrl:
@@ -22,10 +23,7 @@ export async function fetchUserBookmarksPerfumes(userId: string) {
   return { ...bookmarks } as { data: PerfumeBaseResponse[] };
 }
 
-export async function fetchUserBookmarksPosts(userId: string) {
-  const bookmarks = await apiClient.get<PostBookmark[]>(
-    `/users/${userId}/bookmarks/posts`
-  );
-  console.log("bookmarks", bookmarks);
-  return { ...bookmarks } as { data: PostBookmark[] };
+export async function fetchUserBookmarksPosts() {
+  const bookmarks = await apiClient.get<PostCardProps[]>(`/me/bookmarks/posts`);
+  return { ...bookmarks } as { data: PostCardProps[] };
 }

@@ -1,13 +1,10 @@
+"use client";
+
 import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
-import { fetchUserBookmarksPerfumes } from "../../user.helper";
+import { usePerfumeBookmarks } from "./useUserBookmarks";
 
-export default async function PerfumeBookmarksLoader({
-  userId,
-}: {
-  userId: string;
-}) {
-  const perfumes = await fetchUserBookmarksPerfumes(userId);
-  const perfumeData = perfumes.data;
+export default function PerfumeBookmarksLoader({ userId }: { userId: string }) {
+  const { data: perfumes } = usePerfumeBookmarks(userId);
 
-  return renderPerfumeBookmarks(perfumeData);
+  return renderPerfumeBookmarks(perfumes || []);
 }

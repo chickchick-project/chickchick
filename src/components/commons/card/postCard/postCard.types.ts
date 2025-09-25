@@ -1,4 +1,4 @@
-import { PostMetaItem } from "../../author/author.types";
+import { Post } from "@prisma/client";
 import { CATEGORY_TYPES, POST_CARD_TYPES } from "./postCard.constants";
 
 export type PostCardType =
@@ -12,16 +12,18 @@ export interface ThumbnailProps {
   isLoading?: boolean;
 }
 
-export interface PostCardProps {
+interface Author {
   id: string;
-  title: string;
-  content: string;
-  author: string;
-  createdAt: string;
-  meta: PostMetaItem[];
+  nickname: string;
+  imageUrl: string;
+}
+
+export interface PostCardProps extends Post {
+  author: Author;
+  createdAt: Date;
   thumbnail?: string | null;
   isCategory?: boolean;
-  categoryType: CategoryType;
+  category: CategoryType;
   cardType?: PostCardType;
   profileImage?: string | null;
   isAuthor: boolean;

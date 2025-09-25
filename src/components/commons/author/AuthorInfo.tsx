@@ -5,12 +5,12 @@ import PostTime from "./PostTime";
 import PostMeta from "./PostMeta";
 import { SIZE_STATUSES } from "./author.constants";
 import { AuthorInfoProps, SizeStatusType } from "./author.types";
+import dayjs from "dayjs";
 
 const AuthorInfo: React.FC<AuthorInfoProps> = ({
   size = SIZE_STATUSES.DEFAULT,
   author,
   createdAt,
-  profileImage,
   isAuthor,
   info = { type: "basic" },
 }) => {
@@ -19,13 +19,22 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   // 1. 내가 작성한 포스트가 아닐 경우 → 작성자 추가
   if (!isAuthor) {
     items.push(
-      <AuthorProfile key="author" name={author} profileImage={profileImage} />
+      <AuthorProfile
+        key="author"
+        name={author.nickname}
+        profileImage={author.imageUrl}
+      />
     );
   }
 
   // 2. 작성 시간 추가
   items.push(
-    <PostTime key="time" type={info.type} time={createdAt} size={size} />
+    <PostTime
+      key="time"
+      type={info.type}
+      time={dayjs(createdAt).format("YYYY-MM-DD")}
+      size={size}
+    />
   );
 
   switch (info.type) {
