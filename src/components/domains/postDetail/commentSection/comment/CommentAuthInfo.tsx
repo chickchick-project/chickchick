@@ -16,9 +16,12 @@ export function CommentAuthInfo({
         info={{
           type: "comment",
         }}
-        author={author}
-        createdAt={createdAt}
-        profileImage={profileImage}
+        author={{
+          id: "unknown",
+          nickname: author,
+          imageUrl: profileImage || "",
+        }}
+        createdAt={new Date(createdAt)}
         isAuthor={false}
         // size="large"
       />

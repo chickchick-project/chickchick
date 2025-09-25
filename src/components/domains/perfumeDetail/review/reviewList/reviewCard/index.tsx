@@ -44,10 +44,13 @@ export const ReviewCard = ({
       <header className="flex justify-between">
         <AuthorInfo
           size="large"
-          author={author}
-          createdAt={createdAt}
+          author={{
+            id: "unknown",
+            nickname: author,
+            imageUrl: profileImage,
+          }}
+          createdAt={new Date(createdAt)}
           isAuthor={false}
-          profileImage={profileImage}
           info={{ type: "review", item: { status: REVIEW_STATUSES.WANT } }}
         />
         {isMain && (

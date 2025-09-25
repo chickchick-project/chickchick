@@ -98,3 +98,18 @@ const formatFilters = (filters: Record<string, string[]>) => {
  */
 export const getLabel = (key: string) =>
   FILTER_LABELS[key as keyof typeof FILTER_LABELS] || key;
+
+/**
+ * 중복된 향수를 ID 기준으로 제거하는 함수입니다.
+ */
+export const getUniquePerfumes = (perfumes: PerfumeBaseResponse[]): PerfumeBaseResponse[] => {
+  const uniqueMap = new Map<string, PerfumeBaseResponse>();
+
+  perfumes.forEach(perfume => {
+    if (!uniqueMap.has(perfume.id)) {
+      uniqueMap.set(perfume.id, perfume);
+    }
+  });
+
+  return Array.from(uniqueMap.values());
+};

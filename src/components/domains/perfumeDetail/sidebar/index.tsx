@@ -89,7 +89,24 @@ export const PerfumeDetailSidebar = () => {
       <ul className="pl-5 pc:pl-0 flex gap-4 pb-5 overflow-x-auto pc:overflow-x-visible pc:flex-col pc:gap-6 scrollbar-hide pr-5 pc:pr-0 pt-4 tablet:pt-5">
         {mockPosts.map((post) => (
           <li key={post.id}>
-            <PostCard {...post} cardType={POST_CARD_TYPES.DETAIL} />
+            <PostCard
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              {...(post as any)}
+              author={{
+                id: "mock-id",
+                nickname: post.author,
+                imageUrl: post.profileImage,
+              }}
+              createdAt={new Date(post.createdAt)}
+              updatedAt={new Date(post.createdAt)}
+              category={post.categoryType}
+              userId="mock-user-id"
+              published={true}
+              viewCount={0}
+              likeCount={0}
+              commentCount={0}
+              cardType={POST_CARD_TYPES.DETAIL}
+            />
           </li>
         ))}
       </ul>

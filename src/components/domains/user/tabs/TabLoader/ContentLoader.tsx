@@ -49,7 +49,7 @@ export default async function TabContentLoader({
     const dehydratedState = dehydrate(queryClient);
     return (
       <HydrationBoundary state={dehydratedState}>
-        <CollectionSection pageOwner={pageOwner} />
+        <CollectionSection pageOwner={pageOwner} initialCollectionData={[]} />
       </HydrationBoundary>
     );
   }

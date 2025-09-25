@@ -6,7 +6,7 @@ export const mockReviewCardData: ReviewCardProps = {
   title: "떼 마차 26 EDP",
   review:
     "상쾌하면서도 깊은 우디 향이 인상적이에요. 잔향이 오래 남아서 하루 종일 기분이 좋아집니다. 데일리로 쓰기에도 부담 없고, 특별한 날에도 잘 어울려요!",
-  createdAt: "2024-04-20",
+  createdAt: new Date("2024-04-20"),
   info: {
     type: "review",
     item: {
@@ -18,7 +18,11 @@ export const mockReviewCardData: ReviewCardProps = {
     "https://wvedpvxspndgyoisudyr.supabase.co/storage/v1/object/public/perfume_image/perfumes/375x500.31172.jpg",
   isMyPage: true,
   isAuthor: true,
-  author: "작성자",
+  author: {
+    id: "mock-author-id",
+    nickname: "작성자",
+    imageUrl: "",
+  },
 };
 
 export const mockMainpageReviewCardData: ReviewCardProps = {
@@ -26,7 +30,7 @@ export const mockMainpageReviewCardData: ReviewCardProps = {
   title: "떼 마차 26 EDP",
   review:
     "상쾌하면서도 깊은 우디 향이 인상적이에요. 잔향이 오래 남아서 하루 종일 기분이 좋아집니다. 데일리로 쓰기에도 부담 없고, 특별한 날에도 잘 어울려요!",
-  createdAt: "2024-04-20",
+  createdAt: new Date("2024-04-20"),
   info: {
     type: "review",
     item: {
@@ -44,5 +48,9 @@ export const mockMainpageReviewCardData: ReviewCardProps = {
     "https://wvedpvxspndgyoisudyr.supabase.co/storage/v1/object/public/perfume_image/perfumes/375x500.31172.jpg",
   isMyPage: false,
   isAuthor: true,
-  author: "작성자",
+  author: {
+    id: "mock-author-id",
+    nickname: "작성자",
+    imageUrl: "",
+  },
 };

@@ -35,10 +35,9 @@ export default function CommunityCards({
                 author,
                 createdAt,
                 category,
-                commentCount,
-                viewCount,
-                likeCount,
                 thumbnailUrl,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                ..._rest
               }) => (
                 <Link
                   key={id}
@@ -47,19 +46,24 @@ export default function CommunityCards({
                   <PostCard
                     id={id}
                     thumbnail={thumbnailUrl}
+                    thumbnailUrl={thumbnailUrl}
                     title={title}
                     content={contentText}
-                    author={author.nickname}
-                    createdAt={createdAt.toString()}
-                    profileImage={author.imageUrl}
-                    meta={[
-                      { type: "Like", count: likeCount },
-                      { type: "Comment", count: commentCount },
-                      { type: "View", count: viewCount },
-                    ]}
-                    categoryType={category}
+                    contentText={contentText}
+                    author={{
+                      ...author,
+                      imageUrl: author.imageUrl || "",
+                    }}
+                    createdAt={new Date(createdAt)}
+                    updatedAt={new Date(createdAt)}
+                    category={category}
                     isCategory={selectedTab === "BEST"}
                     isAuthor={false}
+                    userId={author.id}
+                    published={true}
+                    viewCount={0}
+                    likeCount={0}
+                    commentCount={0}
                   />
                 </Link>
               )
