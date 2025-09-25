@@ -3,6 +3,7 @@ import { PostCard } from "@/components/commons/card/postCard";
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import Link from "next/link";
 
 const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
   if (perfumes.length === 0) {
@@ -15,12 +16,14 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
   return (
     <div className="grid grid-cols-5 gap-[52px]">
       {perfumes.map((item, idx) => (
-        <PerfumeCard
-          key={`${item.id}-${idx}`}
-          perfumeImage={item.perfumeImage?.imageUrl || null}
-          brandName={item.brand.nameKo || item.brand.nameEn}
-          perfumeName={item.nameKo || item.nameEn}
-        />
+        <Link key={item.id || idx} href={`/perfumes/${item.id}`} passHref>
+          <PerfumeCard
+            key={`${item.id}-${idx}`}
+            perfumeImage={item.perfumeImage?.imageUrl || null}
+            brandName={item.brand.nameKo || item.brand.nameEn}
+            perfumeName={item.nameKo || item.nameEn}
+          />
+        </Link>
       ))}
     </div>
   );
@@ -36,14 +39,16 @@ const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
   }
   return (
     <div className="grid grid-cols-2 gap-y-5">
-      {communityPosts.map((item, idx) => (
-        <PostCard
-          key={`${item.id}-${idx}`}
-          {...item}
-          cardType={POST_CARD_TYPES.SMALL}
-          isCategory={true}
-          isAuthor={false}
-        />
+      {communityPosts.map((item) => (
+        <Link key={item.id} href={`/community/post/${item.id}`}>
+          <PostCard
+            key={item.id}
+            {...item}
+            isAuthor={false}
+            isCategory={true}
+            cardType={POST_CARD_TYPES.SMALL}
+          />
+        </Link>
       ))}
     </div>
   );
