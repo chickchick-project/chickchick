@@ -1,105 +1,47 @@
 "use client";
 
-import { useMemo, useRef, useEffect } from "react";
-import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
-import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
-import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
-import { SearchHeader } from "@/components/commons/perfumeList/search";
-import { usePerfumeSearch } from "./usePerfumeSearch";
-import { useInfinitePerfumes } from "./useInfinitePerfumes";
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
+import React, { useState } from "react";
+import { User } from "@prisma/client";
+import MainTabs from "./tabs/MainTabs";
+import PhotoUploadModal from "@/components/modal/photoUploadModal";
+import { usePathname } from "next/navigation";
 
-export interface SearchResponse<T> {
-  data: T[];
-  nextCursor: string | null;
-  totalCount?: number | null;
+interface PageClientProps {
+  pageOwner: User;
+  isMe: boolean;
+  children: React.ReactNode;
 }
 
-export type BrandName = {
-  en: string;
-  ko: string;
-};
-
 export default function PageClient({
-  brands,
-  notes,
-  accords,
-}: {
-  brands: Brand[];
-  notes: PerfumeNote[];
-  accords: PerfumeAccord[];
-}) {
-  const memoizedBrands = useMemo(() => brands, [brands]);
-  const memoizedNotes = useMemo(() => notes, [notes]);
-  const memoizedAccords = useMemo(() => accords, [accords]);
+  pageOwner,
+  isMe,
+  children,
+}: PageClientProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleUploadSuccess = () => {
+    setIsModalOpen(false);
+  };
 
-  const {
-    inputValue,
-    searchKeyword,
-    matchedBrand,
-    handleChange,
-    handleSubmit,
-  } = usePerfumeSearch(memoizedBrands);
-
-  const {
-    perfumes,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfinitePerfumes(searchKeyword);
-
-  const moreRef = useRef<HTMLDivElement>(null);
-  const isIntersecting = useIntersectionObserver(moreRef);
-
-  useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // 중복 아이디 제거
-  if (isError) {
-    return (
-      <div>
-        에러가 발생했습니다:
-        {error instanceof Error ? error.message : "Unknown error"}
-      </div>
-    );
-  }
+  const pathname = usePathname();
+  const pathSegments = pathname.split("/").filter(Boolean);
+  const activeTab = pathSegments.length > 2 ? pathSegments[2] : "collection";
 
   return (
-    <div>
-      <div className="flex flex-col items-center h-full">
-        <SearchHeader
-          inputValue={inputValue}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-          brands={memoizedBrands}
-          notes={memoizedNotes}
-          accords={memoizedAccords}
+    <>
+      <MainTabs
+        isMe={isMe}
+        pageOwner={pageOwner}
+        tab={activeTab}
+        onAddPhotoClick={() => setIsModalOpen(true)}
+      />
+      <div className="bg-white rounded-lg border-gray-200 border p-10">
+        {children}
+        <PhotoUploadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onUploadSuccess={handleUploadSuccess}
         />
-        <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
-          <div className="w-full flex justify-between items-center mb-5">
-            <span className="tablet:text-headline-2 text-title-2 font-semibold">
-              {searchKeyword
-                ? `'${searchKeyword}'에 대한 검색 결과`
-                : "현재 인기있는 향수들이에요!"}
-            </span>
-            <SortDropdown type="perfume" onSortChange={() => {}} />
-          </div>
-          {matchedBrand && <BrandSection brandName={matchedBrand} />}
-          <PerfumeSection
-            perfumes={perfumes}
-            isLoading={isLoading}
-            isIdle={!isLoading && perfumes.length === 0}
-            moreRef={moreRef}
-          />
-        </main>
       </div>
-    </div>
+    </>
   );
 }

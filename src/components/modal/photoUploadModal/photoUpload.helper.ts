@@ -40,9 +40,6 @@ export async function uploadPhotoCollection({
     const event = new CustomEvent("collection-updated");
     window.dispatchEvent(event);
   }
-
-  const response = await apiClient.post("/me/collections", formData);
-  return response;
 }
 
 export async function searchPerfumes(
