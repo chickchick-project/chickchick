@@ -1,10 +1,17 @@
 "use client";
 
-import { renderPerfumeBookmarks } from "./bookmarkSection.helper";
+import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { PerfumeBookmarkList } from "./bookmarkSection.components";
 import { usePerfumeBookmarks } from "./useUserBookmarks";
 
-export default function PerfumeBookmarksLoader({ userId }: { userId: string }) {
-  const { data: perfumes } = usePerfumeBookmarks(userId);
+export default function PerfumeBookmarksLoader({
+  userId,
+  initialData,
+}: {
+  userId: string;
+  initialData?: PerfumeBaseResponse[];
+}) {
+  const { data: perfumes } = usePerfumeBookmarks(userId, initialData);
 
-  return renderPerfumeBookmarks(perfumes || []);
+  return <PerfumeBookmarkList perfumes={perfumes || []} />;
 }

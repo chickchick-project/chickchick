@@ -5,7 +5,11 @@ import { POST_CARD_TYPES } from "@/lib/constants/post";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import Link from "next/link";
 
-const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
+const PerfumeBookmarkList = ({
+  perfumes,
+}: {
+  perfumes: PerfumeBaseResponse[];
+}) => {
   if (perfumes.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -30,7 +34,11 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
   );
 };
 
-const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
+const CommunityBookmarkList = ({
+  communityPosts,
+}: {
+  communityPosts: PostCardProps[];
+}) => {
   if (communityPosts.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -41,9 +49,9 @@ const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
   return (
     <div className="grid grid-cols-2 gap-y-5">
       {communityPosts.map((item) => (
-        <Link key={item.post.id} href={`/community/post/${item.post.id}`}>
+        <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard
-            key={item.post.id}
+            key={item.id}
             {...item}
             isAuthor={false}
             isCategory={true}
@@ -55,4 +63,4 @@ const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
   );
 };
 
-export { renderPerfumeBookmarks, renderCommunityBookmarks };
+export { PerfumeBookmarkList, CommunityBookmarkList };
