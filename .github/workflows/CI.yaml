@@ -35,7 +35,10 @@ jobs:
           sudo apt-get install -y libvips-dev
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --include=optional
+
+      - name: Ensure sharp is installed
+        run: yarn add sharp --force
 
       - name: Build
         run: yarn build
