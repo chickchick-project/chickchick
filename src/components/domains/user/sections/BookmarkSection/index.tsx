@@ -3,11 +3,11 @@
 import React, { Suspense, useState } from "react";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
-import PerfumeBookmarksLoader from "./PerfumeBookmarks";
-import CommunityBookmarksLoader from "./CommunityBookmarks";
+import PerfumeBookmarksLoader from "./loader/PerfumeBookmarksLoader";
+import CommunityBookmarksLoader from "./loader/CommunityBookmarksLoader";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import { SkeletonBookmark } from "../Skeleton";
-import { PerfumeBookmarkList } from "./bookmarkSection.components";
+import { PerfumeBookmarkList } from "./components";
 
 export const BookmarkSection = ({
   isMe,

@@ -9,14 +9,16 @@ interface User {
   nickname: string;
 }
 
-type SubTabKey =
+type ActivityTabKey =
   | "myReviews"
   | "myPosts"
   | "myComments"
   | "likedPerfumes"
-  | "likedPosts"
-  | "bookmarksPerfumes"
-  | "bookmarksPosts";
+  | "likedPosts";
+
+type BookmarkTabKey = "bookmarksPerfumes" | "bookmarksPosts";
+
+type SubTabKey = ActivityTabKey | BookmarkTabKey;
 
 type SubTabItem = {
   key: SubTabKey;
@@ -29,4 +31,12 @@ interface SubTabSwitcherProps {
   onTabChange: (key: string) => void;
 }
 
-export type { TabItemConfig, User, SubTabItem, SubTabKey, SubTabSwitcherProps };
+export type {
+  TabItemConfig,
+  User,
+  SubTabItem,
+  SubTabKey,
+  SubTabSwitcherProps,
+  ActivityTabKey,
+  BookmarkTabKey,
+};

@@ -2,40 +2,43 @@
 
 import React, { useState } from "react";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
-import {
-  renderMyReviews,
-  renderMyPosts,
-  renderMyComments,
-  renderLikedPerfumes,
-  renderLikedPosts,
-} from "./activitySection.helper";
 import { ActivityData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
+import {
+  MyReviewList,
+  MyPostList,
+  MyCommentsList,
+  LikePerfumeList,
+  LikePostList,
+} from "./components";
+
+const ACTIVITY_TAB_KEYS = [
+  "myReviews",
+  "myPosts",
+  "myComments",
+  "likedPerfumes",
+  "likedPosts",
+] as const;
+
+type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
 
 export const ActivitySection = ({ data }: { data: ActivityData }) => {
-  const [activeTab, setActiveTab] = useState("myReviews");
-  const tabItems: SubTabItem[] = [
-    {
-      key: "myReviews",
-      label: "나의 리뷰",
-    },
-    {
-      key: "myPosts",
-      label: "내가 쓴 게시글",
-    },
-    {
-      key: "myComments",
-      label: "내가 쓴 댓글",
-    },
-    {
-      key: "likedPerfumes",
-      label: "좋아요 한 향수",
-    },
-    {
-      key: "likedPosts",
-      label: "좋아요 한 글",
-    },
-  ];
+  const [activeTab, setActiveTab] = useState<ActivityTabKey>("myReviews");
+
+  // (선택사항) 각 키에 대한 라벨을 매핑하는 객체
+  const TAB_LABELS: Record<ActivityTabKey, string> = {
+    myReviews: "나의 리뷰",
+    myPosts: "내가 쓴 게시글",
+    myComments: "내가 쓴 댓글",
+    likedPerfumes: "좋아요 한 향수",
+    likedPosts: "좋아요 한 글",
+  };
+
+  const tabItems: SubTabItem[] = ACTIVITY_TAB_KEYS.map((key) => ({
+    key: key,
+    label: TAB_LABELS[key],
+  }));
+
   if (!data) {
     return (
       <div className="flex justify-center items-center h-[200px]">
@@ -44,32 +47,23 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
     );
   }
 
-  const renderActiveTabContent = () => {
-    switch (activeTab) {
-      case "myReviews":
-        return renderMyReviews(data.myReviews || []);
-      case "myPosts":
-        return renderMyPosts(data.myPosts || []);
-      case "myComments":
-        return renderMyComments(data.myComments || []);
-      case "likedPerfumes":
-        return renderLikedPerfumes(data.likedPerfumes || []);
-      case "likedPosts":
-        return renderLikedPosts(data.likedPosts || []);
-      default:
-        return null;
-    }
+  const TABS: Record<ActivityTabKey, React.ReactNode> = {
+    myReviews: <MyReviewList reviews={data.myReviews || []} />,
+    myPosts: <MyPostList posts={data.myPosts || []} />,
+    myComments: <MyCommentsList comments={data.myComments || []} />,
+    likedPerfumes: <LikePerfumeList likedPerfumes={data.likedPerfumes || []} />,
+    likedPosts: <LikePostList likedPosts={data.likedPosts || []} />,
   };
 
   return (
     <>
       <SubTabSwitcher
         activeTab={activeTab}
-        onTabChange={(key) => setActiveTab(key)}
+        onTabChange={(key) => setActiveTab(key as ActivityTabKey)}
         tabs={tabItems}
       />
 
-      <div className="mt-6">{renderActiveTabContent()}</div>
+      <div className="mt-6">{TABS[activeTab]}</div>
     </>
   );
 };

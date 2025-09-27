@@ -1,8 +1,8 @@
 "use client";
 
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
-import { PerfumeBookmarkList } from "./bookmarkSection.components";
-import { usePerfumeBookmarks } from "./useUserBookmarks";
+import { PerfumeBookmarkList } from "../components";
+import { usePerfumeBookmarks } from "../hooks/useUserBookmarks";
 
 export default function PerfumeBookmarksLoader({
   userId,
