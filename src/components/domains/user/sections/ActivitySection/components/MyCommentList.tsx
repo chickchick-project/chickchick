@@ -1,8 +1,13 @@
 import React from "react";
 import Reply from "@/components/domains/user/Reply";
 import { mockReplyData } from "@/lib/mocks/reply";
+import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
 
-export const MyCommentsList = ({ comments }: { comments: any[] }) => {
+export const MyCommentsList = ({
+  comments,
+}: {
+  comments: CommentResponse[];
+}) => {
   return comments.map((item, idx) => (
     <Reply
       key={item.id}

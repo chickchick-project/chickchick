@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
-import { ActivityData } from "../sections.type";
+// import { ActivityData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
 import {
   MyReviewList,
@@ -11,6 +11,7 @@ import {
   LikePerfumeList,
   LikePostList,
 } from "./components";
+import { MockActivityData } from "@/lib/mocks/fetchUser";
 
 const ACTIVITY_TAB_KEYS = [
   "myReviews",
@@ -22,7 +23,7 @@ const ACTIVITY_TAB_KEYS = [
 
 type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
 
-export const ActivitySection = ({ data }: { data: ActivityData }) => {
+export const ActivitySection = ({ data }: { data: MockActivityData }) => {
   const [activeTab, setActiveTab] = useState<ActivityTabKey>("myReviews");
 
   // (선택사항) 각 키에 대한 라벨을 매핑하는 객체
@@ -48,11 +49,11 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
   }
 
   const TABS: Record<ActivityTabKey, React.ReactNode> = {
-    myReviews: <MyReviewList reviews={data.myReviews || []} />,
-    myPosts: <MyPostList posts={data.myPosts || []} />,
-    myComments: <MyCommentsList comments={data.myComments || []} />,
-    likedPerfumes: <LikePerfumeList likedPerfumes={data.likedPerfumes || []} />,
-    likedPosts: <LikePostList likedPosts={data.likedPosts || []} />,
+    myReviews: <MyReviewList reviews={data.mockReviews} />,
+    myPosts: <MyPostList posts={data.mockPosts} />,
+    myComments: <MyCommentsList comments={data.mockComments} />,
+    likedPerfumes: <LikePerfumeList likedPerfumes={data.likedPerfumes} />,
+    likedPosts: <LikePostList likedPosts={data.likedPosts} />,
   };
 
   return (
@@ -63,7 +64,7 @@ export const ActivitySection = ({ data }: { data: ActivityData }) => {
         tabs={tabItems}
       />
 
-      <div className="mt-6">{TABS[activeTab]}</div>
+      {TABS[activeTab]}
     </>
   );
 };

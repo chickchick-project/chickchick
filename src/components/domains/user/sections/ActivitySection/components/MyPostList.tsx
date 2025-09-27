@@ -3,22 +3,21 @@ import { PostCard } from "@/components/commons/card/postCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import Link from "next/link";
 import { mockPostCardData } from "@/lib/mocks/postCard";
+import { PostResponse } from "@/lib/hono/schemas/community.schema";
 
-export const MyPostList = ({ posts }: { posts: any[] }) => {
+export const MyPostList = ({ posts }: { posts: PostResponse[] }) => {
   return posts.length > 0 ? (
-    <ul className="space-y-2">
+    <div className="grid grid-cols-2 justify-items-center">
       {posts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard
             key={item.id}
             {...mockPostCardData}
-            isAuthor={false}
-            isCategory={true}
             cardType={POST_CARD_TYPES.SMALL}
           />
         </Link>
       ))}
-    </ul>
+    </div>
   ) : (
     <div className="text-center py-8 text-gray-500">
       작성한 게시글이 없습니다.

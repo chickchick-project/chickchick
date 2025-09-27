@@ -3,22 +3,25 @@ import Link from "next/link";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import { mockPostCardData } from "@/lib/mocks/postCard";
 import { PostCard } from "@/components/commons/card/postCard";
+import { PostResponse } from "@/lib/hono/schemas/community.schema";
 
-export const LikePostList = ({ likedPosts }: { likedPosts: any[] }) => {
+export const LikePostList = ({
+  likedPosts,
+}: {
+  likedPosts: PostResponse[];
+}) => {
   return likedPosts.length > 0 ? (
-    <ul className="space-y-2">
+    <div className="grid grid-cols-2 justify-items-center">
       {likedPosts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard
             key={item.id}
             {...mockPostCardData}
-            isAuthor={false}
-            isCategory={true}
             cardType={POST_CARD_TYPES.SMALL}
           />
         </Link>
       ))}
-    </ul>
+    </div>
   ) : (
     <div className="text-center py-8 text-gray-500">
       좋아요 한 게시글이 없습니다.
