@@ -14,6 +14,7 @@ import {
 } from "./serviceResult.utils";
 import { z } from "zod";
 import { Context } from "hono";
+import { ImageFormat } from "@prisma/client";
 
 /**
  * 특정 리소스가 데이터베이스에 존재하는지 확인합니다.
@@ -70,4 +71,18 @@ export function getAuthenticatedUser(c: Context) {
     throw new Error("인증 되지 않은 사용자입니다.");
   }
   return user;
+}
+
+/**
+ * 이미지 형식을 가져옵니다.
+ * @param formatString - 이미지 형식 문자열
+ * @returns 이미지 형식
+ */
+export function getImageFormat(formatString?: string): ImageFormat {
+  const upperFormat = formatString?.toUpperCase();
+  if (upperFormat === "JPEG" || upperFormat === "JPG") return ImageFormat.JPEG;
+  if (upperFormat === "PNG") return ImageFormat.PNG;
+  if (upperFormat === "WEBP") return ImageFormat.WEBP;
+  if (upperFormat === "HEIF" || upperFormat === "HEIC") return ImageFormat.HEIC;
+  return ImageFormat.UNKNOWN;
 }

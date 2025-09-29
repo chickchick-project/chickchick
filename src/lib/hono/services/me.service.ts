@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { Prisma, ImageFormat } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { supabaseAdmin } from "@/lib/supabase/init";
 import { prisma } from "@/lib/prisma";
 import {
@@ -9,6 +9,7 @@ import {
 } from "../utils/serviceResult.utils";
 import { PostWithAuthor } from "./community.service";
 import { PerfumeBaseResponse } from "../schemas/perfume.schema";
+import { getImageFormat } from "../utils/service.utils";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -233,11 +234,67 @@ export async function deletePhotoCollectionService(payload: {
   return serviceSuccess("컬렉션을 삭제했습니다.");
 }
 
-function getImageFormat(formatString?: string): ImageFormat {
-  const upperFormat = formatString?.toUpperCase();
-  if (upperFormat === "JPEG" || upperFormat === "JPG") return ImageFormat.JPEG;
-  if (upperFormat === "PNG") return ImageFormat.PNG;
-  if (upperFormat === "WEBP") return ImageFormat.WEBP;
-  if (upperFormat === "HEIF" || upperFormat === "HEIC") return ImageFormat.HEIC;
-  return ImageFormat.UNKNOWN;
+/**
+ * 사용자가 작성한 리뷰 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 향수 컬렉션
+ */
+export async function getMyReviewsService(userId: string) {
+  const reviews = await prisma.review.findMany({
+    where: { authorId: userId },
+    include: { perfume: true },
+  });
+  return serviceSuccess(reviews);
+}
+/**
+ * 사용자의 작성한 게시글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 작성한 게시글 목록
+ */
+export async function getMyPostsService(userId: string) {
+  const posts = await prisma.post.findMany({
+    where: { userId },
+    include: { author: true },
+  });
+  return serviceSuccess(posts);
+}
+/**
+ * 사용자의 작성한 댓글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 작성한 댓글 목록
+ */
+export async function getMyCommentsService(userId: string) {
+  const comments = await prisma.comment.findMany({
+    where: { authorId: userId },
+    include: {
+      post: {
+        select: { id: true, title: true },
+      },
+    },
+  });
+  return serviceSuccess(comments);
+}
+/**
+ * 사용자가 좋아요한 향수 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 좋아요한 향수 목록
+ */
+export async function getMyLikedPerfumesService(userId: string) {
+  const likedPerfumes = await prisma.perfumeBookmark.findMany({
+    where: { userId },
+    include: { perfume: true },
+  });
+  return serviceSuccess(likedPerfumes);
+}
+/**
+ * 사용자가 좋아요한 게시글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 좋아요한 게시글 목록
+ */
+export async function getMyLikedPostsService(userId: string) {
+  const likedPosts = await prisma.postBookmark.findMany({
+    where: { userId },
+    include: { post: true },
+  });
+  return serviceSuccess(likedPosts);
 }
