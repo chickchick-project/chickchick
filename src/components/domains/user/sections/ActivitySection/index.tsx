@@ -1,17 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
-// import { ActivityData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
+// import {
+//   MyReviewList,
+//   MyPostList,
+//   MyCommentsList,
+//   LikePerfumeList,
+//   LikePostList,
+// } from "./components";
+// import { MockActivityData } from "@/lib/mocks/fetchUser";
 import {
-  MyReviewList,
-  MyPostList,
-  MyCommentsList,
-  LikePerfumeList,
-  LikePostList,
-} from "./components";
-import { MockActivityData } from "@/lib/mocks/fetchUser";
+  LikePerfumeListLoader,
+  LikePostListLoader,
+  MyCommentsListLoader,
+  MyPostListLoader,
+  MyReviewListLoader,
+} from "./loader";
+import { SkeletonBookmark } from "../Skeleton";
 
 const ACTIVITY_TAB_KEYS = [
   "myReviews",
@@ -23,7 +30,7 @@ const ACTIVITY_TAB_KEYS = [
 
 type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
 
-export const ActivitySection = ({ data }: { data: MockActivityData }) => {
+export const ActivitySection = () => {
   const [activeTab, setActiveTab] = useState<ActivityTabKey>("myReviews");
 
   // (선택사항) 각 키에 대한 라벨을 매핑하는 객체
@@ -40,20 +47,32 @@ export const ActivitySection = ({ data }: { data: MockActivityData }) => {
     label: TAB_LABELS[key],
   }));
 
-  if (!data) {
-    return (
-      <div className="flex justify-center items-center h-[200px]">
-        <p>활동 데이터를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
-
   const TABS: Record<ActivityTabKey, React.ReactNode> = {
-    myReviews: <MyReviewList reviews={data.mockReviews} />,
-    myPosts: <MyPostList posts={data.mockPosts} />,
-    myComments: <MyCommentsList comments={data.mockComments} />,
-    likedPerfumes: <LikePerfumeList likedPerfumes={data.likedPerfumes} />,
-    likedPosts: <LikePostList likedPosts={data.likedPosts} />,
+    myReviews: (
+      <Suspense fallback={<SkeletonBookmark />}>
+        <MyReviewListLoader />,
+      </Suspense>
+    ),
+    myPosts: (
+      <Suspense fallback={<SkeletonBookmark />}>
+        <MyPostListLoader />,
+      </Suspense>
+    ),
+    myComments: (
+      <Suspense fallback={<SkeletonBookmark />}>
+        <MyCommentsListLoader />,
+      </Suspense>
+    ),
+    likedPerfumes: (
+      <Suspense fallback={<SkeletonBookmark />}>
+        <LikePerfumeListLoader />,
+      </Suspense>
+    ),
+    likedPosts: (
+      <Suspense fallback={<SkeletonBookmark />}>
+        <LikePostListLoader />,
+      </Suspense>
+    ),
   };
 
   return (

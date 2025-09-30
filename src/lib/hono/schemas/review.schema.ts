@@ -24,6 +24,13 @@ export const ReviewResponseSchema = ReviewSchema.pick({
     nickname: true,
     imageUrl: true,
   }),
+  perfume: z
+    .object({
+      id: z.string().uuid(),
+      nameEn: z.string().nullable(),
+      nameKo: z.string().nullable(),
+    })
+    .nullable(),
   chips: ReviewChipsSchema,
 });
 
@@ -58,7 +65,20 @@ export const UpdateReviewSchema = ReviewSchema.omit({
   updatedAt: true,
 });
 
+export type RowReviewResponse = z.infer<typeof ReviewSchema> & {
+  author: {
+    id: string;
+    nickname: string;
+    imageUrl: string | null;
+  };
+  perfume: {
+    id: string;
+    nameEn: string | null;
+    nameKo: string | null;
+  };
+};
 export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
+export type ReviewChips = z.infer<typeof ReviewChipsSchema>;
 export type CreateReview = z.infer<typeof CreateReviewSchema>;
 export type CreateReviewPayload = z.infer<typeof CreateReviewPayloadSchema>;
 export type UpdateReview = z.infer<typeof UpdateReviewSchema>;

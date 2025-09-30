@@ -146,14 +146,11 @@ export async function postPhotoCollectionService(payload: {
 
     if (error) serviceInternalError(error.message);
 
-    // console.log("File uploaded successfully");
     uploadedPath = data!.path;
-    // console.log(uploadedPath);
     // 2. 퍼블릭 URL 가져오기
     const {
       data: { publicUrl },
     } = supabaseAdmin.storage.from(bucketName).getPublicUrl(uploadedPath);
-    // console.log("Public URL:", publicUrl);
 
     const newImageData = {
       imageUrl: publicUrl,
@@ -186,7 +183,6 @@ export async function postPhotoCollectionService(payload: {
       include: { image: true },
     });
 
-    // console.log("Collection created successfully:", resultCollection);
     return serviceSuccess(resultCollection);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -242,7 +238,14 @@ export async function deletePhotoCollectionService(payload: {
 export async function getMyReviewsService(userId: string) {
   const reviews = await prisma.review.findMany({
     where: { authorId: userId },
-    include: { perfume: true },
+    include: {
+      perfume: {
+        include: {
+          brand: true,
+        },
+      },
+      author: true,
+    },
   });
   return serviceSuccess(reviews);
 }
@@ -280,7 +283,7 @@ export async function getMyCommentsService(userId: string) {
  * @returns 사용자의 좋아요한 향수 목록
  */
 export async function getMyLikedPerfumesService(userId: string) {
-  const likedPerfumes = await prisma.perfumeBookmark.findMany({
+  const likedPerfumes = await prisma.perfumeLike.findMany({
     where: { userId },
     include: { perfume: true },
   });
@@ -292,7 +295,7 @@ export async function getMyLikedPerfumesService(userId: string) {
  * @returns 사용자의 좋아요한 게시글 목록
  */
 export async function getMyLikedPostsService(userId: string) {
-  const likedPosts = await prisma.postBookmark.findMany({
+  const likedPosts = await prisma.postLike.findMany({
     where: { userId },
     include: { post: true },
   });

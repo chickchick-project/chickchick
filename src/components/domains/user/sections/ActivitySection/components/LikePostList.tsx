@@ -3,12 +3,12 @@ import Link from "next/link";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import { mockPostCardData } from "@/lib/mocks/postCard";
 import { PostCard } from "@/components/commons/card/postCard";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
+import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
 export const LikePostList = ({
   likedPosts,
 }: {
-  likedPosts: PostResponse[];
+  likedPosts: PostCardProps[];
 }) => {
   return likedPosts.length > 0 ? (
     <div className="grid grid-cols-2 justify-items-center">

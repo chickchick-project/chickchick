@@ -166,4 +166,38 @@ authenticatedApi.openapi(toggleBookmarkRoute, async (c) => {
 
 perfumesApi.route("/", authenticatedApi);
 
+/**
+ * @method POST
+ * @path /perfumes/{id}/like
+ * @description 특정 향수에 대한 좋아요 상태를 토글(추가/제거)합니다. 인증이 필요합니다.
+ * @summary 향수 좋아요 토글
+ */
+
+const toggleLikeRoute = createRoute({
+  method: "post",
+  path: "/{id}/like",
+  summary: "향수 좋아요 토글",
+  request: { params: PerfumeSchemas.PerfumeIdParamSchema },
+  responses: createStandardApiResponses({
+    schema: z.object({ liked: z.boolean() }),
+  }),
+  tags: ["Perfume"],
+});
+authenticatedApi.openapi(toggleLikeRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = await getAuthenticatedUser(c);
+
+  const result = await PerfumeServices.togglePerfumeLikeService(id, user.id);
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  const message = result.data.liked
+    ? "좋아요 추가되었습니다."
+    : "좋아요 제거되었습니다.";
+  return apiSuccess(c, result.data, message);
+});
+
+perfumesApi.route("/", authenticatedApi);
+
 export default perfumesApi;

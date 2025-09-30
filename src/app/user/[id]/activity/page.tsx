@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { fetchMockActivityData } from "@/lib/mocks/fetchUser";
 import { ActivitySection } from "@/components/domains/user/sections";
 import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 
@@ -16,6 +15,5 @@ export default async function ActivityPage({
     return notFound();
   }
 
-  const data = await fetchMockActivityData(pageOwnerId);
-  return <ActivitySection data={data} />;
+  return <ActivitySection />;
 }

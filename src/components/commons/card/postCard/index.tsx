@@ -78,7 +78,7 @@ export function PostCard({
 
       {/* 푸터 */}
       <footer className="w-full flex justify-between">
-        <AuthorInfo author={author} createdAt={createdAt} isAuthor={isAuthor} />
+        <AuthorInfo author={author} createdAt={new Date(createdAt)} isAuthor={isAuthor} />
         {cardType !== POST_CARD_TYPES.DETAIL && <PostMeta meta={meta} />}
       </footer>
     </article>

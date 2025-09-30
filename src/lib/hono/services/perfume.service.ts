@@ -195,3 +195,31 @@ export async function togglePerfumeBookmarkService(
     return serviceInternalError(error);
   }
 }
+
+export async function togglePerfumeLikeService(
+  perfumeId: string,
+  userId: string
+): Promise<ServiceResult<{ liked: boolean }>> {
+  try {
+    const checks = await Promise.all([
+      checkResourceExists("perfume", perfumeId, "향수"),
+      checkResourceExists("user", userId, "사용자"),
+    ]);
+    for (const check of checks) {
+      if (!check.success) return check;
+    }
+    const like = await prisma.perfumeLike.findUnique({
+      where: { user_perfume_like_unique: { perfumeId, userId } },
+    });
+
+    if (like) {
+      await prisma.perfumeLike.delete({ where: { id: like.id } });
+      return serviceSuccess({ liked: false });
+    } else {
+      await prisma.perfumeLike.create({ data: { perfumeId, userId } });
+      return serviceSuccess({ liked: true });
+    }
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}

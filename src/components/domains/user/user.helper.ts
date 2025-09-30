@@ -3,6 +3,11 @@ import { UserCollection } from "@prisma/client";
 import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
+import {
+  ReviewResponse,
+  RowReviewResponse,
+} from "@/lib/hono/schemas/review.schema";
+import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 const apiClient = createHttpClient({
   baseUrl:
@@ -11,7 +16,12 @@ const apiClient = createHttpClient({
 
 export async function fetchUserCollections(userId: string) {
   const collections = await apiClient.get<UserCollection[]>(
-    `/users/${userId}/collections`
+    `/users/${userId}/collections`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    }
   );
   return { ...collections } as { data: UserCollection[] };
 }
@@ -26,4 +36,55 @@ export async function fetchUserBookmarksPerfumes(userId: string) {
 export async function fetchUserBookmarksPosts() {
   const bookmarks = await apiClient.get<PostCardProps[]>(`/me/bookmarks/posts`);
   return { ...bookmarks } as { data: PostCardProps[] };
+}
+
+export async function fetchUserReviews(): Promise<ReviewResponse[]> {
+  const reviews = await apiClient.get<
+    ApiSuccessResponse<RowReviewResponse[]>,
+    ReviewResponse[]
+  >("/me/activity/reviews", undefined, {
+    transformResponse: (response) => {
+      return response.data.map((item) => {
+        return {
+          ...item,
+          chips: {
+            feeling: item.feeling,
+            longevity: item.longevity,
+            sillage: item.sillage,
+            genderTone: item.genderTone,
+            season: item.season,
+            timeOfDay: item.timeOfDay,
+            pricePerception: item.pricePerception,
+          },
+        };
+      });
+    },
+  });
+  return reviews ?? [];
+}
+
+export async function fetchUserPosts() {
+  const posts = await apiClient.get<PostCardProps[]>(`/me/activity/posts`);
+  return { ...posts } as { data: PostCardProps[] };
+}
+
+export async function fetchUserComments() {
+  const comments = await apiClient.get<PostCardProps[]>(
+    `/me/activity/comments`
+  );
+  return { ...comments } as { data: PostCardProps[] };
+}
+
+export async function fetchUserLikedPerfumes() {
+  const likedPerfumes = await apiClient.get<PerfumeBaseResponse[]>(
+    `/me/activity/liked-perfumes`
+  );
+  return { ...likedPerfumes } as { data: PerfumeBaseResponse[] };
+}
+
+export async function fetchUserLikedPosts() {
+  const likedPosts = await apiClient.get<PostCardProps[]>(
+    `/me/activity/liked-posts`
+  );
+  return { ...likedPosts } as { data: PostCardProps[] };
 }

@@ -3,9 +3,9 @@ import { PostCard } from "@/components/commons/card/postCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
 import Link from "next/link";
 import { mockPostCardData } from "@/lib/mocks/postCard";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
+import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
-export const MyPostList = ({ posts }: { posts: PostResponse[] }) => {
+export const MyPostList = ({ posts }: { posts: PostCardProps[] }) => {
   return posts.length > 0 ? (
     <div className="grid grid-cols-2 justify-items-center">
       {posts.map((item) => (
