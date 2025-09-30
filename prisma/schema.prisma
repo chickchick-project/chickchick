@@ -295,27 +295,59 @@ model Post {
 }
 
 model Review {
-  id              String             @id @default(uuid()) @db.Uuid
-  content         String
-  authorId        String             @map("author_id") @db.Uuid
-  perfumeId       String             @map("perfume_id") @db.Uuid
-  usageStatus     PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
-  createdAt       DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime           @updatedAt @map("updated_at") @db.Timestamptz(6)
-  longevity       Longevity          @default(VERY_WEAK)
-  pricePerception PricePerception    @default(GOOD_VALUE) @map("price_perception")
-  season          Season[]           @default([SPRING])
-  sillage         Sillage            @default(INTIMATE)
-  timeOfDay       TimeOfDay          @default(DAY) @map("time_of_day")
-  feeling         Feeling            @default(DISLIKE)
-  genderTone      GenderTone         @default(UNISEX) @map("gender_tone")
+  id          String    @id @default(uuid()) @db.Uuid
+  content     String
+  usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   // Relations
-  author          User               @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
-  perfume         Perfume            @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
+  authorId    String    @map("author_id") @db.Uuid
+  author      User      @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
 
-  // Constraints
+  perfumeId   String    @map("perfume_id") @db.Uuid
+  perfume     Perfume   @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
+
+  attributeSelections ReviewAttributeSelection[]
+
   @@map("reviews")
+}
+
+model ReviewAttribute {
+  id    Int     @id @default(autoincrement())
+  key   String  @unique
+  name  String  
+
+  options AttributeOption[]
+
+  @@map("review_attributes")
+}
+
+model AttributeOption {
+  id    Int     @id @default(autoincrement())
+  value String  
+  name  String  
+
+  attributeId Int                @map("attribute_id")
+  attribute   ReviewAttribute    @relation(fields: [attributeId], references: [id])
+  
+  selections  ReviewAttributeSelection[]
+
+  @@unique([attributeId, value])
+  @@map("attribute_options")
+}
+
+model ReviewAttributeSelection {
+  reviewId        String   @map("review_id") @db.Uuid
+  attributeOptionId Int    @map("attribute_option_id")
+
+  // Relations
+  review          Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  option          AttributeOption @relation(fields: [attributeOptionId], references: [id])
+
+  // Composite Primary Key
+  @@id([reviewId, attributeOptionId])
+  @@map("review_attribute_selections")
 }
 
 model Comment {
@@ -396,13 +428,6 @@ enum ActivityTargetType {
   PERFUME
 }
 
-enum NoteStage {
-  TOP
-  MIDDLE
-  BASE
-  NONE
-}
-
 enum BookmarkItemType {
   POST
   PERFUME
@@ -414,53 +439,15 @@ enum PostCategory {
   RECOMMENDATION
 }
 
+enum NoteStage {
+  TOP
+  MIDDLE
+  BASE
+  NONE
+}
+
 enum PerfumeUsageStatus {
   CURRENTLY_USING
   USED_BEFORE
   NOT_USED_YET
-}
-
-enum Feeling {
-  DISLIKE
-  BAD
-  NEUTRAL
-  GOOD
-  BEST
-}
-
-enum Longevity {
-  VERY_WEAK
-  WEAK
-  MODERATE
-  LONG_LASTING
-}
-
-enum Sillage {
-  INTIMATE
-  MODERATE
-  STRONG
-}
-
-enum GenderTone {
-  FEMININE
-  UNISEX
-  MASCULINE
-}
-
-enum Season {
-  SPRING
-  SUMMER
-  AUTUMN
-  WINTER
-}
-
-enum TimeOfDay {
-  DAY
-  NIGHT
-}
-
-enum PricePerception {
-  EXPENSIVE
-  REASONABLE
-  GOOD_VALUE
 }
