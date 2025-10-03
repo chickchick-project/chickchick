@@ -15,7 +15,7 @@ interface BaseInfo<T extends string, I = undefined> {
 
 type BasicInfo = BaseInfo<"basic", undefined>;
 type PostInfo = BaseInfo<"post", PostMetaItem[]>;
-type ReviewInfo = BaseInfo<"review", { status: ReviewStatusType }>;
+type ReviewInfo = BaseInfo<"review", { status: PerfumeUsageStatus }>;
 type CommentInfo = BaseInfo<"comment", undefined>;
 
 export type InfoType = PostInfo | ReviewInfo | CommentInfo | BasicInfo;

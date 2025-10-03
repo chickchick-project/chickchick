@@ -39,7 +39,15 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
 
   switch (info.type) {
     case "review":
-      items.push(<span key="status">{info.item?.status}</span>);
+      items.push(
+        <span key="status">
+          {info.item!.status === "CURRENTLY_USING"
+            ? "지금 쓰고 있어요"
+            : info.item!.status === "USED_BEFORE"
+            ? "써 봤어요"
+            : "갖고 싶어요"}
+        </span>
+      );
       break;
 
     case "post":
