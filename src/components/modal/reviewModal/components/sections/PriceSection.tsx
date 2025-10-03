@@ -1,7 +1,7 @@
 "use client";
 
 import { SubTitle } from "../SubTitle";
-import { REVIEW_OPTIONS } from "../constants";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SelectButton } from "../button/SelectButton";
 import { useFormContext, Controller } from "react-hook-form";
 
@@ -12,7 +12,7 @@ export const PriceSection = () => {
     <div className="flex flex-col gap-5">
       <SubTitle>가격은 어떤가요?</SubTitle>
       <Controller
-        name="pricePerception"
+        name="attributes.pricePerception"
         control={control}
         render={({ field }) => (
           <div className="flex tablet:flex-row flex-col gap-4">

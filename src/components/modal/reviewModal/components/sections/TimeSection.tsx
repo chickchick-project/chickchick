@@ -1,30 +1,29 @@
 "use client";
 
-import { SelectButton } from "../button/SelectButton";
-import { REVIEW_OPTIONS } from "../constants";
 import { SubTitle } from "../SubTitle";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
+import { RadioButton } from "../button/RadioButton";
 import { Controller, useFormContext } from "react-hook-form";
 
-export const SillageSection = () => {
+export const TimeSection = () => {
   const { control } = useFormContext();
 
   return (
     <div className="flex flex-col gap-5">
-      <SubTitle>잔향감</SubTitle>
+      <SubTitle>이 향수에 어울리는 시간대는 언제인가요?</SubTitle>
       <Controller
-        name="sillage"
+        name="attributes.timeOfDay"
         control={control}
         render={({ field }) => (
-          <div className="flex flex-col gap-4">
-            {REVIEW_OPTIONS.sillage.map((option) => (
-              <SelectButton
+          <div className="flex gap-[120px] justify-center items-center w-full">
+            {REVIEW_OPTIONS.timeOfDay.map((option) => (
+              <RadioButton
                 key={option.key}
-                width="100%"
                 isSelected={field.value === option.key}
                 onClick={() => field.onChange(option.key)}
               >
                 {option.label}
-              </SelectButton>
+              </RadioButton>
             ))}
           </div>
         )}

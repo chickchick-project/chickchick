@@ -1,6 +1,6 @@
 import { Review } from "@prisma/client";
 import { useFormContext } from "react-hook-form";
-import { REVIEW_OPTIONS } from "./constants";
+import { REVIEW_OPTIONS } from "../../domains/perfumeDetail/review/review.constants";
 
 type ReviewOptionKey = keyof typeof REVIEW_OPTIONS;
 

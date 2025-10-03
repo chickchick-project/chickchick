@@ -1,29 +1,30 @@
 "use client";
 
+import { SelectButton } from "../button/SelectButton";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SubTitle } from "../SubTitle";
-import { REVIEW_OPTIONS } from "../constants";
-import { RadioButton } from "../button/RadioButton";
 import { Controller, useFormContext } from "react-hook-form";
 
-export const TimeSection = () => {
+export const LongevitySection = () => {
   const { control } = useFormContext();
 
   return (
     <div className="flex flex-col gap-5">
-      <SubTitle>이 향수에 어울리는 시간대는 언제인가요?</SubTitle>
+      <SubTitle>얼마나 지속되나요?</SubTitle>
       <Controller
-        name="timeOfDay"
+        name="attributes.longevity"
         control={control}
         render={({ field }) => (
-          <div className="flex gap-[120px] justify-center items-center w-full">
-            {REVIEW_OPTIONS.timeOfDay.map((option) => (
-              <RadioButton
+          <div className="tablet:grid tablet:grid-cols-2 flex flex-col gap-4">
+            {REVIEW_OPTIONS.longevity.map((option) => (
+              <SelectButton
                 key={option.key}
+                width="100%"
                 isSelected={field.value === option.key}
                 onClick={() => field.onChange(option.key)}
               >
                 {option.label}
-              </RadioButton>
+              </SelectButton>
             ))}
           </div>
         )}

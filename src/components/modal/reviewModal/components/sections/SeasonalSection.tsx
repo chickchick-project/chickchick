@@ -1,7 +1,7 @@
 "use client";
 
 import { SubTitle } from "../SubTitle";
-import { REVIEW_OPTIONS } from "../constants";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { RadioButton } from "../button/RadioButton";
 import { Controller } from "react-hook-form";
 import { useFormContext } from "react-hook-form";
@@ -13,7 +13,7 @@ export const SeasonalSection = () => {
     <div className="flex flex-col gap-5">
       <SubTitle>이 향수에 어울리는 계절은 무엇인가요?</SubTitle>
       <Controller
-        name="season"
+        name="attributes.season"
         control={control}
         render={({ field }) => {
           return (

@@ -1,29 +1,30 @@
 "use client";
 
-import { RadioButton } from "../button/RadioButton";
-import { REVIEW_OPTIONS } from "../constants";
+import { SelectButton } from "../button/SelectButton";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SubTitle } from "../SubTitle";
 import { Controller, useFormContext } from "react-hook-form";
 
-export const GenderToneSection = () => {
+export const SillageSection = () => {
   const { control } = useFormContext();
 
   return (
     <div className="flex flex-col gap-5">
-      <SubTitle>이 향수가 떠오르게 하는 이미지는 어떤가요?</SubTitle>
+      <SubTitle>잔향감</SubTitle>
       <Controller
-        name="genderTone"
+        name="attributes.sillage"
         control={control}
         render={({ field }) => (
-          <div className="flex gap-[60px] justify-center items-center w-full">
-            {REVIEW_OPTIONS.genderTone.map((option) => (
-              <RadioButton
+          <div className="flex flex-col gap-4">
+            {REVIEW_OPTIONS.sillage.map((option) => (
+              <SelectButton
                 key={option.key}
+                width="100%"
                 isSelected={field.value === option.key}
                 onClick={() => field.onChange(option.key)}
               >
                 {option.label}
-              </RadioButton>
+              </SelectButton>
             ))}
           </div>
         )}

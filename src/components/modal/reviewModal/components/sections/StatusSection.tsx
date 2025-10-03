@@ -2,7 +2,7 @@
 
 import { useFormContext, Controller } from "react-hook-form";
 import { SelectButton } from "../button/SelectButton";
-import { REVIEW_OPTIONS } from "../constants";
+import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SubTitle } from "../SubTitle";
 import { PerfumeUsageStatus, Review } from "@prisma/client";
 

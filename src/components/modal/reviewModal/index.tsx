@@ -1,19 +1,26 @@
+import { useMemo } from "react";
 import { ModalContainer } from "../ModalContainer";
-import { Title } from "../../domains/reviewModal/Title";
+import { Title } from "./components/Title";
 import Form from "../../commons/form";
-import { DetailReviewSection } from "../../domains/reviewModal/section/DetailReviewSection";
-import { FeelingSection } from "../../domains/reviewModal/section/FeelingSection";
-import { GenderToneSection } from "../../domains/reviewModal/section/GenderToneSection";
-import { LongevitySection } from "../../domains/reviewModal/section/LongevitySection";
-import { PriceSection } from "../../domains/reviewModal/section/PriceSection";
-import { SeasonalSection } from "../../domains/reviewModal/section/SeasonalSection";
-import { SillageSection } from "../../domains/reviewModal/section/SillageSection";
-import { StatusSection } from "../../domains/reviewModal/section/StatusSection";
-import { TimeSection } from "../../domains/reviewModal/section/TimeSection";
-import { SubmitButton } from "@/components/domains/reviewModal/button/SubmitButton";
+import {
+  StatusSection,
+  FeelingSection,
+  LongevitySection,
+  SillageSection,
+  GenderToneSection,
+  SeasonalSection,
+  TimeSection,
+  PriceSection,
+  DetailReviewSection,
+} from "./components/sections";
 import { useInitialize } from "./form.initialize";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { CreateReviewPayloadSchema } from "@/lib/hono/schemas/review.schema";
+import {
+  CreateReviewInput,
+  CreateReviewInputSchema,
+} from "@/lib/hono/schemas/review.schema";
+import { SubmitButton } from "./components/button/SubmitButton";
+import { PerfumeUsageStatus } from "@prisma/client";
 
 interface IReviewModalProps {
   closeModal: () => void;
@@ -25,8 +32,39 @@ interface IReviewModalProps {
 export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
   const { user } = useUserStore();
 
-  if (!user) alert("로그인 후 리뷰 작성이 가능합니다.");
+  const getInitialData = () => {
+    return {
+      usageStatus: "NOT_USED_YET" as PerfumeUsageStatus,
+      content: "",
+      feeling: undefined,
+      longevity: undefined,
+      sillage: undefined,
+      genderTone: undefined,
+      season: undefined,
+      timeOfDay: undefined,
+      pricePerception: undefined,
+    };
+  };
 
+  const defaultValues = useMemo((): CreateReviewInput => {
+    const initialData = getInitialData();
+
+    return {
+      content: initialData.content,
+      usageStatus: initialData.usageStatus,
+      attributes: {
+        feeling: initialData.feeling,
+        longevity: initialData.longevity,
+        sillage: initialData.sillage,
+        genderTone: initialData.genderTone,
+        season: initialData.season || [],
+        timeOfDay: initialData.timeOfDay,
+        pricePerception: initialData.pricePerception,
+      },
+    };
+  }, []);
+
+  if (!user) alert("로그인 후 리뷰 작성이 가능합니다.");
   return (
     <ModalContainer
       className="tablet:w-[688px] tablet:h-[620px] w-full h-full absolute bottom-0 left-0"
@@ -39,7 +77,8 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
         >
           <Title>이 향수에 대한 리뷰를 남겨주세요</Title>
           <Form
-            schema={CreateReviewPayloadSchema}
+            schema={CreateReviewInputSchema}
+            defaultValues={defaultValues}
             useInitialize={useInitialize}
           >
             <div className="flex flex-col gap-10 p-5">

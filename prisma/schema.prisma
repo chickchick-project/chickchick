@@ -5,9 +5,9 @@ generator client {
 generator zod {
   provider          = "zod-prisma-types"
   output            = "./zod"
-  createInputTypes  = "false"
-  createModelSchema = "true"
-  useMultipleFiles  = "true"
+  createInputTypes  = false
+  createModelSchema = true
+  useMultipleFiles  = true 
 }
 
 datasource db {

@@ -1,10 +1,10 @@
 "use client";
 
-import { useUserStore } from "@/lib/stores/useUserStore";
-import { Review } from "@prisma/client";
-import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { UseFormReturn } from "react-hook-form";
+import { useUserStore } from "@/lib/stores/useUserStore";
+import { Review } from "@zod/modelSchema";
 
 export const useInitialize = (method: UseFormReturn<Review>) => {
   const { id } = useParams();
@@ -16,7 +16,6 @@ export const useInitialize = (method: UseFormReturn<Review>) => {
 
   const onSubmit = async (data: Review): Promise<void> => {
     const payload = { ...data, authorId: user?.id };
-
     try {
       await fetch(`/api/v1/reviews/${perfumeId}`, {
         method: "POST",

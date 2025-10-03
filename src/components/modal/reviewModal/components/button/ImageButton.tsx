@@ -1,14 +1,9 @@
 import Image from "next/image";
+import { ImageType } from "@/components/domains/perfumeDetail/review/review.type";
 
 interface IImageButton {
-  image: {
-    src: string;
-    alt: string;
-  };
-  image_selected: {
-    src: string;
-    alt: string;
-  };
+  image: ImageType;
+  image_selected: ImageType;
   children: React.ReactNode;
   isSelected: boolean;
   onClick: () => void;
