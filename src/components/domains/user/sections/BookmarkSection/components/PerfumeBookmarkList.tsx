@@ -1,11 +1,12 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+
 import Link from "next/link";
 
 export const PerfumeBookmarkList = ({
   perfumes,
 }: {
-  perfumes: PerfumeBaseResponse[];
+  perfumes: ApiPerfumeSimpleResponse[];
 }) => {
   if (perfumes.length === 0) {
     return (

@@ -1,22 +1,31 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import * as PerfumeServices from "@/lib/hono/services/perfume.service";
-import type { AppContext } from "@/lib/hono/app";
+import { AppContext } from "@/lib/hono/app";
 import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
-
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
-} from "../../utils/apiResponse.utils";
-import { PostResponseSchema } from "../../schemas/community.schema";
+} from "@/lib/hono/utils/apiResponse.utils";
+import { ApiPostResponseSchema } from "../../schemas/community.schema";
 
-const perfumesApi = new OpenAPIHono();
+const perfumesApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
 
 authenticatedApi.use("*", authMiddleware);
+
+const perfumeIdParam = z.object({
+  id: z
+    .string()
+    .uuid()
+    .openapi({
+      param: { name: "id", in: "path" },
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    }),
+});
 
 /**
  * @method GET
@@ -29,7 +38,7 @@ const getPerfumesListRoute = createRoute({
   path: "/",
   summary: "모든 향수 목록 조회",
   responses: createStandardApiResponses({
-    schema: z.array(PerfumeSchemas.PerfumeBaseResponseSchema),
+    schema: z.array(PerfumeSchemas.ApiPerfumeSimpleResponseSchema),
   }),
   tags: ["Perfume"],
 });
@@ -51,10 +60,11 @@ const getPerfumesByThemeRoute = createRoute({
   summary: "테마별 향수 목록 조회",
   request: { query: PerfumeSchemas.PerfumeThemeQuerySchema },
   responses: createStandardApiResponses({
-    schema: z.array(PerfumeSchemas.PerfumeBaseResponseSchema),
+    schema: z.array(PerfumeSchemas.ApiPerfumeSimpleResponseSchema),
   }),
   tags: ["Perfume"],
 });
+
 perfumesApi.openapi(getPerfumesByThemeRoute, async (c) => {
   const { themeName } = c.req.valid("query");
   const result = await PerfumeServices.getPerfumesListByThemeService(themeName);
@@ -76,19 +86,23 @@ const getPerfumeByIdRoute = createRoute({
   method: "get",
   path: "/{id}",
   summary: "특정 향수 상세 조회",
-  request: { params: PerfumeSchemas.PerfumeIdParamSchema },
+  request: { params: perfumeIdParam },
   responses: createStandardApiResponses({
-    schema: PerfumeSchemas.PerfumeDetailResponseSchema,
+    schema: PerfumeSchemas.ApiPerfumeDetailResponseSchema,
   }),
   tags: ["Perfume"],
 });
+
 perfumesApi.openapi(getPerfumeByIdRoute, async (c) => {
   const { id } = c.req.valid("param");
   const result = await PerfumeServices.getPerfumeByIdService(id);
+
   if (!result.success) {
-    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
-    return apiInternalError(c, result.message);
+    return result.error === "NOT_FOUND"
+      ? apiNotFound(c, result.message)
+      : apiInternalError(c, result.message);
   }
+
   return apiSuccess(c, result.data, "향수 정보를 성공적으로 불러왔습니다.");
 });
 
@@ -98,31 +112,38 @@ perfumesApi.openapi(getPerfumeByIdRoute, async (c) => {
  * @description 요청된 향수 ID에 해당하는 향수 태그된 게시글 목록을 페이지네이션하여 조회합니다.
  * @summary 향수 태그된 게시글 목록 조회
  */
+
 const getPerfumePostsRoute = createRoute({
   method: "get",
   path: "/{id}/posts",
   summary: "특정 향수를 태그한 게시글 목록 조회",
   request: {
-    params: PerfumeSchemas.PerfumeIdParamSchema,
+    params: perfumeIdParam,
+    query: z.object({
+      take: z.string().optional().default("10").transform(Number),
+      cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
+    }),
   },
   responses: createStandardApiResponses({
-    schema: z.array(PostResponseSchema),
+    schema: z.array(ApiPostResponseSchema),
   }),
   tags: ["Perfume"],
 });
 
 perfumesApi.openapi(getPerfumePostsRoute, async (c) => {
   const { id: perfumeId } = c.req.valid("param");
+  const { take, cursor } = c.req.valid("query");
 
   const result = await PerfumeServices.getPostsTaggedWithPerfumeService(
-    perfumeId
+    perfumeId,
+    { limit: take, cursor }
   );
 
   if (!result.success) {
-    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
-    return apiInternalError(c, result.message);
+    return result.error === "NOT_FOUND"
+      ? apiNotFound(c, result.message)
+      : apiInternalError(c, result.message);
   }
-
   return apiSuccess(
     c,
     result.data,
@@ -140,31 +161,32 @@ const toggleBookmarkRoute = createRoute({
   method: "post",
   path: "/{id}/bookmark",
   summary: "향수 북마크 토글",
-  request: { params: PerfumeSchemas.PerfumeIdParamSchema },
+  request: { params: perfumeIdParam },
   responses: createStandardApiResponses({
     schema: z.object({ bookmarked: z.boolean() }),
   }),
   tags: ["Perfume"],
 });
+
 authenticatedApi.openapi(toggleBookmarkRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
-
+  const user = getAuthenticatedUser(c);
   const result = await PerfumeServices.togglePerfumeBookmarkService(
     id,
     user.id
   );
+
   if (!result.success) {
-    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
-    return apiInternalError(c, result.message);
+    return result.error === "NOT_FOUND"
+      ? apiNotFound(c, result.message)
+      : apiInternalError(c, result.message);
   }
+
   const message = result.data.bookmarked
     ? "북마크에 추가되었습니다."
     : "북마크에서 제거되었습니다.";
   return apiSuccess(c, result.data, message);
 });
-
-perfumesApi.route("/", authenticatedApi);
 
 /**
  * @method POST
@@ -177,24 +199,26 @@ const toggleLikeRoute = createRoute({
   method: "post",
   path: "/{id}/like",
   summary: "향수 좋아요 토글",
-  request: { params: PerfumeSchemas.PerfumeIdParamSchema },
+  request: { params: perfumeIdParam },
   responses: createStandardApiResponses({
     schema: z.object({ liked: z.boolean() }),
   }),
   tags: ["Perfume"],
 });
+
 authenticatedApi.openapi(toggleLikeRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
-
+  const user = getAuthenticatedUser(c);
   const result = await PerfumeServices.togglePerfumeLikeService(id, user.id);
+
   if (!result.success) {
-    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
-    return apiInternalError(c, result.message);
+    return result.error === "NOT_FOUND"
+      ? apiNotFound(c, result.message)
+      : apiInternalError(c, result.message);
   }
   const message = result.data.liked
-    ? "좋아요 추가되었습니다."
-    : "좋아요 제거되었습니다.";
+    ? "좋아요에 추가되었습니다."
+    : "좋아요에서 제거되었습니다.";
   return apiSuccess(c, result.data, message);
 });
 

@@ -3,14 +3,7 @@
 import React, { Suspense, useState } from "react";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
-// import {
-//   MyReviewList,
-//   MyPostList,
-//   MyCommentsList,
-//   LikePerfumeList,
-//   LikePostList,
-// } from "./components";
-// import { MockActivityData } from "@/lib/mocks/fetchUser";
+
 import {
   LikePerfumeListLoader,
   LikePostListLoader,
@@ -50,27 +43,27 @@ export const ActivitySection = () => {
   const TABS: Record<ActivityTabKey, React.ReactNode> = {
     myReviews: (
       <Suspense fallback={<SkeletonBookmark />}>
-        <MyReviewListLoader />,
+        <MyReviewListLoader />
       </Suspense>
     ),
     myPosts: (
       <Suspense fallback={<SkeletonBookmark />}>
-        <MyPostListLoader />,
+        <MyPostListLoader />
       </Suspense>
     ),
     myComments: (
       <Suspense fallback={<SkeletonBookmark />}>
-        <MyCommentsListLoader />,
+        <MyCommentsListLoader />
       </Suspense>
     ),
     likedPerfumes: (
       <Suspense fallback={<SkeletonBookmark />}>
-        <LikePerfumeListLoader />,
+        <LikePerfumeListLoader />
       </Suspense>
     ),
     likedPosts: (
       <Suspense fallback={<SkeletonBookmark />}>
-        <LikePostListLoader />,
+        <LikePostListLoader />
       </Suspense>
     ),
   };

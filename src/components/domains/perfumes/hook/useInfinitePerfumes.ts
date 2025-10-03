@@ -5,7 +5,7 @@ import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { fetchPerfumes } from "@/components/commons/perfumeList/perfumes.helpers";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export interface SearchResponse<T> {
   data: T[];
@@ -13,7 +13,7 @@ export interface SearchResponse<T> {
   totalCount: number | null;
 }
 
-export type PerfumesApiResponse = SearchResponse<PerfumeBaseResponse>;
+export type PerfumesApiResponse = SearchResponse<ApiPerfumeSimpleResponse>;
 
 export const useInfinitePerfumes = (searchKeyword: string) => {
   const filters = useFilterStore((state) => state.filters);

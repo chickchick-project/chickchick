@@ -1,14 +1,16 @@
 import { z } from "@hono/zod-openapi";
-import PerfumeSchema from "@zod/modelSchema/PerfumeSchema";
-import BrandSchema from "@zod/modelSchema/BrandSchema";
-import PerfumeImageSchema from "@zod/modelSchema/PerfumeImageSchema";
-import AccordSchema from "@zod/modelSchema/PerfumeAccordSchema";
-import NoteSchema from "@zod/modelSchema/PerfumeNoteSchema";
-import ReviewSchema from "@zod/modelSchema/ReviewSchema";
-import UserSchema from "@zod/modelSchema/UserSchema";
+import {
+  PerfumeSchema,
+  BrandSchema,
+  PerfumeImageSchema,
+  PerfumeAccordSchema,
+  PerfumeNoteSchema,
+  ReviewSchema,
+  UserSchema,
+} from "@zod/modelSchema";
 
 //API 응답용 스키마
-export const PerfumeBaseResponseSchema = PerfumeSchema.extend({
+const PerfumeBaseResponseSchema = PerfumeSchema.extend({
   brand: BrandSchema.pick({ nameEn: true, nameKo: true }),
   perfumeImage: PerfumeImageSchema.pick({ imageUrl: true }).nullable(),
 }).omit({
@@ -17,11 +19,10 @@ export const PerfumeBaseResponseSchema = PerfumeSchema.extend({
   createdAt: true,
   updatedAt: true,
 });
-
 /**
  * 향수 간단 응답 스키마
  */
-export const PerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
+export const ApiPerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
   id: true,
   nameEn: true,
   nameKo: true,
@@ -32,9 +33,11 @@ export const PerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
 /**
  * 향수 상세 응답 스키마
  */
-export const PerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
-  accordMappings: z.array(z.object({ accord: AccordSchema })),
-  noteMappings: z.array(z.object({ note: NoteSchema, noteStage: z.string() })),
+export const ApiPerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
+  accordMappings: z.array(z.object({ accord: PerfumeAccordSchema })),
+  noteMappings: z.array(
+    z.object({ note: PerfumeNoteSchema, noteStage: z.string() })
+  ),
   reviews: z.array(
     ReviewSchema.pick({ id: true, content: true }).extend({
       author: UserSchema.pick({ id: true, nickname: true, imageUrl: true }),
@@ -45,7 +48,7 @@ export const PerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
     reviews: z.number().int(),
     collectedByUsers: z.number().int(),
   }),
-});
+}).openapi("ApiPerfumeDetailResponse");
 
 /**
  * 향수 ID 파라미터 스키마
@@ -68,6 +71,10 @@ export const PerfumeThemeQuerySchema = z.object({
   }),
 });
 
-export type PerfumeSimpleResponse = z.infer<typeof PerfumeSimpleResponseSchema>;
-export type PerfumeBaseResponse = z.infer<typeof PerfumeBaseResponseSchema>;
-export type PerfumeDetailResponse = z.infer<typeof PerfumeDetailResponseSchema>;
+export type ApiPerfumeSimpleResponse = z.infer<
+  typeof ApiPerfumeSimpleResponseSchema
+>;
+
+export type ApiPerfumeDetailResponse = z.infer<
+  typeof ApiPerfumeDetailResponseSchema
+>;

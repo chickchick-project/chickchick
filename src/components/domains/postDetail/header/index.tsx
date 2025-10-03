@@ -4,12 +4,12 @@ import BoardChip from "@/components/commons/chip/BoardChip";
 import PostInteractions from "./PostInteractions";
 import PostActions from "./PostActions";
 import {
-  PostDetailResponse,
-  PostStatusResponse,
+  ApiPostDetailResponse,
+  ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
 
-type PostDetailHeaderProps = Omit<PostDetailResponse, "content"> & {
-  postStatus: PostStatusResponse;
+type PostDetailHeaderProps = Omit<ApiPostDetailResponse, "content"> & {
+  postStatus: ApiPostStatusResponse;
 };
 
 export default function PostDetailHeader(props: PostDetailHeaderProps) {

@@ -1,6 +1,6 @@
 import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { User, UserCollection, CollectionImage, Perfume } from "@prisma/client";
 import { PerfumeBookmark } from "@zod/modelSchema/PerfumeBookmarkSchema";
 
@@ -11,15 +11,15 @@ export type CollectionItem = UserCollection & {
 
 export type BookmarkData = {
   perfumes: PerfumeBookmark[];
-  community: PostResponse[];
+  community: ApiPostResponse[];
 };
 
 export type ActivityData = {
-  myReviews: ReviewResponse[];
-  myPosts: PostResponse[];
+  myReviews: ApiReviewResponse[];
+  myPosts: ApiPostResponse[];
   myComments: CommentResponse[];
   likedPerfumes: PerfumeBookmark[];
-  likedPosts: PostResponse[];
+  likedPosts: ApiPostResponse[];
 };
 
 export type TabData =

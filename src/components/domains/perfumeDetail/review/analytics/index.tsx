@@ -1,29 +1,29 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewBarSection } from "./ReviewBarSection";
 import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
 import { SectionTitle } from "@/components/commons/sectionTitle";
-import { useState } from "react";
-import { ReviewModal } from "@/components/modal/reviewModal/ReviewModal";
+import { ReviewModal } from "@/components/modal/reviewModal";
 // import ReviewMobileSection from "./ReviewMobileSection";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
-
+import { calculateReviewCounts } from "./analytics.helpers";
+import { ReviewAnalyticsProps } from "../review.type";
 // TODO: 리뷰 수정 기능 검토
-export const ReviewAnalytics = ({ data }: { data: ReviewResponse[] }) => {
+export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { user } = useUserStore();
   const isReviewed = data.some((review) => review.author.id === user?.id);
+  const counts = useMemo(() => calculateReviewCounts(data), [data]);
 
-  console.log("ReviewAnalytics data", data);
   return (
     <section className="flex flex-col gap-4 tablet:gap-5 w-full">
       <SectionTitle>리뷰 한눈에 보기</SectionTitle>
       <section className="hidden tablet:flex flex-col gap-5">
-        <ReviewDoughnutSection data={data} />
-        <ReviewBarSection data={data} />
+        <ReviewDoughnutSection counts={counts} />
+        <ReviewBarSection counts={counts} />
       </section>
       <section className="tablet:hidden">
         {/* <ReviewMobileSection /> */}

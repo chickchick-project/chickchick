@@ -1,5 +1,5 @@
 "use client";
-import { PostRelatedPerfumeResponse } from "@/lib/hono/schemas/community.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
@@ -7,7 +7,7 @@ import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
 interface IPostContent {
   content: string;
   isAuthor?: boolean;
-  relatedPerfumes: PostRelatedPerfumeResponse[] | [];
+  relatedPerfumes: ApiPerfumeSimpleResponse[] | [];
   postId: string;
 }
 

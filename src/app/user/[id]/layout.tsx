@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
-import { User } from "@prisma/client";
 import { getSession } from "@/lib/database/getSession";
 import { fetchUserById } from "@/lib/queries/userQueries";
+import { User } from "@zod/modelSchema";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 

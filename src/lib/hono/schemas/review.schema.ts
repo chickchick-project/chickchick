@@ -1,84 +1,67 @@
 import { z } from "@hono/zod-openapi";
-import { Season } from "@prisma/client";
-import ReviewSchema from "@zod/modelSchema/ReviewSchema";
-import UserSchema from "@zod/modelSchema/UserSchema";
+import {
+  ReviewSchema,
+  UserSchema,
+  PerfumeSchema,
+  BrandSchema,
+  PerfumeImageSchema,
+  ReviewAttributeSelectionSchema,
+  AttributeOptionSchema,
+  ReviewAttributeSchema,
+} from "@zod/modelSchema";
 
-const ReviewChipsSchema = ReviewSchema.pick({
-  feeling: true,
-  longevity: true,
-  sillage: true,
-  genderTone: true,
-  season: true,
-  timeOfDay: true,
-  pricePerception: true,
+const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
+  option: AttributeOptionSchema.extend({
+    attribute: ReviewAttributeSchema,
+  }),
 });
 
-export const ReviewResponseSchema = ReviewSchema.pick({
-  id: true,
-  usageStatus: true,
-  content: true,
-  createdAt: true,
-}).extend({
+export const ApiReviewResponseSchema = ReviewSchema.extend({
   author: UserSchema.pick({
     id: true,
     nickname: true,
     imageUrl: true,
   }),
-  perfume: z
-    .object({
-      id: z.string().uuid(),
-      nameEn: z.string().nullable(),
-      nameKo: z.string().nullable(),
-    })
-    .nullable(),
-  chips: ReviewChipsSchema,
+  perfume: PerfumeSchema.pick({
+    id: true,
+    nameEn: true,
+    nameKo: true,
+  }).extend({
+    brand: BrandSchema.pick({ nameEn: true, nameKo: true }),
+    perfumeImage: PerfumeImageSchema.pick({ imageUrl: true }).nullable(),
+  }),
+  attributeSelections: z.array(FullAttributeSelectionSchema),
+}).openapi("ApiReviewResponse");
+
+// --- 페이지네이션 응답 스키마 ---
+export const PaginatedApiReviewResponseSchema = z.object({
+  data: z.array(ApiReviewResponseSchema),
+  totalCount: z.number().int(),
+  nextCursor: z.string().uuid().nullable(),
 });
 
-export const CreateReviewBodySchema = ReviewSchema.pick({ content: true });
+export const ReviewAttributesInputSchema = z.object({
+  feeling: z.string().optional(),
+  longevity: z.string().optional(),
+  sillage: z.string().optional(),
+  genderTone: z.string().optional(),
+  season: z.array(z.string()).optional(),
+  timeOfDay: z.string().optional(),
+  pricePerception: z.string().optional(),
+});
 
-export const CreateReviewSchema = ReviewSchema.pick({
+export const CreateReviewInputSchema = ReviewSchema.pick({
+  content: true,
   usageStatus: true,
-  feeling: true,
-  longevity: true,
-  sillage: true,
-  genderTone: true,
-  season: true,
-  timeOfDay: true,
-  pricePerception: true,
 }).extend({
-  season: z.preprocess(
-    (val) => (Array.isArray(val) ? val : [val]),
-    z.array(z.nativeEnum(Season))
-  ),
+  attributes: ReviewAttributesInputSchema,
 });
 
-export const CreateReviewPayloadSchema = CreateReviewSchema.merge(
-  CreateReviewBodySchema
-).extend({
-  authorId: z.string().uuid(),
-  perfumeId: z.string().uuid(),
-});
+export const UpdateReviewInputSchema = CreateReviewInputSchema.partial();
 
-export const UpdateReviewSchema = ReviewSchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
-export type RowReviewResponse = z.infer<typeof ReviewSchema> & {
-  author: {
-    id: string;
-    nickname: string;
-    imageUrl: string | null;
-  };
-  perfume: {
-    id: string;
-    nameEn: string | null;
-    nameKo: string | null;
-  };
-};
-export type ReviewResponse = z.infer<typeof ReviewResponseSchema>;
-export type ReviewChips = z.infer<typeof ReviewChipsSchema>;
-export type CreateReview = z.infer<typeof CreateReviewSchema>;
-export type CreateReviewPayload = z.infer<typeof CreateReviewPayloadSchema>;
-export type UpdateReview = z.infer<typeof UpdateReviewSchema>;
+export type PaginatedApiReviewResponse = z.infer<
+  typeof PaginatedApiReviewResponseSchema
+>;
+export type ApiReviewResponse = z.infer<typeof ApiReviewResponseSchema>;
+export type CreateReviewInput = z.infer<typeof CreateReviewInputSchema>;
+export type UpdateReviewInput = z.infer<typeof UpdateReviewInputSchema>;

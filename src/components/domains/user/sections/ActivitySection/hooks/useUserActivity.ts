@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   fetchUserComments,
   fetchUserLikedPerfumes,
@@ -6,14 +6,15 @@ import {
   fetchUserPosts,
   fetchUserReviews,
 } from "../../../user.helper";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
-export const useUserReview = (initialData?: ReviewResponse[]) => {
-  const queryResult = useQuery<ReviewResponse[]>({
+export const useUserReview = (initialData?: PaginatedApiReviewResponse) => {
+  const queryResult = useSuspenseQuery<PaginatedApiReviewResponse>({
     queryKey: ["user", "reviews", "me"],
-    queryFn: async () => await fetchUserReviews(),
+    queryFn: fetchUserReviews,
     initialData,
   });
 
@@ -21,7 +22,7 @@ export const useUserReview = (initialData?: ReviewResponse[]) => {
 };
 
 export const useUserPost = (initialData?: PostCardProps[]) => {
-  const queryResult = useQuery<PostCardProps[]>({
+  const queryResult = useSuspenseQuery<PostCardProps[]>({
     queryKey: ["user", "posts", "me"],
     queryFn: async () => (await fetchUserPosts()).data,
     initialData,
@@ -31,7 +32,7 @@ export const useUserPost = (initialData?: PostCardProps[]) => {
 };
 
 export const useUserComment = (initialData?: PostCardProps[]) => {
-  const queryResult = useQuery<PostCardProps[]>({
+  const queryResult = useSuspenseQuery<PostCardProps[]>({
     queryKey: ["user", "comments", "me"],
     queryFn: async () => (await fetchUserComments()).data,
     initialData,
@@ -40,8 +41,10 @@ export const useUserComment = (initialData?: PostCardProps[]) => {
   return queryResult;
 };
 
-export const useUserLikedPerfume = (initialData?: PerfumeBaseResponse[]) => {
-  const queryResult = useQuery<PerfumeBaseResponse[]>({
+export const useUserLikedPerfume = (
+  initialData?: ApiPerfumeSimpleResponse[]
+) => {
+  const queryResult = useSuspenseQuery<ApiPerfumeSimpleResponse[]>({
     queryKey: ["user", "liked-perfumes", "me"],
     queryFn: async () => (await fetchUserLikedPerfumes()).data,
     initialData,
@@ -51,7 +54,7 @@ export const useUserLikedPerfume = (initialData?: PerfumeBaseResponse[]) => {
 };
 
 export const useUserLikedPost = (initialData?: PostCardProps[]) => {
-  const queryResult = useQuery<PostCardProps[]>({
+  const queryResult = useSuspenseQuery<PostCardProps[]>({
     queryKey: ["user", "liked-posts", "me"],
     queryFn: async () => (await fetchUserLikedPosts()).data,
     initialData,

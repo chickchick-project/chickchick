@@ -1,9 +1,9 @@
 import React from "react";
-import type { User } from "@prisma/client";
 import { notFound } from "next/navigation";
 import { fetchUserById } from "@/lib/queries/userQueries";
 import { CollectionSection } from "@/components/domains/user/sections";
 import { fetchUserCollections } from "@/components/domains/user/user.helper";
+import { User } from "@zod/modelSchema";
 
 const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
 

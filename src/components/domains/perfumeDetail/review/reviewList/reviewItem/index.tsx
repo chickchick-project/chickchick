@@ -1,43 +1,52 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import clsx from "clsx";
 import { ACTION_TYPES, Actions } from "@/components/commons/actions";
-import { REVIEW_STATUSES } from "@/components/commons/author/author.constants";
 import AuthorInfo from "@/components/commons/author/AuthorInfo";
 import ReviewChip from "@/components/commons/chip/ReviewChip";
-import clsx from "clsx";
+import { ReviewItemProps } from "../../review.type";
 
-const MAX_VISIBLE_LINS_DEFAULT = 3;
+const MAX_VISIBLE_LINES_DEFAULT = 3;
 
-export const ReviewCard = ({
+export const ReviewItem = ({
   content,
   tags,
   author,
   createdAt,
   profileImage,
   isMain,
-}: {
-  content: string;
-  tags: string[];
-  author: string;
-  createdAt: string;
-  profileImage: string;
-  isMain: boolean;
-}) => {
+  usageStatus,
+}: ReviewItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isContentClamped, setIsContentClamped] = useState(false);
 
   const contentRef = useRef<HTMLParagraphElement>(null);
 
+  // useEffect(() => {
+  //   if (contentRef.current) {
+  //     const lineHeight = parseFloat(
+  //       getComputedStyle(contentRef.current).lineHeight || "0"
+  //     );
+  //     const lines = contentRef.current.clientHeight / lineHeight;
+  //     setIsContentClamped(lines > MAX_VISIBLE_LINS_DEFAULT);
+  //   }
+  // }, [tags.length]);
+
   useEffect(() => {
-    if (contentRef.current) {
-      const lineHeight = parseFloat(
-        getComputedStyle(contentRef.current).lineHeight || "0"
-      );
-      const lines = contentRef.current.clientHeight / lineHeight;
-      setIsContentClamped(lines > MAX_VISIBLE_LINS_DEFAULT);
+    const element = contentRef.current;
+    if (element) {
+      const computedStyle = getComputedStyle(element);
+      const lineHeight = parseFloat(computedStyle.lineHeight);
+
+      if (isNaN(lineHeight)) return;
+
+      const totalHeight = element.scrollHeight;
+      const totalLines = Math.round(totalHeight / lineHeight);
+
+      setIsContentClamped(totalLines > MAX_VISIBLE_LINES_DEFAULT);
     }
-  }, [tags.length]);
+  }, [content]);
 
   return (
     <div className="tablet:shadow-card tablet:rounded-xl py-6 px-5 tablet:px-6 flex flex-col gap-4">
@@ -51,7 +60,10 @@ export const ReviewCard = ({
           }}
           createdAt={new Date(createdAt)}
           isAuthor={false}
-          info={{ type: "review", item: { status: REVIEW_STATUSES.WANT } }}
+          info={{
+            type: "review",
+            item: { status: usageStatus },
+          }}
         />
         {isMain && (
           <Actions
@@ -83,8 +95,8 @@ export const ReviewCard = ({
       </div>
       <footer className="flex justify-between items-end">
         <ul className="flex flex-wrap gap-1">
-          {tags.map((label, i) => (
-            <ReviewChip key={i} label={label} />
+          {tags.map((label) => (
+            <ReviewChip key={label} label={label} />
           ))}
         </ul>
       </footer>

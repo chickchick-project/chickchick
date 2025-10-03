@@ -10,19 +10,20 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PostCategory from "./PostCategory";
 import { submitNewPost } from "../post.helpers";
-import {
-  CreatePost,
-  CreatePostBodySchema,
-} from "@/lib/hono/schemas/community.schema";
+
 import getPlainText from "@/lib/utils/getPlainText";
 import { PostCategory as TPostCategory } from "@prisma/client";
 import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
-import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
+import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
+import {
+  CreatePostInput,
+  CreatePostInputSchema,
+} from "@/lib/hono/schemas/community.schema";
 
 interface IPostFormProps {
   type: "create" | "edit";
-  initialData?: CreatePost;
+  initialData?: CreatePostInput;
 }
 
 export default function PostForm({ type, initialData }: IPostFormProps) {
@@ -30,8 +31,8 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
-  const method = useForm<CreatePost>({
-    resolver: zodResolver(CreatePostBodySchema),
+  const method = useForm<CreatePostInput>({
+    resolver: zodResolver(CreatePostInputSchema),
     mode: "onChange",
     defaultValues: {
       category: initialData?.category ?? ("" as unknown as TPostCategory),
@@ -48,7 +49,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     setValue,
   } = method;
 
-  const onSubmit = async (data: CreatePost) => {
+  const onSubmit = async (data: CreatePostInput) => {
     setIsLoading(true);
 
     try {
@@ -59,7 +60,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
       setValue("content", finalizedContent, { shouldDirty: true });
       const thumbnailUrl = extractFirstImageSrc(finalizedContent);
       const contentText = getPlainText(finalizedContent);
-      const postData: CreatePost = {
+      const postData: CreatePostInput = {
         ...data,
         content: finalizedContent,
         thumbnailUrl,

@@ -1,12 +1,12 @@
 import React from "react";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export const LikePerfumeList = ({
   likedPerfumes,
 }: {
-  likedPerfumes: PerfumeBaseResponse[];
+  likedPerfumes: ApiPerfumeSimpleResponse[];
 }) => {
   return likedPerfumes.length > 0 ? (
     <div className="grid grid-cols-5 gap-4">

@@ -2,12 +2,12 @@
 
 import { LikePerfumeList } from "../components";
 import { useUserLikedPerfume } from "../hooks/useUserActivity";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export default function LikePerfumeListLoader({
   initialData,
 }: {
-  initialData?: PerfumeBaseResponse[];
+  initialData?: ApiPerfumeSimpleResponse[];
 }) {
   const { data: likedPerfumes, error } = useUserLikedPerfume(initialData);
 

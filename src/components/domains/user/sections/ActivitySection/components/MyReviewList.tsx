@@ -1,12 +1,8 @@
 import React from "react";
 import ReviewCard from "@/components/commons/card/reviewCard";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 
-export const MyReviewList = ({ reviews }: { reviews: ReviewResponse[] }) => {
-  //Todo: reviews에서 데이터를 가져와서 chips를 만들어야 함
-  /**
-   * Feeling, genderTone, longevity, pricePerception, season, sillage, timOfday, usageStatus
-   */
+export const MyReviewList = ({ reviews }: { reviews: ApiReviewResponse[] }) => {
   if (reviews.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -17,11 +13,10 @@ export const MyReviewList = ({ reviews }: { reviews: ReviewResponse[] }) => {
   return (
     <div className="grid grid-cols-2 justify-items-center">
       {reviews.map((item) => {
-        console.log(item);
         return (
           <ReviewCard
             key={item.id}
-            reviews={item}
+            review={item}
             isMyPage={true}
             isAuthor={true}
           />

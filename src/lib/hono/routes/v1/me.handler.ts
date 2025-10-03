@@ -1,15 +1,31 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "../../utils/createStandardApiResponses";
+import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
 import * as MeServices from "@/lib/hono/services/me.service";
 import * as MeSchemas from "@/lib/hono/schemas/me.schema";
 import type { AppContext } from "@/lib/hono/app";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
-import { apiInternalError, apiSuccess } from "../../utils/apiResponse.utils";
-import { getAuthenticatedUser } from "../../utils/service.utils";
+import {
+  apiInternalError,
+  apiSuccess,
+  apiNotFound,
+  apiForbidden,
+  apiBadRequest,
+} from "@/lib/hono/utils/apiResponse.utils";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const meApi = new OpenAPIHono<AppContext>();
 
 meApi.use("*", authMiddleware);
+
+const collectionIdParam = z.object({
+  collectionId: z
+    .string()
+    .uuid()
+    .openapi({
+      param: { name: "collectionId", in: "path" },
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    }),
+});
 
 /**
  * @method GET
@@ -21,14 +37,13 @@ const getMyBookmarkedPostsRoute = createRoute({
   path: "/bookmarks/posts",
   summary: "내 북마크 게시글 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyBookmarkedPostsResponseSchema,
+    schema: MeSchemas.ApiMyBookmarkedPostsResponseSchema,
   }),
   tags: ["Me"],
 });
 
 meApi.openapi(getMyBookmarkedPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
-
   const result = await MeServices.getMyBookmarkedPostsService(user.id);
 
   if (!result.success) {
@@ -51,7 +66,7 @@ const getMyBookmarkedPerfumesRoute = createRoute({
   path: "/bookmarks/perfumes",
   summary: "내 북마크 향수 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyBookmarkedPerfumesResponseSchema,
+    schema: MeSchemas.ApiMyBookmarkedPerfumesResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -97,7 +112,7 @@ const postPhotoCollectionRoute = createRoute({
     },
   },
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyBookmarkedPerfumesResponseSchema,
+    schema: MeSchemas.ApiMyBookmarkedPerfumesResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -110,17 +125,33 @@ meApi.openapi(postPhotoCollectionRoute, async (c) => {
   const imageFile = formData.get("imageFile");
   const comment = formData.get("comment");
 
+  if (!perfumeId || typeof perfumeId !== "string") {
+    return apiBadRequest(c, "올바른 perfumeId가 필요합니다.");
+  }
+
+  if (!imageFile || !(imageFile instanceof File)) {
+    return apiBadRequest(c, "이미지 파일이 필요합니다.");
+  }
+
+  const commentString =
+    comment && typeof comment === "string" ? comment : undefined;
+
   const data = {
     userId: user.id,
     perfumeId,
     imageFile,
-    comment,
+    comment: commentString,
   };
 
   const result = await MeServices.postPhotoCollectionService(data);
 
   if (!result.success) {
-    return apiInternalError(c, result.message);
+    switch (result.error) {
+      case "BAD_REQUEST":
+        return apiBadRequest(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
+    }
   }
   return apiSuccess(c, result.data, "향수 컬렉션을 성공적으로 등록했습니다.");
 });
@@ -135,10 +166,10 @@ const deletePhotoCollectionRoute = createRoute({
   path: "/collections/{collectionId}",
   summary: "내 향수 컬렉션 삭제",
   request: {
-    params: MeSchemas.DeleteCollectionParamSchema,
+    params: collectionIdParam,
   },
   responses: createStandardApiResponses({
-    schema: z.string(),
+    schema: z.object({ message: z.string() }),
   }),
   tags: ["Me"],
 });
@@ -153,7 +184,14 @@ meApi.openapi(deletePhotoCollectionRoute, async (c) => {
   });
 
   if (!result.success) {
-    return apiInternalError(c, result.message);
+    switch (result.error) {
+      case "NOT_FOUND":
+        return apiNotFound(c, result.message);
+      case "FORBIDDEN":
+        return apiForbidden(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
+    }
   }
   return apiSuccess(c, result.data, "향수 컬렉션을 성공적으로 삭제했습니다.");
 });
@@ -168,7 +206,7 @@ const getMyReviewsRoute = createRoute({
   path: "/activity/reviews",
   summary: "내가 작성한 리뷰 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyReviewsResponseSchema,
+    schema: MeSchemas.ApiMyReviewsResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -198,7 +236,7 @@ const getMyPostsRoute = createRoute({
   path: "/activity/posts",
   summary: "내가 작성한 게시글 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyPostsResponseSchema,
+    schema: MeSchemas.ApiMyPostsResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -228,7 +266,7 @@ const getMyCommentsRoute = createRoute({
   path: "/activity/comments",
   summary: "내가 작성한 댓글 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyCommentsResponseSchema,
+    schema: MeSchemas.ApiMyCommentsResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -258,7 +296,7 @@ const getMyLikedPerfumesRoute = createRoute({
   path: "/activity/liked-perfumes",
   summary: "내가 좋아요한 향수 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyLikedPerfumesResponseSchema,
+    schema: MeSchemas.ApiMyLikedPerfumesResponseSchema,
   }),
   tags: ["Me"],
 });
@@ -288,7 +326,7 @@ const getMyLikedPostsRoute = createRoute({
   path: "/activity/liked-posts",
   summary: "내가 좋아요한 게시글 목록 조회",
   responses: createStandardApiResponses({
-    schema: MeSchemas.MyLikedPostsResponseSchema,
+    schema: MeSchemas.ApiMyLikedPostsResponseSchema,
   }),
   tags: ["Me"],
 });

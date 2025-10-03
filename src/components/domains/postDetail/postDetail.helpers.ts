@@ -1,7 +1,7 @@
 import {
-  PostDetailResponse,
-  PostResponse,
-  PostStatusResponse,
+  ApiPostDetailResponse,
+  ApiPostResponse,
+  ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
@@ -11,7 +11,7 @@ export const COMMUNITY_URL = `${API_BASE_URL}/community/posts`;
 export async function getPostDetailById(
   postId: string,
   headers?: HeadersInit
-): Promise<PostDetailResponse> {
+): Promise<ApiPostDetailResponse> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
       method: "GET",
@@ -51,7 +51,7 @@ export async function getPostDetailById(
 export async function getPostDetailStatusById(
   postId: string,
   headers?: HeadersInit
-): Promise<PostStatusResponse> {
+): Promise<ApiPostStatusResponse> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}/status`, {
       method: "GET",
@@ -92,7 +92,7 @@ export async function getPostDetailStatusById(
 
 export async function deletePostById(
   postId: string
-): Promise<ApiSuccessResponse<PostResponse>> {
+): Promise<ApiSuccessResponse<ApiPostResponse>> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
       method: "DELETE",
@@ -112,7 +112,7 @@ export async function deletePostById(
 
 export async function toggleBookmarkedPostById(
   postId: string
-): Promise<ApiSuccessResponse<PostResponse>> {
+): Promise<ApiSuccessResponse<ApiPostResponse>> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}/bookmark`, {
       method: "POST",
@@ -150,7 +150,7 @@ export async function toggleBookmarkedPostById(
 
 export async function toggleLikedPostById(
   postId: string
-): Promise<ApiSuccessResponse<PostResponse>> {
+): Promise<ApiSuccessResponse<ApiPostResponse>> {
   try {
     const response = await fetch(`${COMMUNITY_URL}/${postId}/like`, {
       method: "POST",

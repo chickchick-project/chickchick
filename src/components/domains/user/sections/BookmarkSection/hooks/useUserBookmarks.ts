@@ -5,11 +5,11 @@ import {
   fetchUserBookmarksPerfumes,
   fetchUserBookmarksPosts,
 } from "@/components/domains/user/user.helper";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export const usePerfumeBookmarks = (
   userId: string,
-  initialData?: PerfumeBaseResponse[]
+  initialData?: ApiPerfumeSimpleResponse[]
 ) => {
   const queryResult = useSuspenseQuery({
     queryKey: ["bookmarks", "perfumes", userId],

@@ -1,9 +1,9 @@
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
 import { createHttpClient } from "@/lib/utils/core-request";
 
 export interface SearchResponse {
-  data: PerfumeBaseResponse[];
+  data: ApiPerfumeSimpleResponse[];
   nextCursor: string | null;
   totalCount: number;
 }
@@ -102,10 +102,12 @@ export const getLabel = (key: string) =>
 /**
  * 중복된 향수를 ID 기준으로 제거하는 함수입니다.
  */
-export const getUniquePerfumes = (perfumes: PerfumeBaseResponse[]): PerfumeBaseResponse[] => {
-  const uniqueMap = new Map<string, PerfumeBaseResponse>();
+export const getUniquePerfumes = (
+  perfumes: ApiPerfumeSimpleResponse[]
+): ApiPerfumeSimpleResponse[] => {
+  const uniqueMap = new Map<string, ApiPerfumeSimpleResponse>();
 
-  perfumes.forEach(perfume => {
+  perfumes.forEach((perfume) => {
     if (!uniqueMap.has(perfume.id)) {
       uniqueMap.set(perfume.id, perfume);
     }

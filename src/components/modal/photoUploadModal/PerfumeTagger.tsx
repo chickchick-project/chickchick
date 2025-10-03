@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useSearchTag } from "./useSearchTag";
-import { PerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import Image from "next/image";
 
 interface PerfumeTaggerProps {
-  selectedPerfume: PerfumeSimpleResponse | null;
-  onSelectionChange: (perfume: PerfumeSimpleResponse | null) => void;
+  selectedPerfume: ApiPerfumeSimpleResponse | null;
+  onSelectionChange: (perfume: ApiPerfumeSimpleResponse | null) => void;
 }
 
 export function PerfumeTagger({
@@ -21,7 +21,7 @@ export function PerfumeTagger({
     isSearching,
   } = hookOutput;
 
-  const handleAdd = (perfume: PerfumeSimpleResponse) => {
+  const handleAdd = (perfume: ApiPerfumeSimpleResponse) => {
     onSelectionChange(perfume);
     setQuery("");
   };

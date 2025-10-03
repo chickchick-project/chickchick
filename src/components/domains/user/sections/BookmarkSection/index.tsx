@@ -5,7 +5,8 @@ import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
 import PerfumeBookmarksLoader from "./loader/PerfumeBookmarksLoader";
 import CommunityBookmarksLoader from "./loader/CommunityBookmarksLoader";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+
 import { SkeletonBookmark } from "../Skeleton";
 import { PerfumeBookmarkList } from "./components";
 
@@ -16,7 +17,7 @@ export const BookmarkSection = ({
 }: {
   isMe?: boolean;
   userId: string;
-  initialPerfumeData?: PerfumeBaseResponse[];
+  initialPerfumeData?: ApiPerfumeSimpleResponse[];
 }) => {
   const [activeTab, setActiveTab] = useState("bookmarksPerfumes");
 

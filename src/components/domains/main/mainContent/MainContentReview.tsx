@@ -1,5 +1,5 @@
-import ReviewCard from "@/components/commons/card/reviewCard";
-import { mockMainpageReviewCardData } from "@/lib/mocks/reviewCard";
+// import ReviewCard from "@/components/commons/card/reviewCard";
+// import { mockMainpageReviewCardData } from "@/lib/mocks/reviewCard";
 
 export const MainContentReview = () => {
   return (

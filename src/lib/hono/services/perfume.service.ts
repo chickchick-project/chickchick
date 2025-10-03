@@ -1,15 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import type {
-  PerfumeBaseResponse,
-  PerfumeDetailResponse,
-} from "../schemas/perfume.schema";
 import {
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
 } from "../utils/serviceResult.utils";
+
 import { checkResourceExists } from "../utils/service.utils";
 import { PostWithAuthor } from "./community.service";
 
@@ -36,13 +33,20 @@ const perfumeDetailInclude = {
   },
 } satisfies Prisma.PerfumeInclude;
 
+export type BasePerfume = Prisma.PerfumeGetPayload<{
+  include: typeof perfumeBaseInclude;
+}>;
+export type FullPerfume = Prisma.PerfumeGetPayload<{
+  include: typeof perfumeDetailInclude;
+}>;
+
 /**
  * 향수 목록 조회
  * @description 향수 목록을 조회.
  * @returns 향수 목록
  */
 export async function getPerfumesListService(): Promise<
-  ServiceResult<PerfumeBaseResponse[]>
+  ServiceResult<BasePerfume[]>
 > {
   try {
     const perfumes = await prisma.perfume.findMany({
@@ -63,7 +67,7 @@ export async function getPerfumesListService(): Promise<
  */
 export async function getPerfumesListByThemeService(
   themeName: string
-): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+): Promise<ServiceResult<BasePerfume[]>> {
   console.log(themeName);
   try {
     // TODO: 테마에 따른 필터링 로직 구현 (예: 특정 어코드나 노트를 포함하는 향수 검색)
@@ -96,7 +100,7 @@ export async function getPerfumesListByThemeService(
  */
 export async function getPerfumeByIdService(
   id: string
-): Promise<ServiceResult<PerfumeDetailResponse>> {
+): Promise<ServiceResult<FullPerfume>> {
   try {
     const perfume = await prisma.perfume.findUnique({
       where: { id },
@@ -171,13 +175,13 @@ export async function togglePerfumeBookmarkService(
   userId: string
 ): Promise<ServiceResult<{ bookmarked: boolean }>> {
   try {
-    const checks = await Promise.all([
+    const [perfumeCheck, userCheck] = await Promise.all([
       checkResourceExists("perfume", perfumeId, "향수"),
       checkResourceExists("user", userId, "사용자"),
     ]);
-    for (const check of checks) {
-      if (!check.success) return check;
-    }
+    if (!perfumeCheck.success) return perfumeCheck;
+    if (!userCheck.success) return userCheck;
+
     const bookmark = await prisma.perfumeBookmark.findUnique({
       where: {
         perfume_bookmarks_user_id_perfume_id_key: { perfumeId, userId },
@@ -201,13 +205,13 @@ export async function togglePerfumeLikeService(
   userId: string
 ): Promise<ServiceResult<{ liked: boolean }>> {
   try {
-    const checks = await Promise.all([
+    const [perfumeCheck, userCheck] = await Promise.all([
       checkResourceExists("perfume", perfumeId, "향수"),
       checkResourceExists("user", userId, "사용자"),
     ]);
-    for (const check of checks) {
-      if (!check.success) return check;
-    }
+    if (!perfumeCheck.success) return perfumeCheck;
+    if (!userCheck.success) return userCheck;
+
     const like = await prisma.perfumeLike.findUnique({
       where: { user_perfume_like_unique: { perfumeId, userId } },
     });

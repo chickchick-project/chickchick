@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { searchPerfumes } from "./photoUpload.helper";
-import { PerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
-const initialState = { data: [] as PerfumeSimpleResponse[] };
+const initialState = { data: [] as ApiPerfumeSimpleResponse[] };
 
 export function useSearchTag(query: string) {
   const [results, setResults] = useState(initialState);

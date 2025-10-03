@@ -1,36 +1,37 @@
 import { Prisma, UserCollection } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import { UserProfileResponse } from "../schemas/user.schema";
 import {
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
 } from "../utils/serviceResult.utils";
-import { PostWithAuthor } from "./community.service";
 import { checkResourceExists } from "../utils/service.utils";
-import { PerfumeBaseResponse } from "../schemas/perfume.schema";
+import { BasePost } from "./community.service";
+import { BasePerfume } from "./perfume.service";
 
-const postIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-} satisfies Prisma.PostInclude;
+const userProfileSelect = {
+  id: true,
+  nickname: true,
+  imageUrl: true,
+} satisfies Prisma.UserSelect;
+
+export type UserProfile = Prisma.UserGetPayload<{
+  select: typeof userProfileSelect;
+}>;
 
 const perfumeBaseInclude = {
   brand: { select: { nameEn: true, nameKo: true } },
   perfumeImage: { select: { imageUrl: true } },
 } satisfies Prisma.PerfumeInclude;
 
-const postWithAuthorArgs = { include: postIncludeArgs };
-
 export async function getUserProfileService(
   userId: string
-): Promise<ServiceResult<UserProfileResponse>> {
+): Promise<ServiceResult<UserProfile>> {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, nickname: true, imageUrl: true },
+      select: userProfileSelect,
     });
 
     if (!user) {
@@ -44,7 +45,7 @@ export async function getUserProfileService(
 
 export async function getUserPostsService(
   userId: string
-): Promise<ServiceResult<PostWithAuthor[]>> {
+): Promise<ServiceResult<BasePost[]>> {
   try {
     const userCheck = await checkResourceExists("user", userId, "사용자");
     if (!userCheck.success) return userCheck;
@@ -52,9 +53,13 @@ export async function getUserPostsService(
     const posts = await prisma.post.findMany({
       where: {
         userId,
-        published: true, // 공개된 게시글만
+        published: true,
       },
-      ...postWithAuthorArgs,
+      include: {
+        author: {
+          select: { id: true, nickname: true, imageUrl: true },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
     return serviceSuccess(posts);
@@ -65,7 +70,7 @@ export async function getUserPostsService(
 
 export async function getUserPublicBookmarkedPerfumesService(
   targetUserId: string
-): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+): Promise<ServiceResult<BasePerfume[]>> {
   try {
     const userCheck = await checkResourceExists("user", targetUserId, "사용자");
     if (!userCheck.success) return userCheck;
@@ -73,7 +78,7 @@ export async function getUserPublicBookmarkedPerfumesService(
     const bookmarks = await prisma.perfumeBookmark.findMany({
       where: {
         userId: targetUserId,
-        isPublic: true, // 공개된 북마크만
+        isPublic: true,
       },
       include: { perfume: { include: perfumeBaseInclude } },
       orderBy: { createdAt: "desc" },

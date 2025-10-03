@@ -4,7 +4,7 @@ import { ModalContainer } from "../ModalContainer";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
 import { uploadPhotoCollection } from "./photoUpload.helper";
-import { PerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface PhotoUploadModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ function PhotoUploadModal({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [comment, setComment] = useState("");
   const [selectedPerfume, setSelectedPerfume] =
-    useState<PerfumeSimpleResponse | null>(null);
+    useState<ApiPerfumeSimpleResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
