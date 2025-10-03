@@ -26,7 +26,6 @@ type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
 export const ActivitySection = () => {
   const [activeTab, setActiveTab] = useState<ActivityTabKey>("myReviews");
 
-  // (선택사항) 각 키에 대한 라벨을 매핑하는 객체
   const TAB_LABELS: Record<ActivityTabKey, string> = {
     myReviews: "나의 리뷰",
     myPosts: "내가 쓴 게시글",
