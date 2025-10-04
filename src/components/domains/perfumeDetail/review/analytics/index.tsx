@@ -9,6 +9,7 @@ import { ReviewModal } from "@/components/modal/reviewModal/ReviewModal";
 // import ReviewMobileSection from "./ReviewMobileSection";
 import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
+import ReviewMobileSection from "./ReviewMobileSection";
 
 // TODO: 리뷰 수정 기능 검토
 export const ReviewAnalytics = ({ data }: { data: ReviewResponse[] }) => {
@@ -26,7 +27,7 @@ export const ReviewAnalytics = ({ data }: { data: ReviewResponse[] }) => {
         <ReviewBarSection data={data} />
       </section>
       <section className="tablet:hidden">
-        {/* <ReviewMobileSection /> */}
+        <ReviewMobileSection data={data} />
       </section>
       <section className="hidden tablet:block w-60 self-center">
         <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
