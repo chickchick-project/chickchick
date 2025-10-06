@@ -1,10 +1,10 @@
 import { SubTabSwitcherProps } from "./tabs.type";
 
-export function SubTabSwitcher({
+export function SubTabSwitcher<T extends string = string>({
   tabs,
   activeTab,
   onTabChange,
-}: SubTabSwitcherProps) {
+}: SubTabSwitcherProps<T>) {
   return (
     <div className="flex space-x-2 border-b mb-4">
       {tabs.map(({ key, label }) => (

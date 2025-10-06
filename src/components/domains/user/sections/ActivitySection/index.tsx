@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useState } from "react";
+import React, { Suspense } from "react";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
 
@@ -12,6 +12,7 @@ import {
   MyReviewListLoader,
 } from "./loader";
 import { SkeletonBookmark } from "../Skeleton";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const ACTIVITY_TAB_KEYS = [
   "myReviews",
@@ -23,8 +24,19 @@ const ACTIVITY_TAB_KEYS = [
 
 type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
 
+const isValidActivityTabKey = (key: string | null): key is ActivityTabKey => {
+  return ACTIVITY_TAB_KEYS.includes(key as ActivityTabKey);
+};
+
 export const ActivitySection = () => {
-  const [activeTab, setActiveTab] = useState<ActivityTabKey>("myReviews");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentTab = searchParams.get("tab");
+
+  const activeTab: ActivityTabKey = isValidActivityTabKey(currentTab)
+    ? currentTab
+    : "myReviews";
 
   const TAB_LABELS: Record<ActivityTabKey, string> = {
     myReviews: "나의 리뷰",
@@ -34,11 +46,12 @@ export const ActivitySection = () => {
     likedPosts: "좋아요 한 글",
   };
 
-  const tabItems: SubTabItem[] = ACTIVITY_TAB_KEYS.map((key) => ({
-    key: key,
-    label: TAB_LABELS[key],
-  }));
-
+  const tabItems: SubTabItem<ActivityTabKey>[] = ACTIVITY_TAB_KEYS.map(
+    (key) => ({
+      key: key,
+      label: TAB_LABELS[key],
+    })
+  );
   const TABS: Record<ActivityTabKey, React.ReactNode> = {
     myReviews: (
       <Suspense fallback={<SkeletonBookmark />}>
@@ -67,11 +80,15 @@ export const ActivitySection = () => {
     ),
   };
 
+  const handleTabChange = (key: ActivityTabKey) => {
+    router.replace(`?tab=${key}`, { scroll: false });
+  };
+
   return (
     <>
-      <SubTabSwitcher
+      <SubTabSwitcher<ActivityTabKey>
         activeTab={activeTab}
-        onTabChange={(key) => setActiveTab(key as ActivityTabKey)}
+        onTabChange={handleTabChange}
         tabs={tabItems}
       />
 
