@@ -1,31 +1,78 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
 
-import {
-  LikePerfumeListLoader,
-  LikePostListLoader,
-  MyCommentsListLoader,
-  MyPostListLoader,
-  MyReviewListLoader,
-} from "./loader";
-import { SkeletonBookmark } from "../Skeleton";
-import { useRouter, useSearchParams } from "next/navigation";
+import { SkeletonCard, SkeletonComment, SkeletonPerfume } from "../Skeleton";
 
-const ACTIVITY_TAB_KEYS = [
-  "myReviews",
-  "myPosts",
-  "myComments",
-  "likedPerfumes",
-  "likedPosts",
+const MyReviewListLoader = dynamic(
+  () => import("./loader/MyReviewListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonCard />,
+  }
+);
+const MyPostListLoader = dynamic(() => import("./loader/MyPostListLoader"), {
+  ssr: false,
+  loading: () => <SkeletonCard />,
+});
+const LikePerfumeListLoader = dynamic(
+  () => import("./loader/LikePerfumeListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonPerfume />,
+  }
+);
+const LikePostListLoader = dynamic(
+  () => import("./loader/LikePostListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonCard />,
+  }
+);
+const MyCommentsListLoader = dynamic(
+  () => import("./loader/MyCommentsListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonComment />,
+  }
+);
+
+const ACTIVITY_TABS_CONFIG = [
+  {
+    key: "myReviews",
+    label: "나의 리뷰",
+    component: <MyReviewListLoader />,
+  },
+  {
+    key: "myPosts",
+    label: "내가 쓴 게시글",
+    component: <MyPostListLoader />,
+  },
+  {
+    key: "likedPerfumes",
+    label: "좋아요 한 향수",
+    component: <LikePerfumeListLoader />,
+  },
+  {
+    key: "likedPosts",
+    label: "좋아요 한 글",
+    component: <LikePostListLoader />,
+  },
+  {
+    key: "myComments",
+    label: "내가 쓴 댓글",
+    component: <MyCommentsListLoader />,
+  },
 ] as const;
 
-type ActivityTabKey = (typeof ACTIVITY_TAB_KEYS)[number];
+type ActivityTabKey = (typeof ACTIVITY_TABS_CONFIG)[number]["key"];
 
 const isValidActivityTabKey = (key: string | null): key is ActivityTabKey => {
-  return ACTIVITY_TAB_KEYS.includes(key as ActivityTabKey);
+  return ACTIVITY_TABS_CONFIG.some((tab) => tab.key === key);
 };
 
 export const ActivitySection = () => {
@@ -38,54 +85,24 @@ export const ActivitySection = () => {
     ? currentTab
     : "myReviews";
 
-  const TAB_LABELS: Record<ActivityTabKey, string> = {
-    myReviews: "나의 리뷰",
-    myPosts: "내가 쓴 게시글",
-    myComments: "내가 쓴 댓글",
-    likedPerfumes: "좋아요 한 향수",
-    likedPosts: "좋아요 한 글",
-  };
-
-  const tabItems: SubTabItem<ActivityTabKey>[] = ACTIVITY_TAB_KEYS.map(
-    (key) => ({
-      key: key,
-      label: TAB_LABELS[key],
+  const tabItems: SubTabItem<ActivityTabKey>[] = ACTIVITY_TABS_CONFIG.map(
+    ({ key, label }) => ({
+      key,
+      label,
     })
   );
-  const TABS: Record<ActivityTabKey, React.ReactNode> = {
-    myReviews: (
-      <Suspense fallback={<SkeletonBookmark />}>
-        <MyReviewListLoader />
-      </Suspense>
-    ),
-    myPosts: (
-      <Suspense fallback={<SkeletonBookmark />}>
-        <MyPostListLoader />
-      </Suspense>
-    ),
-    myComments: (
-      <Suspense fallback={<SkeletonBookmark />}>
-        <MyCommentsListLoader />
-      </Suspense>
-    ),
-    likedPerfumes: (
-      <Suspense fallback={<SkeletonBookmark />}>
-        <LikePerfumeListLoader />
-      </Suspense>
-    ),
-    likedPosts: (
-      <Suspense fallback={<SkeletonBookmark />}>
-        <LikePostListLoader />
-      </Suspense>
-    ),
-  };
+
+  const TABS = ACTIVITY_TABS_CONFIG.reduce((acc, tab) => {
+    acc[tab.key] = tab.component;
+    return acc;
+  }, {} as Record<ActivityTabKey, React.ReactNode>);
 
   const handleTabChange = (key: ActivityTabKey) => {
     router.replace(`?tab=${key}`, { scroll: false });
   };
 
   return (
-    <>
+    <div className="h-[800px] overflow-y-auto pr-1">
       <SubTabSwitcher<ActivityTabKey>
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -93,6 +110,6 @@ export const ActivitySection = () => {
       />
 
       {TABS[activeTab]}
-    </>
+    </div>
   );
 };

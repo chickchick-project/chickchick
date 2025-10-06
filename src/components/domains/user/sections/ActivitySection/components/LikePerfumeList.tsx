@@ -1,6 +1,6 @@
 import React from "react";
+import Link from "next/link";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-// import { mockPerfumeCardData } from "@/lib/mocks/perfumeCard";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export const LikePerfumeList = ({
@@ -11,14 +11,17 @@ export const LikePerfumeList = ({
   return likedPerfumes.length > 0 ? (
     <div className="grid grid-cols-5 gap-4">
       {likedPerfumes.map((item) => (
-        <PerfumeCard
-          key={item.id}
-          perfumeImage={
-            item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"
-          }
-          brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
-          perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
-        />
+        <Link key={item.id} href={`/perfumes/${item.id}`}>
+          <PerfumeCard
+            perfumeImage={
+              item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"
+            }
+            brandName={
+              item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"
+            }
+            perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
+          />
+        </Link>
       ))}
     </div>
   ) : (

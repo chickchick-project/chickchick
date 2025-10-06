@@ -26,6 +26,7 @@ export const useUserPost = (initialData?: PostCardProps[]) => {
   const queryResult = useSuspenseQuery<PostCardProps[]>({
     queryKey: ["user", "posts", "me"],
     queryFn: async () => (await fetchUserPosts()).data,
+
     initialData,
   });
 

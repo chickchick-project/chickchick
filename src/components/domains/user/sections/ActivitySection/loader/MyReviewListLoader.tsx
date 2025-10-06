@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { MyReviewList } from "../components";
 import { useUserReview } from "../hooks/useUserActivity";
 import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
@@ -9,6 +10,11 @@ export default function MyReviewListLoader({
 }: {
   initialData?: PaginatedApiReviewResponse;
 }) {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const { data: paginatedReviews, error } = useUserReview(initialData);
 
   if (error) {
@@ -24,8 +30,8 @@ export default function MyReviewListLoader({
   }
 
   return (
-    <div>
-      <MyReviewList reviews={paginatedReviews.data} />
+    <>
+      {isMounted && <MyReviewList reviews={paginatedReviews.data} />}
 
       {paginatedReviews.nextCursor && (
         <div className="mt-4 flex justify-center">
@@ -34,6 +40,6 @@ export default function MyReviewListLoader({
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }

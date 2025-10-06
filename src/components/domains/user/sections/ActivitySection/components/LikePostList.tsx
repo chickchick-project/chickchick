@@ -13,7 +13,7 @@ export const LikePostList = ({
     <div className="grid grid-cols-2 justify-items-center gap-5">
       {likedPosts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
-          <PostCard key={item.id} {...item} cardType={POST_CARD_TYPES.SMALL} />
+          <PostCard {...item} cardType={POST_CARD_TYPES.SMALL} />
         </Link>
       ))}
     </div>

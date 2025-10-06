@@ -60,6 +60,9 @@ export const CollectionSection = ({
   }
 
   const displayData = collectionsData.data;
+  // const displayData = Array(5)
+  //   .fill(null)
+  //   .flatMap(() => collectionsData.data);
 
   return (
     <>
