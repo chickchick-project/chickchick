@@ -4,6 +4,7 @@ import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { MyComment } from "@/lib/hono/services/me.service";
 // import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 
 const apiClient = createHttpClient({
@@ -43,10 +44,8 @@ export async function fetchUserPosts() {
 }
 
 export async function fetchUserComments() {
-  const comments = await apiClient.get<PostCardProps[]>(
-    `/me/activity/comments`
-  );
-  return { ...comments } as { data: PostCardProps[] };
+  const comments = await apiClient.get<MyComment[]>(`/me/activity/comments`);
+  return { ...comments } as { data: MyComment[] };
 }
 
 export async function fetchUserLikedPerfumes() {

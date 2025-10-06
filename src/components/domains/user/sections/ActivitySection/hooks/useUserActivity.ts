@@ -10,6 +10,7 @@ import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
+import { MyComment } from "@/lib/hono/services/me.service";
 
 export const useUserReview = (initialData?: PaginatedApiReviewResponse) => {
   const queryResult = useSuspenseQuery<PaginatedApiReviewResponse>({
@@ -31,8 +32,8 @@ export const useUserPost = (initialData?: PostCardProps[]) => {
   return queryResult;
 };
 
-export const useUserComment = (initialData?: PostCardProps[]) => {
-  const queryResult = useSuspenseQuery<PostCardProps[]>({
+export const useUserComment = (initialData?: MyComment[]) => {
+  const queryResult = useSuspenseQuery<MyComment[]>({
     queryKey: ["user", "comments", "me"],
     queryFn: async () => (await fetchUserComments()).data,
     initialData,

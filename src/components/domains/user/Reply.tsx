@@ -1,20 +1,15 @@
 import React from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
+import { MyComment } from "@/lib/hono/services/me.service";
 
-const Reply = ({
-  content,
-  postInfo,
-  createdAt,
-  isLast,
-}: {
-  content: string;
-  postInfo: { id: string; title: string };
-  createdAt: string;
-  isLast?: boolean;
-}) => {
+interface ReplyProps extends MyComment {
+  isLast: boolean;
+}
+
+const Reply = ({ content, post, createdAt, isLast }: ReplyProps) => {
   return (
-    <li className={`${isLast ? "" : "border-b"} p-4`}>
+    <div className={`${isLast ? "" : "border-b"} p-4`}>
       <div className="flex flex-col items-start gap-2">
         <span className="text-body-1 font-semibold text-black-100">
           {content}
@@ -25,7 +20,7 @@ const Reply = ({
               댓글을 남긴 게시글
             </span>
             <span className="text-primary-200 text-label-1 font-medium">
-              <Link href={`/community/${postInfo.id}`}>{postInfo.title}</Link>
+              <Link href={`/community/post/${post.id}`}>{post.title}</Link>
             </span>
           </div>
           <div className="text-black-300 text-label-1 font-medium">
@@ -33,7 +28,7 @@ const Reply = ({
           </div>
         </div>
       </div>
-    </li>
+    </div>
   );
 };
 

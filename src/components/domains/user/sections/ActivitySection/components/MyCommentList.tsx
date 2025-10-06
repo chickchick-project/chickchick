@@ -1,22 +1,10 @@
 import React from "react";
 import Reply from "@/components/domains/user/Reply";
-import { mockReplyData } from "@/lib/mocks/reply";
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
+import { MyComment } from "@/lib/hono/services/me.service";
 
-export const MyCommentsList = ({
-  comments,
-}: {
-  comments: PostCardProps[];
-}) => {
+export const MyCommentsList = ({ comments }: { comments: MyComment[] }) => {
+  console.log(comments);
   return comments.map((item, idx) => (
-    <Reply
-      key={item.id}
-      {...mockReplyData}
-      postInfo={{
-        id: item.id.toString(),
-        title: "[서울 동대문구]올리브영 향수 나눔합니다!",
-      }}
-      isLast={idx === comments.length - 1}
-    />
+    <Reply key={item.id} {...item} isLast={idx === comments.length - 1} />
   ));
 };

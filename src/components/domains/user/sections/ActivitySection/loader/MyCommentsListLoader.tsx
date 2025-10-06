@@ -1,13 +1,13 @@
 "use client";
 
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 import { MyCommentsList } from "../components";
 import { useUserComment } from "../hooks/useUserActivity";
+import { MyComment } from "@/lib/hono/services/me.service";
 
 export default function MyCommentsListLoader({
   initialData,
 }: {
-  initialData?: PostCardProps[];
+  initialData?: MyComment[];
 }) {
   const { data: comments, error } = useUserComment(initialData);
 
