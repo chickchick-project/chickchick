@@ -76,7 +76,7 @@ export default function ReviewCard({
           alt={title}
           width={imageSize.width}
           height={imageSize.height}
-          className="object-contain border flex-shrink-0 hidden tablet:block"
+          className="object-contain flex-shrink-0 hidden tablet:block"
         />
       ) : (
         <div
@@ -86,7 +86,7 @@ export default function ReviewCard({
       )}
 
       {/* 메인 컨텐츠 */}
-      <main className="flex flex-col gap-1 tablet:gap-2">
+      <main className="flex flex-col flex-1">
         <header>
           <h2 className="text-label-4 font-medium">{brandName}</h2>
           <h1 className="text-label-2 font-semibold">{title}</h1>
@@ -98,27 +98,30 @@ export default function ReviewCard({
           {content}
         </p>
         {/* 리뷰 칩*/}
-        <div className="flex gap-1 flex-wrap">
-          {chipLabels.slice(0, MAX_CHIPS).map((label) => (
-            <ReviewChip key={label} label={label} />
-          ))}
-          {chipLabels.length > MAX_CHIPS && (
-            <ReviewChip count={chipLabels.length - MAX_CHIPS} />
-          )}
+        <div className="mt-auto flex flex-col gap-2 pt-2">
+          {/* 리뷰 칩*/}
+          <div className="flex gap-1 flex-wrap">
+            {chipLabels.slice(0, MAX_CHIPS).map((label) => (
+              <ReviewChip key={label} label={label} />
+            ))}
+            {chipLabels.length > MAX_CHIPS && (
+              <ReviewChip count={chipLabels.length - MAX_CHIPS} />
+            )}
+          </div>
+          {/* 리뷰 메타 정보 */}
+          <footer className="flex">
+            <AuthorInfo
+              author={author}
+              createdAt={createdAt}
+              isAuthor={isAuthorResponsive}
+              info={{
+                type: "review",
+                item: { status: usageStatus },
+              }}
+            />
+            <div className="flex gap-1" />
+          </footer>
         </div>
-        {/* 리뷰 메타 정보 */}
-        <footer className="flex">
-          <AuthorInfo
-            author={author}
-            createdAt={createdAt}
-            isAuthor={isAuthorResponsive}
-            info={{
-              type: "review",
-              item: { status: usageStatus },
-            }}
-          />
-          <div className="flex gap-1" />
-        </footer>
       </main>
     </article>
   );

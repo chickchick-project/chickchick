@@ -1,7 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
-import { mockPostCardData } from "@/lib/mocks/postCard";
 import { PostCard } from "@/components/commons/card/postCard";
 import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
@@ -11,14 +10,10 @@ export const LikePostList = ({
   likedPosts: PostCardProps[];
 }) => {
   return likedPosts.length > 0 ? (
-    <div className="grid grid-cols-2 justify-items-center">
+    <div className="grid grid-cols-2 justify-items-center gap-5">
       {likedPosts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
-          <PostCard
-            key={item.id}
-            {...mockPostCardData}
-            cardType={POST_CARD_TYPES.SMALL}
-          />
+          <PostCard key={item.id} {...item} cardType={POST_CARD_TYPES.SMALL} />
         </Link>
       ))}
     </div>
