@@ -46,7 +46,7 @@ export const reviewIncludeArgs = {
     select: { id: true, nickname: true, imageUrl: true },
   },
   perfume: {
-    select: { id: true, nameKo: true, nameEn: true },
+    select: { id: true, nameKo: true, nameEn: true, perfumeImage: true },
   },
   attributeSelections: {
     include: {
