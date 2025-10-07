@@ -33,6 +33,15 @@ export const ApiReviewResponseSchema = ReviewSchema.extend({
   attributeSelections: z.array(FullAttributeSelectionSchema),
 }).openapi("ApiReviewResponse");
 
+export const ApiPopularReviewResponseSchema = ApiReviewResponseSchema.extend({
+  _count: z.object({
+    likes: z.number().int().openapi({
+      description: "리뷰가 받은 좋아요의 총 개수",
+      example: 42,
+    }),
+  }),
+}).openapi("ApiPopularReviewResponse");
+
 // --- 페이지네이션 응답 스키마 ---
 export const PaginatedApiReviewResponseSchema = z.object({
   data: z.array(ApiReviewResponseSchema),
@@ -63,5 +72,6 @@ export type PaginatedApiReviewResponse = z.infer<
   typeof PaginatedApiReviewResponseSchema
 >;
 export type ApiReviewResponse = z.infer<typeof ApiReviewResponseSchema>;
+
 export type CreateReviewInput = z.infer<typeof CreateReviewInputSchema>;
 export type UpdateReviewInput = z.infer<typeof UpdateReviewInputSchema>;

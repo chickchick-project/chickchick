@@ -1,6 +1,7 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
 import * as ReviewServices from "@/lib/hono/services/review.service";
 import {
+  ApiPopularReviewResponseSchema,
   ApiReviewResponseSchema,
   CreateReviewInputSchema,
   PaginatedApiReviewResponseSchema,
@@ -31,6 +32,27 @@ const perfumeIdParam = z.object({
       param: { name: "perfumeId", in: "path" },
       example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
     }),
+});
+
+const getPopularReviewsRoute = createRoute({
+  method: "get",
+  path: "/popular",
+  summary: "인기 리뷰 조회",
+  description: "인기 리뷰를 조회합니다.",
+  responses: createStandardApiResponses({
+    schema: z.array(ApiPopularReviewResponseSchema),
+  }),
+  tags: ["Review"],
+});
+
+reviewsApi.openapi(getPopularReviewsRoute, async (c) => {
+  const result = await ReviewServices.getPopularReviewsService();
+
+  if (!result.success) {
+    return apiNotFound(c, result.message);
+  }
+
+  return apiSuccess(c, result.data, "인기 리뷰를 성공적으로 불러왔습니다.");
 });
 
 const getReviewRoute = createRoute({
@@ -130,6 +152,37 @@ authenticatedApi.openapi(createReviewRoute, async (c) => {
   }
 
   return apiCreated(c, result.data, "리뷰가 성공적으로 작성되었습니다.");
+});
+
+const toggleLikeRoute = createRoute({
+  method: "post",
+  path: "/{reviewId}/like",
+  summary: "리뷰 좋아요/싫어요 토글",
+  description: "리뷰에 대해 좋아요/싫어요를 토글합니다.",
+  request: {
+    params: z.object({
+      reviewId: z.string().uuid("유효하지 않은 리뷰 ID입니다."),
+    }),
+  },
+  responses: createStandardApiResponses({ schema: ApiReviewResponseSchema }),
+  tags: ["Review"],
+});
+
+authenticatedApi.openapi(toggleLikeRoute, async (c) => {
+  const { reviewId } = c.req.param();
+  const user = getAuthenticatedUser(c);
+
+  const result = await ReviewServices.toggleLikeService(reviewId, user.id);
+
+  if (!result.success) {
+    return apiNotFound(c, result.message);
+  }
+
+  return apiSuccess(
+    c,
+    result.data,
+    "리뷰 좋아요/싫어요가 성공적으로 변경되었습니다."
+  );
 });
 
 reviewsApi.route("/", authenticatedApi);

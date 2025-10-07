@@ -213,7 +213,7 @@ export async function togglePerfumeLikeService(
     if (!userCheck.success) return userCheck;
 
     const like = await prisma.perfumeLike.findUnique({
-      where: { user_perfume_like_unique: { perfumeId, userId } },
+      where: { perfume_likes_user_id_perfume_id_key: { perfumeId, userId } },
     });
 
     if (like) {

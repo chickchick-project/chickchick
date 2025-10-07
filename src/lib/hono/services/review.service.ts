@@ -14,6 +14,9 @@ import {
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import { createCursorPaginationResult } from "../utils/pagination";
 
+const POPULAR_REVIEW_LIMIT = 5;
+const POPULAR_REVIEW_POOL_SIZE = 20;
+
 let optionMap = new Map<string, number>();
 
 async function initializeOptionMap() {
@@ -290,6 +293,65 @@ export async function deleteReviewService(
       where: { id: reviewId },
     });
     return serviceSuccess({ message: "리뷰가 성공적으로 삭제되었습니다." });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getPopularReviewsService(): Promise<
+  ServiceResult<FullReview[]>
+> {
+  try {
+    const popularReviews = await prisma.review.findMany({
+      include: {
+        ...reviewIncludeArgs,
+        _count: {
+          select: { likes: true },
+        },
+      },
+      orderBy: {
+        likes: {
+          _count: "desc",
+        },
+      },
+      take: POPULAR_REVIEW_POOL_SIZE,
+    });
+
+    if (popularReviews.length <= POPULAR_REVIEW_LIMIT)
+      return serviceSuccess(popularReviews);
+
+    const shuffled = popularReviews.sort(() => 0.5 - Math.random());
+    const selectedReviews = shuffled.slice(0, POPULAR_REVIEW_LIMIT);
+
+    return serviceSuccess(selectedReviews);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function toggleLikeService(
+  reviewId: string,
+  userId: string
+): Promise<ServiceResult<{ liked: boolean }>> {
+  try {
+    const [reviewCheck, userCheck] = await Promise.all([
+      checkResourceExists("review", reviewId, "리뷰"),
+      checkResourceExists("user", userId, "사용자"),
+    ]);
+    if (!reviewCheck.success) return reviewCheck;
+    if (!userCheck.success) return userCheck;
+
+    const like = await prisma.reviewLike.findUnique({
+      where: { review_likes_user_id_review_id_key: { reviewId, userId } },
+    });
+
+    if (like) {
+      await prisma.reviewLike.delete({ where: { id: like.id } });
+      return serviceSuccess({ liked: false });
+    } else {
+      await prisma.reviewLike.create({ data: { reviewId, userId } });
+      return serviceSuccess({ liked: true });
+    }
   } catch (error) {
     return serviceInternalError(error);
   }
