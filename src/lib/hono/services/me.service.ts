@@ -112,7 +112,7 @@ export async function postPhotoCollectionService(payload: {
     // 0. 중복 체크
     const existingCollection = await prisma.userCollection.findUnique({
       where: {
-        user_collection_unique_constraint: {
+        user_collections_user_id_perfume_id_key: {
           userId: payload.userId,
           perfumeId: payload.perfumeId as string,
         },
@@ -164,7 +164,7 @@ export async function postPhotoCollectionService(payload: {
     // // 3. DB 저장
     const resultCollection = await prisma.userCollection.upsert({
       where: {
-        user_collection_unique_constraint: {
+        user_collections_user_id_perfume_id_key: {
           userId: payload.userId,
           perfumeId: payload.perfumeId,
         },

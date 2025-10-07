@@ -179,7 +179,9 @@ export async function togglePerfumeBookmarkService(
       if (!check.success) return check;
     }
     const bookmark = await prisma.perfumeBookmark.findUnique({
-      where: { user_perfume_bookmark_unique: { perfumeId, userId } },
+      where: {
+        perfume_bookmarks_user_id_perfume_id_key: { perfumeId, userId },
+      },
     });
 
     if (bookmark) {

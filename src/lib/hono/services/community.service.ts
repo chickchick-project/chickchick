@@ -150,12 +150,12 @@ export async function getPostStatusByIdService(
 
       userId
         ? prisma.postLike.findUnique({
-            where: { user_post_like_unique: { postId, userId } },
+            where: { post_likes_user_id_post_id_key: { postId, userId } },
           })
         : null,
       userId
         ? prisma.postBookmark.findUnique({
-            where: { user_post_bookmark_unique: { postId, userId } },
+            where: { post_bookmarks_user_id_post_id_key: { postId, userId } },
           })
         : null,
     ]);
@@ -293,7 +293,7 @@ export async function togglePostLikeService(
 
     const updatedPost = await prisma.$transaction(async (tx) => {
       const like = await tx.postLike.findUnique({
-        where: { user_post_like_unique: { postId, userId } },
+        where: { post_likes_user_id_post_id_key: { postId, userId } },
       });
 
       if (like) {
@@ -328,7 +328,7 @@ export async function togglePostBookmarkService(
 
     const updatedPost = await prisma.$transaction(async (tx) => {
       const bookmark = await tx.postBookmark.findUnique({
-        where: { user_post_bookmark_unique: { postId, userId } },
+        where: { post_bookmarks_user_id_post_id_key: { postId, userId } },
       });
 
       if (bookmark) {

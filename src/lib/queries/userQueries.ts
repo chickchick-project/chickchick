@@ -185,7 +185,7 @@ export async function addUserCollection(userId: string, perfumeId: string) {
 
   try {
     const existingEntry = await prisma.userCollection.findUnique({
-      where: { user_collection_unique_constraint: { userId, perfumeId } },
+      where: { user_collections_user_id_perfume_id_key: { userId, perfumeId } },
     });
     if (existingEntry)
       return { message: "이미 컬렉션에 있는 향수입니다.", success: false };
@@ -264,7 +264,7 @@ export async function addUserBookmark(
 
   if (itemType === BookmarkItemType.POST) {
     const existing = await prisma.postBookmark.findUnique({
-      where: { user_post_bookmark_unique: { userId, postId: itemId } },
+      where: { post_bookmarks_user_id_post_id_key: { userId, postId: itemId } },
     });
     if (existing)
       return { message: "이미 북마크한 게시물입니다.", success: false };
@@ -277,7 +277,9 @@ export async function addUserBookmark(
     });
   } else if (itemType === BookmarkItemType.PERFUME) {
     const existing = await prisma.perfumeBookmark.findUnique({
-      where: { user_perfume_bookmark_unique: { userId, perfumeId: itemId } },
+      where: {
+        perfume_bookmarks_user_id_perfume_id_key: { userId, perfumeId: itemId },
+      },
     });
     if (existing)
       return { message: "이미 북마크한 향수입니다.", success: false };
