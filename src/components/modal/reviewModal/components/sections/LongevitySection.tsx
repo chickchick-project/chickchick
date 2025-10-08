@@ -1,7 +1,7 @@
 "use client";
 
+import { REVIEW_OPTIONS } from "@/lib/constants/review";
 import { SelectButton } from "../button/SelectButton";
-import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SubTitle } from "../SubTitle";
 import { Controller, useFormContext } from "react-hook-form";
 

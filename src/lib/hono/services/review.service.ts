@@ -49,8 +49,20 @@ export const reviewIncludeArgs = {
     select: { id: true, nickname: true, imageUrl: true },
   },
   perfume: {
-    select: { id: true, nameKo: true, nameEn: true, perfumeImage: true },
+    select: {
+      id: true,
+      nameKo: true,
+      nameEn: true,
+      perfumeImage: true,
+      brand: {
+        select: {
+          nameKo: true,
+          nameEn: true,
+        },
+      },
+    },
   },
+
   attributeSelections: {
     include: {
       option: {
@@ -298,24 +310,36 @@ export async function deleteReviewService(
   }
 }
 
+//상위 리뷰 조회 서비스
+async function findPopularReviewsPool(): Promise<FullReview[]> {
+  const popularReviewsWithCount = await prisma.review.findMany({
+    include: {
+      ...reviewIncludeArgs,
+      _count: {
+        select: { likes: true },
+      },
+    },
+    orderBy: {
+      likes: {
+        _count: "desc",
+      },
+    },
+    take: POPULAR_REVIEW_POOL_SIZE,
+  });
+
+  return popularReviewsWithCount.map((review) => {
+    //_count 제거
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _count, ...restOfReview } = review;
+    return restOfReview;
+  });
+}
+
 export async function getPopularReviewsService(): Promise<
   ServiceResult<FullReview[]>
 > {
   try {
-    const popularReviews = await prisma.review.findMany({
-      include: {
-        ...reviewIncludeArgs,
-        _count: {
-          select: { likes: true },
-        },
-      },
-      orderBy: {
-        likes: {
-          _count: "desc",
-        },
-      },
-      take: POPULAR_REVIEW_POOL_SIZE,
-    });
+    const popularReviews = await findPopularReviewsPool();
 
     if (popularReviews.length <= POPULAR_REVIEW_LIMIT)
       return serviceSuccess(popularReviews);
@@ -324,6 +348,22 @@ export async function getPopularReviewsService(): Promise<
     const selectedReviews = shuffled.slice(0, POPULAR_REVIEW_LIMIT);
 
     return serviceSuccess(selectedReviews);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+//메인 베너에서 가져올 리뷰
+export async function getOneRandomPopularReviewService(): Promise<
+  ServiceResult<FullReview>
+> {
+  try {
+    const popularReviews = await findPopularReviewsPool();
+
+    const randomIndex = Math.floor(Math.random() * popularReviews.length);
+    const randomReview = popularReviews[randomIndex];
+
+    return serviceSuccess(randomReview);
   } catch (error) {
     return serviceInternalError(error);
   }

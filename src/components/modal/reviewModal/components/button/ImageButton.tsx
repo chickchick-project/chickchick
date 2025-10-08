@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ImageType } from "@/components/domains/perfumeDetail/review/review.type";
+import { ImageType } from "@/lib/types/review";
 
 interface IImageButton {
   image: ImageType;

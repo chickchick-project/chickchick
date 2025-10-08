@@ -1,9 +1,9 @@
 "use client";
 
-import { SubTitle } from "../SubTitle";
-import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
-import { SelectButton } from "../button/SelectButton";
 import { useFormContext, Controller } from "react-hook-form";
+import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import { SubTitle } from "../SubTitle";
+import { SelectButton } from "../button/SelectButton";
 
 export const PriceSection = () => {
   const { control } = useFormContext();

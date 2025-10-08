@@ -46,7 +46,7 @@ const getPopularReviewsRoute = createRoute({
 });
 
 reviewsApi.openapi(getPopularReviewsRoute, async (c) => {
-  const result = await ReviewServices.getPopularReviewsService();
+  const result = await ReviewServices.getOneRandomPopularReviewService();
 
   if (!result.success) {
     return apiNotFound(c, result.message);

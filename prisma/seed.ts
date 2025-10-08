@@ -108,7 +108,7 @@ async function main() {
   for (const option of optionsToCreate) {
     await prisma.attributeOption.upsert({
       where: {
-        attributeId_value: {
+        attribute_options_attribute_id_value_key: {
           attributeId: option.attributeId,
           value: option.value,
         },

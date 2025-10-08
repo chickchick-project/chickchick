@@ -6,6 +6,7 @@ import { getLayoutSize } from "./reviewCard.helpers";
 import { ReviewCardProps } from "./reviewCard.types";
 import AuthorInfo from "../../author/AuthorInfo";
 import ReviewChip from "../../chip/ReviewChip";
+import { getCategoryById, getTagByKey } from "@/lib/utils/review.helpers";
 
 export default function ReviewCard({
   review,
@@ -57,9 +58,11 @@ export default function ReviewCard({
 
   const title = perfumeName || "향수 이름 정보 없음";
 
-  const chipLabels = attributeSelections.map(
-    (selection) => selection.option.name
-  );
+  const chipLabels = attributeSelections.map((selection) => {
+    const category = getCategoryById(selection.option.attributeId);
+    const key = selection.option.value;
+    return category ? getTagByKey(category, key) : key;
+  });
   const MAX_CHIPS = isMyPage ? 2 : 3;
 
   const { articleSize, imageSize } = getLayoutSize(isMyPage);
@@ -88,12 +91,14 @@ export default function ReviewCard({
       {/* 메인 컨텐츠 */}
       <main className="flex flex-col flex-1">
         <header>
-          <h2 className="text-label-4 font-medium">{brandName}</h2>
-          <h1 className="text-label-2 font-semibold">{title}</h1>
+          <h2 className="text-label-4 font-medium text-black-300">
+            {brandName}
+          </h2>
+          <h1 className="text-body-1 font-semibold text-black-100">{title}</h1>
         </header>
         {/* 리뷰 내용 */}
         <p
-          className={`line-clamp-2 tablet:line-clamp-3 text-label-2 tablet:text-body-2 flex-shrink-0`}
+          className={`line-clamp-2 tablet:line-clamp-3 text-body-2 font-medium tablet:text-body-2 flex-shrink-0`}
         >
           {content}
         </p>

@@ -1,10 +1,11 @@
 "use client";
 
+import { PerfumeUsageStatus } from "@prisma/client";
+import { Review } from "@zod/modelSchema";
 import { useFormContext, Controller } from "react-hook-form";
 import { SelectButton } from "../button/SelectButton";
-import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { SubTitle } from "../SubTitle";
-import { PerfumeUsageStatus, Review } from "@prisma/client";
+import { REVIEW_OPTIONS } from "@/lib/constants/review";
 
 export const StatusSection = () => {
   const { control } = useFormContext<Review>();

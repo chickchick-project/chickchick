@@ -2,8 +2,8 @@ import { useMemo } from "react";
 import { ButtonFilledGrayLFull } from "@/components/commons/button/ButtonFilled";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { ReviewItem } from "./reviewItem";
-import { getTagByKey, getCategoryById } from "../review.helper";
 import { ReviewListProps } from "../review.type";
+import { getCategoryById, getTagByKey } from "@/lib/utils/review.helpers";
 
 export const ReviewList = ({ data }: ReviewListProps) => {
   const reviewItems = useMemo(() => {

@@ -1,9 +1,9 @@
 "use client";
 
 import { Controller, useFormContext } from "react-hook-form";
-import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
 import { ImageButton } from "../button/ImageButton";
 import { SubTitle } from "../SubTitle";
+import { REVIEW_OPTIONS } from "@/lib/constants/review";
 
 export const FeelingSection = () => {
   const { control } = useFormContext();

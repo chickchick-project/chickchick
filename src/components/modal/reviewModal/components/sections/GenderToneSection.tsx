@@ -1,9 +1,9 @@
 "use client";
 
-import { REVIEW_OPTIONS } from "@/components/domains/perfumeDetail/review/review.constants";
+import { Controller, useFormContext } from "react-hook-form";
 import { RadioButton } from "../button/RadioButton";
 import { SubTitle } from "../SubTitle";
-import { Controller, useFormContext } from "react-hook-form";
+import { REVIEW_OPTIONS } from "@/lib/constants/review";
 
 export const GenderToneSection = () => {
   const { control } = useFormContext();
