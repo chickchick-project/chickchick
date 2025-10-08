@@ -4,17 +4,15 @@ import { SearchBar } from "@/components/commons/search/SearchBar";
 import { useState } from "react";
 import { PerfumeOverview } from "./overview";
 import { InteractionStates } from "./overview/perfumeInfo";
+import { PerfumeReview } from "./review";
+import { MobileActionBar } from "./mobileActionBar";
+import { PerfumeRecentViewList } from "./recentViewList";
+import { PerfumeDetailSidebar } from "./sidebar";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
 
-export const DetailClient = ({
-  perfumeId,
-}: // reviewData,
-{
-  perfumeId: string;
-  // reviewData: ReviewResponse[];
-}) => {
+export const DetailClient = ({ perfumeId }: { perfumeId: string }) => {
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
       liked: false,
@@ -40,9 +38,9 @@ export const DetailClient = ({
         />
       </section>
       <MobileSeparator className="pc:h-px pc:bg-gray-200" mobileOnly={false} />
-      {/* <section className="w-full flex flex-col pc:flex-row pc:justify-between">
+      <section className="w-full flex flex-col pc:flex-row pc:justify-between">
         <div className="flex flex-col pc:gap-[60px]">
-          <PerfumeReview data={reviewData} />
+          <PerfumeReview perfumeId={perfumeId} />
           <MobileSeparator />
           <PerfumeRecentViewList />
         </div>
@@ -54,7 +52,7 @@ export const DetailClient = ({
           interactionStates={interactionStates}
           onToggleInteraction={toggleInteraction}
         />
-      </section> */}
+      </section>
     </div>
   );
 };

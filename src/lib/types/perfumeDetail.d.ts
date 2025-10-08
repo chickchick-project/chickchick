@@ -10,11 +10,11 @@ export interface IPerfumeDetail {
   nameEn: string;
   nameKo: string;
   brand: Brand;
-  perfumeImage?: PerfumeImage | null;
+  perfumeImage?: IPerfumeImage | null;
   accordMappings: IAccordMapping[];
   noteMappings: INoteMapping[];
-  reviews: ReviewSummary[];
-  _count: PerfumeCount;
+  reviews: IReviewSummary[];
+  _count: IPerfumeCount;
 }
 
 export interface IBrand {

@@ -7,12 +7,12 @@ import { SectionTitle } from "@/components/commons/sectionTitle";
 import { useState } from "react";
 import { ReviewModal } from "@/components/modal/reviewModal/ReviewModal";
 // import ReviewMobileSection from "./ReviewMobileSection";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import ReviewMobileSection from "./ReviewMobileSection";
+import { IReviewItem } from "@/lib/types/perfumeReview";
 
 // TODO: 리뷰 수정 기능 검토
-export const ReviewAnalytics = ({ data }: { data: ReviewResponse[] }) => {
+export const ReviewAnalytics = ({ data }: { data: IReviewItem[] }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const { user } = useUserStore();

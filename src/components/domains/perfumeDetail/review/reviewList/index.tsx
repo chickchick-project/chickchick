@@ -1,8 +1,8 @@
 import { ButtonFilledGrayLFull } from "@/components/commons/button/ButtonFilled";
 import { ReviewCard } from "./reviewCard";
 import { SectionTitle } from "@/components/commons/sectionTitle";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { getLabelByKey, ReviewCategory } from "../review.helper";
+import { IReviewItem } from "@/lib/types/perfumeReview";
 
 // const mockReviews = [
 //   {
@@ -48,7 +48,7 @@ import { getLabelByKey, ReviewCategory } from "../review.helper";
 //   },
 // ];
 
-export const ReviewList = ({ data }: { data: ReviewResponse[] }) => {
+export const ReviewList = ({ data }: { data: IReviewItem[] }) => {
   return (
     <section className="flex flex-col gap-5">
       <SectionTitle itemCount={data.length}>리뷰</SectionTitle>

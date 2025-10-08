@@ -3,6 +3,7 @@ import {
   IPerfumeDetail,
   IPerfumeDetailResponse,
 } from "@/lib/types/perfumeDetail";
+import { IReviewItem, IReviewsResponse } from "@/lib/types/perfumeReview";
 import { makeQueryClient } from "@/lib/utils/core-request/queryClient";
 import { createApiServerClient } from "@/lib/utils/core-request/serverClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
@@ -29,7 +30,13 @@ export default async function PerfumeDetailPage({
       ),
   });
 
-  // const perfumeReviewData = await getReviewData(id);
+  await queryClient.prefetchQuery({
+    queryKey: ["perfume", id, "review"],
+    queryFn: () =>
+      api.get<IReviewsResponse, IReviewItem[]>(`/reviews/${id}`, undefined, {
+        transformResponse: (res) => res.data,
+      }),
+  });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { BarChart } from "./BarChart";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { IReviewItem } from "@/lib/types/perfumeReview";
 
 const CATEGORY_LABEL_MAP = {
   genderTone: [
@@ -23,7 +23,7 @@ const CATEGORY_LABEL_MAP = {
 
 type SeasonKey = "AUTUMN" | "SPRING" | "SUMMER" | "WINTER";
 
-const reviewAnalytics = (data: ReviewResponse[]) => {
+const reviewAnalytics = (data: IReviewItem[]) => {
   const countByCategory = (category: keyof typeof CATEGORY_LABEL_MAP) => {
     return CATEGORY_LABEL_MAP[category].map(({ key, label, color }) => {
       let count = 0;
@@ -58,7 +58,7 @@ const reviewAnalytics = (data: ReviewResponse[]) => {
   ];
 };
 
-export const ReviewBarSection = ({ data }: { data: ReviewResponse[] }) => {
+export const ReviewBarSection = ({ data }: { data: IReviewItem[] }) => {
   return (
     <section className="w-full p-9 pb-5 rounded-xl shadow-card">
       <ul className="grid grid-cols-2 gap-x-9 gap-y-5 w-full">
