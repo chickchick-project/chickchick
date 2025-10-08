@@ -1,25 +1,19 @@
 "use client";
+import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import { SearchBar } from "@/components/commons/search/SearchBar";
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
 import { useState } from "react";
-import { MobileActionBar } from "./mobileActionBar";
 import { PerfumeOverview } from "./overview";
 import { InteractionStates } from "./overview/perfumeInfo";
-import { PerfumeRecentViewList } from "./recentViewList";
-import { PerfumeReview } from "./review";
-import { PerfumeDetailSidebar } from "./sidebar";
-import { MobileSeparator } from "@/components/commons/mobileSeparator";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
 
 export const DetailClient = ({
-  perfumeDetail,
-  reviewData,
-}: {
-  perfumeDetail: TPerfumeDetail;
-  reviewData: ReviewResponse[];
+  perfumeId,
+}: // reviewData,
+{
+  perfumeId: string;
+  // reviewData: ReviewResponse[];
 }) => {
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
@@ -40,13 +34,13 @@ export const DetailClient = ({
       <section className="w-full px-5 flex flex-col gap-[60px] items-center">
         <SearchBar />
         <PerfumeOverview
-          perfumeDetail={perfumeDetail}
+          perfumeId={perfumeId}
           interactionStates={interactionStates}
           onToggleInteraction={toggleInteraction}
         />
       </section>
       <MobileSeparator className="pc:h-px pc:bg-gray-200" mobileOnly={false} />
-      <section className="w-full flex flex-col pc:flex-row pc:justify-between">
+      {/* <section className="w-full flex flex-col pc:flex-row pc:justify-between">
         <div className="flex flex-col pc:gap-[60px]">
           <PerfumeReview data={reviewData} />
           <MobileSeparator />
@@ -60,7 +54,7 @@ export const DetailClient = ({
           interactionStates={interactionStates}
           onToggleInteraction={toggleInteraction}
         />
-      </section>
+      </section> */}
     </div>
   );
 };

@@ -1,10 +1,8 @@
+import { INoteMapping } from "@/lib/types/perfumeDetail";
 import clsx from "clsx";
 
 interface PerfumeInfoNoteProps {
-  notes: {
-    id: string;
-    name: string;
-  }[];
+  notes: INoteMapping[];
 }
 
 export const PerfumeInfoNote = ({ notes }: PerfumeInfoNoteProps) => {
@@ -14,8 +12,8 @@ export const PerfumeInfoNote = ({ notes }: PerfumeInfoNoteProps) => {
         노트
       </h2>
       <ul className="flex gap-2 items-center flex-wrap">
-        {notes.map(({ id, name }, index) => (
-          <li key={id} className="flex items-center gap-2">
+        {notes.map(({ note }, index) => (
+          <li key={note.id} className="flex items-center gap-2">
             <div
               className={clsx(
                 index === 0 && "hidden",
@@ -23,10 +21,10 @@ export const PerfumeInfoNote = ({ notes }: PerfumeInfoNoteProps) => {
               )}
             />
             <span
-              key={id}
+              key={note.id}
               className="text-label-2 tablet:text-body-2 text-black-100 font-medium"
             >
-              {name}
+              {note.nameKo}
             </span>
           </li>
         ))}

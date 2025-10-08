@@ -1,34 +1,74 @@
-import {
-  perfumes,
-  perfumes_notes_map,
-  perfumes_accords_map,
-  brands,
-  perfume_notes,
-  perfume_accords,
-} from "@prisma/client";
+export type UUID = string;
+export interface IPerfumeDetailResponse {
+  success: boolean;
+  message: string;
+  data: IPerfumeDetail;
+}
 
-export type TPerfumeDetailRaw = perfumes & {
-  brands: brands;
-  perfumes_notes_map: (perfumes_notes_map & {
-    perfume_notes: perfume_notes;
-  })[];
-  perfumes_accords_map: (perfumes_accords_map & {
-    perfume_accords: perfume_accords;
-  })[];
-};
+export interface IPerfumeDetail {
+  id: UUID;
+  nameEn: string;
+  nameKo: string;
+  brand: Brand;
+  perfumeImage?: PerfumeImage | null;
+  accordMappings: IAccordMapping[];
+  noteMappings: INoteMapping[];
+  reviews: ReviewSummary[];
+  _count: PerfumeCount;
+}
 
-export type TPerfumeDetail = {
-  id: string;
-  name: string;
-  brand: string;
+export interface IBrand {
+  nameEn: string;
+  nameKo: string;
+}
+
+export interface IPerfumeImage {
   imageUrl: string;
-  officialUrl: string | null;
-  notes: {
-    id: string;
-    name: string;
-  }[];
-  accords: {
-    id: string;
-    name: string;
-  }[];
-};
+}
+
+export interface IAccord {
+  id: UUID;
+  nameKo: string;
+  nameEn: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IAccordMapping {
+  accord: IAccord;
+}
+
+export interface INote {
+  id: UUID;
+  nameKo: string;
+  nameEn: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type TNoteStage = string;
+
+export interface INoteMapping {
+  note: INote;
+  noteStage: TNoteStage;
+}
+
+export interface IReviewAuthor {
+  id: UUID;
+  nickname: string;
+  imageUrl: string | null;
+}
+
+export interface IReviewSummary {
+  id: UUID;
+  content: string;
+  author: IReviewAuthor;
+}
+
+export interface IPerfumeCount {
+  bookmarks: number;
+  reviews: number;
+  collectedByUsers: number;
+}
