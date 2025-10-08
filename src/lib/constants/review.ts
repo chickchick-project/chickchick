@@ -158,6 +158,38 @@ export const ATTRIBUTE_ID_TO_CATEGORY_MAP = Object.fromEntries(
   ])
 ) as Record<number, ReviewCategory>;
 
+export const DEFAULT_POPULAR_REVIEW = {
+  id: "NO_REVIEW_PLACEHOLDER",
+  content: "가장 먼저 리뷰를 남겨주시면 다른 사용자에게 큰 도움이 됩니다.",
+  usageStatus: "NOT_USED_YET" as const,
+  createdAt: new Date("2025-01-01T00:00:00"),
+  updatedAt: new Date("2025-01-01T00:00:00"),
+  authorId: "admin",
+  perfumeId: "",
+
+  author: {
+    id: "admin",
+    nickname: "CHICKCHICK",
+    imageUrl: "",
+  },
+  perfume: {
+    id: "",
+    nameKo: "인기 리뷰를 준비 중입니다",
+    nameEn: "Review is being prepared",
+    perfumeImage: {
+      id: "placeholder",
+      imageUrl: "/images/PlaceHolder.png",
+      createdAt: new Date("2024-01-01T00:00:00"),
+      perfumeId: "",
+    },
+    brand: {
+      nameKo: "소중한 리뷰를 기다리고 있어요",
+      nameEn: "Waiting for your precious review",
+    },
+  },
+  attributeSelections: [],
+};
+
 const statusOptions = [
   {
     key: "NOT_USED_YET",

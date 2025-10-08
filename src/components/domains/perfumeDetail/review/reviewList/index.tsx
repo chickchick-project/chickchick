@@ -29,16 +29,22 @@ export const ReviewList = ({ data }: ReviewListProps) => {
   return (
     <section className="flex flex-col gap-5">
       <SectionTitle itemCount={data.length}>리뷰</SectionTitle>
-      <ul className="flex flex-col tablet:gap-6 tablet:px-5 pc:px-0">
-        {reviewItems.map((item) => (
-          <li
-            key={item.id}
-            className="last:border-0 border-b border-gray-200 tablet:border-0"
-          >
-            <ReviewItem {...item} />
-          </li>
-        ))}
-      </ul>
+      {data.length > 0 ? (
+        <ul className="flex flex-col tablet:gap-6 tablet:px-5 pc:px-0">
+          {reviewItems.map((item) => (
+            <li
+              key={item.id}
+              className="last:border-0 border-b border-gray-200 tablet:border-0"
+            >
+              <ReviewItem {...item} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-center text-black-300">
+          아직 등록된 리뷰가 없습니다.
+        </div>
+      )}
       {data.length > 3 && (
         <div className="px-5 pc:px-0">
           <ButtonFilledGrayLFull>더보기</ButtonFilledGrayLFull>
