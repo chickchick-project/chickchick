@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { User } from "@zod/modelSchema";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
-import { User } from "@prisma/client";
 import type { CollectionItem } from "../sections.type";
 import { useUserCollections } from "./useUserCollections";
 import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
