@@ -13,6 +13,11 @@ import { getImageFormat } from "../utils/service.utils";
 import { BasePost } from "./community.service";
 import { BasePerfume } from "./perfume.service";
 import { FullReview, reviewIncludeArgs } from "./review.service";
+import {
+  ApiMyProfileResponse,
+  ApiUpdateMyProfileRequest,
+  ApiUpdateMyProfileRequestSchema,
+} from "../schemas/me.schema";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -334,6 +339,62 @@ export async function getMyLikedPostsService(
     });
     // 5. 사용자가 원하는 '게시글' 데이터를 반환
     return serviceSuccess(likes.map((like) => like.post));
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getMyProfileService(
+  id: string
+): Promise<ServiceResult<ApiMyProfileResponse>> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        age: true,
+        gender: true,
+        imageUrl: true,
+      },
+    });
+
+    if (!user) {
+      return serviceNotFound("사용자를 찾을 수 없습니다.");
+    }
+
+    return serviceSuccess(user);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function updateMyProfileService(
+  formData: ApiUpdateMyProfileRequest
+): Promise<ServiceResult<ApiMyProfileResponse>> {
+  try {
+    const { id, ...updateData } = formData;
+
+    // undefined 값 제거
+    const cleanedData = ApiUpdateMyProfileRequestSchema.partial()
+      .strip()
+      .parse(updateData);
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: cleanedData,
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        age: true,
+        gender: true,
+        imageUrl: true,
+      },
+    });
+
+    return serviceSuccess(updatedUser);
   } catch (error) {
     return serviceInternalError(error);
   }

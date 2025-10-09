@@ -1,22 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import { User } from "@prisma/client";
 import MainTabs from "./tabs/MainTabs";
 import PhotoUploadModal from "@/components/modal/photoUploadModal";
 import { usePathname } from "next/navigation";
 
 interface PageClientProps {
-  pageOwner: User;
   isMe: boolean;
   children: React.ReactNode;
 }
 
-export default function PageClient({
-  pageOwner,
-  isMe,
-  children,
-}: PageClientProps) {
+export default function PageClient({ isMe, children }: PageClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleUploadSuccess = () => {
     setIsModalOpen(false);
@@ -30,7 +24,6 @@ export default function PageClient({
     <>
       <MainTabs
         isMe={isMe}
-        pageOwner={pageOwner}
         tab={activeTab}
         onAddPhotoClick={() => setIsModalOpen(true)}
       />

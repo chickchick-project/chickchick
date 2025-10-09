@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { BodyWrapper } from "@/components/commons/bodyWrapper/BodyWrapper";
 import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import Providers from "@/components/commons/Provider/TanstackProvider";
+import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -22,7 +23,10 @@ export default function RootLayout({
       <body className={`${pretendard.variable} font-pretendard h-full`}>
         <Providers>
           <NavBarWrapper />
-          <BodyWrapper>{children}</BodyWrapper>
+          <BodyWrapper>
+            <GlobalStateSync />
+            {children}
+          </BodyWrapper>
           <LoginModalProvider />
         </Providers>
         <div id="modal"></div>

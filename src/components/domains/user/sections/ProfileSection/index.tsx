@@ -1,58 +1,54 @@
 "use client";
 
-import { User } from "@prisma/client";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import z from "zod";
-import { ProfileForm } from "./components/ProfileForm";
-import { ProfileActions } from "./components/ProfileActions";
+import { PersonalInfo } from "./components/PersonalInfo";
+import { ProfileImage } from "./components/ProfileImage";
+import { useState, useCallback, useEffect } from "react";
 
-const profileSchema = z.object({
-  name: z.string().min(1),
-  nickname: z.string().min(1),
-  age: z.number().min(0).optional(),
-  gender: z.string().optional(),
-});
+export const ProfileSection = () => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-export type ProfileFormData = z.infer<typeof profileSchema>;
+  const resetState = useCallback(() => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+  }, []);
 
-export const ProfileSection = ({ data }: { data: User }) => {
-  const {
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-  } = useForm<ProfileFormData>({
-    resolver: zodResolver(profileSchema),
-    defaultValues: {
-      name: data.name || "",
-      nickname: data.nickname || "",
-      age: data.age || undefined,
-      gender: data.gender || undefined,
+  const onFileSelect = useCallback(
+    (file: File) => {
+      setSelectedFile(file);
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      setPreviewUrl(URL.createObjectURL(file));
     },
-  });
+    [previewUrl]
+  );
 
-  const onSubmit = async (formData: ProfileFormData) => {
-    // TODO: 수정 API 호출 로직 구현
-    console.log("폼", formData);
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    alert("수정되었습니다.");
+  const onCancel = () => {
+    resetState();
   };
 
-  // 탈퇴 처리 함수
-  const handleWithdraw = () => {
-    console.log("탈퇴 버튼 클릭");
-    if (confirm("정말로 탈퇴하시겠습니까?")) {
-      alert("탈퇴 처리되었습니다.");
-      //TODO: 이후 메인으로 처리
-    }
-  };
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="p-[120px]">
-      <ProfileForm control={control} errors={errors} />
-      <ProfileActions onWithdraw={handleWithdraw} isSubmitting={isSubmitting} />
-    </form>
+    <div className="w-full flex flex-row items-start gap-12 p-[120px]">
+      <div className="w-1/3 flex-shrink-0">
+        <ProfileImage
+          previewUrl={previewUrl}
+          onFileSelect={onFileSelect}
+          onCancel={onCancel}
+          isUploading={false}
+        />
+      </div>
+      <div className="w-2/3 flex-grow">
+        <PersonalInfo />
+      </div>
+    </div>
   );
 };

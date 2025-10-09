@@ -3,7 +3,11 @@ import { ApiPostResponseSchema } from "./community.schema";
 import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
 import { ApiReviewResponseSchema } from "./review.schema";
 import { CommentResponseSchema } from "./comment.schema";
-import { UserCollectionSchema, CollectionImageSchema } from "@zod/modelSchema";
+import {
+  UserCollectionSchema,
+  CollectionImageSchema,
+  UserSchema,
+} from "@zod/modelSchema";
 
 export const ApiMyBookmarkedPostsResponseSchema = z.array(
   ApiPostResponseSchema
@@ -47,6 +51,23 @@ export const CreateCollectionInputSchema = z.object({
   comment: z.string().optional(),
 });
 
+export const ApiMyProfileResponseSchema = UserSchema.pick({
+  id: true,
+  nickname: true,
+  age: true,
+  gender: true,
+  imageUrl: true,
+}).openapi("ApiMyProfileResponse");
+
+export const ApiUpdateMyProfileRequestSchema = z
+  .object({
+    id: UserSchema.shape.id,
+    nickname: UserSchema.shape.nickname.optional(),
+    age: UserSchema.shape.age.optional(),
+    gender: UserSchema.shape.gender.optional(),
+  })
+  .openapi("ApiUpdateMyProfileRequest");
+
 export type ApiMyBookmarkedPostsResponse = z.infer<
   typeof ApiMyBookmarkedPostsResponseSchema
 >;
@@ -66,3 +87,8 @@ export type ApiMyLikedPostsResponse = z.infer<
   typeof ApiMyLikedPostsResponseSchema
 >;
 export type CreateCollectionInput = z.infer<typeof CreateCollectionInputSchema>;
+
+export type ApiMyProfileResponse = z.infer<typeof ApiMyProfileResponseSchema>;
+export type ApiUpdateMyProfileRequest = z.infer<
+  typeof ApiUpdateMyProfileRequestSchema
+>;

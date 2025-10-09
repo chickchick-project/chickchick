@@ -1,12 +1,10 @@
-import { notFound } from "next/navigation";
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
 import { getSession } from "@/lib/database/getSession";
-import { fetchUserById } from "@/lib/queries/userQueries";
-import { User } from "@zod/modelSchema";
-
-const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
+import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import { getUserById } from "@/lib/utils/getUserProfile";
+import { notFound } from "next/navigation";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -17,14 +15,13 @@ export default async function UserLayout({ children, params }: LayoutProps) {
   const { id: pageOwnerId } = await params;
 
   const session = await getSession();
-  let user: User | null = null;
+
+  const isMe = session?.user?.id === pageOwnerId;
+  let user: ApiMyProfileResponse | null;
+
   try {
-    const userResult = await fetchUserById(pageOwnerId);
-    if (!userResult.success || !userResult.data) {
-      return notFound();
-    }
-    user = userResult.data;
-    if (typeof user.id !== "string" || !USER_REGEX.test(user.id)) {
+    user = await getUserById(pageOwnerId);
+    if (!user) {
       return notFound();
     }
   } catch (error) {
@@ -32,14 +29,14 @@ export default async function UserLayout({ children, params }: LayoutProps) {
     return notFound();
   }
 
-  const isMe = session?.user?.id === pageOwnerId;
+  if (!isMe) {
+    return notFound();
+  }
 
   return (
     <div className="w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
-      <PageClient pageOwner={user} isMe={isMe}>
-        {children}
-      </PageClient>
+      <PageClient isMe={isMe}>{children}</PageClient>
       <UserFooter />
     </div>
   );

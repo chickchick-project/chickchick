@@ -10,6 +10,7 @@ import {
   useForm,
   UseFormReturn,
 } from "react-hook-form";
+import { useEffect } from "react";
 
 interface IForm<T extends FieldValues> {
   children: React.ReactNode;
@@ -27,20 +28,30 @@ export default function Form<T extends FieldValues>({
   defaultValues,
   useInitialize,
 }: IForm<T>) {
-  const method = useForm<T>({
+  const methods = useForm<T>({
     resolver: zodResolver(schema),
     mode: "all",
     defaultValues,
   });
 
-  const { onSubmit, isLoaded = true } = useInitialize(method);
+  const { reset, handleSubmit } = methods;
+
+  const { onSubmit, isLoaded = true } = useInitialize(methods);
+
   const onInvalid = (errors: FieldErrors<T>) => {
     console.error("Validation Errors:", JSON.stringify(errors, null, 2));
   };
+
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
+
   return (
-    <FormProvider {...method}>
+    <FormProvider {...methods}>
       <form
-        onSubmit={method.handleSubmit(onSubmit, onInvalid)}
+        onSubmit={handleSubmit(onSubmit, onInvalid)}
         style={{
           width: "100%",
           display: "flex",

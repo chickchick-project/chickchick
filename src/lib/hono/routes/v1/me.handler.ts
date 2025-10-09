@@ -346,4 +346,71 @@ meApi.openapi(getMyLikedPostsRoute, async (c) => {
   );
 });
 
+/**
+ * @method get
+ * @path /me/profile
+ * @summary 내 정보 조회
+ */
+const getMyProfileRoute = createRoute({
+  method: "get",
+  path: "/profile",
+  summary: "내 정보 조회",
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiMyProfileResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(getMyProfileRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+
+  const result = await MeServices.getMyProfileService(user.id);
+
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") {
+      return apiNotFound(c, result.message);
+    }
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "내 정보를 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method patch
+ * @path /me/profile
+ * @summary 내 정보 수정
+ */
+const patchMyProfileRoute = createRoute({
+  method: "patch",
+  path: "/profile",
+  summary: "내 정보 수정",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: MeSchemas.ApiUpdateMyProfileRequestSchema,
+        },
+      },
+    },
+  },
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiMyProfileResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(patchMyProfileRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const formData = c.req.valid("json");
+  console.log(user, formData);
+  if (user.id !== formData.id)
+    return apiForbidden(c, "프로필 수정을 할 수 없습니다.");
+  const result = await MeServices.updateMyProfileService(formData);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "내 정보를 성공적으로 수정했습니다.");
+});
+
 export default meApi;
