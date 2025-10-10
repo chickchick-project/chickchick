@@ -16,9 +16,10 @@ const renderPerfumeBookmarks = (perfumes: PerfumeBaseResponse[]) => {
   return (
     <div className="grid grid-cols-5 gap-[52px]">
       {perfumes.map((item, idx) => (
-        <Link key={item.id || idx} href={`/perfumes/${item.id}`} passHref>
+        <Link key={item.id} href={`/perfumes/${item.id}`} passHref>
           <PerfumeCard
             key={`${item.id}-${idx}`}
+            cardType="default"
             perfumeImage={item.perfumeImage?.imageUrl || null}
             brandName={item.brand.nameKo || item.brand.nameEn}
             perfumeName={item.nameKo || item.nameEn}
@@ -40,9 +41,9 @@ const renderCommunityBookmarks = (communityPosts: PostCardProps[]) => {
   return (
     <div className="grid grid-cols-2 gap-y-5">
       {communityPosts.map((item) => (
-        <Link key={item.id} href={`/community/post/${item.id}`}>
+        <Link key={item.post.id} href={`/community/post/${item.post.id}`}>
           <PostCard
-            key={item.id}
+            key={item.post.id}
             {...item}
             isAuthor={false}
             isCategory={true}

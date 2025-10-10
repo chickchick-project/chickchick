@@ -1,20 +1,11 @@
 import { InfoType } from "../../author/author.types";
+import { CardWithImageProps } from "../card.types";
 
-interface Author {
-  id: string;
-  nickname: string;
-  imageUrl: string;
-}
-
-export interface ReviewCardProps {
+export interface ReviewCardProps extends CardWithImageProps {
   brand: string;
   title: string;
   review: string;
-  createdAt: Date;
   info: InfoType;
-  chips: Array<string>;
-  imageUrl?: string;
+  chips: string[];
   isMyPage: boolean;
-  isAuthor: boolean;
-  author: Author;
 }

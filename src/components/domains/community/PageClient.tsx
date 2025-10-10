@@ -118,13 +118,23 @@ export default function PageClient() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const uniquePostData = useMemo(() => {
+  const postCardData = useMemo(() => {
     const allPosts = data?.pages.flatMap((page) => page.data) ?? [];
-    return getUniquePostList(allPosts);
+    const uniquePosts = getUniquePostList(allPosts);
+    return uniquePosts.map((post) => ({
+      id: post.id,
+      post: {
+        ...post,
+        userId: post.author.id,
+        published: true,
+      },
+      author: post.author,
+      createdAt: post.createdAt,
+      isAuthor: false,
+    }));
   }, [data]);
 
-  const isIdle = !isLoading && uniquePostData.length === 0;
-
+  const isIdle = !isLoading && postCardData.length === 0;
   return (
     <div className="px-4 w-full flex flex-col  gap-5">
       <Header
@@ -139,7 +149,7 @@ export default function PageClient() {
       />
       <main className="pb-[280px] tablet:max-w-[1200px]">
         <CommunityCards
-          postData={uniquePostData}
+          postData={postCardData}
           selectedTab={selectedTab}
           isLoading={isLoading}
           moreRef={moreRef}

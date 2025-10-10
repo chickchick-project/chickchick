@@ -1,11 +1,6 @@
 import React from "react";
 import Image from "next/image";
-
-interface IconBadgeProps {
-  iconSrc: string;
-  altText: string;
-  count: number;
-}
+import { IconBadgeProps } from "./author.types";
 
 const MAX_COUNT = 999;
 

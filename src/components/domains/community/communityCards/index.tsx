@@ -1,11 +1,12 @@
 import React from "react";
 import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
 import { Spinner } from "@/components/commons/loading/Spinner";
+import { POST_CARD_TYPES } from "@/lib/constants/post";
+import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
 interface ICommunityCardsProps {
-  postData: PostResponse[];
+  postData: PostCardProps[];
   selectedTab: string;
   isLoading?: boolean;
   isIdle?: boolean;
@@ -18,6 +19,7 @@ export default function CommunityCards({
   isIdle,
   moreRef,
 }: ICommunityCardsProps) {
+  console.log(postData);
   return (
     <section className="w-full">
       {!isIdle && postData.length === 0 && !isLoading ? (
@@ -27,47 +29,19 @@ export default function CommunityCards({
       ) : (
         <div className="grid grid-col-1 tablet:grid-cols-2 tablet:gap-y-5 tablet:gap-x-5 pc:gap-x-10 max-w-[1200px]">
           {postData.length > 0 &&
-            postData.map(
-              ({
-                id,
-                title,
-                contentText,
-                author,
-                createdAt,
-                category,
-                thumbnailUrl,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                ..._rest
-              }) => (
-                <Link
-                  key={id}
-                  href={`/community/post/${id}?from=${selectedTab}`}
-                >
-                  <PostCard
-                    id={id}
-                    thumbnail={thumbnailUrl}
-                    thumbnailUrl={thumbnailUrl}
-                    title={title}
-                    content={contentText}
-                    contentText={contentText}
-                    author={{
-                      ...author,
-                      imageUrl: author.imageUrl || "",
-                    }}
-                    createdAt={new Date(createdAt)}
-                    updatedAt={new Date(createdAt)}
-                    category={category}
-                    isCategory={selectedTab === "BEST"}
-                    isAuthor={false}
-                    userId={author.id}
-                    published={true}
-                    viewCount={0}
-                    likeCount={0}
-                    commentCount={0}
-                  />
-                </Link>
-              )
-            )}
+            postData.map((item) => (
+              <Link
+                key={item.post.id}
+                href={`/community/post/${item.post.id}?from=${selectedTab}`}
+              >
+                <PostCard
+                  key={item.post.id}
+                  {...item}
+                  isCategory={true}
+                  cardType={POST_CARD_TYPES.SMALL}
+                />
+              </Link>
+            ))}
         </div>
       )}
       <div ref={moreRef} className="py-10 text-center">

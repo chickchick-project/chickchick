@@ -60,6 +60,7 @@ const renderPerfumeCard = (item: any, index: number) => {
     <Link key={item.id || index} href={`/perfumes/${item.id}`} passHref>
       <PerfumeCard
         className="tablet:block hidden"
+        cardType="default"
         perfumeImage={item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
         brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
         perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
