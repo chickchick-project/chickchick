@@ -2,6 +2,7 @@ import {
   CommentResponse,
   CreateCommentBody,
   DeleteCommentResponse,
+  UpdateCommentBody,
 } from "@/lib/hono/schemas/comment.schema";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
@@ -84,6 +85,13 @@ export async function getCommentsByPostId(
     console.error("Error fetching comments:", error);
     throw error;
   }
+}
+
+export async function editCommentById(
+  commentId: string,
+  commentData: UpdateCommentBody
+): Promise<CommentResponse | null> {
+  return await apiClient.patch(`/comments/${commentId}`, commentData);
 }
 
 export async function deleteCommentById(
