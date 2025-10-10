@@ -1,10 +1,8 @@
 import AccordChip from "@/components/commons/chip/AccordChip";
+import { IAccordMapping } from "@/lib/types/perfumeDetail";
 
 interface PerfumeInfoMainAccordProps {
-  accords: {
-    id: string;
-    name: string;
-  }[];
+  accords: IAccordMapping[];
 }
 
 export const PerfumeInfoMainAccord = ({
@@ -16,9 +14,9 @@ export const PerfumeInfoMainAccord = ({
         메인 어코드
       </h2>
       <ul className="flex gap-2 flex-wrap">
-        {accords.map(({ id, name }) => (
-          <li key={id}>
-            <AccordChip accord={name} />
+        {accords.map(({ accord }) => (
+          <li key={accord.id}>
+            <AccordChip accord={accord.nameKo} />
           </li>
         ))}
       </ul>

@@ -1,7 +1,12 @@
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
-import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
-import { getPerfumeDetailRaw } from "@/lib/utils/getPerfumeById";
+import {
+  IPerfumeDetail,
+  IPerfumeDetailResponse,
+} from "@/lib/types/perfumeDetail";
+import { IReviewItem, IReviewsResponse } from "@/lib/types/perfumeReview";
+import { makeQueryClient } from "@/lib/utils/core-request/queryClient";
+import { createApiServerClient } from "@/lib/utils/core-request/serverClient";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function PerfumeDetailPage({
   params,
@@ -9,20 +14,34 @@ export default async function PerfumeDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeDetailRaw(
-    id
-  );
-  if (!perfumeDetailRaw) {
-    return <div>향수를 찾을 수 없습니다.</div>;
-  }
 
-  const perfumeReviewData = await getReviewData(id);
+  const api = await createApiServerClient();
+  const queryClient = makeQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["perfume", id, "detail"],
+    queryFn: () =>
+      api.get<IPerfumeDetailResponse, IPerfumeDetail>(
+        `/perfumes/${id}`,
+        undefined,
+        {
+          transformResponse: (res) => res.data,
+        }
+      ),
+  });
+
+  await queryClient.prefetchQuery({
+    queryKey: ["perfume", id, "review"],
+    queryFn: () =>
+      api.get<IReviewsResponse, IReviewItem[]>(`/reviews/${id}`, undefined, {
+        transformResponse: (res) => res.data,
+      }),
+  });
 
   return (
-    <DetailClient
-      perfumeDetail={perfumeDetailRaw}
-      reviewData={perfumeReviewData}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <DetailClient perfumeId={id} />
+    </HydrationBoundary>
   );
 }
 

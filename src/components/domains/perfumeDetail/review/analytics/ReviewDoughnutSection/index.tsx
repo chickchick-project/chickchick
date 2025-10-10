@@ -1,5 +1,5 @@
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { DoughnutChart } from "./DoughnutChart";
+import { IReviewItem } from "@/lib/types/perfumeReview";
 
 const CATEGORY_LABEL_MAP = {
   feeling: [
@@ -27,7 +27,7 @@ const CATEGORY_LABEL_MAP = {
   ],
 };
 
-const reviewAnalytics = (data: ReviewResponse[]) => {
+const reviewAnalytics = (data: IReviewItem[]) => {
   const countByCategory = (category: keyof typeof CATEGORY_LABEL_MAP) => {
     return CATEGORY_LABEL_MAP[category].map(({ key, label, color }) => ({
       label,
@@ -56,7 +56,7 @@ const reviewAnalytics = (data: ReviewResponse[]) => {
   ];
 };
 
-export const ReviewDoughnutSection = ({ data }: { data: ReviewResponse[] }) => {
+export const ReviewDoughnutSection = ({ data }: { data: IReviewItem[] }) => {
   return (
     <section className="w-full p-9 rounded-xl shadow-card">
       <ul className="grid grid-cols-[max-content_1fr] gap-x-9 gap-y-9 w-full">

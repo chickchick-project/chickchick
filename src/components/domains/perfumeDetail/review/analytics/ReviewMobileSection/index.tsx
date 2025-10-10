@@ -1,4 +1,4 @@
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { IReviewItem } from "@/lib/types/perfumeReview";
 import React, { useMemo, useState } from "react";
 
 const CATEGORY_LABEL_MAP = {
@@ -45,7 +45,7 @@ const CATEGORY_LABEL_MAP = {
 export type BarDatum = { label: string; value: number };
 export type Block = { title: string; results: BarDatum[] };
 
-const reviewAnalytics = (data: ReviewResponse[]): Block[] => {
+const reviewAnalytics = (data: IReviewItem[]): Block[] => {
   const countByCategory = (
     category: keyof typeof CATEGORY_LABEL_MAP
   ): BarDatum[] => {
@@ -192,11 +192,7 @@ function MobileAnalyticsBlock({ block }: { block: Block }) {
   );
 }
 
-export default function ReviewMobileSection({
-  data,
-}: {
-  data: ReviewResponse[];
-}) {
+export default function ReviewMobileSection({ data }: { data: IReviewItem[] }) {
   const blocks = useMemo(() => reviewAnalytics(data), [data]);
 
   return (

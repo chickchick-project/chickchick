@@ -1,6 +1,6 @@
 "use client";
 
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
+import { IPerfumeDetail } from "@/lib/types/perfumeDetail";
 import { PerfumeInfoHeader } from "./header";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";
@@ -14,7 +14,7 @@ export type InteractionStates = {
 };
 
 interface PerfumeInfoProps {
-  perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
+  perfumeInfo: IPerfumeDetail;
   interactionStates: InteractionStates;
   onToggleInteraction: (type: keyof InteractionStates) => void;
 }
@@ -24,21 +24,24 @@ export const PerfumeInfo = ({
   interactionStates,
   onToggleInteraction,
 }: PerfumeInfoProps) => {
-  const { name, brand, officialUrl, accords, notes } = perfumeInfo;
-  const isAccordAvailable = accords.length !== 0;
-  const isNoteAvailable = notes.length !== 0;
+  const { nameKo, brand, accordMappings, noteMappings } = perfumeInfo;
+  const isAccordAvailable = accordMappings.length !== 0;
+  const isNoteAvailable = noteMappings.length !== 0;
+  const officialUrl = "";
 
   return (
     <section className="w-full flex flex-col justify-between gap-10 tablet:gap-5">
       <div className="flex flex-col gap-10 tablet:gap-5 justify-between">
         <PerfumeInfoHeader
-          perfumeName={name}
-          brandName={brand}
+          perfumeName={nameKo}
+          brandName={brand.nameKo}
           interactionStates={interactionStates}
           onToggleInteraction={onToggleInteraction}
         />
-        {isAccordAvailable && <PerfumeInfoMainAccord accords={accords} />}
-        {isNoteAvailable && <PerfumeInfoNote notes={notes} />}
+        {isAccordAvailable && (
+          <PerfumeInfoMainAccord accords={accordMappings} />
+        )}
+        {isNoteAvailable && <PerfumeInfoNote notes={noteMappings} />}
       </div>
       {officialUrl && (
         <div className="self-end w-full tablet:w-[130px]">
