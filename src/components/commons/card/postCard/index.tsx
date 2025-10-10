@@ -9,12 +9,16 @@ import { PostCardProps } from "./postCard.types";
 import { PostMetaItem } from "../../author/author.types";
 
 export function PostCard({
-  post,
+  title,
+  contentText,
   author,
   createdAt,
-  isAuthor = false,
+  thumbnailUrl,
   isCategory = false,
+  category,
   cardType = POST_CARD_TYPES.DEFAULT,
+  isAuthor = false,
+  ...rest
 }: PostCardProps) {
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
@@ -23,15 +27,15 @@ export function PostCard({
   const meta: PostMetaItem[] = [
     {
       type: "Like",
-      count: post?.likeCount ?? 0,
+      count: rest.likeCount as number,
     },
     {
       type: "Comment",
-      count: post?.commentCount ?? 0,
+      count: rest.commentCount as number,
     },
     {
       type: "View",
-      count: post?.viewCount ?? 0,
+      count: rest.viewCount as number,
     },
   ];
   return (
@@ -41,7 +45,7 @@ export function PostCard({
       {/* 헤더 */}
       {isCategory && (
         <header className="flex justify-between items-center">
-          <BoardChip type={post.category} />
+          <BoardChip type={category} />
         </header>
       )}
 
@@ -51,9 +55,7 @@ export function PostCard({
           cardType === POST_CARD_TYPES.DETAIL ? "gap-4" : "gap-2"
         }`}
       >
-        <h3 className="text-body-1 font-semibold line-clamp-1">
-          {post?.title}
-        </h3>
+        <h3 className="text-body-1 font-semibold line-clamp-1">{title}</h3>
 
         {cardType === POST_CARD_TYPES.DETAIL && (
           <div className="flex justify-end">
@@ -70,15 +72,19 @@ export function PostCard({
           }`}
         >
           <p className={`text-gray-600 flex-1 ${contentClamp}`}>
-            {post?.contentText}
+            {contentText}
           </p>
-          <Thumbnail thumbnail={post?.thumbnailUrl} cardType={cardType} />
+          <Thumbnail thumbnail={thumbnailUrl} cardType={cardType} />
         </div>
       </main>
 
       {/* 푸터 */}
       <footer className="w-full flex justify-between">
-        <AuthorInfo author={author} createdAt={new Date(createdAt)} isAuthor={isAuthor} />
+        <AuthorInfo
+          author={author}
+          createdAt={new Date(createdAt)}
+          isAuthor={isAuthor}
+        />
         {cardType !== POST_CARD_TYPES.DETAIL && <PostMeta meta={meta} />}
       </footer>
     </article>

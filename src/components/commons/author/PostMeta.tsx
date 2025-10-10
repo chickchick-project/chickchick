@@ -1,7 +1,11 @@
 import React from "react";
 import IconBadge from "../author/IconBadge";
 import ICONS from "@/lib/constants/icons";
-import { PostMetaProps } from "./author.types";
+import { PostMetaItem } from "./author.types";
+
+interface PostMetaProps {
+  meta: PostMetaItem[];
+}
 
 export default function PostMeta({ meta }: PostMetaProps) {
   return (

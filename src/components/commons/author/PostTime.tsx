@@ -1,13 +1,19 @@
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";
-import { PostTimeProps } from "./author.types";
+import { InfoType, SizeStatusType } from "./author.types";
 import { SIZE_STATUSES } from "./author.constants";
 import utc from "dayjs/plugin/utc";
 
 dayjs.extend(relativeTime);
 dayjs.locale("ko");
 dayjs.extend(utc);
+
+interface PostTimeProps {
+  time: string;
+  type: InfoType["type"];
+  size: SizeStatusType;
+}
 
 export default function PostTime({ time, type, size }: PostTimeProps) {
   const now = dayjs();
