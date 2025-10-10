@@ -29,15 +29,25 @@ export default function CommentListItem({
     setReplyingCommentId,
   } = commentActionState;
   const { user } = useUserStore();
-  const { id, author, createdAt, content, postId, parentId, published } =
-    comment;
+  const {
+    id,
+    author,
+    createdAt,
+    updatedAt,
+    content,
+    postId,
+    parentId,
+    published,
+  } = comment;
   const isAuthor = author.id === user?.id;
   const isPostAuthor = author.id === postAuthorId;
   const isEditing = editingCommentId === id;
   const isReplying = replyingCommentId === id;
   const isAnyCommentBeingEdited = editingCommentId !== null;
   const isAnyCommentBeingReplied = replyingCommentId !== null;
-
+  const isEdited = updatedAt
+    ? new Date(updatedAt).getTime() - new Date(createdAt).getTime() > 1000
+    : false;
   const { deleteMutation } = useCommentMutation(postId);
   const { isPending: isDeleting } = deleteMutation;
   const userActions: ActionItem[] = [
@@ -137,7 +147,13 @@ export default function CommentListItem({
                   } leading-6`}
                 >
                   {content}
+                  {isEdited && (
+                    <span className="text-gray-100 text-label-2 ml-1">
+                      (수정됨)
+                    </span>
+                  )}
                 </p>
+
                 {published && (
                   <PostTime type="comment" time={createdAt} size="default" />
                 )}

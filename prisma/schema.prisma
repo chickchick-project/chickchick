@@ -38,11 +38,8 @@ model Brand {
   nameEn      String    @unique @map("name_en")
   nameKo      String?   @unique @map("name_ko")
   brandUrl    String?   @map("brand_url")
-
-  // Relations
   perfumes    Perfume[] @relation("BrandToPerfumes")
 
-  // Constraints
   @@map("brands")
 }
 
@@ -53,11 +50,8 @@ model PerfumeAccord {
   description    String?
   createdAt      DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt      DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations  
   accordMappings PerfumeAccordMapping[] @relation("PerfumeAccordToMappings")
 
-  // Constraints
   @@map("perfume_accords")
 }
 
@@ -68,11 +62,8 @@ model PerfumeNote {
   description  String?
   createdAt    DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt    DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations  
   noteMappings PerfumeNoteMapping[] @relation("PerfumeNoteToMappings")
 
-  // Constraints
   @@map("perfume_notes")
 }
 
@@ -84,50 +75,44 @@ model Perfume {
   updatedAt        DateTime               @updatedAt @map("updated_at") @db.Timestamptz(6)
   nameEn           String                 @unique @map("name_en")
   nameKo           String?                @unique @map("name_ko")
-
-  // Relations 
   accordMappings   PerfumeAccordMapping[] @relation("PerfumeToAccordMappings")
   bookmarks        PerfumeBookmark[]      @relation("PerfumeToBookmarks")
+  likedByUsers     PerfumeLike[]          @relation("PerfumeToLikes")
   noteMappings     PerfumeNoteMapping[]   @relation("PerfumeToNoteMappings")
   brand            Brand                  @relation("BrandToPerfumes", fields: [brandId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfumeImage     PerfumeImage?          @relation("PerfumeToImage")
   perfumeMappings  PostPerfumeMapping[]   @relation("PerfumeToPostMappings")
   reviews          Review[]               @relation("PerfumeToReviews")
   collectedByUsers UserCollection[]       @relation("PerfumeToUserCollections")
-  likedByUsers     PerfumeLike[]          @relation("PerfumeToLikes")
 
-  // Constraints
   @@map("perfumes")
 }
 
 model User {
-  id            String            @id @default(uuid()) @db.Uuid
-  name          String
-  authId        String            @unique @map("auth_id") @db.Uuid
-  email         String?           @unique
-  nickname      String            @unique
-  age           Int?
-  gender        Gender            @default(UNKNOWN)
-  createdAt     DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isActive      Boolean           @default(true) @map("is_active")
-  role          String?           @default("user")
-  imageUrl      String?           @map("image_url")
-  deletedAt     DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  id               String            @id @default(uuid()) @db.Uuid
+  name             String
+  authId           String            @unique @map("auth_id") @db.Uuid
+  email            String?           @unique
+  nickname         String            @unique
+  age              Int?
+  gender           Gender            @default(UNKNOWN)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isActive         Boolean           @default(true) @map("is_active")
+  role             String?           @default("user")
+  imageUrl         String?           @map("image_url")
+  deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  comments         Comment[]         @relation("UserToComments")
+  perfumeBookmarks PerfumeBookmark[] @relation("UserToPerfumeBookmarks")
+  perfumeLikes     PerfumeLike[]     @relation("UserToPerfumeLikes")
+  postBookmarks    PostBookmark[]    @relation("UserToPostBookmarks")
+  postLikes        PostLike[]        @relation("UserToPostLikes")
+  posts            Post[]            @relation("UserToPosts")
+  reviewLikes      ReviewLike[]      @relation("UserToReviewLikes")
+  reviews          Review[]          @relation("UserToReviews")
+  activities       UserActivity[]    @relation("UserToActivities")
+  collections      UserCollection[]  @relation("UserToCollections")
 
-  // Relations
-  comments      Comment[]         @relation("UserToComments")
-  perfumeBookmarks     PerfumeBookmark[] @relation("UserToPerfumeBookmarks")
-  postBookmarks PostBookmark[]    @relation("UserToPostBookmarks")
-  posts         Post[]            @relation("UserToPosts")
-  reviews       Review[]          @relation("UserToReviews")
-  activities    UserActivity[]    @relation("UserToActivities")
-  collections   UserCollection[]  @relation("UserToCollections")
-  perfumeLikes  PerfumeLike[]     @relation("UserToPerfumeLikes")
-  postLikes     PostLike[]        @relation("UserToPostLikes")
-  reviewLikes   ReviewLike[]      @relation("UserToReviewLikes")  
-
-  // Constraints
   @@map("users")
 }
 
@@ -136,8 +121,6 @@ model PerfumeLike {
   userId    String   @map("user_id") @db.Uuid
   perfumeId String   @map("perfume_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  
-  // Relations
   perfume   Perfume  @relation("PerfumeToLikes", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user      User     @relation("UserToPerfumeLikes", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
@@ -151,13 +134,9 @@ model PerfumeAccordMapping {
   id        String        @id @default(uuid()) @db.Uuid
   perfumeId String        @map("perfume_id") @db.Uuid
   accordId  String        @map("accord_id") @db.Uuid
-
-  // Relations
   accord    PerfumeAccord @relation("PerfumeAccordToMappings", fields: [accordId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfume   Perfume       @relation("PerfumeToAccordMappings", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([perfumeId, accordId], name: "perfume_accord_unique_constraint")
   @@unique([perfumeId, accordId], name: "perfume_accord_mappings_perfume_id_accord_id_key")
   @@map("perfume_accord_mappings")
 }
@@ -167,13 +146,9 @@ model PerfumeNoteMapping {
   perfumeId String      @map("perfume_id") @db.Uuid
   noteId    String      @map("note_id") @db.Uuid
   noteStage NoteStage   @default(NONE) @map("note_stage")
-
-  // Relations
   note      PerfumeNote @relation("PerfumeNoteToMappings", fields: [noteId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   perfume   Perfume     @relation("PerfumeToNoteMappings", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([perfumeId, noteId], name: "perfume_note_unique_constraint")
   @@unique([perfumeId, noteId], name: "perfume_note_mappings_perfume_id_note_id_key")
   @@map("perfume_note_mappings")
 }
@@ -185,11 +160,8 @@ model UserActivity {
   targetType ActivityTargetType @map("target_type")
   targetId   String             @map("target_id") @db.Uuid
   createdAt  DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  // Relations
   user       User               @relation("UserToActivities", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
   @@map("user_activities")
 }
 
@@ -199,32 +171,24 @@ model PerfumeBookmark {
   perfumeId String   @map("perfume_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   isPublic  Boolean  @default(true)
-
-  // Relations
   perfume   Perfume  @relation("PerfumeToBookmarks", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user      User     @relation("UserToPerfumeBookmarks", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([userId, perfumeId], name: "user_perfume_bookmark_unique")
   @@unique([userId, perfumeId], name: "perfume_bookmarks_user_id_perfume_id_key")
   @@map("perfume_bookmarks")
 }
 
 model UserCollection {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @map("user_id") @db.Uuid
-  perfumeId String   @map("perfume_id") @db.Uuid
-  comment   String? 
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  isPublic  Boolean  @default(true)
-
-  // Relations
-  perfume   Perfume  @relation("PerfumeToUserCollections", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user      User     @relation("UserToCollections", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id        String           @id @default(uuid()) @db.Uuid
+  userId    String           @map("user_id") @db.Uuid
+  perfumeId String           @map("perfume_id") @db.Uuid
+  createdAt DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  isPublic  Boolean          @default(true)
+  comment   String?
   image     CollectionImage? @relation("CollectionToImage")
+  perfume   Perfume          @relation("PerfumeToUserCollections", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User             @relation("UserToCollections", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([userId, perfumeId], name: "user_collections_user_id_perfume_id_key")
   @@unique([userId, perfumeId], name: "user_collections_user_id_perfume_id_key")
   @@map("user_collections")
 }
@@ -234,13 +198,9 @@ model PostPerfumeMapping {
   postId    String   @map("post_id") @db.Uuid
   perfumeId String   @map("perfume_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
-
-  // Relations
   perfume   Perfume  @relation("PerfumeToPostMappings", fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   post      Post     @relation("PostToPerfumeMappings", fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([postId, perfumeId], name: "post_perfume_unique_constraint")
   @@unique([postId, perfumeId], name: "post_perfume_mappings_post_id_perfume_id_key")
   @@map("post_perfume_mappings")
 }
@@ -250,13 +210,9 @@ model PostBookmark {
   userId    String   @map("user_id") @db.Uuid
   postId    String   @map("post_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  // Relations
   post      Post     @relation("PostToBookmarks", fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user      User     @relation("UserToPostBookmarks", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([userId, postId], name: "post_bookmarks_user_id_post_id_key")
   @@unique([userId, postId], name: "post_bookmarks_user_id_post_id_key")
   @@map("post_bookmarks")
 }
@@ -266,13 +222,9 @@ model PostLike {
   userId    String   @map("user_id") @db.Uuid
   postId    String   @map("post_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-
-  // Relations
   post      Post     @relation("PostToLikes", fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   user      User     @relation("UserToPostLikes", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
-  // Constraints
-  // @@unique([userId, postId], name: "user_post_like_unique")
   @@unique([userId, postId], name: "post_likes_user_id_post_id_key")
   @@map("post_likes")
 }
@@ -291,33 +243,27 @@ model Post {
   createdAt       DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt       DateTime?            @updatedAt @map("updated_at") @db.Timestamptz(6)
   contentText     String
-  
-  // Relations
   comments        Comment[]            @relation("PostToComments")
   bookmarks       PostBookmark[]       @relation("PostToBookmarks")
   likes           PostLike[]           @relation("PostToLikes")
   perfumeMappings PostPerfumeMapping[] @relation("PostToPerfumeMappings")
   author          User                 @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
 
-  // Constraints
   @@map("posts")
 }
 
 model Review {
-  id          String    @id @default(uuid()) @db.Uuid
-  content     String
-  usageStatus PerfumeUsageStatus @default(NOT_USED_YET) @map("usage_status")
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-
-  // Relations
-  authorId    String    @map("author_id") @db.Uuid
-  author      User      @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
-
-  perfumeId   String    @map("perfume_id") @db.Uuid
-  perfume     Perfume   @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
-  likes       ReviewLike[] @relation("ReviewToLikes")
+  id                  String                     @id @default(uuid()) @db.Uuid
+  content             String
+  authorId            String                     @map("author_id") @db.Uuid
+  perfumeId           String                     @map("perfume_id") @db.Uuid
+  usageStatus         PerfumeUsageStatus         @default(NOT_USED_YET) @map("usage_status")
+  createdAt           DateTime                   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt           DateTime                   @updatedAt @map("updated_at") @db.Timestamptz(6)
   attributeSelections ReviewAttributeSelection[]
+  likes               ReviewLike[]               @relation("ReviewToLikes")
+  author              User                       @relation("UserToReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  perfume             Perfume                    @relation("PerfumeToReviews", fields: [perfumeId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }
@@ -326,47 +272,40 @@ model ReviewLike {
   id       String @id @default(uuid()) @db.Uuid
   userId   String @map("user_id") @db.Uuid
   reviewId String @map("review_id") @db.Uuid
-
-  user   User   @relation("UserToReviewLikes", fields: [userId], references: [id], onDelete: Cascade)
-  review Review @relation("ReviewToLikes", fields: [reviewId], references: [id], onDelete: Cascade)
+  review   Review @relation("ReviewToLikes", fields: [reviewId], references: [id], onDelete: Cascade)
+  user     User   @relation("UserToReviewLikes", fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, reviewId], name: "review_likes_user_id_review_id_key")
   @@map("review_likes")
 }
-  
-model ReviewAttribute {
-  id    Int     @id @default(autoincrement())
-  key   String  @unique
-  name  String  
 
+model ReviewAttribute {
+  id      Int               @id @default(autoincrement())
+  key     String            @unique
+  name    String
   options AttributeOption[]
 
   @@map("review_attributes")
 }
 
 model AttributeOption {
-  id    Int     @id @default(autoincrement())
-  value String  
-  name  String  
-
-  attributeId Int                @map("attribute_id")
-  attribute   ReviewAttribute    @relation(fields: [attributeId], references: [id])
-  
+  id          Int                        @id @default(autoincrement())
+  value       String
+  name        String
+  attributeId Int                        @map("attribute_id")
+  attribute   ReviewAttribute            @relation(fields: [attributeId], references: [id])
   selections  ReviewAttributeSelection[]
 
-  @@unique([attributeId, value], name:"attribute_options_attribute_id_value_key")
+  @@unique([attributeId, value], name: "attribute_options_attribute_id_value_key")
   @@map("attribute_options")
 }
 
 model ReviewAttributeSelection {
-  reviewId        String   @map("review_id") @db.Uuid
-  attributeOptionId Int    @map("attribute_option_id")
+  reviewId          String          @map("review_id") @db.Uuid
+  attributeOptionId Int             @map("attribute_option_id")
+  option            AttributeOption @relation(fields: [attributeOptionId], references: [id])
+  review            Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
-  // Relations
-  review          Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  option          AttributeOption @relation(fields: [attributeOptionId], references: [id])
-
-  // Composite Primary Key
   @@id([reviewId, attributeOptionId])
   @@map("review_attribute_selections")
 }
@@ -379,15 +318,12 @@ model Comment {
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
   updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   postId    String    @map("post_id") @db.Uuid
-  published Boolean   @default(true) 
-  
-  // Relations
+  published Boolean   @default(true)
   author    User      @relation("UserToComments", fields: [authorId], references: [id], onDelete: Cascade)
   parent    Comment?  @relation("CommentToReplies", fields: [parentId], references: [id], onDelete: NoAction)
   replies   Comment[] @relation("CommentToReplies")
   post      Post      @relation("PostToComments", fields: [postId], references: [id], onDelete: Cascade)
 
-  // Constraints
   @@index([postId, createdAt])
   @@index([parentId, createdAt])
   @@map("comments")
@@ -398,29 +334,22 @@ model PerfumeImage {
   imageUrl  String   @map("image_url")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
   perfumeId String   @unique @map("perfume_id") @db.Uuid
-
-  // Relations
   perfume   Perfume  @relation("PerfumeToImage", fields: [perfumeId], references: [id])
 
-  // Constraints
   @@map("perfumes_image")
 }
 
-
 model CollectionImage {
-  id        String   @id @default(uuid()) @db.Uuid
-  imageUrl  String   @map("image_url")
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  collectionId String   @unique @map("collection_id") @db.Uuid
-  width        Int
+  id           String         @id @default(uuid()) @db.Uuid
+  imageUrl     String         @map("image_url")
+  createdAt    DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  collectionId String         @unique @map("collection_id") @db.Uuid
+  format       ImageFormat    @default(UNKNOWN)
   height       Int
-  format       ImageFormat @default(UNKNOWN)
-
-  // Relations
+  width        Int
   collection   UserCollection @relation("CollectionToImage", fields: [collectionId], references: [id], onDelete: Cascade)
 
-  // Constraints
-    @@map("collection_image")
+  @@map("collection_image")
 }
 
 enum ImageFormat {
