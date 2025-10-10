@@ -1,75 +1,115 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
-import {
-  renderMyReviews,
-  renderMyPosts,
-  renderMyComments,
-  renderLikedPerfumes,
-  renderLikedPosts,
-} from "./activitySection.helper";
-import { ActivityData } from "../sections.type";
 import { SubTabItem } from "../../tabs/tabs.type";
 
-export const ActivitySection = ({ data }: { data: ActivityData }) => {
-  const [activeTab, setActiveTab] = useState("myReviews");
-  const tabItems: SubTabItem[] = [
-    {
-      key: "myReviews",
-      label: "나의 리뷰",
-    },
-    {
-      key: "myPosts",
-      label: "내가 쓴 게시글",
-    },
-    {
-      key: "myComments",
-      label: "내가 쓴 댓글",
-    },
-    {
-      key: "likedPerfumes",
-      label: "좋아요 한 향수",
-    },
-    {
-      key: "likedPosts",
-      label: "좋아요 한 글",
-    },
-  ];
-  if (!data) {
-    return (
-      <div className="flex justify-center items-center h-[200px]">
-        <p>활동 데이터를 불러올 수 없습니다.</p>
-      </div>
-    );
-  }
+import { SkeletonCard, SkeletonComment, SkeletonPerfume } from "../Skeleton";
 
-  const renderActiveTabContent = () => {
-    switch (activeTab) {
-      case "myReviews":
-        return renderMyReviews(data.myReviews || []);
-      case "myPosts":
-        return renderMyPosts(data.myPosts || []);
-      case "myComments":
-        return renderMyComments(data.myComments || []);
-      case "likedPerfumes":
-        return renderLikedPerfumes(data.likedPerfumes || []);
-      case "likedPosts":
-        return renderLikedPosts(data.likedPosts || []);
-      default:
-        return null;
-    }
+const MyReviewListLoader = dynamic(
+  () => import("./loader/MyReviewListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonCard />,
+  }
+);
+const MyPostListLoader = dynamic(() => import("./loader/MyPostListLoader"), {
+  ssr: false,
+  loading: () => <SkeletonCard />,
+});
+const LikePerfumeListLoader = dynamic(
+  () => import("./loader/LikePerfumeListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonPerfume />,
+  }
+);
+const LikePostListLoader = dynamic(
+  () => import("./loader/LikePostListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonCard />,
+  }
+);
+const MyCommentsListLoader = dynamic(
+  () => import("./loader/MyCommentsListLoader"),
+  {
+    ssr: false,
+    loading: () => <SkeletonComment />,
+  }
+);
+
+const ACTIVITY_TABS_CONFIG = [
+  {
+    key: "myReviews",
+    label: "나의 리뷰",
+    component: <MyReviewListLoader />,
+  },
+  {
+    key: "myPosts",
+    label: "내가 쓴 게시글",
+    component: <MyPostListLoader />,
+  },
+  {
+    key: "likedPerfumes",
+    label: "좋아요 한 향수",
+    component: <LikePerfumeListLoader />,
+  },
+  {
+    key: "likedPosts",
+    label: "좋아요 한 글",
+    component: <LikePostListLoader />,
+  },
+  {
+    key: "myComments",
+    label: "내가 쓴 댓글",
+    component: <MyCommentsListLoader />,
+  },
+] as const;
+
+type ActivityTabKey = (typeof ACTIVITY_TABS_CONFIG)[number]["key"];
+
+const isValidActivityTabKey = (key: string | null): key is ActivityTabKey => {
+  return ACTIVITY_TABS_CONFIG.some((tab) => tab.key === key);
+};
+
+export const ActivitySection = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const currentTab = searchParams.get("tab");
+
+  const activeTab: ActivityTabKey = isValidActivityTabKey(currentTab)
+    ? currentTab
+    : "myReviews";
+
+  const tabItems: SubTabItem<ActivityTabKey>[] = ACTIVITY_TABS_CONFIG.map(
+    ({ key, label }) => ({
+      key,
+      label,
+    })
+  );
+
+  const TABS = ACTIVITY_TABS_CONFIG.reduce((acc, tab) => {
+    acc[tab.key] = tab.component;
+    return acc;
+  }, {} as Record<ActivityTabKey, React.ReactNode>);
+
+  const handleTabChange = (key: ActivityTabKey) => {
+    router.replace(`?tab=${key}`, { scroll: false });
   };
 
   return (
-    <>
-      <SubTabSwitcher
+    <div className="h-[800px] overflow-y-auto pr-1">
+      <SubTabSwitcher<ActivityTabKey>
         activeTab={activeTab}
-        onTabChange={(key) => setActiveTab(key)}
+        onTabChange={handleTabChange}
         tabs={tabItems}
       />
 
-      <div className="mt-6">{renderActiveTabContent()}</div>
-    </>
+      {TABS[activeTab]}
+    </div>
   );
 };

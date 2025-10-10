@@ -1,7 +1,15 @@
-import { PostBookmark, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
-import * as CommunitySchemas from "../schemas/community.schema";
-import { createCursorPaginationResult } from "../utils/pagination";
+import type {
+  ApiPostStatusResponse,
+  CreatePostInput,
+  GetPostsQuery,
+  UpdatePostInput,
+} from "../schemas/community.schema";
+import {
+  createCursorPaginationResult,
+  PaginationResult,
+} from "../utils/pagination";
 import {
   serviceInternalError,
   ServiceResult,
@@ -23,34 +31,34 @@ const postWithAuthorArgs = { include: postIncludeArgs };
 
 export type PostWithAuthor = Prisma.PostGetPayload<typeof postWithAuthorArgs>;
 
-const postDetailArgs = {
-  include: {
-    ...postIncludeArgs,
-    perfumeMappings: {
-      select: {
-        perfume: {
-          select: {
-            id: true,
-            nameEn: true,
-            nameKo: true,
-            brand: {
-              select: {
-                nameEn: true,
-                nameKo: true,
-              },
-            },
-            perfumeImage: { select: { imageUrl: true } },
-          },
+const postDetailIncludeArgs = {
+  ...postIncludeArgs,
+  perfumeMappings: {
+    select: {
+      perfume: {
+        select: {
+          id: true,
+          nameEn: true,
+          nameKo: true,
+          brand: { select: { nameEn: true, nameKo: true } },
+          perfumeImage: { select: { imageUrl: true } },
         },
       },
     },
   },
-};
+} satisfies Prisma.PostInclude;
+
+export type BasePost = Prisma.PostGetPayload<{
+  include: typeof postIncludeArgs;
+}>;
+export type FullPost = Prisma.PostGetPayload<{
+  include: typeof postDetailIncludeArgs;
+}>;
 
 // --- 서비스 함수들 ---
 export async function getPaginatedPostListService(
-  params: CommunitySchemas.GetPostsQuery
-): Promise<ServiceResult<CommunitySchemas.PaginatedPostListResponse>> {
+  params: GetPostsQuery
+): Promise<ServiceResult<PaginationResult<BasePost>>> {
   try {
     const { category, sortBy, q, cursor, limit } = params;
     const fetchLimit = limit + 1;
@@ -82,22 +90,28 @@ export async function getPaginatedPostListService(
       prisma.post.count({ where }),
     ]);
 
-    const transformedPosts = posts.map((post) => ({
-      //논의 필요
-      ...post,
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt?.toISOString() || null,
-    }));
+    // const transformedPosts = posts.map((post) => ({
+    //   //논의 필요
+    //   ...post,
+    //   createdAt: post.createdAt.toISOString(),
+    //   updatedAt: post.updatedAt?.toISOString() || null,
+    // }));
+    // const paginatedResult = createCursorPaginationResult(
+    //   transformedPosts,
+    //   totalCount,
+    //   limit
+    // );
+    // return serviceSuccess({
+    //   data: paginatedResult.data,
+    //   totalCount: paginatedResult.totalCount,
+    //   nextCursor: paginatedResult.nextCursor,
+    // });
     const paginatedResult = createCursorPaginationResult(
-      transformedPosts,
+      posts,
       totalCount,
       limit
     );
-    return serviceSuccess({
-      data: paginatedResult.data,
-      totalCount: paginatedResult.totalCount,
-      nextCursor: paginatedResult.nextCursor,
-    });
+    return serviceSuccess(paginatedResult);
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -106,32 +120,24 @@ export async function getPaginatedPostListService(
 export async function getPostByIdService(
   id: string,
   userId?: string | null
-): Promise<ServiceResult<CommunitySchemas.PostDetailResponse>> {
+): Promise<ServiceResult<FullPost & { isAuthor: boolean }>> {
   try {
     const post = await prisma.$transaction(async (tx) => {
       await tx.post.update({
         where: { id },
-        data: { viewCount: { increment: 1 } }, //조회수 증가로직 게시글 조회 시 1 올릴지 따로 api를 만들지 논의 필요
+        data: { viewCount: { increment: 1 } },
       });
       return tx.post.findUnique({
         where: { id },
-        ...postDetailArgs,
+        include: postDetailIncludeArgs,
       });
     });
 
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
-    const { perfumeMappings, ...restOfPost } = post;
     const isAuthor = post.userId === userId;
-    const result: CommunitySchemas.PostDetailResponse = {
-      ...restOfPost,
-      isAuthor,
-      perfumes: perfumeMappings.map((mapping) => mapping.perfume),
-      createdAt: post.createdAt.toISOString(),
-      updatedAt: post.updatedAt?.toISOString() || null,
-    };
-    return serviceSuccess(result);
+    return serviceSuccess({ ...post, isAuthor });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -140,7 +146,7 @@ export async function getPostByIdService(
 export async function getPostStatusByIdService(
   postId: string,
   userId?: string | null
-): Promise<ServiceResult<CommunitySchemas.PostStatusResponse>> {
+): Promise<ServiceResult<ApiPostStatusResponse>> {
   try {
     const [postCounts, like, bookmark] = await Promise.all([
       prisma.post.findUnique({
@@ -164,7 +170,7 @@ export async function getPostStatusByIdService(
       return serviceNotFound("게시글 상태 정보를 찾을 수 없습니다.");
     }
 
-    const result: CommunitySchemas.PostStatusResponse = {
+    const result: ApiPostStatusResponse = {
       ...postCounts,
       isLiked: !!like,
       isBookmarked: !!bookmark,
@@ -177,12 +183,11 @@ export async function getPostStatusByIdService(
 }
 
 export async function createPostService(
-  payload: CommunitySchemas.CreatePostPayload
+  payload: CreatePostInput & { authorId: string }
 ): Promise<ServiceResult<PostWithAuthor>> {
   const { authorId, perfumeIds, ...rest } = payload;
   try {
     const userCheck = await checkResourceExists("user", authorId, "사용자");
-
     if (!userCheck.success) return userCheck;
 
     const newPost = await prisma.post.create({
@@ -190,14 +195,10 @@ export async function createPostService(
         ...rest,
         userId: authorId,
         perfumeMappings: perfumeIds
-          ? {
-              create: perfumeIds.map((perfumeId) => ({
-                perfume: { connect: { id: perfumeId } },
-              })),
-            }
+          ? { create: perfumeIds.map((perfumeId) => ({ perfumeId })) }
           : undefined,
       },
-      ...postWithAuthorArgs,
+      include: postIncludeArgs,
     });
     return serviceSuccess(newPost);
   } catch (error) {
@@ -208,8 +209,8 @@ export async function createPostService(
 export async function updatePostService(
   postId: string,
   authorId: string,
-  updateData: CommunitySchemas.UpdatePost
-): Promise<ServiceResult<PostWithAuthor>> {
+  updateData: UpdatePostInput
+): Promise<ServiceResult<BasePost>> {
   try {
     const { perfumeIds, ...postUpdateData } = updateData;
     const uuidValidation = validateUuid(postId, "게시글");
@@ -239,7 +240,7 @@ export async function updatePostService(
                 }
               : undefined,
         },
-        ...postWithAuthorArgs,
+        include: postIncludeArgs,
       });
       return post;
     });
@@ -253,7 +254,7 @@ export async function updatePostService(
 export async function deletePostService(
   postId: string,
   authorId: string
-): Promise<ServiceResult<PostWithAuthor>> {
+): Promise<ServiceResult<{ message: string }>> {
   try {
     const uuidValidation = validateUuid(postId, "게시글");
     if (!uuidValidation.success) return uuidValidation;
@@ -261,23 +262,17 @@ export async function deletePostService(
     const post = await prisma.post.findUnique({
       where: { id: postId },
     });
-    if (!post) {
-      return serviceNotFound("게시글을 찾을 수 없습니다.");
-    }
-    if (post.userId !== authorId) {
+    if (!post) return serviceNotFound("게시글을 찾을 수 없습니다.");
+    if (post.userId !== authorId)
       return serviceForbidden("게시글 삭제 권한이 없습니다.");
-    }
-    if (!post.published) {
-      return serviceBadRequest("이미 삭제된 게시글입니다.");
-    }
+    if (!post.published) return serviceBadRequest("이미 삭제된 게시글입니다.");
 
-    const deletedPost = await prisma.post.update({
+    await prisma.post.update({
       where: { id: postId },
       data: { published: false },
-      ...postWithAuthorArgs,
     });
 
-    return serviceSuccess(deletedPost);
+    return serviceSuccess({ message: "게시글을 성공적으로 삭제했습니다." });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -286,79 +281,74 @@ export async function deletePostService(
 export async function togglePostLikeService(
   postId: string,
   userId: string
-): Promise<ServiceResult<PostWithAuthor>> {
+): Promise<ServiceResult<{ liked: boolean; likeCount: number }>> {
   try {
     const postCheck = await checkResourceExists("post", postId, "게시글");
     if (!postCheck.success) return postCheck;
 
-    const updatedPost = await prisma.$transaction(async (tx) => {
-      const like = await tx.postLike.findUnique({
-        where: { post_likes_user_id_post_id_key: { postId, userId } },
-      });
+    const like = await prisma.postLike.findUnique({
+      where: { post_likes_user_id_post_id_key: { postId, userId } },
+    });
 
-      if (like) {
-        await tx.postLike.delete({ where: { id: like.id } });
-        return tx.post.update({
+    if (like) {
+      const [, updatedPost] = await prisma.$transaction([
+        prisma.postLike.delete({ where: { id: like.id } }),
+        prisma.post.update({
           where: { id: postId },
           data: { likeCount: { decrement: 1 } },
-          ...postWithAuthorArgs,
-        });
-      } else {
-        await tx.postLike.create({ data: { postId, userId } });
-        return tx.post.update({
+          select: { likeCount: true },
+        }),
+      ]);
+      return serviceSuccess({ liked: false, likeCount: updatedPost.likeCount });
+    } else {
+      const [, updatedPost] = await prisma.$transaction([
+        prisma.postLike.create({ data: { postId, userId } }),
+        prisma.post.update({
           where: { id: postId },
           data: { likeCount: { increment: 1 } },
-          ...postWithAuthorArgs,
-        });
-      }
-    });
-    return serviceSuccess(updatedPost);
+          select: { likeCount: true },
+        }),
+      ]);
+      return serviceSuccess({ liked: true, likeCount: updatedPost.likeCount });
+    }
   } catch (error) {
     return serviceInternalError(error);
   }
 }
-
 export async function togglePostBookmarkService(
   postId: string,
   userId: string
-): Promise<ServiceResult<PostBookmark | null>> {
+): Promise<ServiceResult<{ bookmarked: boolean }>> {
   try {
     const postCheck = await checkResourceExists("post", postId, "게시글");
     if (!postCheck.success) return postCheck;
 
-    const updatedPost = await prisma.$transaction(async (tx) => {
-      const bookmark = await tx.postBookmark.findUnique({
-        where: { post_bookmarks_user_id_post_id_key: { postId, userId } },
-      });
-
-      if (bookmark) {
-        // 북마크가 있으면 삭제
-        return tx.postBookmark.delete({
-          where: { id: bookmark.id },
-        });
-      } else {
-        // 북마크가 없으면 생성
-        return tx.postBookmark.create({
-          data: { postId, userId },
-        });
-      }
+    const bookmark = await prisma.postBookmark.findUnique({
+      where: { post_bookmarks_user_id_post_id_key: { postId, userId } },
     });
-    return serviceSuccess(updatedPost);
+
+    if (bookmark) {
+      await prisma.postBookmark.delete({ where: { id: bookmark.id } });
+      return serviceSuccess({ bookmarked: false });
+    } else {
+      await prisma.postBookmark.create({ data: { postId, userId } });
+      return serviceSuccess({ bookmarked: true });
+    }
   } catch (error) {
     return serviceInternalError(error);
   }
 }
 
-export async function getBookmarkedPostService(userId: string) {
-  try {
-    const bookmarkedPosts = await prisma.postBookmark.findMany({
-      where: { userId },
-      include: {
-        post: true,
-      },
-    });
-    return serviceSuccess(bookmarkedPosts);
-  } catch (error) {
-    return serviceInternalError(error);
-  }
-}
+// export async function getBookmarkedPostService(userId: string) {
+//   try {
+//     const bookmarkedPosts = await prisma.postBookmark.findMany({
+//       where: { userId },
+//       include: {
+//         post: true,
+//       },
+//     });
+//     return serviceSuccess(bookmarkedPosts);
+//   } catch (error) {
+//     return serviceInternalError(error);
+//   }
+// }

@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { PerfumeBaseResponseSchema } from "./perfume.schema";
+import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
 
 // GET 요청의 쿼리 파라미터 스키마
 export const SearchGetQuerySchema = z.object({
@@ -18,7 +18,7 @@ export const SearchPostBodySchema = z.object({
   limit: z.number().int().positive().optional().default(15),
 });
 export const PaginatedSearchResponseSchema = z.object({
-  data: z.array(PerfumeBaseResponseSchema),
+  data: z.array(ApiPerfumeSimpleResponseSchema),
   totalCount: z.number().int(),
   nextCursor: z.string().uuid().nullable(),
 });

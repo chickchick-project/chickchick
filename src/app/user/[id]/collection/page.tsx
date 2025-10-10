@@ -1,11 +1,9 @@
 import React from "react";
-import type { User } from "@prisma/client";
-import { notFound } from "next/navigation";
-import { fetchUserById } from "@/lib/queries/userQueries";
 import { CollectionSection } from "@/components/domains/user/sections";
 import { fetchUserCollections } from "@/components/domains/user/user.helper";
-
-const USER_REGEX = /^[0-9a-fA-F-]{36}$/;
+import { notFound } from "next/navigation";
+import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import { getUserById } from "@/lib/utils/getUserProfile";
 
 export default async function UserPage({
   params,
@@ -13,15 +11,11 @@ export default async function UserPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: pageOwnerId } = await params;
+  let user: ApiMyProfileResponse | null;
 
-  let user: User | null = null;
   try {
-    const userResult = await fetchUserById(pageOwnerId);
-    if (!userResult.success || !userResult.data) {
-      return notFound();
-    }
-    user = userResult.data;
-    if (typeof user.id !== "string" || !USER_REGEX.test(user.id)) {
+    user = await getUserById(pageOwnerId);
+    if (!user) {
       return notFound();
     }
   } catch (error) {
@@ -33,8 +27,8 @@ export default async function UserPage({
 
   return (
     <CollectionSection
-      pageOwner={user}
       initialCollectionData={initialCollectionData.data}
+      user={user}
     />
   );
 }

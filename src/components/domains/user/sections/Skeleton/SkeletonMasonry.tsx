@@ -6,7 +6,7 @@ const skeletonHeightsCols = [
 ];
 
 export const SkeletonMasonry = () => (
-  <div className="columns-4 gap-4 animate-pulse">
+  <div className="columns-4 gap-4 animate-pulse" aria-hidden="true">
     {skeletonHeightsCols.map((heights, colIndex) => (
       <div key={colIndex} className="column">
         {heights.map((height, rowIndex) => (

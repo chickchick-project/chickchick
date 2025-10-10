@@ -4,7 +4,7 @@ import type {
   SearchPostBody,
   PaginatedSearchResponse,
 } from "../schemas/search.schema";
-import type { PerfumeBaseResponse } from "../schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "../schemas/perfume.schema";
 import {
   serviceInternalError,
   ServiceResult,
@@ -21,7 +21,9 @@ interface SupabasePerfume {
   image_url: string;
 }
 
-function transformSupabasePerfume(p: SupabasePerfume): PerfumeBaseResponse {
+function transformSupabasePerfume(
+  p: SupabasePerfume
+): ApiPerfumeSimpleResponse {
   return {
     id: p.perfume_id,
     nameEn: p.perfume_name_en,

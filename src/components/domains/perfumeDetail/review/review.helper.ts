@@ -1,35 +1,55 @@
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
-import { REVIEW_OPTIONS } from "../../reviewModal/constants";
+import type {
+  ApiReviewResponse,
+  CreateReviewInput,
+} from "@/lib/hono/schemas/review.schema";
+import { createHttpClient } from "@/lib/utils/core-request";
 
-export async function getReviewData(id: string): Promise<ReviewResponse[]> {
+interface RawApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+}
+
+const apiClient = createHttpClient({
+  baseUrl:
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
+});
+
+export async function getReviewData(id: string): Promise<ApiReviewResponse[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/v1/reviews/${id}`, {
-      cache: "no-store",
-      next: {
-        tags: ["review", `perfume-${id}`],
-      },
-    });
-
-    const { data } = await res.json();
-    if (!res.ok) {
-      console.error("Failed to fetch review data:", res.statusText);
-      return [];
-    }
-
-    return data;
+    const res = await apiClient.get<RawApiResponse<ApiReviewResponse[]>>(
+      `/reviews/${id}`
+    );
+    if (!res) return [];
+    return res.data;
   } catch (error) {
     console.error("Error in getReviewData:", error);
     return [];
   }
 }
 
-export type ReviewCategory = keyof typeof REVIEW_OPTIONS;
+export async function fetchReviewData(id: string, payload: CreateReviewInput) {
+  try {
+    const formData = new FormData();
 
-export function getLabelByKey(category: ReviewCategory, key: string) {
-  const option = REVIEW_OPTIONS[category];
-  if (!option) return key;
+    formData.append("content", payload.content);
+    formData.append("usageStatus", payload.usageStatus);
 
-  const found = option.find((item: { key: string }) => item.key === key);
-  return found ? found.tag : key;
+    if (payload.attributes) {
+      Object.entries(payload.attributes).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach((item) => formData.append(`attributes.${key}`, item));
+        } else if (value !== undefined) {
+          formData.append(`attributes.${key}`, value);
+        }
+      });
+    }
+    await apiClient.post<RawApiResponse<ApiReviewResponse>>(
+      `/reviews/${id}`,
+      formData
+    );
+  } catch (error) {
+    console.error("Error in fetchReviewData:", error);
+    return {};
+  }
 }

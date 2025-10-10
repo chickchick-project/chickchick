@@ -9,7 +9,7 @@ import {
   getApiSortBy,
   getUniquePostList,
 } from "./community.helpers";
-import { PostResponse } from "@/lib/hono/schemas/community.schema";
+import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 import { Option, TSortBy } from "@/lib/constants/options";
 import { PostCategory } from "@prisma/client";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
@@ -87,13 +87,13 @@ export default function PageClient() {
   // );
 
   // const { data, isLoading, moreRef, isIdle } =
-  //   useInfiniteScroll<PostResponse>(fetcher);
+  //   useInfiniteScroll<ApiPostResponse>(fetcher);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<
-      SearchResponse<PostResponse>,
+      SearchResponse<ApiPostResponse>,
       Error,
-      InfiniteData<SearchResponse<PostResponse>>,
+      InfiniteData<SearchResponse<ApiPostResponse>>,
       (string | null)[],
       string | null
     >({
@@ -118,23 +118,19 @@ export default function PageClient() {
     }
   }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const postCardData = useMemo(() => {
+  const uniquePostData = useMemo(() => {
     const allPosts = data?.pages.flatMap((page) => page.data) ?? [];
     const uniquePosts = getUniquePostList(allPosts);
-    return uniquePosts.map((post) => ({
-      id: post.id,
-      post: {
-        ...post,
-        userId: post.author.id,
-        published: true,
-      },
-      author: post.author,
-      createdAt: post.createdAt,
+    const postCardProps = uniquePosts.map((post) => ({
+      ...post,
       isAuthor: false,
+      userId: post.author.id,
+      published: true,
     }));
+    return postCardProps;
   }, [data]);
 
-  const isIdle = !isLoading && postCardData.length === 0;
+  const isIdle = !isLoading && uniquePostData.length === 0;
   return (
     <div className="px-4 w-full flex flex-col  gap-5">
       <Header
@@ -149,7 +145,7 @@ export default function PageClient() {
       />
       <main className="pb-[280px] tablet:max-w-[1200px]">
         <CommunityCards
-          postData={postCardData}
+          postData={uniquePostData}
           selectedTab={selectedTab}
           isLoading={isLoading}
           moreRef={moreRef}

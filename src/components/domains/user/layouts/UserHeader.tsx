@@ -3,17 +3,17 @@
 import Image from "next/image";
 import LevelChip from "@/components/commons/chip/LevelChip";
 import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
-import { User } from "@prisma/client";
+import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 
-const UserHeader = ({ user }: { user: User }) => {
-  const profileImageSrc = user.imageUrl || DEFAULT_PROFILE_IMAGE;
+const UserHeader = ({ user }: { user: ApiMyProfileResponse }) => {
+  const profileImageSrc = user?.imageUrl || DEFAULT_PROFILE_IMAGE;
   return (
     <header className="ml-10 mb-16 flex items-center gap-4">
       <div className="flex items-center gap-5">
         <Image src={profileImageSrc} width={140} height={140} alt="프로필" />
         <div className="flex flex-col my-[7px] gap-1">
           <LevelChip level={1} />
-          <span className="text-headline-1 font-bold">{user.nickname}</span>
+          <span className="text-headline-1 font-bold">{user?.nickname}</span>
           <div className="flex text-body-1 font-semibold text-black-100 gap-x-5">
             <span>글 123개</span>
             <span>리뷰 123개</span>

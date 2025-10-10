@@ -1,11 +1,12 @@
 import Image from "next/image";
 import ICONS from "@/lib/constants/icons";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+
 import clsx from "clsx";
 
 interface PerfumeResultItemProps {
-  perfume: PerfumeBaseResponse;
-  onToggle: (perfume: PerfumeBaseResponse) => void;
+  perfume: ApiPerfumeSimpleResponse;
+  onToggle: (perfume: ApiPerfumeSimpleResponse) => void;
   isSelected: boolean;
   isTempSelected: boolean;
   isDisabled: boolean;

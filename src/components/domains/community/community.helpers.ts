@@ -5,7 +5,7 @@ import {
 } from "@/lib/constants/options";
 import {
   GetPostsQuery,
-  PostResponse,
+  ApiPostResponse,
 } from "@/lib/hono/schemas/community.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
@@ -20,7 +20,7 @@ type FetchCommunityPostListParams = {
 
 async function fetchCommunityPostList(
   params: FetchCommunityPostListParams
-): Promise<SearchResponse<PostResponse>> {
+): Promise<SearchResponse<ApiPostResponse>> {
   try {
     const queryParams = new URLSearchParams();
 
@@ -61,8 +61,8 @@ async function fetchCommunityPostList(
   }
 }
 
-const getUniquePostList = (postList: PostResponse[]) => {
-  const postMap = new Map<string, PostResponse>();
+const getUniquePostList = (postList: ApiPostResponse[]) => {
+  const postMap = new Map<string, ApiPostResponse>();
   postList.forEach((post) => {
     if (!postMap.has(post.id)) {
       postMap.set(post.id, post);

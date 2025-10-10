@@ -1,10 +1,9 @@
 "use client";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { PostRelatedPerfumeResponse } from "@/lib/hono/schemas/community.schema";
 import Link from "next/link";
-
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 interface IRelatedPerfumeProps {
-  perfumes: PostRelatedPerfumeResponse[];
+  perfumes: ApiPerfumeSimpleResponse[];
 }
 
 export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {
@@ -14,7 +13,7 @@ export default function RelatedPerfume({ perfumes }: IRelatedPerfumeProps) {
         관련된 향수
       </h2>
       <div className="grid tablet:grid-cols-5 grid-cols-3 tablet:gap-x-6 gap-x-4  mobile:gap-y-5 gap-y-4 mt-5">
-        {perfumes.map((item: PostRelatedPerfumeResponse) => (
+        {perfumes.map((item: ApiPerfumeSimpleResponse) => (
           <Link key={item.id} href={`/perfumes/${item.id}`}>
             <PerfumeCard
               cardType="default"

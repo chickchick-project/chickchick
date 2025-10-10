@@ -1,14 +1,23 @@
 import sharp from "sharp";
-import { Prisma, ImageFormat } from "@prisma/client";
-import { supabaseAdmin } from "@/lib/supabase/init";
+import { Prisma } from "@prisma/client";
+import { supabaseAdmin } from "@/lib/supabase/server";
 import { prisma } from "@/lib/prisma";
 import {
   ServiceResult,
   serviceSuccess,
   serviceInternalError,
+  serviceNotFound,
+  serviceForbidden,
 } from "../utils/serviceResult.utils";
-import { PostWithAuthor } from "./community.service";
-import { PerfumeBaseResponse } from "../schemas/perfume.schema";
+import { getImageFormat } from "../utils/service.utils";
+import { BasePost } from "./community.service";
+import { BasePerfume } from "./perfume.service";
+import { FullReview, reviewIncludeArgs } from "./review.service";
+import {
+  ApiMyProfileResponse,
+  ApiUpdateMyProfileRequest,
+  ApiUpdateMyProfileRequestSchema,
+} from "../schemas/me.schema";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -28,7 +37,19 @@ const perfumeBaseInclude = {
   perfumeImage: { select: { imageUrl: true } },
 } satisfies Prisma.PerfumeInclude;
 
-const postWithAuthorArgs = { include: postIncludeArgs };
+const myCollectionInclude = {
+  image: true,
+} satisfies Prisma.UserCollectionInclude;
+export type MyCollection = Prisma.UserCollectionGetPayload<{
+  include: typeof myCollectionInclude;
+}>;
+
+const myCommentInclude = {
+  post: { select: { id: true, title: true } },
+} satisfies Prisma.CommentInclude;
+export type MyComment = Prisma.CommentGetPayload<{
+  include: typeof myCommentInclude;
+}>;
 
 /**
  * 인증된 사용자가 북마크한 게시글 목록을 조회합니다.
@@ -36,15 +57,11 @@ const postWithAuthorArgs = { include: postIncludeArgs };
  */
 export async function getMyBookmarkedPostsService(
   userId: string
-): Promise<ServiceResult<PostWithAuthor[]>> {
+): Promise<ServiceResult<BasePost[]>> {
   try {
     const bookmarks = await prisma.postBookmark.findMany({
       where: { userId },
-      select: {
-        post: {
-          ...postWithAuthorArgs,
-        },
-      },
+      include: { post: { include: postIncludeArgs } },
       orderBy: { createdAt: "desc" },
     });
 
@@ -61,15 +78,11 @@ export async function getMyBookmarkedPostsService(
  */
 export async function getMyBookmarkedPerfumesService(
   userId: string
-): Promise<ServiceResult<PerfumeBaseResponse[]>> {
+): Promise<ServiceResult<BasePerfume[]>> {
   try {
     const bookmarks = await prisma.perfumeBookmark.findMany({
       where: { userId },
-      select: {
-        perfume: {
-          include: perfumeBaseInclude,
-        },
-      },
+      include: { perfume: { include: perfumeBaseInclude } },
       orderBy: { createdAt: "desc" },
     });
 
@@ -88,12 +101,16 @@ export async function getMyBookmarkedPerfumesService(
  * @param payload.imageFile - 이미지 파일
  * @param payload.comment - 댓글
  */
-export async function postPhotoCollectionService(payload: {
+
+interface PostCollectionPayload {
   userId: string;
-  perfumeId: FormDataEntryValue | null;
-  imageFile: FormDataEntryValue | null;
-  comment: FormDataEntryValue | null;
-}) {
+  perfumeId: string;
+  imageFile: File;
+  comment?: string;
+}
+export async function postPhotoCollectionService(
+  payload: PostCollectionPayload
+): Promise<ServiceResult<MyCollection>> {
   let uploadedPath: string | null = null;
 
   // 입력값 검증
@@ -145,14 +162,11 @@ export async function postPhotoCollectionService(payload: {
 
     if (error) serviceInternalError(error.message);
 
-    // console.log("File uploaded successfully");
     uploadedPath = data!.path;
-    // console.log(uploadedPath);
     // 2. 퍼블릭 URL 가져오기
     const {
       data: { publicUrl },
     } = supabaseAdmin.storage.from(bucketName).getPublicUrl(uploadedPath);
-    // console.log("Public URL:", publicUrl);
 
     const newImageData = {
       imageUrl: publicUrl,
@@ -182,10 +196,9 @@ export async function postPhotoCollectionService(payload: {
           create: newImageData,
         },
       },
-      include: { image: true },
+      include: myCollectionInclude,
     });
 
-    // console.log("Collection created successfully:", resultCollection);
     return serviceSuccess(resultCollection);
   } catch (err: unknown) {
     if (err instanceof Error) {
@@ -198,46 +211,191 @@ export async function postPhotoCollectionService(payload: {
 export async function deletePhotoCollectionService(payload: {
   userId: string;
   collectionId: string;
-}) {
+}): Promise<ServiceResult<{ message: string }>> {
   const { userId, collectionId } = payload;
+  try {
+    const collection = await prisma.userCollection.findUnique({
+      where: { id: collectionId },
+      include: { image: true },
+    });
 
-  const collection = await prisma.userCollection.findUnique({
-    where: {
-      id: collectionId,
-    },
-    include: {
-      image: true,
-    },
-  });
+    if (!collection) {
+      return serviceNotFound("해당 컬렉션을 찾을 수 없습니다.");
+    }
+    if (collection.userId !== userId) {
+      return serviceForbidden("컬렉션을 삭제할 권한이 없습니다.");
+    }
+    if (collection.image) {
+      const imageUrl = collection.image.imageUrl;
+      const filePath = imageUrl.substring(
+        imageUrl.indexOf(bucketName) + bucketName.length + 1
+      );
+      await supabaseAdmin.storage.from(bucketName).remove([filePath]);
+    }
 
-  if (!collection || collection.userId !== userId) {
-    return serviceInternalError(
-      "해당 컬렐션을 찾을 수 없거나 삭제 권한이 없습니다."
-    );
+    await prisma.userCollection.delete({
+      where: {
+        id: collectionId,
+      },
+    });
+
+    return serviceSuccess({ message: "컬렉션을 삭제했습니다." });
+  } catch (error) {
+    return serviceInternalError(error);
   }
-
-  if (collection.image) {
-    const imageUrl = collection.image.imageUrl;
-    const filePath = imageUrl.substring(
-      imageUrl.indexOf(bucketName) + bucketName.length + 1
-    );
-    await supabaseAdmin.storage.from(bucketName).remove([filePath]);
-  }
-
-  await prisma.userCollection.delete({
-    where: {
-      id: collectionId,
-    },
-  });
-
-  return serviceSuccess("컬렉션을 삭제했습니다.");
 }
 
-function getImageFormat(formatString?: string): ImageFormat {
-  const upperFormat = formatString?.toUpperCase();
-  if (upperFormat === "JPEG" || upperFormat === "JPG") return ImageFormat.JPEG;
-  if (upperFormat === "PNG") return ImageFormat.PNG;
-  if (upperFormat === "WEBP") return ImageFormat.WEBP;
-  if (upperFormat === "HEIF" || upperFormat === "HEIC") return ImageFormat.HEIC;
-  return ImageFormat.UNKNOWN;
+/**
+ * 사용자가 작성한 리뷰 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 향수 컬렉션
+ */
+export async function getMyReviewsService(
+  userId: string
+): Promise<ServiceResult<FullReview[]>> {
+  try {
+    const reviews = await prisma.review.findMany({
+      where: { authorId: userId },
+      include: reviewIncludeArgs,
+      orderBy: { createdAt: "desc" },
+    });
+    return serviceSuccess(reviews);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+/**
+ * 사용자의 작성한 게시글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 작성한 게시글 목록
+ */
+export async function getMyPostsService(
+  userId: string
+): Promise<ServiceResult<BasePost[]>> {
+  try {
+    const posts = await prisma.post.findMany({
+      where: { userId },
+      include: postIncludeArgs,
+      orderBy: { createdAt: "desc" },
+    });
+    return serviceSuccess(posts);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 사용자의 작성한 댓글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 작성한 댓글 목록
+ */
+export async function getMyCommentsService(
+  userId: string
+): Promise<ServiceResult<MyComment[]>> {
+  try {
+    const comments = await prisma.comment.findMany({
+      where: { authorId: userId },
+      include: myCommentInclude,
+      orderBy: { createdAt: "desc" },
+    });
+    return serviceSuccess(comments);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+/**
+ * 사용자가 좋아요한 향수 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 좋아요한 향수 목록
+ */
+export async function getMyLikedPerfumesService(
+  userId: string
+): Promise<ServiceResult<BasePerfume[]>> {
+  try {
+    const likes = await prisma.perfumeLike.findMany({
+      where: { userId },
+      include: { perfume: { include: perfumeBaseInclude } },
+      orderBy: { createdAt: "desc" },
+    });
+    // 5. 사용자가 원하는 '향수' 데이터를 반환
+    return serviceSuccess(likes.map((like) => like.perfume));
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+/**
+ * 사용자가 좋아요한 게시글 목록을 조회합니다.
+ * @param userId - 사용자의 ID
+ * @returns 사용자의 좋아요한 게시글 목록
+ */
+export async function getMyLikedPostsService(
+  userId: string
+): Promise<ServiceResult<BasePost[]>> {
+  try {
+    const likes = await prisma.postLike.findMany({
+      where: { userId },
+      include: { post: { include: postIncludeArgs } },
+      orderBy: { createdAt: "desc" },
+    });
+    // 5. 사용자가 원하는 '게시글' 데이터를 반환
+    return serviceSuccess(likes.map((like) => like.post));
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getMyProfileService(
+  id: string
+): Promise<ServiceResult<ApiMyProfileResponse>> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        age: true,
+        gender: true,
+        imageUrl: true,
+      },
+    });
+
+    if (!user) {
+      return serviceNotFound("사용자를 찾을 수 없습니다.");
+    }
+
+    return serviceSuccess(user);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function updateMyProfileService(
+  formData: ApiUpdateMyProfileRequest
+): Promise<ServiceResult<ApiMyProfileResponse>> {
+  try {
+    const { id, ...updateData } = formData;
+
+    // undefined 값 제거
+    const cleanedData = ApiUpdateMyProfileRequestSchema.partial()
+      .strip()
+      .parse(updateData);
+
+    const updatedUser = await prisma.user.update({
+      where: { id },
+      data: cleanedData,
+      select: {
+        id: true,
+        name: true,
+        nickname: true,
+        age: true,
+        gender: true,
+        imageUrl: true,
+      },
+    });
+
+    return serviceSuccess(updatedUser);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
 }

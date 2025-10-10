@@ -1,8 +1,8 @@
 import { createHttpClient } from "@/lib/utils/core-request";
-import type { PerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface PerfumeSearchResultData {
-  data: PerfumeSimpleResponse[];
+  data: ApiPerfumeSimpleResponse[];
   totalCount: number;
   nextCursor: string | null;
 }
@@ -16,7 +16,7 @@ export interface PerfumeSearchResponse {
 interface UploadPayload {
   file: File;
   comment: string;
-  perfume: PerfumeSimpleResponse;
+  perfume: ApiPerfumeSimpleResponse;
 }
 
 const apiClient = createHttpClient({

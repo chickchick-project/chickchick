@@ -3,16 +3,16 @@
 import Image from "next/image";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
-import { User } from "@prisma/client";
 import type { CollectionItem } from "../sections.type";
 import { useUserCollections } from "./useUserCollections";
 import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
+import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 
 export const CollectionSection = ({
-  pageOwner,
+  user,
   initialCollectionData,
 }: {
-  pageOwner: User;
+  user: ApiMyProfileResponse;
   initialCollectionData: CollectionItem[];
 }) => {
   const {
@@ -28,7 +28,7 @@ export const CollectionSection = ({
     data: collectionsData,
     isLoading,
     error,
-  } = useUserCollections(pageOwner.id, initialCollectionData);
+  } = useUserCollections(user!.id, initialCollectionData);
 
   if (error) {
     console.error("CollectionSection error:", error);
@@ -60,6 +60,9 @@ export const CollectionSection = ({
   }
 
   const displayData = collectionsData.data;
+  // const displayData = Array(5)
+  //   .fill(null)
+  //   .flatMap(() => collectionsData.data);
 
   return (
     <>

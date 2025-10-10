@@ -1,9 +1,9 @@
 import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import { ReviewAnalytics } from "./analytics";
 import { ReviewList } from "./reviewList";
-import { ReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { PerfumeReviewsProps } from "./review.type";
 
-export const PerfumeReview = ({ data }: { data: ReviewResponse[] }) => {
+export const PerfumeReviews = ({ data }: PerfumeReviewsProps) => {
   return (
     <section className="flex flex-col pc:gap-[60px] pc:w-[760px] pc:px-0">
       <ReviewAnalytics data={data} />

@@ -2,54 +2,67 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import AuthorInfo from "../../author/AuthorInfo";
-import ReviewChip from "../../chip/ReviewChip";
 import { getLayoutSize } from "./reviewCard.helpers";
 import { ReviewCardProps } from "./reviewCard.types";
+import AuthorInfo from "../../author/AuthorInfo";
+import ReviewChip from "../../chip/ReviewChip";
+import { getCategoryById, getTagByKey } from "@/lib/utils/review.helpers";
 
 export default function ReviewCard({
-  brand,
-  title,
   review,
-  createdAt,
-  info,
-  chips,
-  imageUrl,
   isMyPage = false,
   isAuthor = false,
-  author,
 }: ReviewCardProps) {
-  //컴포넌트 사이즈에 따라 AuthorInfo 값 변경
   const [isAuthorResponsive, setIsAuthorResponsive] = useState(isAuthor);
   const articleRef = useRef<HTMLElement | null>(null);
 
   const handleResize = useCallback((entries: ResizeObserverEntry[]) => {
     for (const entry of entries) {
       const newIsAuthorResponsiveBasedOnWidth = entry.contentRect.width < 656;
-      setIsAuthorResponsive((prevIsAuthorResponsive) => {
-        if (newIsAuthorResponsiveBasedOnWidth !== prevIsAuthorResponsive) {
-          return newIsAuthorResponsiveBasedOnWidth;
-        }
-        return prevIsAuthorResponsive;
-      });
+      setIsAuthorResponsive((prevIsAuthorResponsive) =>
+        newIsAuthorResponsiveBasedOnWidth !== prevIsAuthorResponsive
+          ? newIsAuthorResponsiveBasedOnWidth
+          : prevIsAuthorResponsive
+      );
     }
   }, []);
 
   useEffect(() => {
     const currentArticleRef = articleRef.current;
-    if (!currentArticleRef) {
-      return;
-    }
-
+    if (!currentArticleRef) return;
     const observer = new ResizeObserver(handleResize);
     observer.observe(currentArticleRef);
-
     return () => {
-      observer.unobserve(currentArticleRef);
+      if (currentArticleRef) {
+        observer.unobserve(currentArticleRef);
+      }
       observer.disconnect();
     };
   }, [handleResize]);
 
+  if (!review) {
+    return null;
+  }
+
+  // --- 데이터 구조 분해 수정 ---
+  const {
+    author,
+    perfume,
+    createdAt,
+    content,
+    attributeSelections,
+    usageStatus,
+  } = review;
+  const { nameKo: perfumeName, brand, perfumeImage } = perfume;
+  const { nameKo: brandName } = brand || {};
+
+  const title = perfumeName || "향수 이름 정보 없음";
+
+  const chipLabels = attributeSelections.map((selection) => {
+    const category = getCategoryById(selection.option.attributeId);
+    const key = selection.option.value;
+    return category ? getTagByKey(category, key) : key;
+  });
   const MAX_CHIPS = isMyPage ? 2 : 3;
 
   const { articleSize, imageSize } = getLayoutSize(isMyPage);
@@ -57,18 +70,16 @@ export default function ReviewCard({
   return (
     <article
       ref={articleRef}
-      className={`${articleSize}
-        p-5 gap-3 tablet:p-6 tablet:gap-4
-        flex rounded-xl shadow-card`}
+      className={`${articleSize} p-5 gap-3 tablet:p-6 tablet:gap-4 flex rounded-xl shadow-card`}
     >
-      {/* 이미지 (마이페이지가 아닐 때만 표시) */}
-      {imageUrl ? (
+      {/* 이미지 */}
+      {perfumeImage?.imageUrl ? (
         <Image
-          src={imageUrl}
+          src={perfumeImage.imageUrl}
           alt={title}
           width={imageSize.width}
           height={imageSize.height}
-          className="object-contain border flex-shrink-0 hidden tablet:block"
+          className="object-contain flex-shrink-0 hidden tablet:block"
         />
       ) : (
         <div
@@ -78,35 +89,44 @@ export default function ReviewCard({
       )}
 
       {/* 메인 컨텐츠 */}
-      <main className="flex flex-col gap-1 tablet:gap-2">
+      <main className="flex flex-col flex-1">
         <header>
-          <h2 className="text-label-4 font-medium">{brand}</h2>
-          <h1 className="text-label-2 font-semibold">{title}</h1>
+          <h2 className="text-label-4 font-medium text-black-300">
+            {brandName}
+          </h2>
+          <h1 className="text-body-1 font-semibold text-black-100">{title}</h1>
         </header>
         {/* 리뷰 내용 */}
         <p
-          className={`line-clamp-2 tablet:line-clamp-3 text-label-2 tablet:text-body-2 flex-shrink-0`}
+          className={`line-clamp-2 tablet:line-clamp-3 text-body-2 font-medium tablet:text-body-2 flex-shrink-0`}
         >
-          {review}
+          {content}
         </p>
         {/* 리뷰 칩*/}
-        <div className="flex gap-1">
-          {chips.slice(0, MAX_CHIPS).map((label, index) => (
-            <ReviewChip key={index} label={label} />
-          ))}
-          {chips.length > MAX_CHIPS && (
-            <ReviewChip count={chips.length - MAX_CHIPS} />
-          )}
+        <div className="mt-auto flex flex-col gap-2 pt-2">
+          {/* 리뷰 칩*/}
+          <div className="flex gap-1 flex-wrap">
+            {chipLabels.slice(0, MAX_CHIPS).map((label) => (
+              <ReviewChip key={label} label={label} />
+            ))}
+            {chipLabels.length > MAX_CHIPS && (
+              <ReviewChip count={chipLabels.length - MAX_CHIPS} />
+            )}
+          </div>
+          {/* 리뷰 메타 정보 */}
+          <footer className="flex">
+            <AuthorInfo
+              author={author}
+              createdAt={createdAt}
+              isAuthor={isAuthorResponsive}
+              info={{
+                type: "review",
+                item: { status: usageStatus },
+              }}
+            />
+            <div className="flex gap-1" />
+          </footer>
         </div>
-        {/* 리뷰 메타 정보 */}
-        <footer className="flex">
-          <AuthorInfo
-            author={author}
-            createdAt={createdAt}
-            info={info}
-            isAuthor={isAuthorResponsive}
-          />
-        </footer>
       </main>
     </article>
   );

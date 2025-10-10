@@ -13,9 +13,9 @@ import {
   getUniquePerfumes,
 } from "@/components/commons/perfumeList/perfumes.helpers";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
-export interface SearchResponse<T> {
+interface SearchResponse<T> {
   data: T[]; // 검색된 목록
   nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
   totalCount?: number | null;
@@ -38,9 +38,9 @@ export const PageClient = ({
   const moreRef = useRef<HTMLDivElement>(null);
 
   const { data, isLoading } = useInfiniteQuery<
-    SearchResponse<PerfumeBaseResponse>,
+    SearchResponse<ApiPerfumeSimpleResponse>,
     Error,
-    InfiniteData<SearchResponse<PerfumeBaseResponse>>,
+    InfiniteData<SearchResponse<ApiPerfumeSimpleResponse>>,
     (string | typeof filters)[],
     string | null
   >({

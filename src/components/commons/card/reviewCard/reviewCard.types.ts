@@ -1,11 +1,6 @@
-import { InfoType } from "../../author/author.types";
-import { CardWithImageProps } from "../card.types";
-
-export interface ReviewCardProps extends CardWithImageProps {
-  brand: string;
-  title: string;
-  review: string;
-  info: InfoType;
-  chips: string[];
-  isMyPage: boolean;
+import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+export interface ReviewCardProps {
+  review: ApiReviewResponse;
+  isMyPage?: boolean;
+  isAuthor?: boolean;
 }

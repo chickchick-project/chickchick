@@ -1,21 +1,20 @@
 import React from "react";
 import Link from "next/link";
 import { getRenderableTabItems } from "./tabs.helper";
-import { User } from "@prisma/client";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
 const MainTabs = ({
   tab,
   isMe,
-  pageOwner,
   onAddPhotoClick,
 }: {
   tab: string;
   isMe?: boolean;
-  pageOwner: User;
   onAddPhotoClick: () => void;
 }) => {
-  const tabItems = getRenderableTabItems(isMe, pageOwner.nickname);
-  const showAddButton = isMe;
+  const user = useUserStore((state) => state.user);
+  const tabItems = getRenderableTabItems(isMe, user?.nickname);
+  const isCollectionTab = isMe && tab === "collection";
 
   return (
     <div className="flex items-end w-full px-10 relative z-10 h-[52px]">
@@ -26,7 +25,7 @@ const MainTabs = ({
           return (
             <Link
               key={value}
-              href={`/user/${pageOwner.id}/${value}`}
+              href={`/user/${user?.id}/${value}`}
               className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
                 ${
                   isActive
@@ -40,7 +39,7 @@ const MainTabs = ({
         })}
       </div>
 
-      {showAddButton && (
+      {isCollectionTab && (
         <button
           className="ml-auto mb-1 px-5 py-2.5 bg-primary-200 text-white rounded-lg font-regular hover:bg-primary-300 transition-colors"
           onClick={onAddPhotoClick}

@@ -1,11 +1,26 @@
 import { z } from "@hono/zod-openapi";
-import PostSchema from "@zod/modelSchema/PostSchema";
-import UserSchema from "@zod/modelSchema/UserSchema";
+import { PostSchema, UserSchema } from "@zod/modelSchema";
 import { CursorPaginationSchema } from "./common.schema";
 import { PostCategory } from "@prisma/client";
 
-// API 응답용 스키마 (목록용)
-export const PostResponseSchema = PostSchema.extend({
+const BrandForPerfumeSchema = z.object({
+  nameEn: z.string(),
+  nameKo: z.string().nullable(),
+});
+
+const PerfumeImageForPerfumeSchema = z.object({
+  imageUrl: z.string(),
+});
+
+const PerfumeForPostSchema = z.object({
+  id: z.string().uuid(),
+  nameEn: z.string(),
+  nameKo: z.string().nullable(),
+  brand: BrandForPerfumeSchema,
+  perfumeImage: PerfumeImageForPerfumeSchema.nullable(),
+});
+
+export const ApiPostResponseSchema = PostSchema.extend({
   author: UserSchema.pick({
     id: true,
     nickname: true,
@@ -18,34 +33,12 @@ export const PostResponseSchema = PostSchema.extend({
   published: true,
 });
 
-// 게시글 상세 조회용 Brand 이름 스키마
-const BrandForPerfumeSchema = z.object({
-  nameEn: z.string(),
-  nameKo: z.string().nullable(),
-});
-
-// 게시글 상세 조회용 Perfume 이미지 스키마
-const PerfumeImageForPerfumeSchema = z.object({
-  imageUrl: z.string(),
-});
-
-// 게시글 상세에 포함될 Perfume 스키마
-const PerfumeForPostSchema = z.object({
-  id: z.string().uuid(),
-  nameEn: z.string(),
-  nameKo: z.string().nullable(),
-  brand: BrandForPerfumeSchema,
-  perfumeImage: PerfumeImageForPerfumeSchema.nullable(),
-});
-
-// 게시글 상세 조회 응답 스키마
-export const PostDetailResponseSchema = PostResponseSchema.extend({
+export const ApiPostDetailResponseSchema = ApiPostResponseSchema.extend({
   isAuthor: z.boolean(),
   perfumes: z.array(PerfumeForPostSchema),
-});
+}).openapi("ApiPostDetailResponse");
 
-// 게시글 상태 조회
-export const PostStatusResponseSchema = PostSchema.pick({
+export const ApiPostStatusResponseSchema = PostSchema.pick({
   viewCount: true,
   likeCount: true,
   commentCount: true,
@@ -54,14 +47,19 @@ export const PostStatusResponseSchema = PostSchema.pick({
   isBookmarked: z.boolean(),
 });
 
-// 글 목록 조회 쿼리
+export const PaginatedApiPostResponseSchema = z.object({
+  data: z.array(ApiPostResponseSchema),
+  totalCount: z.number().int(),
+  nextCursor: z.string().uuid().nullable(),
+});
+
 export const GetPostsQuerySchema = CursorPaginationSchema.extend({
   q: z.string().optional(),
   category: z.nativeEnum(PostCategory).optional(),
   sortBy: z.enum(["createdAt", "popular"]).default("createdAt"),
 });
 
-export const CreatePostBodySchema = PostSchema.pick({
+export const CreatePostInputSchema = PostSchema.pick({
   title: true,
   content: true,
   contentText: true,
@@ -71,32 +69,29 @@ export const CreatePostBodySchema = PostSchema.pick({
   perfumeIds: z.array(z.string().uuid()).optional(),
 });
 
-export const CreatePostPayloadSchema = CreatePostBodySchema.extend({
+export const CreatePostBodySchema = z.object({
+  title: PostSchema.shape.title.min(1, "제목을 입력해주세요."),
+  content: PostSchema.shape.content.min(10, "내용을 10자 이상 입력해주세요."),
+  category: PostSchema.shape.category,
+  perfumeIds: z.array(z.string().uuid()).optional(),
+});
+
+export const CreatePostPayloadSchema = CreatePostInputSchema.extend({
   authorId: z.string().uuid(),
 });
 
-export const UpdatePostSchema = CreatePostBodySchema.partial();
+export const UpdatePostInputSchema = CreatePostInputSchema.partial();
 
 export const PostIdParamSchema = z.object({
   id: PostSchema.shape.id,
 });
 
-export const PaginatedPostListResponseSchema = z.object({
-  data: z.array(PostResponseSchema),
-  nextCursor: z.string().uuid().nullable(),
-  totalCount: z.number().optional(),
-});
-
-// 타입 추론
-export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
-export type PostResponse = z.infer<typeof PostResponseSchema>;
-export type PostDetailResponse = z.infer<typeof PostDetailResponseSchema>;
-export type PostStatusResponse = z.infer<typeof PostStatusResponseSchema>;
-export type CreatePost = z.infer<typeof CreatePostBodySchema>;
-export type CreatePostPayload = z.infer<typeof CreatePostPayloadSchema>;
-export type UpdatePost = z.infer<typeof UpdatePostSchema>;
-export type PostIdParam = z.infer<typeof PostIdParamSchema>;
-export type PaginatedPostListResponse = z.infer<
-  typeof PaginatedPostListResponseSchema
+export type ApiPostResponse = z.infer<typeof ApiPostResponseSchema>;
+export type ApiPostDetailResponse = z.infer<typeof ApiPostDetailResponseSchema>;
+export type ApiPostStatusResponse = z.infer<typeof ApiPostStatusResponseSchema>;
+export type PaginatedApiPostResponse = z.infer<
+  typeof PaginatedApiPostResponseSchema
 >;
-export type PostRelatedPerfumeResponse = z.infer<typeof PerfumeForPostSchema>;
+export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
+export type CreatePostInput = z.infer<typeof CreatePostInputSchema>;
+export type UpdatePostInput = z.infer<typeof UpdatePostInputSchema>;

@@ -1,11 +1,14 @@
-import { CreatePost, PostResponse } from "@/lib/hono/schemas/community.schema";
+import {
+  CreatePostInput,
+  ApiPostResponse,
+} from "@/lib/hono/schemas/community.schema";
 import { API_BASE_URL, COMMUNITY_URL } from "../postDetail/postDetail.helpers";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export async function submitNewPost(
-  postFormData: CreatePost
-): Promise<ApiSuccessResponse<PostResponse>> {
+  postFormData: CreatePostInput
+): Promise<ApiSuccessResponse<ApiPostResponse>> {
   const response = await fetch(`${COMMUNITY_URL}`, {
     method: "POST",
     headers: {
@@ -23,7 +26,7 @@ export async function submitNewPost(
 
 export async function searchPerfumesByName(
   searchText: string
-): Promise<ApiSuccessResponse<PerfumeBaseResponse[]>> {
+): Promise<ApiSuccessResponse<ApiPerfumeSimpleResponse[]>> {
   try {
     const queryParams = new URLSearchParams();
     queryParams.append("q", searchText);

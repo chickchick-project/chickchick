@@ -2,11 +2,11 @@
 
 import PostForm from "./form";
 import Header from "./header";
-import { CreatePost } from "@/lib/hono/schemas/community.schema";
+import { CreatePostInput } from "@/lib/hono/schemas/community.schema";
 
 interface IPostFormPageProps {
   type: "create" | "edit";
-  initialData?: CreatePost;
+  initialData?: CreatePostInput;
 }
 
 export default function PageClient({ type, initialData }: IPostFormPageProps) {

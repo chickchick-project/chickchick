@@ -1,2 +1,4 @@
+export { SkeletonPerfume } from "./SkeletonPerfume";
 export { SkeletonMasonry } from "./SkeletonMasonry";
-export { SkeletonBookmark } from "./SkeletonBookmark";
+export { SkeletonCard } from "./SkeletonCard";
+export { SkeletonComment } from "./SkeletonComment";

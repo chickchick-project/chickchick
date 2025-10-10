@@ -1,8 +1,8 @@
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export async function getBannerData(
   themeName: string
-): Promise<PerfumeBaseResponse[]> {
+): Promise<ApiPerfumeSimpleResponse[]> {
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
     const res = await fetch(

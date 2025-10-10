@@ -2,10 +2,10 @@
 
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import Link from "next/link";
-import { PerfumeBaseResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface IMainBannerPerfumesListProps {
-  data: PerfumeBaseResponse[];
+  data: ApiPerfumeSimpleResponse[];
 }
 
 export const MainBannerPerfumeList = ({
