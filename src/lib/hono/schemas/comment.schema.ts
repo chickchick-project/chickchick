@@ -27,6 +27,17 @@ export const CreateCommentPayloadSchema = CreateCommentBodySchema.extend({
   postId: z.string().uuid(),
 });
 
+export const UpdateCommentBodySchema = CommentSchema.pick({
+  content: true,
+}).extend({
+  parentId: z.string().uuid().nullable().optional(),
+});
+
+export const UpdateCommentPayloadSchema = UpdateCommentBodySchema.extend({
+  id: z.string().uuid(),
+  authorId: z.string().uuid(),
+});
+
 export const PostIdParamSchema = z.object({
   postId: z.string().uuid("유효하지 않은 게시글 ID입니다."),
 });
@@ -63,6 +74,9 @@ export type PaginatedCommentResponse = z.infer<
 >;
 export type CreateCommentBody = z.infer<typeof CreateCommentBodySchema>;
 export type CreateCommentPayload = z.infer<typeof CreateCommentPayloadSchema>;
+
+export type UpdateCommentBody = z.infer<typeof UpdateCommentBodySchema>;
+export type UpdateCommentPayload = z.infer<typeof UpdateCommentPayloadSchema>;
 
 export type DeleteCommentPayload = z.infer<typeof DeleteCommentPayloadSchema>;
 export type DeleteCommentResponse = z.infer<typeof DeleteCommentResponseSchema>;

@@ -163,6 +163,53 @@ commentsApi.route("/", authenticatedApi);
 
 export default commentsApi;
 
+/** * @method PATCH
+ * @path /{commentId}
+ * @summary 댓글 수정
+ */
+const editCommentRoute = createRoute({
+  method: "patch",
+  path: "/{commentId}",
+  summary: "댓글 수정",
+  description: "댓글 또는 대댓글의 내용을 수정합니다.",
+  request: {
+    params: CommentSchemas.CommentIdParamSchema,
+    body: {
+      content: {
+        "application/json": { schema: CommentSchemas.UpdateCommentBodySchema },
+      },
+    },
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: CommentSchemas.CommentResponseSchema,
+      description: "수정된 댓글",
+    },
+    ["400", "401", "403", "404"]
+  ),
+  tags: ["Comment"],
+});
+commentsApi.use(editCommentRoute.getRoutingPath(), authMiddleware);
+commentsApi.openapi(editCommentRoute, async (c) => {
+  const { commentId } = c.req.valid("param");
+  const body = c.req.valid("json");
+  const user = getAuthenticatedUser(c);
+  const payload = {
+    id: commentId,
+    authorId: user.id,
+    content: body.content,
+    parentId: body.parentId,
+  };
+  const result = await CommentServices.updateCommentService(payload);
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "댓글을 성공적으로 수정했습니다.");
+});
+
 /** * @method DELETE
  * @path /{commentId}
  * @summary 댓글 삭제
@@ -178,7 +225,7 @@ const deleteCommentRoute = createRoute({
   responses: createStandardApiResponses(
     {
       schema: CommentSchemas.DeleteCommentResponseSchema,
-      description: "댓글",
+      description: "삭제된 댓글",
     },
     ["400", "401", "403", "404"]
   ),
