@@ -5,17 +5,17 @@ import { ProfileImage } from "./components/ProfileImage";
 import { useState, useCallback, useEffect } from "react";
 
 export const ProfileSection = () => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const resetState = useCallback(() => {
-    setSelectedFile(null);
+    // setSelectedFile(null);
     setPreviewUrl(null);
   }, []);
 
   const onFileSelect = useCallback(
     (file: File) => {
-      setSelectedFile(file);
+      // setSelectedFile(file);
       if (previewUrl) {
         URL.revokeObjectURL(previewUrl);
       }

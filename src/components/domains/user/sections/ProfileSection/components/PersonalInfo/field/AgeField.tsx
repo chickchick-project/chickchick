@@ -6,6 +6,14 @@ import Dropdown from "@/components/commons/dropdown/DropdownBase";
 export const AgeField = () => {
   const { control } = useFormContext<ApiMyProfileResponse>();
 
+  const options = [
+    { value: "private", label: "비공개" },
+    ...[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((age) => ({
+      value: age.toString(),
+      label: `${age}대`,
+    })),
+  ];
+
   return (
     <ProfileRow label="나이" htmlFor="age">
       <Controller
@@ -16,18 +24,14 @@ export const AgeField = () => {
             id="age"
             selectedOption={
               field.value
-                ? {
-                    value: field.value.toString(),
-                    label: field.value.toString(),
-                  }
-                : { value: "0", label: "나이" }
+                ? { value: field.value.toString(), label: `${field.value}대` }
+                : { value: "private", label: "비공개" }
             }
-            options={Array.from({ length: 100 }, (_, i) => i + 1).map((a) => ({
-              value: a.toString(),
-              label: a.toString(),
-            }))}
+            options={options}
             handleChangeOption={(option) =>
-              field.onChange(Number(option.value))
+              field.onChange(
+                option.value === "private" ? null : Number(option.value)
+              )
             }
           />
         )}

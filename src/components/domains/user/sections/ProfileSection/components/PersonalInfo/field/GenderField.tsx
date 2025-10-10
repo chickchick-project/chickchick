@@ -29,7 +29,7 @@ export const GenderField = () => {
                 : { value: "UNKNOWN", label: "성별" }
             }
             options={[
-              { value: "", label: "성별" },
+              { value: "UNKNOWN", label: "성별" },
               { value: "MALE", label: "남성" },
               { value: "FEMALE", label: "여성" },
             ]}
