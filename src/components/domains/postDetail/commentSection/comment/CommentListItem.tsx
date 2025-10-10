@@ -147,7 +147,7 @@ export default function CommentListItem({
                   } leading-6`}
                 >
                   {content}
-                  {isEdited && (
+                  {published && isEdited && (
                     <span className="text-gray-100 text-label-2 ml-1">
                       (수정됨)
                     </span>
