@@ -11,7 +11,7 @@ export default function CommentForm({
   type,
   value,
   commentId,
-  // parentId, // 답글 수정시 필요
+  parentId,
   onSuccess,
   postId,
 }: ICommentFormProps) {
@@ -21,8 +21,9 @@ export default function CommentForm({
     setInputValue(inputValue);
   };
 
-  const { uploadMutation } = useCommentMutation(postId);
+  const { uploadMutation, editMutation } = useCommentMutation(postId);
   const { isPending: isCreating } = uploadMutation;
+  const { isPending: isEditing } = editMutation;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,8 +49,16 @@ export default function CommentForm({
 
           break;
         case "edit":
-          alert("댓글 id:" + commentId + "댓글 수정: " + inputValue); //수정 api 구현 후 연동 필요
-          // onSuccess?.();
+          if (!commentId) return;
+          editMutation.mutate(
+            {
+              commentId,
+              commentData: { content: inputValue, parentId },
+            },
+            {
+              onSuccess: onSuccess,
+            }
+          );
           break;
       }
     } catch (error) {
@@ -84,7 +93,10 @@ export default function CommentForm({
         </ButtonOutlinedPrimaryLFit>
       )}
       {type === "edit" && (
-        <ButtonOutlinedPrimaryLFit disabled={!inputValue.trim()} type="submit">
+        <ButtonOutlinedPrimaryLFit
+          disabled={!inputValue.trim() || isEditing}
+          type="submit"
+        >
           댓글 수정
         </ButtonOutlinedPrimaryLFit>
       )}

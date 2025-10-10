@@ -15,6 +15,7 @@ import {
   DELETED_COMMENT_MESSAGE_BY_USER,
   GetCommentQuery,
   PaginatedCommentResponse,
+  UpdateCommentPayload,
 } from "../schemas/comment.schema";
 import { createCursorPaginationResult } from "../utils/pagination";
 
@@ -191,6 +192,51 @@ export const createCommentService = async (
     });
 
     return serviceSuccess(newComment);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/**
+ * 댓글 또는 대댓글의 내용을 수정합니다.
+ * @param payload - 수정할 댓글 정보 (id, authorId, content, parentId?)
+ */
+export const updateCommentService = async (
+  payload: UpdateCommentPayload
+): Promise<ServiceResult<CommentWithReplies>> => {
+  try {
+    const { id: commentId, authorId, content } = payload;
+    const uuidValidation = validateUuid(commentId, "댓글");
+    if (!uuidValidation.success) return uuidValidation;
+    if (!content?.trim()) {
+      return serviceBadRequest("댓글 내용이 비어있습니다.");
+    }
+    const existenceCheck = await checkResourceExists(
+      "comment",
+      commentId,
+      "댓글"
+    );
+    if (!existenceCheck.success) return existenceCheck;
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { authorId: true, published: true },
+    });
+    if (!comment || comment.authorId !== authorId) {
+      return serviceForbidden("댓글을 수정할 권한이 없습니다.");
+    }
+    if (!comment.published) {
+      return serviceBadRequest("삭제된 댓글은 수정할 수 없습니다.");
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: {
+        content,
+      },
+      ...commentWithRepliesArgs,
+    });
+    return serviceSuccess(updatedComment);
   } catch (error) {
     return serviceInternalError(error);
   }
