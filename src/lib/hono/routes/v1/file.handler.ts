@@ -13,7 +13,6 @@ import * as FileServices from "@/lib/hono/services/file.service";
 const fileApi = new OpenAPIHono<AppContext>();
 fileApi.use("*", authMiddleware);
 
-const BUCKET_NAME = "collection_image";
 
 const UploadedImageInfoSchema = z.object({
   imageUrl: z.string().url(),
@@ -25,7 +24,7 @@ const UploadedImageInfoSchema = z.object({
 const uploadRoute = createRoute({
   method: "post",
   path: "/upload",
-  summary: "컬렉션 이미지 업로드",
+  summary: "파일 업로드",
   requestBody: {
     content: {
       "multipart/form-data": {
@@ -33,8 +32,9 @@ const uploadRoute = createRoute({
           type: "object",
           properties: {
             file: { type: "string", format: "binary" },
+            bucketName: { type: "string" },
           },
-          required: ["file"],
+          required: ["file", "bucketName"],
         },
       },
     },
@@ -49,13 +49,18 @@ fileApi.openapi(uploadRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = await c.req.formData();
   const file = formData.get("file");
+  const bucketName = formData.get("bucketName");
 
   if (!file || !(file instanceof File)) {
     return apiBadRequest(c, "업로드할 파일이 필요합니다.");
   }
 
+  if (!bucketName || typeof bucketName !== "string") {
+    return apiBadRequest(c, "버킷 이름이 필요합니다.");
+  }
+
   const uploadResult = await FileServices.uploadImage(
-    BUCKET_NAME,
+    bucketName,
     file,
     user.id
   );

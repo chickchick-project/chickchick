@@ -16,11 +16,13 @@ import {
   ApiUpdateMyProfileRequestSchema,
 } from "../schemas/me.schema";
 import { deleteImageByUrl } from "./file.service";
+import {
+  COLLECTION_BUCKET_NAME,
+  PROFILE_BUCKET_NAME,
+} from "@/lib/constants/buckets";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-
-const bucketName = "collection_image";
 
 const postIncludeArgs = {
   author: {
@@ -134,7 +136,10 @@ export async function postPhotoCollectionService(
     });
     // console.log("existingCollection", existingCollection);
     if (existingCollection?.image) {
-      await deleteImageByUrl(bucketName, existingCollection.image.imageUrl);
+      await deleteImageByUrl(
+        COLLECTION_BUCKET_NAME,
+        existingCollection.image.imageUrl
+      );
     }
 
     const newImageData = {
@@ -196,7 +201,7 @@ export async function deletePhotoCollectionService(payload: {
     }
 
     if (collection.image) {
-      await deleteImageByUrl(bucketName, collection.image.imageUrl);
+      await deleteImageByUrl(COLLECTION_BUCKET_NAME, collection.image.imageUrl);
     }
 
     await prisma.userCollection.delete({
@@ -337,15 +342,34 @@ export async function getMyProfileService(
 }
 
 export async function updateMyProfileService(
-  formData: ApiUpdateMyProfileRequest
+  formData: ApiUpdateMyProfileRequest & { id: string }
 ): Promise<ServiceResult<ApiMyProfileResponse>> {
   try {
     const { id, ...updateData } = formData;
 
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: { imageUrl: true },
+    });
+
+    if (!user) {
+      return serviceNotFound("사용자를 찾을 수 없습니다.");
+    }
+
+    // 기존 프로필 이미지가 있다면 삭제
+    if (user.imageUrl && user.imageUrl.includes(PROFILE_BUCKET_NAME)) {
+      await deleteImageByUrl(PROFILE_BUCKET_NAME, user.imageUrl);
+    }
     // undefined 값 제거
-    const cleanedData = ApiUpdateMyProfileRequestSchema.partial()
-      .strip()
-      .parse(updateData);
+    let cleanedData;
+    try {
+      cleanedData = ApiUpdateMyProfileRequestSchema.partial()
+        .strip()
+        .parse(updateData);
+    } catch (parseError) {
+      console.error("[updateMyProfileService] Schema parse 에러:", parseError);
+      throw parseError;
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -362,6 +386,7 @@ export async function updateMyProfileService(
 
     return serviceSuccess(updatedUser);
   } catch (error) {
+    console.error("[updateMyProfileService] 에러 발생:", error);
     return serviceInternalError(error);
   }
 }

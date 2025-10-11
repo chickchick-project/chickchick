@@ -1,10 +1,10 @@
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
-import PageClient from "@/components/domains/user/PageClient";
 import { getSession } from "@/lib/database/getSession";
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import PageClient from "@/components/domains/user/PageClient";
 import { getUserById } from "@/lib/utils/getUserProfile";
 import { notFound } from "next/navigation";
+import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -29,14 +29,12 @@ export default async function UserLayout({ children, params }: LayoutProps) {
     return notFound();
   }
 
-  if (!isMe) {
-    return notFound();
-  }
-
   return (
     <div className="w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
-      <PageClient isMe={isMe}>{children}</PageClient>
+      <PageClient pageOwnerId={pageOwnerId} isMe={isMe}>
+        {children}
+      </PageClient>
       <UserFooter />
     </div>
   );

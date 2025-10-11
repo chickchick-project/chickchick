@@ -15,7 +15,7 @@ export interface UploadedImageInfo {
 }
 
 const filePath = (userId: string, file: File) =>
-  `collections/${userId}/${crypto.randomUUID()}-${file.name}`;
+  `/${userId}/${crypto.randomUUID()}-${file.name}`;
 
 /**
  * 사용자 컬렉션 이미지를 Supabase Storage에 업로드합니다.
@@ -86,7 +86,6 @@ export async function deleteImageByUrl(
     const filePath = new URL(imageUrl).pathname.split(
       `/public/${storageBucketName}/`
     )[1];
-
     if (!filePath) {
       return serviceInternalError("유효하지 않은 이미지 URL입니다.");
     }
@@ -98,7 +97,6 @@ export async function deleteImageByUrl(
     if (error) {
       console.warn(`파일 삭제 실패: ${filePath}`, error.message);
     }
-
     return serviceSuccess(undefined);
   } catch (err: unknown) {
     const message =

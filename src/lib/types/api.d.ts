@@ -17,3 +17,10 @@ interface PaginatedResponse<T> {
   totalCount: number;
   nextCursor: string | null;
 }
+
+interface UploadedImageInfo {
+  imageUrl: string;
+  width: number;
+  height: number;
+  format: "JPEG" | "PNG" | "WEBP" | "HEIC" | "UNKNOWN";
+}

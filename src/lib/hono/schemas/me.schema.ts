@@ -75,16 +75,10 @@ export const ApiMyProfileResponseSchema = UserSchema.pick({
 
 export const ApiUpdateMyProfileRequestSchema = z
   .object({
-    id: UserSchema.shape.id,
     nickname: UserSchema.shape.nickname.optional(),
     age: UserSchema.shape.age.optional(),
     gender: UserSchema.shape.gender.optional(),
-    imageInfo: z.object({
-      imageUrl: z.string().url(),
-      width: z.number(),
-      height: z.number(),
-      format: ImageFormatSchema,
-    }),
+    imageUrl: z.string().url().optional(),
   })
   .openapi("ApiUpdateMyProfileRequest");
 

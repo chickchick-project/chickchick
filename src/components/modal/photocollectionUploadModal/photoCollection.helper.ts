@@ -11,13 +11,6 @@ interface UploadPayload {
   perfume: ApiPerfumeSimpleResponse;
 }
 
-interface UploadedImageInfo {
-  imageUrl: string;
-  width: number;
-  height: number;
-  format: "JPEG" | "PNG" | "WEBP" | "HEIC" | "UNKNOWN";
-}
-
 const apiClient = createHttpClient({
   baseUrl:
     process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
@@ -31,6 +24,7 @@ export async function uploadPhotoCollection({
   // 1단계: 파일 업로드
   const formData = new FormData();
   formData.append("file", file);
+  formData.append("bucketName", "collection_image");
 
   const uploadResponse = await apiClient.post<ApiResponse<UploadedImageInfo>>(
     "/file/upload",

@@ -6,10 +6,12 @@ import { useUserStore } from "@/lib/stores/useUserStore";
 const MainTabs = ({
   tab,
   isMe,
+  pageOwnerId,
   onAddPhotoClick,
 }: {
   tab: string;
   isMe?: boolean;
+  pageOwnerId: string;
   onAddPhotoClick: () => void;
 }) => {
   const user = useUserStore((state) => state.user);
@@ -25,7 +27,7 @@ const MainTabs = ({
           return (
             <Link
               key={value}
-              href={`/user/${user?.id}/${value}`}
+              href={`/user/${pageOwnerId}/${value}`}
               className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
                 ${
                   isActive

@@ -378,10 +378,10 @@ const patchMyProfileRoute = createRoute({
 meApi.openapi(patchMyProfileRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = c.req.valid("json");
-  console.log(user, formData);
-  if (user.id !== formData.id)
-    return apiForbidden(c, "프로필 수정을 할 수 없습니다.");
-  const result = await MeServices.updateMyProfileService(formData);
+  const result = await MeServices.updateMyProfileService({
+    id: user.id,
+    ...formData,
+  });
 
   if (!result.success) {
     return apiInternalError(c, result.message);
