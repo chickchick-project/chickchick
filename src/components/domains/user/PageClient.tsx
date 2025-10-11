@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import MainTabs from "./tabs/MainTabs";
-import PhotoUploadModal from "@/components/modal/photoUploadModal";
+import PhotoCollectionUploadModal from "@/components/modal/photocollectionUploadModal";
 import { usePathname } from "next/navigation";
 
 interface PageClientProps {
@@ -29,7 +29,7 @@ export default function PageClient({ isMe, children }: PageClientProps) {
       />
       <div className="bg-white rounded-lg border-gray-200 border p-10">
         {children}
-        <PhotoUploadModal
+        <PhotoCollectionUploadModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onUploadSuccess={handleUploadSuccess}

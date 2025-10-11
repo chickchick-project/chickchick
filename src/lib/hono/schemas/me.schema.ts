@@ -8,6 +8,7 @@ import {
   CollectionImageSchema,
   UserSchema,
 } from "@zod/modelSchema";
+import { ImageFormatSchema } from "@zod/inputTypeSchemas/ImageFormatSchema";
 
 export const ApiMyBookmarkedPostsResponseSchema = z.array(
   ApiPostResponseSchema
@@ -51,6 +52,19 @@ export const CreateCollectionInputSchema = z.object({
   comment: z.string().optional(),
 });
 
+export const PostCollectionRequestSchema = z
+  .object({
+    perfumeId: z.string().uuid(),
+    comment: z.string().optional(),
+    imageInfo: z.object({
+      imageUrl: z.string().url(),
+      width: z.number(),
+      height: z.number(),
+      format: ImageFormatSchema,
+    }),
+  })
+  .openapi("PostCollectionRequest");
+
 export const ApiMyProfileResponseSchema = UserSchema.pick({
   id: true,
   nickname: true,
@@ -65,6 +79,12 @@ export const ApiUpdateMyProfileRequestSchema = z
     nickname: UserSchema.shape.nickname.optional(),
     age: UserSchema.shape.age.optional(),
     gender: UserSchema.shape.gender.optional(),
+    imageInfo: z.object({
+      imageUrl: z.string().url(),
+      width: z.number(),
+      height: z.number(),
+      format: ImageFormatSchema,
+    }),
   })
   .openapi("ApiUpdateMyProfileRequest");
 

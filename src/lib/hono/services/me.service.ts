@@ -1,6 +1,4 @@
-import sharp from "sharp";
-import { Prisma } from "@prisma/client";
-import { supabaseAdmin } from "@/lib/supabase/server";
+import { ImageFormat, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   ServiceResult,
@@ -9,7 +7,6 @@ import {
   serviceNotFound,
   serviceForbidden,
 } from "../utils/serviceResult.utils";
-import { getImageFormat } from "../utils/service.utils";
 import { BasePost } from "./community.service";
 import { BasePerfume } from "./perfume.service";
 import { FullReview, reviewIncludeArgs } from "./review.service";
@@ -18,13 +15,12 @@ import {
   ApiUpdateMyProfileRequest,
   ApiUpdateMyProfileRequestSchema,
 } from "../schemas/me.schema";
+import { deleteImageByUrl } from "./file.service";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
 const bucketName = "collection_image";
-const filePath = (userId: string, file: File) =>
-  `collections/${userId}/${crypto.randomUUID()}-${file.name}`;
 
 const postIncludeArgs = {
   author: {
@@ -98,31 +94,31 @@ export async function getMyBookmarkedPerfumesService(
  * @param payload - 향수 컬렉션 등록 정보
  * @param payload.userId - 인증된 사용자의 ID
  * @param payload.perfumeId - 향수 ID
- * @param payload.imageFile - 이미지 파일
+ * @param payload.imageInfo - 이미지 정보
  * @param payload.comment - 댓글
  */
 
 interface PostCollectionPayload {
   userId: string;
   perfumeId: string;
-  imageFile: File;
   comment?: string;
+  imageInfo: {
+    imageUrl: string;
+    width: number;
+    height: number;
+    format: ImageFormat;
+  };
 }
+
 export async function postPhotoCollectionService(
   payload: PostCollectionPayload
 ): Promise<ServiceResult<MyCollection>> {
-  let uploadedPath: string | null = null;
-
   // 입력값 검증
-  if (
-    !payload.perfumeId ||
-    typeof payload.perfumeId !== "string" ||
-    !UUID_REGEX.test(payload.perfumeId)
-  ) {
+  if (!payload.perfumeId || !UUID_REGEX.test(payload.perfumeId)) {
     return serviceInternalError(new Error("향수 ID가 올바르지 않습니다."));
   }
-  if (!payload.imageFile || !(payload.imageFile instanceof File)) {
-    return serviceInternalError(new Error("이미지 파일이 필요합니다."));
+  if (!payload.imageInfo.imageUrl) {
+    return serviceInternalError(new Error("이미지 URL이 필요합니다."));
   }
 
   try {
@@ -131,48 +127,21 @@ export async function postPhotoCollectionService(
       where: {
         user_collections_user_id_perfume_id_key: {
           userId: payload.userId,
-          perfumeId: payload.perfumeId as string,
+          perfumeId: payload.perfumeId,
         },
       },
       include: { image: true },
     });
     // console.log("existingCollection", existingCollection);
     if (existingCollection?.image) {
-      const oldImageUrl = existingCollection.image.imageUrl;
-      const oldFilePath = oldImageUrl.substring(
-        oldImageUrl.indexOf(bucketName) + bucketName.length + 1
-      );
-      await supabaseAdmin.storage.from(bucketName).remove([oldFilePath]);
+      await deleteImageByUrl(bucketName, existingCollection.image.imageUrl);
     }
 
-    const file = payload.imageFile as File;
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const metadata = await sharp(fileBuffer).metadata();
-    const imageFormat = getImageFormat(metadata.format);
-
-    const newFilePath = filePath(payload.userId, file);
-
-    // 1. 파일 업로드
-    const { data, error } = await supabaseAdmin.storage
-      .from(bucketName)
-      .upload(newFilePath, fileBuffer, {
-        contentType: file.type,
-        cacheControl: "3600",
-      });
-
-    if (error) serviceInternalError(error.message);
-
-    uploadedPath = data!.path;
-    // 2. 퍼블릭 URL 가져오기
-    const {
-      data: { publicUrl },
-    } = supabaseAdmin.storage.from(bucketName).getPublicUrl(uploadedPath);
-
     const newImageData = {
-      imageUrl: publicUrl,
-      width: metadata.width || 0,
-      height: metadata.height || 0,
-      format: imageFormat,
+      imageUrl: payload.imageInfo.imageUrl,
+      width: payload.imageInfo.width,
+      height: payload.imageInfo.height,
+      format: payload.imageInfo.format,
     };
 
     // // 3. DB 저장
@@ -186,11 +155,11 @@ export async function postPhotoCollectionService(
       create: {
         userId: payload.userId,
         perfumeId: payload.perfumeId,
-        comment: (payload.comment as string) || null,
+        comment: payload.comment || null,
         image: { create: newImageData },
       },
       update: {
-        comment: (payload.comment as string) || null,
+        comment: payload.comment || null,
         image: {
           delete: existingCollection?.image ? true : false,
           create: newImageData,
@@ -225,12 +194,9 @@ export async function deletePhotoCollectionService(payload: {
     if (collection.userId !== userId) {
       return serviceForbidden("컬렉션을 삭제할 권한이 없습니다.");
     }
+
     if (collection.image) {
-      const imageUrl = collection.image.imageUrl;
-      const filePath = imageUrl.substring(
-        imageUrl.indexOf(bucketName) + bucketName.length + 1
-      );
-      await supabaseAdmin.storage.from(bucketName).remove([filePath]);
+      await deleteImageByUrl(bucketName, collection.image.imageUrl);
     }
 
     await prisma.userCollection.delete({

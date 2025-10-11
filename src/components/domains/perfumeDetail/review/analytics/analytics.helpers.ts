@@ -1,6 +1,6 @@
 import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { ATTRIBUTE_ID_MAP, CATEGORY_LABEL_MAP } from "./analytics.constants";
-import { ReviewCategory } from "@/lib/types/review";
+import { ReviewCategory } from "@/lib/types/review.types";
 
 type AttributeId = number;
 type OptionKey = string;

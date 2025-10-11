@@ -3,20 +3,20 @@ import ModalPortal from "@/lib/portal/ModalPortal";
 import { ModalContainer } from "../ModalContainer";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
-import { uploadPhotoCollection } from "./photoUpload.helper";
+import { uploadPhotoCollection } from "./photoCollection.helper";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
-interface PhotoUploadModalProps {
+interface PhotoCollectionUploadModalProps {
   isOpen: boolean;
   onClose: () => void;
   onUploadSuccess: () => void;
 }
 
-function PhotoUploadModal({
+function PhotoCollectionUploadModal({
   isOpen,
   onClose,
   onUploadSuccess,
-}: PhotoUploadModalProps) {
+}: PhotoCollectionUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [comment, setComment] = useState("");
@@ -180,4 +180,4 @@ function PhotoUploadModal({
   return <ModalPortal>{modalContent}</ModalPortal>;
 }
 
-export default PhotoUploadModal;
+export default PhotoCollectionUploadModal;

@@ -1,5 +1,9 @@
 import ICONS from "@/lib/constants/icons";
-import { ImageType, ReviewCategory, ReviewOptionKey } from "../types/review";
+import {
+  ReviewImageType,
+  ReviewCategory,
+  ReviewOptionKey,
+} from "../types/review.types";
 
 export const REVIEW_CONFIG = {
   feeling: {
@@ -74,8 +78,8 @@ export const REVIEW_UI_DETAILS: {
   [K in ReviewCategory]?: {
     [P in ReviewOptionKey<K>]?: {
       tag?: string;
-      image?: ImageType;
-      image_selected?: ImageType;
+      image?: ReviewImageType;
+      image_selected?: ReviewImageType;
     };
   };
 } = {
@@ -226,8 +230,8 @@ function createCategoryOptions<K extends ReviewCategory>(
   key: ReviewOptionKey<K>;
   label: string;
   tag?: string;
-  image?: ImageType;
-  image_selected?: ImageType;
+  image?: ReviewImageType;
+  image_selected?: ReviewImageType;
 }> {
   const categoryConfig = REVIEW_CONFIG[category];
   const uiDetails = REVIEW_UI_DETAILS[category];

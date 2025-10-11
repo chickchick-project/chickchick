@@ -5,8 +5,8 @@ import { DEFAULT_POPULAR_REVIEW } from "@/lib/constants/review";
 
 export const MainContentReview = async () => {
   const review = await fetchPopularReviews();
-  const hasRealReview = !!review?.data;
-  const reviewData = hasRealReview ? review!.data : DEFAULT_POPULAR_REVIEW;
+  const hasRealReview = review?.success && review.data;
+  const reviewData = hasRealReview ? review.data : DEFAULT_POPULAR_REVIEW;
   return (
     <div className="flex flex-col items-start justify-center gap-5 w-full pc:px-0 px-4 ">
       <div className="tablet:text-headline-2 text-title-2 font-semibold text-black-100">
