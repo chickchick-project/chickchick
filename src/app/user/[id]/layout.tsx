@@ -1,9 +1,9 @@
 import UserFooter from "@/components/domains/user/layouts/UserFooter";
 import UserHeader from "@/components/domains/user/layouts/UserHeader";
 import PageClient from "@/components/domains/user/PageClient";
-import { getSession } from "@/lib/database/getSession";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 import { getUserById } from "@/lib/utils/getUserProfile";
+import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 import { notFound } from "next/navigation";
 
 interface LayoutProps {
@@ -14,9 +14,7 @@ interface LayoutProps {
 export default async function UserLayout({ children, params }: LayoutProps) {
   const { id: pageOwnerId } = await params;
 
-  const session = await getSession();
-
-  const isMe = session?.user?.id === pageOwnerId;
+  const { isMe } = await getUserSessionInfo(pageOwnerId);
   let user: ApiMyProfileResponse | null;
 
   try {

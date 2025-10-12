@@ -10,6 +10,9 @@ import { PerfumeReviews } from "./review";
 import { PerfumeDetailSidebar } from "./sidebar";
 import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
+import { useRecentPerfumesStore } from "@/lib/stores/useRecentPerfumesStore";
+import { useMemo } from "react";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
@@ -21,6 +24,17 @@ export const DetailClient = ({
   perfumeDetail: TPerfumeDetail;
   reviewData: ApiReviewResponse[];
 }) => {
+  const recentPerfumeData = useMemo(() => {
+    return {
+      id: perfumeDetail.id,
+      perfumeName: perfumeDetail.name,
+      brandName: perfumeDetail.brand,
+      imageUrl: perfumeDetail.imageUrl,
+    };
+  }, [perfumeDetail]);
+
+  useLogRecentItem(recentPerfumeData, useRecentPerfumesStore);
+
   const [interactionStates, setInteractionStates] = useState<InteractionStates>(
     {
       liked: false,

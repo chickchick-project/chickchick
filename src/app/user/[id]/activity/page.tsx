@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { ActivitySection } from "@/components/domains/user/sections";
-import { getSession } from "@/lib/database/getSession";
 import { getUserById } from "@/lib/utils/getUserProfile";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 
 export default async function ActivityPage({
   params,
@@ -11,8 +11,7 @@ export default async function ActivityPage({
 }) {
   const { id: pageOwnerId } = await params;
 
-  const session = await getSession();
-  const isMe = session?.user?.id === pageOwnerId;
+  const { isMe } = await getUserSessionInfo(pageOwnerId);
 
   let user: ApiMyProfileResponse | null;
 

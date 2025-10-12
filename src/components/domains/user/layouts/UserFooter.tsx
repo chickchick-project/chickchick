@@ -72,7 +72,7 @@ const UserFooter = () => {
       </ScrollRowSection>
       <ScrollRowSection title="최근에 본 향수 10" gap="gap-x-[50px]">
         {Array.from({ length: 5 }).map((_, idx) => (
-          <>{idx}</>
+          <React.Fragment key={idx}>{idx}</React.Fragment>
         ))}
       </ScrollRowSection>
     </div>

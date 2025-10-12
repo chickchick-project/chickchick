@@ -5,6 +5,7 @@ import { BodyWrapper } from "@/components/commons/bodyWrapper/BodyWrapper";
 import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import Providers from "@/components/commons/Provider/TanstackProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
+import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="kr" className="h-dvh overflow-y-scroll">
       <body className={`${pretendard.variable} font-pretendard h-full`}>
         <Providers>
+          <RecentSyncManager />
           <NavBarWrapper />
           <BodyWrapper>
             <GlobalStateSync />
