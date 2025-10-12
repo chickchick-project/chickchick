@@ -106,3 +106,30 @@ export type ApiMyProfileResponse = z.infer<typeof ApiMyProfileResponseSchema>;
 export type ApiUpdateMyProfileRequest = z.infer<
   typeof ApiUpdateMyProfileRequestSchema
 >;
+
+export const ApiSyncRecentPostsRequestSchema = z.object({
+  postIds: z.array(z.string().uuid()),
+}).openapi("ApiSyncRecentPostsRequest");
+
+export type ApiSyncRecentPostsRequest = z.infer<
+  typeof ApiSyncRecentPostsRequestSchema
+>;
+
+// Pass-through sync schemas (no persistence yet)
+export const ApiSyncRecentPerfumesRequestSchema = z
+  .object({
+    perfumeIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPerfumesRequest");
+
+export const ApiSyncRecentPerfumesResponseSchema = z
+  .object({
+    receivedPerfumeIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPerfumesResponse");
+
+export const ApiSyncRecentPostsResponseSchema = z
+  .object({
+    receivedPostIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPostsResponse");
