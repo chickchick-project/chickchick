@@ -32,7 +32,7 @@ export default async function UserLayout({ children, params }: LayoutProps) {
   }
 
   return (
-    <div className="w-[1200px] mx-auto my-10">
+    <div className="max-w-[1200px] mx-auto my-10">
       <UserHeader user={user} />
       <PageClient isMe={isMe}>{children}</PageClient>
       <UserFooter />

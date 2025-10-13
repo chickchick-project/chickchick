@@ -13,7 +13,7 @@ export default function PerfumeCard({
   perfumeName,
   onClick,
   onClose,
-  className,
+  className = "",
 }: PerfumeCardProps) {
   return (
     <article

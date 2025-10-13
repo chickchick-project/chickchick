@@ -1,14 +1,13 @@
 import { createRecentItemsStore } from "./createRecentItemsStore";
-import type { ApiPostDetailResponse } from "@/lib/hono/schemas/community.schema";
 import type { GenericRecentItem } from "./createRecentItemsStore";
+import type { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 
-export type RecentPostItem = GenericRecentItem<ApiPostDetailResponse>;
+export type RecentPostItem = GenericRecentItem<PostCardProps>;
 
 const MAX_RECENT_POSTS = 10;
 
-export const useRecentPostsStore =
-  createRecentItemsStore<ApiPostDetailResponse>({
-    name: "recent-posts",
-    maxItems: MAX_RECENT_POSTS,
-    type: "post",
-  });
+export const useRecentPostsStore = createRecentItemsStore<PostCardProps>({
+  name: "recent-posts",
+  maxItems: MAX_RECENT_POSTS,
+  type: "post",
+});
