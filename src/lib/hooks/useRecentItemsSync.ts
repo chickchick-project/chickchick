@@ -45,25 +45,27 @@ export function useRecentItemsSync<T>({
     const syncToServer = async () => {
       if (isSyncingRef.current) return;
 
-      const latestViewedAt = Math.max(...items.map((item) => item.viewedAt));
+      const itemsToSync = lastSyncedAt
+        ? items.filter((item) => item.viewedAt > lastSyncedAt)
+        : items;
 
-      if (lastSyncedAt && latestViewedAt <= lastSyncedAt) return;
+      if (itemsToSync.length === 0) return;
 
       try {
         isSyncingRef.current = true;
-        console.log(`Syncing ${items.length} items to ${apiEndpoint}...`);
+        console.log(`Syncing ${itemsToSync.length} items to ${apiEndpoint}...`);
 
         const body =
           apiEndpoint === "recent-perfumes"
-            ? { perfumeIds: items.map((i) => String(i.id)) }
+            ? { perfumeIds: itemsToSync.map((i) => String(i.id)) }
             : apiEndpoint === "recent-posts"
-            ? { postIds: items.map((i) => String(i.id)) }
-            : items; // 확장 대비 기본 동작
+            ? { postIds: itemsToSync.map((i) => String(i.id)) }
+            : itemsToSync; // 확장 대비 기본 동작
 
-        const response = await apiClient.post<typeof body, ApiEnvelope<unknown>>(
-          `/me/${apiEndpoint}`,
-          body
-        );
+        const response = await apiClient.post<
+          typeof body,
+          ApiEnvelope<unknown>
+        >(`/me/${apiEndpoint}`, body);
 
         if (!response || !response.success) {
           throw new Error(`Failed to sync: ${response?.message ?? "Unknown"}`);
@@ -78,10 +80,19 @@ export function useRecentItemsSync<T>({
       }
     };
 
-    syncToServer();
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        syncToServer();
+      }
+    };
 
     const interval = setInterval(syncToServer, syncInterval);
 
-    return () => clearInterval(interval);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, [items, lastSyncedAt, setLastSyncedAt, apiEndpoint, syncInterval]);
 }

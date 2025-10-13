@@ -1,15 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { PERFUME_CARD_TYPES } from "@/components/commons/card/perfumeCard/perfumeCard.constants";
 
 interface PerfumeSectionProps {
   perfumes: any;
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;
-  isFetchingNextPage?: boolean; // 다음 페이지 로딩 상태를 위한 prop 추가
+  isFetchingNextPage?: boolean;
   pageType?: "brandDetail" | "perfumes";
 }
 
@@ -60,14 +60,14 @@ const renderPerfumeCard = (item: any, index: number) => {
     <Link key={item.id || index} href={`/perfumes/${item.id}`} passHref>
       <PerfumeCard
         className="tablet:block hidden"
-        cardType="default"
+        cardType={PERFUME_CARD_TYPES.DEFAULT}
         perfumeImage={item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
         brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
         perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
       />
       <PerfumeCard
         className="tablet:hidden block"
-        cardType="smallSize"
+        cardType={PERFUME_CARD_TYPES.SMALLSIZE}
         perfumeImage={item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
         brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
         perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}

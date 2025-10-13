@@ -13,6 +13,7 @@ export type GenericRecentItem<T> = {
 interface RecentItemsState<T> {
   items: GenericRecentItem<T>[];
   lastSyncedAt: number | null;
+  _hasHydrated: boolean;
   setLastSyncedAt: (timestamp: number) => void;
   addItem: (newItem: { id: string; item: T }) => void;
   clearItems: () => void;
@@ -41,6 +42,7 @@ export function createRecentItemsStore<T>({
       (set, get) => ({
         items: [],
         lastSyncedAt: null,
+        _hasHydrated: false,
         setLastSyncedAt: (timestamp: number) =>
           set({ lastSyncedAt: timestamp }),
         addItem: (newItem) => {
@@ -66,6 +68,11 @@ export function createRecentItemsStore<T>({
       {
         name,
         storage: createJSONStorage(() => localStorage),
+        onRehydrateStorage: () => (state) => {
+          if (state) {
+            state._hasHydrated = true;
+          }
+        },
       }
     )
   );
