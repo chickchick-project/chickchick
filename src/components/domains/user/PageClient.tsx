@@ -7,15 +7,10 @@ import { usePathname } from "next/navigation";
 
 interface PageClientProps {
   isMe: boolean;
-  pageOwnerId: string;
   children: React.ReactNode;
 }
 
-export default function PageClient({
-  isMe,
-  pageOwnerId,
-  children,
-}: PageClientProps) {
+export default function PageClient({ isMe, children }: PageClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const handleUploadSuccess = () => {
     setIsModalOpen(false);
@@ -30,17 +25,15 @@ export default function PageClient({
       <MainTabs
         isMe={isMe}
         tab={activeTab}
-        pageOwnerId={pageOwnerId}
         onAddPhotoClick={() => setIsModalOpen(true)}
-      />
-      <div className="bg-white rounded-lg border-gray-200 border p-10">
+      >
         {children}
         <PhotoCollectionUploadModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onUploadSuccess={handleUploadSuccess}
         />
-      </div>
+      </MainTabs>
     </>
   );
 }
