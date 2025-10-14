@@ -16,6 +16,7 @@ interface RecentItemsState<T> {
   _hasHydrated: boolean;
   setLastSyncedAt: (timestamp: number) => void;
   addItem: (newItem: { id: string; item: T }) => void;
+  setItems: (items: GenericRecentItem<T>[]) => void;
   clearItems: () => void;
 }
 
@@ -62,6 +63,9 @@ export function createRecentItemsStore<T>({
           const slicedItems = updatedItems.slice(0, maxItems);
 
           set({ items: slicedItems });
+        },
+        setItems: (items) => {
+          set({ items });
         },
         clearItems: () => set({ items: [], lastSyncedAt: null }),
       }),

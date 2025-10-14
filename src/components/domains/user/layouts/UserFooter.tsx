@@ -133,7 +133,9 @@ const UserFooter = () => {
       >
         <div className="flex flex-col gap-4 tablet:grid tablet:grid-cols-2 tablet:gap-x-4">
           {recentPostItems.length === 0 ? (
-            <span className="text-gray-500">최근에 본 게시글이 없습니다.</span>
+            <span className="text-gray-500 text-center tablet:col-span-2">
+              최근에 본 게시글이 없습니다.
+            </span>
           ) : (
             visiblePosts.map((ri) => (
               <PostCard
