@@ -35,10 +35,62 @@ export function useRecentItemsSync<T>({
   const items = useStore((state) => state.items);
   const lastSyncedAt = useStore((state) => state.lastSyncedAt);
   const setLastSyncedAt = useStore((state) => state.setLastSyncedAt);
+  const setItems = useStore(
+    (state) =>
+      (state as any).setItems as (items: GenericRecentItem<T>[]) => void
+  );
 
   const isSyncingRef = useRef(false);
 
   useEffect(() => {
+    // 로컬이 비어있고 아직 동기화된 적이 없다면 서버에서 가져오기
+    const hydrateFromServer = async () => {
+      const res = await apiClient.get<null, ApiEnvelope<any>>(
+        `/me/${apiEndpoint}`
+      );
+      if (!res || !res.success) return;
+      const serverItems = res.data?.items ?? [];
+      const mapped: GenericRecentItem<T>[] = serverItems.map((it: any) => {
+        const viewedAt = new Date(it.viewedAt).getTime();
+        if (apiEndpoint === "recent-perfumes") {
+          const p = it.perfume;
+          const mappedItem: any = {
+            id: p.id,
+            perfumeName: p.nameKo ?? p.nameEn,
+            brandName: p.brand?.nameKo ?? p.brand?.nameEn ?? "",
+            imageUrl: p.perfumeImage?.imageUrl ?? "",
+          };
+          return {
+            id: p.id,
+            type: "perfume",
+            item: mappedItem,
+            viewedAt,
+          } as GenericRecentItem<T>;
+        } else if (apiEndpoint === "recent-posts") {
+          const post = it.post;
+          return {
+            id: post.id,
+            type: "post",
+            item: post as T,
+            viewedAt,
+          } as GenericRecentItem<T>;
+        }
+        return {
+          id: it.id,
+          type: "unknown",
+          item: it as T,
+          viewedAt,
+        } as GenericRecentItem<T>;
+      });
+      if (mapped.length > 0) {
+        setItems(mapped);
+        setLastSyncedAt(Date.now());
+      }
+    };
+
+    if (items.length === 0 && !lastSyncedAt) {
+      hydrateFromServer();
+    }
     // 동기화할 아이템이 없으면 중단
     if (items.length === 0) return;
 

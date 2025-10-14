@@ -435,6 +435,30 @@ meApi.openapi(postRecentPerfumesRoute, async (c) => {
 });
 
 /**
+ * @method get
+ * @path /me/recent-perfumes
+ * @summary 최근 본 향수 목록 조회 (하이드레이션)
+ */
+const getRecentPerfumesRoute = createRoute({
+  method: "get",
+  path: "/recent-perfumes",
+  summary: "최근 본 향수 목록 조회",
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiGetRecentPerfumesResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(getRecentPerfumesRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const result = await MeServices.getRecentPerfumesService(user.id);
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "최근 본 향수 목록을 성공적으로 조회했습니다.");
+});
+
+/**
  * @method post
  * @path /me/recent-posts
  * @summary 최근 본 게시글 목록 동기화
@@ -476,6 +500,30 @@ meApi.openapi(postRecentPostsRoute, async (c) => {
     { receivedPostIds: formData.postIds },
     "최근 본 게시글 목록을 성공적으로 동기화했습니다."
   );
+});
+
+/**
+ * @method get
+ * @path /me/recent-posts
+ * @summary 최근 본 게시글 목록 조회 (하이드레이션)
+ */
+const getRecentPostsRoute = createRoute({
+  method: "get",
+  path: "/recent-posts",
+  summary: "최근 본 게시글 목록 조회",
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiGetRecentPostsResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(getRecentPostsRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const result = await MeServices.getRecentPostsService(user.id);
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "최근 본 게시글 목록을 성공적으로 조회했습니다.");
 });
 
 export default meApi;
