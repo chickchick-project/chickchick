@@ -72,6 +72,81 @@ export async function getMyBookmarkedPostsService(
   }
 }
 
+// 최근 본 항목 동기화 로직
+const MAX_RECENT_ITEMS = 50;
+
+export async function syncRecentPerfumesService(payload: {
+  userId: string;
+  perfumeIds: string[];
+}): Promise<ServiceResult<{ syncedCount: number }>> {
+  const { userId, perfumeIds } = payload;
+  try {
+    const now = new Date();
+
+    for (const perfumeId of perfumeIds) {
+      await prisma.recentPerfumeView.upsert({
+        where: {
+          recent_perfume_user_id_perfume_id_key: { userId, perfumeId },
+        },
+        create: { userId, perfumeId, viewedAt: now },
+        update: { viewedAt: now },
+      });
+    }
+
+    const toDelete = await prisma.recentPerfumeView.findMany({
+      where: { userId },
+      orderBy: { viewedAt: "desc" },
+      skip: MAX_RECENT_ITEMS,
+      select: { id: true },
+    });
+    if (toDelete.length > 0) {
+      await prisma.recentPerfumeView.deleteMany({
+        where: { id: { in: toDelete.map((r: { id: string }) => r.id) } },
+      });
+    }
+
+    return serviceSuccess({ syncedCount: perfumeIds.length });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function syncRecentPostsService(payload: {
+  userId: string;
+  postIds: string[];
+}): Promise<ServiceResult<{ syncedCount: number }>> {
+  const { userId, postIds } = payload;
+  try {
+    const now = new Date();
+
+    for (const postId of postIds) {
+      await prisma.recentPostView.upsert({
+        where: {
+          recent_post_user_id_post_id_key: { userId, postId },
+        },
+        create: { userId, postId, viewedAt: now },
+        update: { viewedAt: now },
+      });
+    }
+
+    const toDelete = await prisma.recentPostView.findMany({
+      where: { userId },
+      orderBy: { viewedAt: "desc" },
+      skip: MAX_RECENT_ITEMS,
+      select: { id: true },
+    });
+    if (toDelete.length > 0) {
+      await prisma.recentPostView.deleteMany({
+        where: { id: { in: toDelete.map((r: { id: string }) => r.id) } },
+      });
+    }
+
+    return serviceSuccess({ syncedCount: postIds.length });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
 /**
  * 인증된 사용자가 북마크한 향수 목록을 조회합니다.
  * @param userId - 인증된 사용자의 ID

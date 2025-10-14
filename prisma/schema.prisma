@@ -84,6 +84,7 @@ model Perfume {
   perfumeMappings  PostPerfumeMapping[]   @relation("PerfumeToPostMappings")
   reviews          Review[]               @relation("PerfumeToReviews")
   collectedByUsers UserCollection[]       @relation("PerfumeToUserCollections")
+  recentViews      RecentPerfumeView[]
 
   @@map("perfumes")
 }
@@ -112,6 +113,8 @@ model User {
   reviews          Review[]          @relation("UserToReviews")
   activities       UserActivity[]    @relation("UserToActivities")
   collections      UserCollection[]  @relation("UserToCollections")
+  recentPerfumeViews RecentPerfumeView[]
+  recentPostViews    RecentPostView[]
 
   @@map("users")
 }
@@ -248,6 +251,7 @@ model Post {
   likes           PostLike[]           @relation("PostToLikes")
   perfumeMappings PostPerfumeMapping[] @relation("PostToPerfumeMappings")
   author          User                 @relation("UserToPosts", fields: [userId], references: [id], onDelete: Cascade)
+  recentViews     RecentPostView[]
 
   @@map("posts")
 }
@@ -350,6 +354,34 @@ model CollectionImage {
   collection   UserCollection @relation("CollectionToImage", fields: [collectionId], references: [id], onDelete: Cascade)
 
   @@map("collection_image")
+}
+
+model RecentPerfumeView {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  perfumeId String   @map("perfume_id") @db.Uuid
+  viewedAt  DateTime @default(now()) @map("viewed_at") @db.Timestamptz(6)
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  perfume Perfume @relation(fields: [perfumeId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, perfumeId], name: "recent_perfume_user_id_perfume_id_key")
+  @@index([userId, viewedAt])
+  @@map("recent_perfume_views")
+}
+
+model RecentPostView {
+  id       String   @id @default(uuid()) @db.Uuid
+  userId   String   @map("user_id") @db.Uuid
+  postId   String   @map("post_id") @db.Uuid
+  viewedAt DateTime @default(now()) @map("viewed_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, postId], name: "recent_post_user_id_post_id_key")
+  @@index([userId, viewedAt])
+  @@map("recent_post_views")
 }
 
 enum ImageFormat {

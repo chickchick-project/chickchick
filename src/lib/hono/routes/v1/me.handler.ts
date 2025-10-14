@@ -413,4 +413,93 @@ meApi.openapi(patchMyProfileRoute, async (c) => {
   return apiSuccess(c, result.data, "내 정보를 성공적으로 수정했습니다.");
 });
 
+/**
+ * @method post
+ * @path /me/recent-perfumes
+ * @summary 최근 본 향수 목록 동기화
+ * @request
+ * @responses
+ * @tags
+ */
+const postRecentPerfumesRoute = createRoute({
+  method: "post",
+  path: "/recent-perfumes",
+  summary: "최근 본 향수 목록 동기화",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: MeSchemas.ApiSyncRecentPerfumesRequestSchema,
+        },
+      },
+    },
+  },
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiSyncRecentPerfumesResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(postRecentPerfumesRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const formData = c.req.valid("json");
+  // DB에 최근 본 향수 기록 동기화
+  const result = await MeServices.syncRecentPerfumesService({
+    userId: user.id,
+    perfumeIds: formData.perfumeIds,
+  });
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(
+    c,
+    { receivedPerfumeIds: formData.perfumeIds },
+    "최근 본 향수 목록을 성공적으로 동기화했습니다."
+  );
+});
+
+/**
+ * @method post
+ * @path /me/recent-posts
+ * @summary 최근 본 게시글 목록 동기화
+ * @request
+ * @responses
+ * @tags
+ */
+const postRecentPostsRoute = createRoute({
+  method: "post",
+  path: "/recent-posts",
+  summary: "최근 본 게시글 목록 동기화",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: MeSchemas.ApiSyncRecentPostsRequestSchema,
+        },
+      },
+    },
+  },
+  responses: createStandardApiResponses({
+    schema: MeSchemas.ApiSyncRecentPostsResponseSchema,
+  }),
+  tags: ["Me"],
+});
+
+meApi.openapi(postRecentPostsRoute, async (c) => {
+  const user = getAuthenticatedUser(c);
+  const formData = c.req.valid("json");
+  const result = await MeServices.syncRecentPostsService({
+    userId: user.id,
+    postIds: formData.postIds,
+  });
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(
+    c,
+    { receivedPostIds: formData.postIds },
+    "최근 본 게시글 목록을 성공적으로 동기화했습니다."
+  );
+});
+
 export default meApi;
