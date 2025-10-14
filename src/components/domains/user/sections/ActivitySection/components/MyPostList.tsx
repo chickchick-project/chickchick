@@ -6,7 +6,7 @@ import { PostCardProps } from "@/components/commons/card/postCard/postCard.types
 
 export const MyPostList = ({ posts }: { posts: PostCardProps[] }) => {
   return posts.length > 0 ? (
-    <div className="grid grid-cols-2 justify-items-center gap-5">
+    <div className="flex flex-col gap-4 tablet:grid tablet:grid-cols-2 tablet:justify-items-center tablet:gap-5">
       {posts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard key={item.id} {...item} cardType={POST_CARD_TYPES.SMALL} />

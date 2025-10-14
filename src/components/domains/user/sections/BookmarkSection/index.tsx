@@ -86,7 +86,7 @@ export const BookmarkSection = ({
   };
 
   return (
-    <div className="h-[800px] overflow-y-auto pr-1">
+    <>
       <SubTabSwitcher<BookmarkTabKey>
         activeTab={activeTab}
         onTabChange={handleTabChange}
@@ -94,6 +94,6 @@ export const BookmarkSection = ({
       />
 
       <div className="mt-6">{TABS[activeTab]}</div>
-    </div>
+    </>
   );
 };

@@ -1,12 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
 import { SubTabItem } from "../../tabs/tabs.type";
 
 import { SkeletonCard, SkeletonComment, SkeletonPerfume } from "../Skeleton";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const MyReviewListLoader = dynamic(
   () => import("./loader/MyReviewListLoader"),
@@ -78,6 +79,7 @@ const isValidActivityTabKey = (key: string | null): key is ActivityTabKey => {
 export const ActivitySection = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const subTabRef = useRef<HTMLDivElement>(null);
 
   const currentTab = searchParams.get("tab");
 
@@ -101,15 +103,20 @@ export const ActivitySection = () => {
     router.replace(`?tab=${key}`, { scroll: false });
   };
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   return (
-    <div className="h-[800px] overflow-y-auto pr-1">
+    <>
       <SubTabSwitcher<ActivityTabKey>
+        ref={subTabRef}
         activeTab={activeTab}
         onTabChange={handleTabChange}
         tabs={tabItems}
+        autoScrollOnChange={isMobile}
+        scrollBehavior="smooth"
+        scrollDelayMs={0}
       />
-
-      {TABS[activeTab]}
-    </div>
+      <div className="p-6">{TABS[activeTab]}</div>
+    </>
   );
 };

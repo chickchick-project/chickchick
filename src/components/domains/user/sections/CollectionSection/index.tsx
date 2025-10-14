@@ -66,7 +66,7 @@ export const CollectionSection = ({
 
   return (
     <>
-      <div className="h-[800px] overflow-y-auto pr-1">
+      <>
         <div className="columns-4 gap-4">
           {displayData.map((item: CollectionItem, index: number) => (
             <CollectionItem
@@ -77,7 +77,7 @@ export const CollectionSection = ({
             />
           ))}
         </div>
-      </div>
+      </>
 
       {isOpen && (
         <ImageDetailModal

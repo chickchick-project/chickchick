@@ -16,7 +16,7 @@ export const CommunityBookmarkList = ({
     );
   }
   return (
-    <div className="grid grid-cols-2 gap-y-5">
+    <div className="flex flex-col gap-4 tablet:grid tablet:grid-cols-2 tablet:gap-y-5">
       {communityPosts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard

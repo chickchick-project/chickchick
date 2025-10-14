@@ -26,15 +26,14 @@ export default function PageClient({ isMe, children }: PageClientProps) {
         isMe={isMe}
         tab={activeTab}
         onAddPhotoClick={() => setIsModalOpen(true)}
-      />
-      <div className="bg-white rounded-lg border-gray-200 border p-10">
+      >
         {children}
-        <PhotoUploadModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onUploadSuccess={handleUploadSuccess}
-        />
-      </div>
+      </MainTabs>
+      <PhotoUploadModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onUploadSuccess={handleUploadSuccess}
+      />
     </>
   );
 }
