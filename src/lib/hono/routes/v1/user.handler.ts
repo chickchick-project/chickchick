@@ -40,7 +40,7 @@ const getUserProfileRoute = createRoute({
   responses: createStandardApiResponses({
     schema: UserSchemas.ApiUserProfileResponseSchema,
   }),
-  tags: ["User"],
+  tags: ["Users"],
 });
 
 usersApi.openapi(getUserProfileRoute, async (c) => {

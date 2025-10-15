@@ -23,11 +23,11 @@ export default function PageClient({ postId }: { postId: string }) {
     queryFn: () => getPostDetailStatusById(postId),
   });
 
+  useLogRecentItem(postDetail, useRecentPostsStore);
+
   if (!postDetail || !postStatus) {
     return <div>Loading...</div>;
   }
-
-  useLogRecentItem(postDetail, useRecentPostsStore);
 
   const { content, ...postDetailHeader } = postDetail;
 

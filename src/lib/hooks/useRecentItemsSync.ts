@@ -1,18 +1,24 @@
 import { useEffect, useRef } from "react";
 import type { UseBoundStore, StoreApi } from "zustand";
-import type { GenericRecentItem } from "../stores/createRecentItemsStore";
+import type {
+  GenericRecentItem,
+  RecentItemsState,
+} from "../stores/createRecentItemsStore";
 import { createHttpClient } from "../utils/core-request";
+import {
+  ApiRecentPerfumeItem,
+  ApiRecentPostItem,
+  ApiGetRecentPerfumesResponseSchema,
+  ApiGetRecentPostsResponseSchema,
+} from "../hono/schemas/me.schema";
+
+type RecentApiEndpoint = "recent-perfumes" | "recent-posts";
 
 interface UseRecentItemsSyncOptions<T> {
-  useStore: UseBoundStore<
-    StoreApi<{
-      items: GenericRecentItem<T>[];
-      lastSyncedAt: number | null;
-      setLastSyncedAt: (timestamp: number) => void;
-    }>
-  >;
-  apiEndpoint: string;
+  useStore: UseBoundStore<StoreApi<RecentItemsState<T>>>;
+  apiEndpoint: RecentApiEndpoint;
   syncInterval?: number;
+  enabled?: boolean;
 }
 
 type ApiEnvelope<T> = {
@@ -27,60 +33,77 @@ const apiClient = createHttpClient({
   baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
 });
 
+const responseSchemaMap = {
+  "recent-perfumes": ApiGetRecentPerfumesResponseSchema,
+  "recent-posts": ApiGetRecentPostsResponseSchema,
+};
+
 export function useRecentItemsSync<T>({
   useStore,
   apiEndpoint,
   syncInterval = 10000,
+  enabled = true,
 }: UseRecentItemsSyncOptions<T>) {
   const items = useStore((state) => state.items);
   const lastSyncedAt = useStore((state) => state.lastSyncedAt);
   const setLastSyncedAt = useStore((state) => state.setLastSyncedAt);
-  const setItems = useStore(
-    (state) =>
-      (state as any).setItems as (items: GenericRecentItem<T>[]) => void
-  );
+  const setItems = useStore((state) => state.setItems);
 
   const isSyncingRef = useRef(false);
 
   useEffect(() => {
+    if (!enabled) return;
     // 로컬이 비어있고 아직 동기화된 적이 없다면 서버에서 가져오기
     const hydrateFromServer = async () => {
-      const res = await apiClient.get<null, ApiEnvelope<any>>(
+      const res = await apiClient.get<ApiEnvelope<unknown>>(
         `/me/${apiEndpoint}`
       );
       if (!res || !res.success) return;
-      const serverItems = res.data?.items ?? [];
-      const mapped: GenericRecentItem<T>[] = serverItems.map((it: any) => {
-        const viewedAt = new Date(it.viewedAt).getTime();
+
+      const schema = responseSchemaMap[apiEndpoint];
+      const parsedResponse = schema.safeParse(res.data);
+      if (!parsedResponse.success) {
+        console.error(
+          `[useRecentItemsSync] Failed to parse server response for ${apiEndpoint}:`,
+          parsedResponse.error
+        );
+        return;
+      }
+
+      const serverItems = parsedResponse.data.items;
+      const mapped: GenericRecentItem<T>[] = serverItems.map((serverItem) => {
         if (apiEndpoint === "recent-perfumes") {
-          const p = it.perfume;
-          const mappedItem: any = {
+          const p = (serverItem as ApiRecentPerfumeItem).perfume;
+          const viewedAt = new Date(
+            (serverItem as ApiRecentPerfumeItem).viewedAt
+          ).getTime();
+
+          const item = {
             id: p.id,
-            perfumeName: p.nameKo ?? p.nameEn,
+            perfumeName: p.nameKo ?? p.nameEn ?? "",
             brandName: p.brand?.nameKo ?? p.brand?.nameEn ?? "",
             imageUrl: p.perfumeImage?.imageUrl ?? "",
-          };
+          } as unknown as T;
+
           return {
             id: p.id,
             type: "perfume",
-            item: mappedItem,
+            item,
             viewedAt,
-          } as GenericRecentItem<T>;
-        } else if (apiEndpoint === "recent-posts") {
-          const post = it.post;
-          return {
-            id: post.id,
-            type: "post",
-            item: post as T,
-            viewedAt,
-          } as GenericRecentItem<T>;
+          } satisfies GenericRecentItem<T>;
         }
+        // recent-posts
+        const post = (serverItem as ApiRecentPostItem).post;
+        const viewedAt = new Date(
+          (serverItem as ApiRecentPostItem).viewedAt
+        ).getTime();
+
         return {
-          id: it.id,
-          type: "unknown",
-          item: it as T,
+          id: post.id,
+          type: "post",
+          item: post as unknown as T,
           viewedAt,
-        } as GenericRecentItem<T>;
+        } satisfies GenericRecentItem<T>;
       });
       if (mapped.length > 0) {
         setItems(mapped);
@@ -146,5 +169,13 @@ export function useRecentItemsSync<T>({
       clearInterval(interval);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [items, lastSyncedAt, setLastSyncedAt, apiEndpoint, syncInterval]);
+  }, [
+    items,
+    lastSyncedAt,
+    setLastSyncedAt,
+    setItems,
+    apiEndpoint,
+    syncInterval,
+    enabled,
+  ]);
 }

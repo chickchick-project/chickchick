@@ -162,3 +162,6 @@ export type ApiUpdateMyProfileRequest = z.infer<
 export type ApiSyncRecentPostsRequest = z.infer<
   typeof ApiSyncRecentPostsRequestSchema
 >;
+
+export type ApiRecentPostItem = z.infer<typeof ApiRecentPostItemSchema>;
+export type ApiRecentPerfumeItem = z.infer<typeof ApiRecentPerfumeItemSchema>;

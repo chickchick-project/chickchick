@@ -5,7 +5,26 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: (failureCount, error: unknown) => {
+              // 401, 403 에러는 재시도하지 않음 (인증 실패)
+              const errorStatus = (error as { status?: number })?.status;
+              if (errorStatus === 401 || errorStatus === 403) {
+                return false;
+              }
+              // 그 외 에러는 최대 3번까지 재시도
+              return failureCount < 3;
+            },
+            staleTime: 1000 * 60 * 5, // 5분
+            refetchOnWindowFocus: true, // 윈도우 포커스 시 재요청
+          },
+        },
+      })
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
