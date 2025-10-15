@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 interface ImageDisplayProps {
   imageUrl?: string | null;
   previewUrl?: string | null;
@@ -14,17 +16,28 @@ export const ImageDisplay = ({
       {/* 프로필 이미지 */}
       <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
         {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt="프로필 이미지"
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={previewUrl}
+              alt="프로필 이미지"
+              fill
+              sizes="160px"
+              className="object-cover"
+              unoptimized
+              priority
+            />
+          </div>
         ) : imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="프로필 이미지"
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={imageUrl}
+              alt="프로필 이미지"
+              fill
+              sizes="160px"
+              className="object-cover"
+              priority
+            />
+          </div>
         ) : (
           // 이미지가 없을 때 보여줄 기본 아이콘이나 UI
           <span className="text-gray-500">No Image</span>

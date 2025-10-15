@@ -3,9 +3,10 @@ import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { PERFUME_CARD_TYPES } from "@/components/commons/card/perfumeCard/perfumeCard.constants";
+import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
-  perfumes: any;
+  perfumes: ApiPerfumeSimpleResponse[];
   isLoading: boolean;
   isIdle: boolean;
   moreRef: React.RefObject<HTMLDivElement>;
@@ -37,7 +38,7 @@ export function PerfumeSection({
         </div>
       ) : (
         <div className="grid pc:grid-cols-5 tablet:grid-cols-4 mobile:grid-cols-3 grid-cols-2 pc:gap-x-[52px] mobile:gap-x-[24px] gap-x-[10px] mobile:gap-y-10 gap-y-5 mt-5">
-          {perfumes.map((item: any, index: number) => {
+          {perfumes.map((item: ApiPerfumeSimpleResponse, index: number) => {
             return renderPerfumeCard(item, index);
           })}
         </div>
@@ -55,7 +56,7 @@ export function PerfumeSection({
   );
 }
 
-const renderPerfumeCard = (item: any, index: number) => {
+const renderPerfumeCard = (item: ApiPerfumeSimpleResponse, index: number) => {
   return (
     <Link key={item.id || index} href={`/perfumes/${item.id}`} passHref>
       <PerfumeCard

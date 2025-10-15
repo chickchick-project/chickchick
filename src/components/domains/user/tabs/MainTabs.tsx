@@ -22,6 +22,10 @@ const MainTabs = ({
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
 
+  if (isDesktop === undefined) {
+    return null;
+  }
+
   if (isDesktop) {
     // --- 데스크톱 뷰 ---
     return (

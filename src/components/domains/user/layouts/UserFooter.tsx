@@ -83,7 +83,7 @@ const UserFooter = () => {
   const POSTS_PER_VIEW = 2;
   const PERFUMES_PER_VIEW = 5;
 
-  if (!postsHydrated || !perfumesHydrated) {
+  if (!postsHydrated || !perfumesHydrated || isTabletOrLarger === undefined) {
     return null;
   }
 
@@ -137,15 +137,21 @@ const UserFooter = () => {
               최근에 본 게시글이 없습니다.
             </span>
           ) : (
-            visiblePosts.map((ri) => (
-              <PostCard
-                key={ri.id}
-                {...ri.item}
-                updatedAt={ri.item.updatedAt ?? ri.item.createdAt}
-                isAuthor={false}
-                cardType={"small"}
-              />
-            ))
+            visiblePosts.map((ri) => {
+              const postForCard = {
+                ...ri.item,
+                userId: ri.item.author.id,
+              } as const;
+              return (
+                <PostCard
+                  key={ri.id}
+                  {...postForCard}
+                  updatedAt={ri.item.updatedAt ?? ri.item.createdAt}
+                  isAuthor={false}
+                  cardType={"small"}
+                />
+              );
+            })
           )}
         </div>
       </ScrollRowSection>

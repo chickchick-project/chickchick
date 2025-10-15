@@ -28,4 +28,5 @@ export interface PostCardProps extends Omit<Post, "createdAt" | "updatedAt"> {
   cardType?: PostCardType;
   profileImage?: string | null;
   isAuthor: boolean;
+  published: boolean;
 }

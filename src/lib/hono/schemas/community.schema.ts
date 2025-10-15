@@ -30,7 +30,6 @@ export const ApiPostResponseSchema = PostSchema.extend({
   updatedAt: z.string().datetime().nullable(),
 }).omit({
   userId: true,
-  published: true,
 });
 
 export const ApiPostDetailResponseSchema = ApiPostResponseSchema.extend({

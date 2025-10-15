@@ -1,6 +1,13 @@
 import React, { forwardRef, useEffect } from "react";
 import { SubTabSwitcherProps } from "./tabs.type";
 
+const getSelfY = (el: HTMLDivElement | null) => {
+  if (typeof window === "undefined" || !el) return 0;
+  const rect = el.getBoundingClientRect();
+  const computedTop = parseInt(window.getComputedStyle(el).top || "0", 10) || 0;
+  return rect.top + window.scrollY - computedTop;
+};
+
 function SubTabSwitcherInner<T extends string = string>(
   {
     tabs,
@@ -12,35 +19,29 @@ function SubTabSwitcherInner<T extends string = string>(
   }: SubTabSwitcherProps<T>,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  const getSelfY = () => {
-    if (typeof window === "undefined") return 0;
-    const el = (ref as React.MutableRefObject<HTMLDivElement | null>)?.current;
-    if (!el) return 0;
-    const rect = el.getBoundingClientRect();
-    const computedTop =
-      parseInt(window.getComputedStyle(el).top || "0", 10) || 0;
-    return rect.top + window.scrollY - computedTop;
-  };
-
   useEffect(() => {
     if (!autoScrollOnChange) return;
     if (typeof window === "undefined") return;
     const run = () => {
-      const y = getSelfY();
+      const el = (ref as React.MutableRefObject<HTMLDivElement | null>)
+        ?.current;
+      const y = getSelfY(el);
       window.scrollTo({ top: y, behavior: scrollBehavior });
     };
     const id = window.setTimeout(() => {
       requestAnimationFrame(() => requestAnimationFrame(run));
     }, scrollDelayMs);
     return () => window.clearTimeout(id);
-  }, [activeTab, autoScrollOnChange, scrollBehavior, scrollDelayMs]);
+  }, [activeTab, autoScrollOnChange, scrollBehavior, scrollDelayMs, ref]);
 
   const handleClick = (key: T) => {
     onTabChange(key);
     if (!autoScrollOnChange) return;
     if (typeof window === "undefined") return;
     const run = () => {
-      const y = getSelfY();
+      const el = (ref as React.MutableRefObject<HTMLDivElement | null>)
+        ?.current;
+      const y = getSelfY(el);
       window.scrollTo({ top: y, behavior: scrollBehavior });
     };
     window.setTimeout(() => {

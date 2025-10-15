@@ -10,7 +10,7 @@ export type GenericRecentItem<T> = {
 };
 
 // 스토어의 상태(State) 타입 정의
-interface RecentItemsState<T> {
+export interface RecentItemsState<T> {
   items: GenericRecentItem<T>[];
   lastSyncedAt: number | null;
   _hasHydrated: boolean;
@@ -21,7 +21,6 @@ interface RecentItemsState<T> {
 }
 
 // 스토어 생성을 위한 설정값 타입 정의
-// <<< [수정] 불필요한 제네릭 <T> 제거
 interface CreateRecentItemsStoreOptions {
   name: string; // localStorage에 저장될 키 이름
   maxItems: number; // 최대 저장 개수
