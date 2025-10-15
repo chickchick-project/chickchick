@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
-import { SubTabItem } from "../../tabs/tabs.type";
+import { useUrlTabs } from "../../useUrlTabs";
 
 import { SkeletonCard, SkeletonComment, SkeletonPerfume } from "../Skeleton";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
@@ -72,38 +71,24 @@ const ACTIVITY_TABS_CONFIG = [
 
 type ActivityTabKey = (typeof ACTIVITY_TABS_CONFIG)[number]["key"];
 
-const isValidActivityTabKey = (key: string | null): key is ActivityTabKey => {
-  return ACTIVITY_TABS_CONFIG.some((tab) => tab.key === key);
-};
-
 export const ActivitySection = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
   const subTabRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const currentTab = searchParams.get("tab");
+  const tabConfigs = useMemo(
+    () => ACTIVITY_TABS_CONFIG.map(({ key, label }) => ({ key, label })),
+    []
+  );
 
-  const activeTab: ActivityTabKey = isValidActivityTabKey(currentTab)
-    ? currentTab
-    : "myReviews";
-
-  const tabItems: SubTabItem<ActivityTabKey>[] = ACTIVITY_TABS_CONFIG.map(
-    ({ key, label }) => ({
-      key,
-      label,
-    })
+  const { activeTab, handleTabChange, tabItems } = useUrlTabs<ActivityTabKey>(
+    tabConfigs,
+    "myReviews"
   );
 
   const TABS = ACTIVITY_TABS_CONFIG.reduce((acc, tab) => {
     acc[tab.key] = tab.component;
     return acc;
   }, {} as Record<ActivityTabKey, React.ReactNode>);
-
-  const handleTabChange = (key: ActivityTabKey) => {
-    router.replace(`?tab=${key}`, { scroll: false });
-  };
-
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <>
