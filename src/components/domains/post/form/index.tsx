@@ -19,11 +19,16 @@ import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import {
   CreatePostInput,
   CreatePostInputSchema,
+  PerfumeForPost,
 } from "@/lib/hono/schemas/community.schema";
 
+export type TPostFormInitialData = CreatePostInput & {
+  perfumes: PerfumeForPost[] | [];
+};
 interface IPostFormProps {
   type: "create" | "edit";
-  initialData?: CreatePostInput;
+  initialData?: TPostFormInitialData;
+  postId?: string;
 }
 
 export default function PostForm({ type, initialData }: IPostFormProps) {
@@ -40,9 +45,9 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
       content: initialData?.content ?? "",
       contentText: initialData?.contentText ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
-      perfumeIds: initialData?.perfumeIds,
     },
   });
+
   const {
     handleSubmit,
     formState: { isValid, isDirty },
@@ -93,7 +98,7 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
           <PostCategory />
           <PostTitle />
           <PostEditor blobRegistryRef={blobRegistryRef} />
-          <PostRelatedPerfume />
+          <PostRelatedPerfume initialPerfumes={initialData?.perfumes} />
         </div>
         <PostFormActions disabled={disabled} />
       </form>

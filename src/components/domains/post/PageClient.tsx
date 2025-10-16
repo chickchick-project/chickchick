@@ -1,27 +1,57 @@
 "use client";
 
-import PostForm from "./form";
+import { useQuery } from "@tanstack/react-query";
+import PostForm, { TPostFormInitialData } from "./form";
 import Header from "./header";
-import { CreatePostInput } from "@/lib/hono/schemas/community.schema";
+import { getPostDetailById } from "../postDetail/postDetail.helpers";
+import { useUserStore } from "@/lib/stores/useUserStore";
+import { useRouter } from "next/navigation";
+// import { Spinner } from "@/components/commons/loading/Spinner";
+// import { useEffect } from "react";
 
 interface IPostFormPageProps {
   type: "create" | "edit";
-  initialData?: CreatePostInput;
+  postId?: string;
 }
 
-export default function PageClient({ type, initialData }: IPostFormPageProps) {
-  // const { user } = useUserStore();
-  // if (!user) {
-  //   return (
-  //     <div className="w-full h-screen flex items-center justify-center">
-  //       <p className="text-lg text-gray-600">로그인이 필요합니다.</p>
-  //     </div>
-  //   );
+export default function PageClient({ type, postId }: IPostFormPageProps) {
+  const { user, isLoading: isAuthLoading } = useUserStore();
+  const router = useRouter();
+
+  const { data: post, isError } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPostDetailById(postId!),
+    enabled: type === "edit" && !!postId && !!user,
+  });
+
+  // useEffect(() => {
+  //   if (!isAuthLoading && !user) {
+  //     router.replace("/");
+  //   }
+  // }, [isAuthLoading, user, router]);
+
+  // if (isAuthLoading || !user) {
+  //   return <Spinner />;
   // }
+
+  if (isError) return <div>데이터를 불러오는 데 실패했습니다.</div>;
+
+  const initialData: TPostFormInitialData | undefined =
+    type === "edit" && post
+      ? {
+          category: post.category,
+          title: post.title,
+          content: post.content,
+          thumbnailUrl: post.thumbnailUrl,
+          contentText: post.contentText,
+          perfumes: post.perfumes || [],
+        }
+      : undefined;
+
   return (
     <div className="px-4 w-full flex flex-col items-center gap-5 pb-[150px]">
-      <Header />
-      <PostForm type={type} initialData={initialData} />
+      <Header type={type} />
+      <PostForm type={type} initialData={initialData} postId={postId} />
     </div>
   );
 }

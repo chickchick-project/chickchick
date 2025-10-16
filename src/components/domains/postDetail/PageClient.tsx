@@ -28,7 +28,6 @@ export default function PageClient({ postId }: { postId: string }) {
   if (!postDetail || !postStatus) {
     return <div>Loading...</div>;
   }
-
   const { content, ...postDetailHeader } = postDetail;
 
   return (

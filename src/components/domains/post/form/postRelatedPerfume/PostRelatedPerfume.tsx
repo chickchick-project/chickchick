@@ -3,7 +3,7 @@ import SubTitleLabel from "../element/SubTitleLabel";
 import InputBase from "@/components/commons/input";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
 import PerfumeResultItem from "./PerfumeResultItem";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
@@ -11,8 +11,14 @@ import useDebounce from "@/lib/hooks/useDebounce";
 import { useFormContext } from "react-hook-form";
 import { searchPerfumesByName } from "../../post.helpers";
 import usePerfumeSearch from "./usePerfumeSearch";
+import { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
 
-export default function PostRelatedPerfume() {
+interface IPostRelatedPerfumeProps {
+  initialPerfumes?: PerfumeForPost[] | [];
+}
+export default function PostRelatedPerfume({
+  initialPerfumes,
+}: IPostRelatedPerfumeProps) {
   const { setValue } = useFormContext();
   const {
     searchQuery,
@@ -20,11 +26,12 @@ export default function PostRelatedPerfume() {
     searchResults,
     setSearchResults,
     selectedPerfumes,
+
     tempSelectedPerfumeIds,
     handleToggleTempSelect,
     handleAddSelectedPerfumes,
     handleRemoveSelectedPerfume,
-  } = usePerfumeSearch();
+  } = usePerfumeSearch(initialPerfumes);
 
   const debouncedSearchQuery = useDebounce(searchQuery, 1000);
   const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +41,10 @@ export default function PostRelatedPerfume() {
   const searchContainerRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(searchContainerRef, () => close(dropdownId));
 
-  const selectedPerfumesIds = selectedPerfumes.map((p) => p.id);
+  const selectedPerfumesIds = useMemo(
+    () => selectedPerfumes.map((p) => p.id),
+    [selectedPerfumes]
+  );
   const MAX_SELECTED_PERFUMES = 8;
   const isSelectedPerfumesLimit =
     selectedPerfumesIds.length + tempSelectedPerfumeIds.length >=
@@ -42,7 +52,7 @@ export default function PostRelatedPerfume() {
 
   useEffect(() => {
     setValue("perfumeIds", selectedPerfumesIds);
-  }, [selectedPerfumes, setValue, selectedPerfumesIds]);
+  }, [setValue, selectedPerfumesIds]);
 
   useEffect(() => {
     const fetchAndSetResults = async () => {
