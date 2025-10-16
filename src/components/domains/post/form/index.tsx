@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef } from "react";
+
 import PostEditor from "./PostEditor";
 import PostFormActions from "./PostFormActions";
 import PostTitle from "./PostTitle";
@@ -9,8 +9,6 @@ import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PostCategory from "./PostCategory";
-import { submitNewPost } from "../post.helpers";
-
 import getPlainText from "@/lib/utils/getPlainText";
 import { PostCategory as TPostCategory } from "@prisma/client";
 import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
@@ -37,8 +35,6 @@ export default function PostForm({
   initialData,
   postId,
 }: IPostFormProps) {
-  const router = useRouter();
-
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
   const method = useForm<CreatePostInput>({
