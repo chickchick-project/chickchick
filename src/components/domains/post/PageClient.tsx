@@ -5,9 +5,6 @@ import PostForm, { TPostFormInitialData } from "./form";
 import Header from "./header";
 import { getPostDetailById } from "../postDetail/postDetail.helpers";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { useRouter } from "next/navigation";
-// import { Spinner } from "@/components/commons/loading/Spinner";
-// import { useEffect } from "react";
 
 interface IPostFormPageProps {
   type: "create" | "edit";
@@ -16,7 +13,6 @@ interface IPostFormPageProps {
 
 export default function PageClient({ type, postId }: IPostFormPageProps) {
   const { user, isLoading: isAuthLoading } = useUserStore();
-  const router = useRouter();
 
   const { data: post, isError } = useQuery({
     queryKey: ["post", postId],
@@ -24,15 +20,9 @@ export default function PageClient({ type, postId }: IPostFormPageProps) {
     enabled: type === "edit" && !!postId && !!user,
   });
 
-  // useEffect(() => {
-  //   if (!isAuthLoading && !user) {
-  //     router.replace("/");
-  //   }
-  // }, [isAuthLoading, user, router]);
-
-  // if (isAuthLoading || !user) {
-  //   return <Spinner />;
-  // }
+  if (isAuthLoading || !user) {
+    return <div>로그인이 필요한 서비스 입니다.</div>;
+  }
 
   if (isError) return <div>데이터를 불러오는 데 실패했습니다.</div>;
 

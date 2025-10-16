@@ -56,6 +56,6 @@ export async function searchPerfumesByName(
 export async function editPostById(
   postId: string,
   postFormData: UpdatePostInput
-): Promise<ApiPostResponse | null> {
+): Promise<ApiSuccessResponse<ApiPostResponse> | null> {
   return await apiClient.patch(`/community/posts/${postId}`, postFormData);
 }

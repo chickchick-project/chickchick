@@ -29,7 +29,7 @@ export default function usePostMutation(postId?: string) {
   const editMutation = useMutation({
     mutationFn: (updatedPost: UpdatePostInput) =>
       editPostById(postId!, updatedPost),
-    onSuccess: (data) => {
+    onSuccess: () => {
       invalidatePost();
       router.push(`/community/post/${postId}`);
     },
