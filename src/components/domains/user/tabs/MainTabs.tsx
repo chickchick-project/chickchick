@@ -9,10 +9,12 @@ const MainTabs = ({
   tab,
   isMe,
   onAddPhotoClick,
+  pageOwnerId,
   children,
 }: {
   tab: string;
   isMe?: boolean;
+  pageOwnerId: string;
   onAddPhotoClick: () => void;
   children?: React.ReactNode;
 }) => {
@@ -21,10 +23,6 @@ const MainTabs = ({
   const isCollectionTab = isMe && tab === "collection";
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  if (isDesktop === undefined) {
-    return null;
-  }
 
   if (isDesktop) {
     // --- 데스크톱 뷰 ---
@@ -38,7 +36,7 @@ const MainTabs = ({
               return (
                 <Link
                   key={value}
-                  href={`/user/${user?.id}/${value}`}
+                  href={`/user/${pageOwnerId}/${value}`}
                   className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
                     ${
                       isActive
