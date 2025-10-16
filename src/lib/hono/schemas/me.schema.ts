@@ -82,6 +82,58 @@ export const ApiUpdateMyProfileRequestSchema = z
   })
   .openapi("ApiUpdateMyProfileRequest");
 
+export const ApiSyncRecentPostsRequestSchema = z
+  .object({
+    postIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPostsRequest");
+
+export const ApiSyncRecentPerfumesRequestSchema = z
+  .object({
+    perfumeIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPerfumesRequest");
+
+export const ApiSyncRecentPerfumesResponseSchema = z
+  .object({
+    receivedPerfumeIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPerfumesResponse");
+
+export const ApiSyncRecentPostsResponseSchema = z
+  .object({
+    receivedPostIds: z.array(z.string().uuid()),
+  })
+  .openapi("ApiSyncRecentPostsResponse");
+
+export const ApiRecentPerfumeItemSchema = z
+  .object({
+    id: z.string().uuid(),
+    viewedAt: z.string().datetime(),
+    perfume: ApiPerfumeSimpleResponseSchema,
+  })
+  .openapi("ApiRecentPerfumeItem");
+
+export const ApiGetRecentPerfumesResponseSchema = z
+  .object({
+    items: z.array(ApiRecentPerfumeItemSchema),
+  })
+  .openapi("ApiGetRecentPerfumesResponse");
+
+export const ApiRecentPostItemSchema = z
+  .object({
+    id: z.string().uuid(),
+    viewedAt: z.string().datetime(),
+    post: ApiPostResponseSchema,
+  })
+  .openapi("ApiRecentPostItem");
+
+export const ApiGetRecentPostsResponseSchema = z
+  .object({
+    items: z.array(ApiRecentPostItemSchema),
+  })
+  .openapi("ApiGetRecentPostsResponse");
+
 export type ApiMyBookmarkedPostsResponse = z.infer<
   typeof ApiMyBookmarkedPostsResponseSchema
 >;
@@ -106,3 +158,10 @@ export type ApiMyProfileResponse = z.infer<typeof ApiMyProfileResponseSchema>;
 export type ApiUpdateMyProfileRequest = z.infer<
   typeof ApiUpdateMyProfileRequestSchema
 >;
+
+export type ApiSyncRecentPostsRequest = z.infer<
+  typeof ApiSyncRecentPostsRequestSchema
+>;
+
+export type ApiRecentPostItem = z.infer<typeof ApiRecentPostItemSchema>;
+export type ApiRecentPerfumeItem = z.infer<typeof ApiRecentPerfumeItemSchema>;

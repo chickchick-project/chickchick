@@ -70,6 +70,66 @@ export async function getMyBookmarkedPostsService(
   }
 }
 
+/**
+ * 인증된 사용자가 최근 본 향수 목록을 조회합니다.
+ * @param userId - 인증된 사용자의 ID
+ */
+export async function getRecentPerfumesService(
+  userId: string
+): Promise<
+  ServiceResult<{
+    items: Array<{ id: string; viewedAt: Date; perfume: BasePerfume }>;
+  }>
+> {
+  try {
+    const views = await prisma.recentPerfumeView.findMany({
+      where: { userId },
+      orderBy: { viewedAt: "desc" },
+      include: { perfume: { include: perfumeBaseInclude } },
+    });
+
+    const items = views.map((v) => ({
+      id: v.perfumeId,
+      viewedAt: v.viewedAt,
+      perfume: v.perfume as unknown as BasePerfume,
+    }));
+
+    return serviceSuccess({ items });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 인증된 사용자가 최근 본 게시글 목록을 조회합니다.
+ * @param userId - 인증된 사용자의 ID
+ */
+export async function getRecentPostsService(
+  userId: string
+): Promise<
+  ServiceResult<{
+    items: Array<{ id: string; viewedAt: Date; post: BasePost }>;
+  }>
+> {
+  try {
+    const views = await prisma.recentPostView.findMany({
+      where: { userId },
+      orderBy: { viewedAt: "desc" },
+      include: { post: { include: postIncludeArgs } },
+    });
+
+    const items = views.map((v) => ({
+      id: v.postId,
+      viewedAt: v.viewedAt,
+      post: v.post as unknown as BasePost,
+    }));
+
+    return serviceSuccess({ items });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
 // 최근 본 항목 동기화 로직
 const MAX_RECENT_ITEMS = 50;
 

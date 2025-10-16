@@ -32,15 +32,14 @@ export default function PageClient({
         tab={activeTab}
         pageOwnerId={pageOwnerId}
         onAddPhotoClick={() => setIsModalOpen(true)}
-      />
-      <div className="bg-white rounded-lg border-gray-200 border p-10">
+      >
         {children}
         <PhotoCollectionUploadModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onUploadSuccess={handleUploadSuccess}
         />
-      </div>
+      </MainTabs>
     </>
   );
 }

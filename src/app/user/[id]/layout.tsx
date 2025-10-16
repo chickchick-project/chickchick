@@ -1,9 +1,9 @@
-import { notFound } from "next/navigation";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import getQueryClient from "@/lib/hono/utils/getQueryClient";
 import { getUserById } from "@/lib/utils/getUserProfile";
 import UserLayoutClient from "@/components/domains/user/UserLayoutClient";
-import { getSession } from "@/lib/database/getSession";
+import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
+import { notFound } from "next/navigation";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -12,10 +12,8 @@ interface LayoutProps {
 
 export default async function UserLayout({ children, params }: LayoutProps) {
   const { id: pageOwnerId } = await params;
-  const session = await getSession();
-  const isMe = session?.user?.id === pageOwnerId;
-
   const queryClient = getQueryClient();
+  const { isMe } = await getUserSessionInfo(pageOwnerId);
 
   try {
     await queryClient.prefetchQuery({

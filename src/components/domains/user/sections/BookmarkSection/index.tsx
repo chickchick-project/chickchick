@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
-import { SubTabItem } from "../../tabs/tabs.type";
+import { useUrlTabs } from "../../useUrlTabs";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { SkeletonCard, SkeletonPerfume } from "../Skeleton";
 import { PerfumeBookmarkList } from "./components";
+import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const PerfumeBookmarksLoader = dynamic(
   () => import("./loader/PerfumeBookmarksLoader"),
@@ -29,18 +29,24 @@ const BOOKMARK_TABS_CONFIG = [
   {
     key: "bookmarkPerfumes",
     label: "향수",
+    component: (
+      userId: string,
+      initialPerfumeData?: ApiPerfumeSimpleResponse[]
+    ) => (
+      <PerfumeBookmarksLoader
+        userId={userId}
+        initialData={initialPerfumeData}
+      />
+    ),
   },
   {
     key: "bookmarkPosts",
     label: "커뮤니티",
+    component: () => <CommunityBookmarksLoader />,
   },
-];
+] as const;
 
 type BookmarkTabKey = (typeof BOOKMARK_TABS_CONFIG)[number]["key"];
-
-const isValidBookmarkTabKey = (key: string | null): key is BookmarkTabKey => {
-  return BOOKMARK_TABS_CONFIG.some((tab) => tab.key === key);
-};
 
 export const BookmarkSection = ({
   isMe,
@@ -51,49 +57,43 @@ export const BookmarkSection = ({
   userId: string;
   initialPerfumeData?: ApiPerfumeSimpleResponse[];
 }) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const subTabRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const tabConfigs = useMemo(
+    () => BOOKMARK_TABS_CONFIG.map(({ key, label }) => ({ key, label })),
+    []
+  );
+
+  const { activeTab, handleTabChange, tabItems } = useUrlTabs<BookmarkTabKey>(
+    tabConfigs,
+    "bookmarkPerfumes"
+  );
+
+  const TABS = BOOKMARK_TABS_CONFIG.reduce((acc, tab) => {
+    if (tab.key === "bookmarkPerfumes") {
+      acc[tab.key] = tab.component(userId, initialPerfumeData);
+    } else {
+      acc[tab.key] = tab.component();
+    }
+    return acc;
+  }, {} as Record<BookmarkTabKey, React.ReactNode>);
 
   if (!isMe) {
     return <PerfumeBookmarkList perfumes={initialPerfumeData || []} />;
   }
 
-  const currentTab = searchParams.get("tab");
-
-  const activeTab: BookmarkTabKey = isValidBookmarkTabKey(currentTab)
-    ? currentTab
-    : "bookmarkPerfumes";
-
-  const tabsItem: SubTabItem<BookmarkTabKey>[] = BOOKMARK_TABS_CONFIG.map(
-    ({ key, label }) => ({
-      key,
-      label,
-    })
-  );
-
-  const TABS: Record<BookmarkTabKey, React.ReactNode> = {
-    bookmarkPerfumes: (
-      <PerfumeBookmarksLoader
-        userId={userId}
-        initialData={initialPerfumeData}
-      />
-    ),
-    bookmarkPosts: <CommunityBookmarksLoader />,
-  };
-
-  const handleTabChange = (key: BookmarkTabKey) => {
-    router.replace(`?tab=${key}`, { scroll: false });
-  };
-
   return (
-    <div className="h-[800px] overflow-y-auto pr-1">
+    <>
       <SubTabSwitcher<BookmarkTabKey>
+        ref={subTabRef}
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        tabs={tabsItem}
+        tabs={tabItems}
+        autoScrollOnChange={isMobile}
+        scrollBehavior="smooth"
+        scrollDelayMs={0}
       />
-
       <div className="mt-6">{TABS[activeTab]}</div>
-    </div>
+    </>
   );
 };

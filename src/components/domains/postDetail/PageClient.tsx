@@ -8,6 +8,8 @@ import {
   getPostDetailById,
   getPostDetailStatusById,
 } from "./postDetail.helpers";
+import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
+import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
 
 export default function PageClient({ postId }: { postId: string }) {
   const { data: postDetail } = useQuery({
@@ -20,6 +22,8 @@ export default function PageClient({ postId }: { postId: string }) {
     queryKey: ["post", postId, "status"],
     queryFn: () => getPostDetailStatusById(postId),
   });
+
+  useLogRecentItem(postDetail, useRecentPostsStore);
 
   if (!postDetail || !postStatus) {
     return <div>Loading...</div>;
