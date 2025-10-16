@@ -30,7 +30,7 @@ export type InfoType = PostInfo | ReviewInfo | CommentInfo | BasicInfo;
 export interface AuthorInfoProps {
   size?: SizeStatusType;
   author: Author;
-  createdAt: Date;
+  createdAt: Date | string;
   isAuthor: boolean;
   info?: InfoType;
 }
