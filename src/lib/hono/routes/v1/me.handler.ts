@@ -95,52 +95,28 @@ const postPhotoCollectionRoute = createRoute({
   method: "post",
   path: "/collections",
   summary: "내 향수 컬렉션 등록",
-  requestBody: {
-    required: true,
-    content: {
-      "multipart/form-data": {
-        schema: {
-          type: "object",
-          properties: {
-            perfumeId: { type: "string" },
-            imageFile: { type: "string", format: "binary" },
-            comment: { type: "string" },
-          },
-          required: ["perfumeId", "imageFile"],
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: MeSchemas.PostCollectionRequestSchema,
         },
       },
     },
   },
   responses: createStandardApiResponses({
-    schema: MeSchemas.ApiMyBookmarkedPerfumesResponseSchema,
+    schema: MeSchemas.ApiMyCollectionResponseSchema,
   }),
   tags: ["Me"],
 });
 
 meApi.openapi(postPhotoCollectionRoute, async (c) => {
   const user = getAuthenticatedUser(c);
-  const formData = await c.req.formData();
-
-  const perfumeId = formData.get("perfumeId");
-  const imageFile = formData.get("imageFile");
-  const comment = formData.get("comment");
-
-  if (!perfumeId || typeof perfumeId !== "string") {
-    return apiBadRequest(c, "올바른 perfumeId가 필요합니다.");
-  }
-
-  if (!imageFile || !(imageFile instanceof File)) {
-    return apiBadRequest(c, "이미지 파일이 필요합니다.");
-  }
-
-  const commentString =
-    comment && typeof comment === "string" ? comment : undefined;
+  const body = c.req.valid("json");
 
   const data = {
     userId: user.id,
-    perfumeId,
-    imageFile,
-    comment: commentString,
+    ...body,
   };
 
   const result = await MeServices.postPhotoCollectionService(data);
@@ -402,10 +378,10 @@ const patchMyProfileRoute = createRoute({
 meApi.openapi(patchMyProfileRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = c.req.valid("json");
-  console.log(user, formData);
-  if (user.id !== formData.id)
-    return apiForbidden(c, "프로필 수정을 할 수 없습니다.");
-  const result = await MeServices.updateMyProfileService(formData);
+  const result = await MeServices.updateMyProfileService({
+    id: user.id,
+    ...formData,
+  });
 
   if (!result.success) {
     return apiInternalError(c, result.message);

@@ -1,5 +1,5 @@
 import { REVIEW_CONFIG } from "@/lib/constants/review";
-import { ReviewCategory, ReviewOptionKey } from "@/lib/types/review";
+import { ReviewCategory, ReviewOptionKey } from "@/lib/types/review.types";
 
 const ANALYTICS_COLORS: {
   [K in ReviewCategory]?: { [P in ReviewOptionKey<K>]?: string };

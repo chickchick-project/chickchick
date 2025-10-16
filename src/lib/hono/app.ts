@@ -8,6 +8,7 @@ import meApi from "./routes/v1/me.handler";
 import usersApi from "./routes/v1/user.handler";
 import commentsApi from "./routes/v1/comment.handler";
 import { handleApiError } from "./utils/apiResponse.utils";
+import fileApi from "./routes/v1/file.handler";
 
 export type AuthenticatedUser = User;
 
@@ -45,6 +46,7 @@ v1.route("/community", communityApi);
 v1.route("/comments", commentsApi);
 v1.route("/me", meApi);
 v1.route("/users", usersApi);
+v1.route("/file", fileApi);
 
 app.route("/v1", v1);
 // app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));

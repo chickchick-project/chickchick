@@ -8,12 +8,12 @@ export const AgeField = () => {
 
   const options = [
     { value: "private", label: "비공개" },
-    ...[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((age) => ({
+    ...[10, 20, 30, 40, 50].map((age) => ({
       value: age.toString(),
       label: `${age}대`,
     })),
+    { value: "60", label: "60대 이상" },
   ];
-
   return (
     <ProfileRow label="나이" htmlFor="age">
       <Controller

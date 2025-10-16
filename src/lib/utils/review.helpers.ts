@@ -3,7 +3,7 @@ import {
   REVIEW_CONFIG,
   REVIEW_UI_DETAILS,
 } from "../constants/review";
-import { ReviewCategory } from "../types/review";
+import { ReviewCategory } from "../types/review.types";
 
 export function getCategoryById(id: number): ReviewCategory | undefined {
   return ATTRIBUTE_ID_TO_CATEGORY_MAP[id];

@@ -1,10 +1,9 @@
-import UserFooter from "@/components/domains/user/layouts/UserFooter";
-import UserHeader from "@/components/domains/user/layouts/UserHeader";
-import PageClient from "@/components/domains/user/PageClient";
-import { getSession } from "@/lib/database/getSession";
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
-import { getUserById } from "@/lib/utils/getUserProfile";
 import { notFound } from "next/navigation";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import getQueryClient from "@/lib/hono/utils/getQueryClient";
+import { getUserById } from "@/lib/utils/getUserProfile";
+import UserLayoutClient from "@/components/domains/user/UserLayoutClient";
+import { getSession } from "@/lib/database/getSession";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -13,31 +12,26 @@ interface LayoutProps {
 
 export default async function UserLayout({ children, params }: LayoutProps) {
   const { id: pageOwnerId } = await params;
-
   const session = await getSession();
-
   const isMe = session?.user?.id === pageOwnerId;
-  let user: ApiMyProfileResponse | null;
+
+  const queryClient = getQueryClient();
 
   try {
-    user = await getUserById(pageOwnerId);
-    if (!user) {
-      return notFound();
-    }
+    await queryClient.prefetchQuery({
+      queryKey: ["user", "profile", pageOwnerId],
+      queryFn: () => getUserById(pageOwnerId),
+    });
   } catch (error) {
     console.error("Error fetching user:", error);
     return notFound();
   }
 
-  if (!isMe) {
-    return notFound();
-  }
-
   return (
-    <div className="w-[1200px] mx-auto my-10">
-      <UserHeader user={user} />
-      <PageClient isMe={isMe}>{children}</PageClient>
-      <UserFooter />
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <UserLayoutClient pageOwnerId={pageOwnerId} isMe={isMe}>
+        {children}
+      </UserLayoutClient>
+    </HydrationBoundary>
   );
 }

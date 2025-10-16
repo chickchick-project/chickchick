@@ -9,17 +9,15 @@ import {
 } from "@/lib/hono/schemas/me.schema";
 import Form from "@/components/commons/form";
 import { useUpdateProfileMutation } from "../../useUpdateProfile";
-import { useUserStore } from "@/lib/stores/useUserStore";
 
-export const PersonalInfo = () => {
-  const user = useUserStore((state) => state.user);
+export const PersonalInfo = (user: ApiMyProfileResponse) => {
   const { mutateAsync, isPending } = useUpdateProfileMutation();
   const defaultValues = {
-    id: user?.id,
-    nickname: user?.nickname || "",
-    age: user?.age || 0,
-    gender: user?.gender || "UNKNOWN",
-    imageUrl: user?.imageUrl || "",
+    id: user.id,
+    nickname: user.nickname || "",
+    age: user.age || 0,
+    gender: user.gender || "UNKNOWN",
+    imageUrl: user.imageUrl || "",
   };
 
   // 탈퇴 처리 함수
