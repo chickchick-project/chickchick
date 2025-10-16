@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
+  ApiPostDetailResponse,
   ApiPostStatusResponse,
   CreatePostInput,
   GetPostsQuery,
@@ -120,7 +121,7 @@ export async function getPaginatedPostListService(
 export async function getPostByIdService(
   id: string,
   userId?: string | null
-): Promise<ServiceResult<FullPost & { isAuthor: boolean }>> {
+): Promise<ServiceResult<ApiPostDetailResponse>> {
   try {
     const post = await prisma.$transaction(async (tx) => {
       await tx.post.update({
@@ -136,8 +137,19 @@ export async function getPostByIdService(
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
+    const { perfumeMappings, ...restOfPost } = post;
+    const perfumes = perfumeMappings.map((mapping) => {
+      const perfumeImage = mapping.perfume.perfumeImage
+        ? { imageUrl: mapping.perfume.perfumeImage.imageUrl }
+        : null;
+
+      return {
+        ...mapping.perfume,
+        perfumeImage,
+      };
+    });
     const isAuthor = post.userId === userId;
-    return serviceSuccess({ ...post, isAuthor });
+    return serviceSuccess({ ...restOfPost, perfumes, isAuthor });
   } catch (error) {
     return serviceInternalError(error);
   }
