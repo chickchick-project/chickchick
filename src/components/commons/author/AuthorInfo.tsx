@@ -5,7 +5,6 @@ import PostTime from "./PostTime";
 import PostMeta from "./PostMeta";
 import { SIZE_STATUSES } from "./author.constants";
 import { AuthorInfoProps, SizeStatusType } from "./author.types";
-import dayjs from "dayjs";
 
 const AuthorInfo: React.FC<AuthorInfoProps> = ({
   size = SIZE_STATUSES.DEFAULT,
@@ -28,13 +27,11 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
   }
 
   // 2. 작성 시간 추가
+  const timeString =
+    createdAt instanceof Date ? createdAt.toISOString() : createdAt;
+
   items.push(
-    <PostTime
-      key="time"
-      type={info.type}
-      time={dayjs(createdAt).format("YYYY-MM-DD")}
-      size={size}
-    />
+    <PostTime key="time" type={info.type} time={timeString} size={size} />
   );
 
   switch (info.type) {
