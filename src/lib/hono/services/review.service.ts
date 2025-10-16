@@ -20,7 +20,6 @@ const POPULAR_REVIEW_POOL_SIZE = 20;
 let optionMap = new Map<string, number>();
 
 async function initializeOptionMap() {
-  console.log("Initializing AttributeOption map...");
   try {
     const allOptions = await prisma.attributeOption.findMany({
       include: { attribute: true },
@@ -31,9 +30,6 @@ async function initializeOptionMap() {
       newMap.set(key, opt.id);
     });
     optionMap = newMap;
-    // console.log(
-    //   `AttributeOption map initialized with ${optionMap.size} entries.`
-    // );
   } catch (error) {
     console.error("Failed to initialize AttributeOption map:", error);
   }
@@ -168,8 +164,6 @@ export async function getPaginatedReviewsByPerfumeIdService(
       }),
       countReviews({ perfumeId }),
     ]);
-
-    console.log("review", reviews);
 
     const paginatedResult = createCursorPaginationResult(
       reviews,

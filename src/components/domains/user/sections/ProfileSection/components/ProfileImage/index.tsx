@@ -6,14 +6,16 @@ interface ProfileImageProps {
   initialImage?: string | null;
   previewUrl?: string | null;
   isUploading?: boolean;
-  onFileSelect?: (file: File) => void;
-  onCancel?: () => void;
+  onSaveImage: () => void;
+  onFileSelect: (file: File) => void;
+  onCancel: () => void;
 }
 
 export const ProfileImage = ({
   initialImage,
   previewUrl,
   isUploading = false,
+  onSaveImage,
   onFileSelect,
   onCancel,
 }: ProfileImageProps) => {
@@ -26,16 +28,14 @@ export const ProfileImage = ({
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      console.log("Selected file:", file.name);
-      onFileSelect?.(file);
+      onFileSelect(file);
     }
   };
   const handleSave = () => {
-    console.log("Save clicked");
-    // onSaveImage();
+    onSaveImage();
   };
   const handleCancel = () => {
-    onCancel?.();
+    onCancel();
   };
   return (
     <div className="flex flex-col items-center gap-4 p-6">

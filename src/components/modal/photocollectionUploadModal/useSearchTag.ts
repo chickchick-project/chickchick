@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { searchPerfumes } from "./photoUpload.helper";
+import { searchPerfumeTags } from "./photoCollection.helper";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 const initialState = { data: [] as ApiPerfumeSimpleResponse[] };
@@ -19,10 +19,9 @@ export function useSearchTag(query: string) {
     setIsSearching(true);
     const handler = setTimeout(async () => {
       try {
-        const response = await searchPerfumes(query);
+        const response = await searchPerfumeTags(query);
         if (isActive) {
-          const perfumeArray = response.data.data;
-          setResults({ data: perfumeArray });
+          setResults({ data: response.data });
         }
       } catch (error) {
         console.error("검색 실패:", error);

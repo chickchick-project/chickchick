@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { ImageType } from "@/lib/types/review";
+import { ReviewImageType } from "@/lib/types/review.types";
 
 interface IImageButton {
-  image: ImageType;
-  image_selected: ImageType;
+  image: ReviewImageType;
+  image_selected: ReviewImageType;
   children: React.ReactNode;
   isSelected: boolean;
   onClick: () => void;

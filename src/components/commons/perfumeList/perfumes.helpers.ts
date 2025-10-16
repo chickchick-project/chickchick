@@ -2,17 +2,9 @@ import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
 import { createHttpClient } from "@/lib/utils/core-request";
 
-export interface SearchResponse {
-  data: ApiPerfumeSimpleResponse[];
-  nextCursor: string | null;
-  totalCount: number;
-}
+type SearchResponse = PaginatedResponse<ApiPerfumeSimpleResponse>;
 
-interface RawPerfumesApiResponse {
-  success: boolean;
-  message: string;
-  data: SearchResponse;
-}
+type RawApiResponse = ApiResponse<SearchResponse>;
 
 // --- API 클라이언트 초기화 ---
 const apiClient = createHttpClient({
@@ -22,8 +14,6 @@ const apiClient = createHttpClient({
 
 /**
  * 향수 목록을 검색하고 필터링하는 비동기 함수입니다.
- * 성공 시 SearchResponse 객체를 반환하고, 실패 시 에러를 던집니다.
- * @returns Promise<SearchResponse>
  */
 export async function fetchPerfumes(
   cursor: string | null,
@@ -34,7 +24,7 @@ export async function fetchPerfumes(
     const formattedFilters = formatFilters(filters);
     const hasFilters = Object.keys(formattedFilters).length > 0;
 
-    let response: RawPerfumesApiResponse | null = null;
+    let response: RawApiResponse | null = null;
 
     if (hasFilters) {
       // 필터가 있을 경우 POST 요청
@@ -45,10 +35,10 @@ export async function fetchPerfumes(
         ...formattedFilters,
       };
 
-      response = await apiClient.post<
-        typeof requestBody,
-        RawPerfumesApiResponse
-      >("/search/perfumes", requestBody);
+      response = await apiClient.post<typeof requestBody, RawApiResponse>(
+        "/search/perfumes",
+        requestBody
+      );
     } else {
       // 필터가 없을 경우 GET 요청
       const params = {
@@ -57,7 +47,7 @@ export async function fetchPerfumes(
         limit: "15",
       };
 
-      response = await apiClient.get<RawPerfumesApiResponse>(
+      response = await apiClient.get<RawApiResponse>(
         "/search/perfumes",
         params
       );
