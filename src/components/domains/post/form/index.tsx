@@ -21,6 +21,7 @@ import {
   CreatePostInputSchema,
   PerfumeForPost,
 } from "@/lib/hono/schemas/community.schema";
+import usePostMutation from "../usePostMutation";
 
 export type TPostFormInitialData = CreatePostInput & {
   perfumes: PerfumeForPost[] | [];
@@ -31,9 +32,13 @@ interface IPostFormProps {
   postId?: string;
 }
 
-export default function PostForm({ type, initialData }: IPostFormProps) {
+export default function PostForm({
+  type,
+  initialData,
+  postId,
+}: IPostFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
   const method = useForm<CreatePostInput>({
@@ -54,35 +59,28 @@ export default function PostForm({ type, initialData }: IPostFormProps) {
     setValue,
   } = method;
 
+  const { createMutation, editMutation } = usePostMutation(postId);
+  const isLoading = createMutation.isPending || editMutation.isPending;
+
   const onSubmit = async (data: CreatePostInput) => {
-    setIsLoading(true);
+    const finalizedContent = await finalizeWithBlobRegistry(
+      data.content,
+      blobRegistryRef.current
+    );
+    setValue("content", finalizedContent, { shouldDirty: true });
+    const thumbnailUrl = extractFirstImageSrc(finalizedContent);
+    const contentText = getPlainText(finalizedContent);
+    const postData: CreatePostInput = {
+      ...data,
+      content: finalizedContent,
+      thumbnailUrl,
+      contentText,
+    };
 
-    try {
-      const finalizedContent = await finalizeWithBlobRegistry(
-        data.content,
-        blobRegistryRef.current
-      );
-      setValue("content", finalizedContent, { shouldDirty: true });
-      const thumbnailUrl = extractFirstImageSrc(finalizedContent);
-      const contentText = getPlainText(finalizedContent);
-      const postData: CreatePostInput = {
-        ...data,
-        content: finalizedContent,
-        thumbnailUrl,
-        contentText,
-      };
-
-      if (type === "create") {
-        const result = await submitNewPost(postData);
-        if (result.success && result.data) {
-          router.push(`/community/post/${result.data.id}`);
-        }
-      }
-      //게시글 수정 추가
-    } catch (error) {
-      console.error("Error submitting new post:", error);
-    } finally {
-      setIsLoading(false);
+    if (type === "create") {
+      createMutation.mutate(postData);
+    } else if (type === "edit") {
+      editMutation.mutate(postData);
     }
   };
 
