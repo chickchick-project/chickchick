@@ -36,8 +36,8 @@ export default function PostDetailHeader(props: PostDetailHeaderProps) {
       <div className="flex item-center justify-between">
         <BoardChip type={category} />
         <PostInteractions
-          initialIsLiked={isLiked}
-          initialIsBookmarked={isBookmarked}
+          isLiked={isLiked}
+          isBookmarked={isBookmarked}
           postId={postId}
         />
       </div>
