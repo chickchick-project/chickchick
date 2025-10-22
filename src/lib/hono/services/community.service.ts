@@ -123,6 +123,9 @@ export async function getPostByIdService(
   userId?: string | null
 ): Promise<ServiceResult<ApiPostDetailResponse>> {
   try {
+    const uuidValidation = validateUuid(id, "게시글");
+    if (!uuidValidation.success) return uuidValidation;
+
     const post = await prisma.$transaction(async (tx) => {
       await tx.post.update({
         where: { id },
@@ -136,6 +139,9 @@ export async function getPostByIdService(
 
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (!post.published) {
+      return serviceForbidden("이미 삭제된 게시글입니다.");
     }
     const { perfumeMappings, ...restOfPost } = post;
     const perfumes = perfumeMappings.map((mapping) => {
@@ -159,6 +165,8 @@ export async function getPostStatusByIdService(
   postId: string,
   userId?: string | null
 ): Promise<ServiceResult<ApiPostStatusResponse>> {
+  const uuidValidation = validateUuid(postId, "게시글");
+  if (!uuidValidation.success) return uuidValidation;
   try {
     const [postCounts, like, bookmark] = await Promise.all([
       prisma.post.findUnique({
@@ -225,15 +233,27 @@ export async function updatePostService(
 ): Promise<ServiceResult<BasePost>> {
   try {
     const { perfumeIds, ...postUpdateData } = updateData;
-    const uuidValidation = validateUuid(postId, "게시글");
+    const [uuidValidation, userCheck] = await Promise.all([
+      validateUuid(postId, "게시글"),
+      checkResourceExists("user", authorId, "사용자"),
+    ]);
     if (!uuidValidation.success) return uuidValidation;
+    if (!userCheck.success) return userCheck;
 
     const post = await prisma.post.findUnique({
-      where: { id: postId, author: { id: authorId } },
+      where: { id: postId },
+      select: { published: true, author: { select: { id: true } } },
     });
     if (!post) {
-      return serviceNotFound("게시글을 찾을 수 없거나 수정 권한이 없습니다.");
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
+    if (post.author.id !== authorId) {
+      return serviceForbidden("게시글을 수정할 권한이 없습니다.");
+    }
+    if (!post.published) {
+      return serviceBadRequest("이미 삭제된 게시글은 수정할 수 없습니다.");
+    }
+
     const updatedPost = await prisma.$transaction(async (tx) => {
       if (perfumeIds !== undefined) {
         await tx.postPerfumeMapping.deleteMany({ where: { postId } });
@@ -268,8 +288,12 @@ export async function deletePostService(
   authorId: string
 ): Promise<ServiceResult<{ message: string }>> {
   try {
-    const uuidValidation = validateUuid(postId, "게시글");
+    const [uuidValidation, userCheck] = await Promise.all([
+      validateUuid(postId, "게시글"),
+      checkResourceExists("user", authorId, "사용자"),
+    ]);
     if (!uuidValidation.success) return uuidValidation;
+    if (!userCheck.success) return userCheck;
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
@@ -295,8 +319,24 @@ export async function togglePostLikeService(
   userId: string
 ): Promise<ServiceResult<{ liked: boolean; likeCount: number }>> {
   try {
-    const postCheck = await checkResourceExists("post", postId, "게시글");
-    if (!postCheck.success) return postCheck;
+    const [uuidValidation, userCheck] = await Promise.all([
+      validateUuid(postId, "게시글"),
+      checkResourceExists("user", userId, "사용자"),
+    ]);
+    if (!uuidValidation.success) return uuidValidation;
+    if (!userCheck.success) return userCheck;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { published: true },
+    });
+
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (!post.published) {
+      return serviceForbidden("이미 삭제된 게시글입니다.");
+    }
 
     const like = await prisma.postLike.findUnique({
       where: { post_likes_user_id_post_id_key: { postId, userId } },
@@ -332,8 +372,24 @@ export async function togglePostBookmarkService(
   userId: string
 ): Promise<ServiceResult<{ bookmarked: boolean }>> {
   try {
-    const postCheck = await checkResourceExists("post", postId, "게시글");
-    if (!postCheck.success) return postCheck;
+    const [uuidValidation, userCheck] = await Promise.all([
+      validateUuid(postId, "게시글"),
+      checkResourceExists("user", userId, "사용자"),
+    ]);
+    if (!uuidValidation.success) return uuidValidation;
+    if (!userCheck.success) return userCheck;
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { published: true },
+    });
+
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (!post.published) {
+      return serviceForbidden("이미 삭제된 게시글입니다.");
+    }
 
     const bookmark = await prisma.postBookmark.findUnique({
       where: { post_bookmarks_user_id_post_id_key: { postId, userId } },

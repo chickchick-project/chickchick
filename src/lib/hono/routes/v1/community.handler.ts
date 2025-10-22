@@ -78,10 +78,13 @@ const getPostRoute = createRoute({
   request: {
     params: postIdParam,
   },
-  responses: createStandardApiResponses({
-    schema: CommunitySchemas.ApiPostDetailResponseSchema,
-    description: "게시글",
-  }),
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.ApiPostDetailResponseSchema,
+      description: "게시글",
+    },
+    ["400", "403", "404"]
+  ),
   tags: ["Community"],
 });
 
@@ -91,7 +94,10 @@ communityApi.openapi(getPostRoute, async (c) => {
   const result = await CommunityServices.getPostByIdService(id, user?.id);
 
   if (!result.success) {
-    return apiNotFound(c, result.message);
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
   }
   return apiSuccess(c, result.data, "게시글을 성공적으로 불러왔습니다.");
 });
@@ -110,10 +116,13 @@ const getPostStatusRoute = createRoute({
   request: {
     params: postIdParam,
   },
-  responses: createStandardApiResponses({
-    schema: CommunitySchemas.ApiPostStatusResponseSchema,
-    description: "게시글 상태 정보",
-  }),
+  responses: createStandardApiResponses(
+    {
+      schema: CommunitySchemas.ApiPostStatusResponseSchema,
+      description: "게시글 상태 정보",
+    },
+    ["400", "404"]
+  ),
   tags: ["Community"],
 });
 
@@ -123,9 +132,9 @@ communityApi.openapi(getPostStatusRoute, async (c) => {
   const result = await CommunityServices.getPostStatusByIdService(id, user?.id);
 
   if (!result.success) {
-    return result.error === "NOT_FOUND"
-      ? apiNotFound(c, result.message)
-      : apiInternalError(c, result.message);
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
   }
   return apiSuccess(
     c,
@@ -227,10 +236,13 @@ const deletePostRoute = createRoute({
   request: {
     params: postIdParam,
   },
-  responses: createStandardApiResponses({
-    schema: z.object({ message: z.string() }),
-    description: "삭제된 게시글 정보",
-  }),
+  responses: createStandardApiResponses(
+    {
+      schema: z.object({ message: z.string() }),
+      description: "삭제된 게시글 정보",
+    },
+    ["400", "403", "404"]
+  ),
   tags: ["Community"],
 });
 
@@ -240,13 +252,10 @@ authenticatedApi.openapi(deletePostRoute, async (c) => {
   const result = await CommunityServices.deletePostService(id, user.id);
 
   if (!result.success) {
-    return result.error === "NOT_FOUND"
-      ? apiNotFound(c, result.message)
-      : result.error === "BAD_REQUEST"
-      ? apiBadRequest(c, result.message)
-      : result.error === "FORBIDDEN"
-      ? apiForbidden(c, result.message)
-      : apiInternalError(c, result.message);
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
   }
   return apiSuccess(c, result.data, "게시글을 성공적으로 삭제했습니다.");
 });
@@ -262,9 +271,12 @@ const likePostRoute = createRoute({
   summary: "게시글 좋아요",
   description: "게시글 좋아요 추가 한번 더 요청하면 자동으로 제거",
   request: { params: postIdParam },
-  responses: createStandardApiResponses({
-    schema: z.object({ liked: z.boolean(), likeCount: z.number() }),
-  }),
+  responses: createStandardApiResponses(
+    {
+      schema: z.object({ liked: z.boolean(), likeCount: z.number() }),
+    },
+    ["400", "403", "404"]
+  ),
   tags: ["Community"],
 });
 
@@ -274,7 +286,10 @@ authenticatedApi.openapi(likePostRoute, async (c) => {
   const result = await CommunityServices.togglePostLikeService(id, user.id);
 
   if (!result.success) {
-    return apiNotFound(c, result.message);
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
   }
   return apiSuccess(c, result.data, "게시글 좋아요를 성공적으로 추가했습니다.");
 });
@@ -290,9 +305,12 @@ const bookmarkPostRoute = createRoute({
   summary: "게시글 북마크",
   description: "게시글 북마크 추가 한번 더 요청하면 자동으로 제거",
   request: { params: postIdParam },
-  responses: createStandardApiResponses({
-    schema: z.object({ bookmarked: z.boolean() }),
-  }),
+  responses: createStandardApiResponses(
+    {
+      schema: z.object({ bookmarked: z.boolean() }),
+    },
+    ["400", "403", "404"]
+  ),
   tags: ["Community"],
 });
 
@@ -302,7 +320,10 @@ authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
   const result = await CommunityServices.togglePostBookmarkService(id, user.id);
 
   if (!result.success) {
-    return apiNotFound(c, result.message);
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "FORBIDDEN") return apiForbidden(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
   }
 
   return apiSuccess(c, result.data, "게시글 북마크를 성공적으로 추가했습니다.");
