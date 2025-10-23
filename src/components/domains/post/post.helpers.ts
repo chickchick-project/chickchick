@@ -14,20 +14,15 @@ const apiClient = createHttpClient({
 
 export async function submitNewPost(
   postFormData: CreatePostInput
-): Promise<ApiSuccessResponse<ApiPostResponse>> {
-  const response = await fetch(`${COMMUNITY_URL}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(postFormData),
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.message || `API Error: ${response.status}`);
+): Promise<ApiPostResponse> {
+  const result = await apiClient.post<
+    CreatePostInput,
+    ApiSuccessResponse<ApiPostResponse>
+  >(`${COMMUNITY_URL}`, postFormData);
+  if (!result || !result.success) {
+    throw new Error(result?.message || "게시글 작성에 실패했습니다.");
   }
-
-  return data;
+  return result.data;
 }
 
 export async function searchPerfumesByName(
@@ -56,6 +51,14 @@ export async function searchPerfumesByName(
 export async function editPostById(
   postId: string,
   postFormData: UpdatePostInput
-): Promise<ApiSuccessResponse<ApiPostResponse> | null> {
-  return await apiClient.patch(`/community/posts/${postId}`, postFormData);
+): Promise<ApiPostResponse> {
+  const result = await apiClient.patch<
+    UpdatePostInput,
+    ApiSuccessResponse<ApiPostResponse>
+  >(`${COMMUNITY_URL}/${postId}`, postFormData);
+
+  if (!result || !result.success) {
+    throw new Error(result?.message || "게시글 수정에 실패했습니다.");
+  }
+  return result.data;
 }
