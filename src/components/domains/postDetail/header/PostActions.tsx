@@ -1,8 +1,7 @@
 "use client";
 import { ActionItem, Actions } from "@/components/commons/actions";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { deletePostById } from "../postDetail.helpers";
+import usePostMutation from "../../post/usePostMutation";
 
 interface IPostActions {
   section?: "header" | "content";
@@ -13,24 +12,13 @@ export default function PostActions({
   section = "header",
   postId,
 }: IPostActions) {
-  const [isLoading, setIsLoading] = useState(false);
+  const { deleteMutation } = usePostMutation(postId);
   const router = useRouter();
 
-  const handleDeletePost = async (postId: string) => {
+  const handleDeletePost = () => {
     if (window.confirm("게시글을 삭제하시겠습니까?")) {
-      try {
-        setIsLoading(true);
-        const response = await deletePostById(postId);
-        if (response.success) {
-          alert("게시글이 삭제되었습니다.");
-          router.push("/community");
-        }
-      } catch (error) {
-        console.error("게시글 삭제 실패:", error);
-        alert((error as Error).message || "게시글 삭제에 실패했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
+      //모달로 교체 예정
+      deleteMutation.mutate();
     }
   };
 
@@ -43,8 +31,8 @@ export default function PostActions({
     {
       type: "delete",
       label: "삭제",
-      onClick: () => handleDeletePost(postId),
-      disabled: isLoading,
+      onClick: () => handleDeletePost(),
+      disabled: deleteMutation.isPending,
     },
   ];
 
