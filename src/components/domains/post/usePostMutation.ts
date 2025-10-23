@@ -5,6 +5,8 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { editPostById, submitNewPost } from "./post.helpers";
+import { deletePostById } from "../postDetail/postDetail.helpers";
+import { PostCategory } from "@prisma/client";
 
 export default function usePostMutation(postId?: string) {
   const queryClient = useQueryClient();
@@ -13,15 +15,20 @@ export default function usePostMutation(postId?: string) {
 
   const invalidatePost = () =>
     queryClient.invalidateQueries({ queryKey: postQueryKey });
+  const invalidateAllCommunityQueries = () =>
+    queryClient.invalidateQueries({ queryKey: ["community"] });
+  const invalidateAffectedPostLists = (category: PostCategory) => {
+    queryClient.invalidateQueries({ queryKey: ["community", category] });
+    queryClient.invalidateQueries({
+      queryKey: ["community", "BEST"],
+    });
+  };
 
   const createMutation = useMutation({
     mutationFn: (newPost: CreatePostInput) => submitNewPost(newPost),
     onSuccess: (newPostData) => {
-      const categoryOfNewPost = newPostData.data.category;
-      queryClient.invalidateQueries({
-        queryKey: ["community", categoryOfNewPost],
-      });
-      router.push(`/community/post/${newPostData.data.id}`);
+      invalidateAffectedPostLists(newPostData.category);
+      router.push(`/community/post/${newPostData.id}`);
     },
     onError: (error) => console.error(error, error.message),
   });
@@ -31,10 +38,19 @@ export default function usePostMutation(postId?: string) {
       editPostById(postId!, updatedPost),
     onSuccess: () => {
       invalidatePost();
+      invalidateAllCommunityQueries();
       router.push(`/community/post/${postId}`);
     },
     onError: (error) => console.error(error, error.message),
   });
+  const deleteMutation = useMutation({
+    mutationFn: () => deletePostById(postId!),
+    onSuccess: (data) => {
+      invalidateAffectedPostLists(data.category);
+      router.push(`/community?tab=${data.category}`);
+    },
+    onError: (error) => console.error(error, error.message),
+  });
 
-  return { createMutation, editMutation };
+  return { createMutation, editMutation, deleteMutation };
 }
