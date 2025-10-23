@@ -2,7 +2,9 @@ import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 import { useState } from "react";
 
-export default function usePerfumeSearch() {
+export default function usePerfumeSearch(
+  initialPerfumes?: ApiPerfumeSimpleResponse[]
+) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<
     ApiPerfumeSimpleResponse[]
@@ -13,7 +15,7 @@ export default function usePerfumeSearch() {
   >([]);
   const [selectedPerfumes, setSelectedPerfumes] = useState<
     ApiPerfumeSimpleResponse[]
-  >([]);
+  >(initialPerfumes || []);
 
   const handleToggleTempSelect = (perfume: ApiPerfumeSimpleResponse) => {
     setTempSelectedPerfumesIds((prev) => {

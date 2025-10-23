@@ -26,8 +26,6 @@ export const ApiPostResponseSchema = PostSchema.extend({
     nickname: true,
     imageUrl: true,
   }),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime().nullable(),
 }).omit({
   userId: true,
 });
@@ -94,3 +92,4 @@ export type PaginatedApiPostResponse = z.infer<
 export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type CreatePostInput = z.infer<typeof CreatePostInputSchema>;
 export type UpdatePostInput = z.infer<typeof UpdatePostInputSchema>;
+export type PerfumeForPost = z.infer<typeof PerfumeForPostSchema>;

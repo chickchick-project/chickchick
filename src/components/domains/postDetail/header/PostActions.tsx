@@ -38,7 +38,7 @@ export default function PostActions({
     {
       type: "edit",
       label: "수정",
-      onClick: () => {},
+      onClick: () => router.push(`/community/post/${postId}/edit`),
     },
     {
       type: "delete",

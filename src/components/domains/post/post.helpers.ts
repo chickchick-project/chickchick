@@ -1,10 +1,16 @@
 import {
   CreatePostInput,
   ApiPostResponse,
+  UpdatePostInput,
 } from "@/lib/hono/schemas/community.schema";
 import { API_BASE_URL, COMMUNITY_URL } from "../postDetail/postDetail.helpers";
 import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { createHttpClient } from "@/lib/utils/core-request";
+
+const apiClient = createHttpClient({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
+});
 
 export async function submitNewPost(
   postFormData: CreatePostInput
@@ -45,4 +51,11 @@ export async function searchPerfumesByName(
     console.error("searchPerfumesByName 오류:", error);
     throw error;
   }
+}
+
+export async function editPostById(
+  postId: string,
+  postFormData: UpdatePostInput
+): Promise<ApiSuccessResponse<ApiPostResponse> | null> {
+  return await apiClient.patch(`/community/posts/${postId}`, postFormData);
 }

@@ -178,6 +178,47 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
   return apiCreated(c, result.data, "게시글을 성공적으로 생성했습니다.");
 });
 
+const editPostRoute = createRoute({
+  method: "patch",
+  path: "/posts/{id}",
+  summary: "커뮤니티 게시글 수정",
+  description: "커뮤니티 게시글 수정",
+  request: {
+    params: postIdParam,
+    body: {
+      content: {
+        "application/json": { schema: CommunitySchemas.UpdatePostInputSchema },
+      },
+    },
+  },
+  responses: createStandardApiResponses({
+    schema: CommunitySchemas.ApiPostResponseSchema,
+    description: "수정된 게시글",
+  }),
+  tags: ["Community"],
+});
+
+authenticatedApi.openapi(editPostRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const user = getAuthenticatedUser(c);
+
+  const result = await CommunityServices.updatePostService(
+    id,
+    user.id,
+    c.req.valid("json")
+  );
+  if (!result.success) {
+    return result.error === "NOT_FOUND"
+      ? apiNotFound(c, result.message)
+      : result.error === "BAD_REQUEST"
+      ? apiBadRequest(c, result.message)
+      : result.error === "FORBIDDEN"
+      ? apiForbidden(c, result.message)
+      : apiInternalError(c, result.message);
+  }
+  return apiSuccess(c, result.data, "게시글을 성공적으로 수정했습니다.");
+});
+
 const deletePostRoute = createRoute({
   method: "delete",
   path: "/posts/{id}",
