@@ -17,6 +17,7 @@ import {
   apiCreated,
   apiForbidden,
 } from "@/lib/hono/utils/apiResponse.utils";
+import { PostCategory } from "@prisma/client";
 
 const communityApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -238,7 +239,7 @@ const deletePostRoute = createRoute({
   },
   responses: createStandardApiResponses(
     {
-      schema: z.object({ message: z.string() }),
+      schema: z.object({ category: z.nativeEnum(PostCategory) }),
       description: "삭제된 게시글 정보",
     },
     ["400", "403", "404"]

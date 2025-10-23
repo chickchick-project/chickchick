@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { PostCategory, Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
   ApiPostDetailResponse,
@@ -286,7 +286,7 @@ export async function updatePostService(
 export async function deletePostService(
   postId: string,
   authorId: string
-): Promise<ServiceResult<{ message: string }>> {
+): Promise<ServiceResult<{ category: PostCategory }>> {
   try {
     const [uuidValidation, userCheck] = await Promise.all([
       validateUuid(postId, "게시글"),
@@ -308,7 +308,7 @@ export async function deletePostService(
       data: { published: false },
     });
 
-    return serviceSuccess({ message: "게시글을 성공적으로 삭제했습니다." });
+    return serviceSuccess({ category: post.category });
   } catch (error) {
     return serviceInternalError(error);
   }
