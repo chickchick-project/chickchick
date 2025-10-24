@@ -5,6 +5,7 @@ import getQueryClient from "@/lib/hono/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
+
 export default async function Page({
   params,
 }: {
@@ -12,11 +13,12 @@ export default async function Page({
 }) {
   const { id } = await params;
   const session = await getSession();
-  if (!session) {
-    return <div>로그인이 필요한 서비스 입니다.</div>; //로그인 하지 않은경우 로그인 모달띄우기
-  }
-  const cookieStore = await cookies();
 
+  // if (!session) {
+  //   return <div>로그인이 필요한 서비스 입니다.</div>; //로그인 하지 않은경우 로그인 모달띄우기
+  // }
+
+  const cookieStore = await cookies();
   const requestHeaders = {
     Cookie: cookieStore.toString(),
   };
@@ -27,7 +29,7 @@ export default async function Page({
     queryFn: () => getPostDetailById(id, requestHeaders),
   });
 
-  if (!post || post.author.id !== session.user?.id) {
+  if (!post || post.author.id !== session?.user?.id) {
     return notFound();
   }
 

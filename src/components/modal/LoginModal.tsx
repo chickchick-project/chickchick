@@ -1,3 +1,5 @@
+"use client";
+
 import {
   googleLogin,
   kakaoLogin,
@@ -7,12 +9,22 @@ import { ModalContainer } from "./ModalContainer";
 import Image from "next/image";
 import IMAGES from "@/lib/constants/images";
 import { SocialLogoContainer } from "../commons/socialLogo/SocialLogoContainer";
+import { usePathname, useSearchParams } from "next/navigation";
 
 interface ILoginModalProps {
   closeModal: () => void;
 }
 
 export const LoginModal = ({ closeModal }: ILoginModalProps) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const callbackUrl = searchParams.get("callbackUrl") || pathname;
+
+  const handleGoogleLogin = googleLogin.bind(null, callbackUrl);
+  const handleNaverLogin = naverLogin.bind(null, callbackUrl);
+  const handleKakaoLogin = kakaoLogin.bind(null, callbackUrl);
+
   return (
     <ModalContainer closeModal={closeModal}>
       <div className="flex flex-col justify-center items-center gap-7 w-[444px] h-[308px]">
@@ -27,7 +39,7 @@ export const LoginModal = ({ closeModal }: ILoginModalProps) => {
         </div>
         <div className="flex justify-center items-center gap-6">
           {/* google */}
-          <form action={googleLogin}>
+          <form action={handleGoogleLogin}>
             <button>
               <SocialLogoContainer>
                 <Image
@@ -41,7 +53,7 @@ export const LoginModal = ({ closeModal }: ILoginModalProps) => {
           </form>
 
           {/* naver */}
-          <form action={naverLogin}>
+          <form action={handleNaverLogin}>
             <button>
               <SocialLogoContainer>
                 <Image
@@ -55,7 +67,7 @@ export const LoginModal = ({ closeModal }: ILoginModalProps) => {
           </form>
 
           {/* kakao: email 받아오는 권한 없음. 보류 */}
-          <form action={kakaoLogin}>
+          <form action={handleKakaoLogin}>
             <button>
               <SocialLogoContainer>
                 <Image
