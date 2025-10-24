@@ -24,7 +24,7 @@ export default function UserLayoutClient({
   }
 
   return (
-    <div className="w-[1200px] mx-auto my-10">
+    <div className="max-w-[1200px] w-full mx-auto my-10">
       <UserHeader user={user} />
       <PageClient pageOwnerId={pageOwnerId} isMe={isMe}>
         {children}

@@ -10,14 +10,12 @@ import { TabItem } from "./tabs.type";
 interface MobileTabsAccordionProps {
   tabItems: TabItem[];
   currentTab: string;
-  subTabs?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export const MobileTabsAccordion = ({
   tabItems,
   currentTab,
-  subTabs,
   children,
 }: MobileTabsAccordionProps) => {
   const user = useUserStore((state) => state.user);
@@ -55,7 +53,6 @@ export const MobileTabsAccordion = ({
 
         {/* 다른 탭들 드롭다운 */}
         <div className="mt-2">
-          {subTabs}
           <button
             type="button"
             onClick={() => setShowAllTabs(!showAllTabs)}

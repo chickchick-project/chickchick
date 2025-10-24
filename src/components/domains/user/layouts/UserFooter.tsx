@@ -26,14 +26,16 @@ const ScrollRowSection = ({
 }) => {
   return (
     <div className="flex flex-col gap-y-5">
-      <span className="text-headline-2 font-semibold ml-[50px]">{title}</span>
+      <span className="text-headline-2 font-semibold ml-4 tablet:ml-[50px]">
+        {title}
+      </span>
       <div className="w-full flex justify-center">
         <div className="relative w-fit">
           {hasPrev && (
             <button
               onClick={onPrev}
               className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full ml-[-20px] z-10 p-2 rounded-full hover:bg-gray-100"
-              aria-label="이전"
+              aria-label="이전 게시글 보기"
             >
               <Image
                 src={ICONS.ArrowDownGray.src}
@@ -51,7 +53,7 @@ const ScrollRowSection = ({
             <button
               onClick={onNext}
               className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full mr-[-20px] z-10 p-2 rounded-full hover:bg-gray-100"
-              aria-label="다음"
+              aria-label="다음 게시글 보기"
             >
               <Image
                 src={ICONS.ArrowDownGray.src}
@@ -125,13 +127,13 @@ const UserFooter = () => {
   return (
     <div className="flex flex-col gap-y-16 py-[60px]">
       <ScrollRowSection
-        title="최근에 본 게시글 10"
+        title="최근에 본 게시글"
         hasPrev={hasPrevPost}
         hasNext={hasNextPost}
         onPrev={handlePrevPost}
         onNext={handleNextPost}
       >
-        <div className="flex flex-col gap-4 tablet:grid tablet:grid-cols-2 tablet:gap-x-4">
+        <div className="flex flex-col gap-4 tablet:grid pc:grid-cols-2 tablet:grid-cols-1 tablet:gap-x-4">
           {recentPostItems.length === 0 ? (
             <span className="text-gray-500 text-center tablet:col-span-2">
               최근에 본 게시글이 없습니다.
@@ -141,7 +143,7 @@ const UserFooter = () => {
               const postForCard = {
                 ...ri.item,
                 userId: ri.item.author.id,
-              } as const;
+              };
               return (
                 <PostCard
                   key={ri.id}
@@ -156,7 +158,7 @@ const UserFooter = () => {
         </div>
       </ScrollRowSection>
       <ScrollRowSection
-        title="최근에 본 향수 10"
+        title="최근에 본 향수"
         hasPrev={hasPrevPerfume}
         hasNext={hasNextPerfume}
         onPrev={handlePrevPerfume}

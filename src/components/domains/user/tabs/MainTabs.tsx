@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import { getRenderableTabItems } from "./tabs.helper";
+import { getVisibleTabs } from "./tabs.helper";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 import { MobileTabsAccordion } from "./MobileTabsAccordion";
 import { FloatingActionButton } from "./FAB";
+
 const MainTabs = ({
   tab,
   isMe,
@@ -19,36 +19,39 @@ const MainTabs = ({
   children?: React.ReactNode;
 }) => {
   const user = useUserStore((state) => state.user);
-  const tabItems = getRenderableTabItems(isMe, user?.nickname);
+  const tabItems = getVisibleTabs(isMe, user?.nickname);
   const isCollectionTab = isMe && tab === "collection";
 
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-
-  if (isDesktop) {
-    // --- 데스크톱 뷰 ---
-    return (
-      <>
+  return (
+    <>
+      {/* 데스크톱 뷰 - tablet(768px) 이상에서만 표시 */}
+      <div className="hidden tablet:block">
         <div className="flex items-end w-full relative z-10 h-[52px]">
           {/* 탭 그룹 */}
-          <div className="flex space-x-2 mb-[-1px]">
-            {tabItems.map(({ label, value }) => {
-              const isActive = value === tab;
-              return (
-                <Link
-                  key={value}
-                  href={`/user/${pageOwnerId}/${value}`}
-                  className={`w-[140px] h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
-                    ${
-                      isActive
-                        ? "bg-white text-gray-800 border-b-white"
-                        : "bg-primary-200 text-white font-regular hover:bg-primary-300"
-                    }`}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
+          <nav role="tablist" aria-label="사용자 프로필 탭">
+            <div className="flex space-x-2 mb-[-1px]">
+              {tabItems.map(({ label, value }) => {
+                const isActive = value === tab;
+                return (
+                  <Link
+                    key={value}
+                    href={`/user/${pageOwnerId}/${value}`}
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`${value}-panel`}
+                    className={`min-w-[120px] px-4 h-[52px] flex items-center justify-center rounded-t-lg border transition-colors text-center font-medium
+            ${
+              isActive
+                ? "bg-white text-gray-800 border-b-white"
+                : "bg-primary-200 text-white font-regular hover:bg-primary-300"
+            }`}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
 
           {isCollectionTab && (
             <button
@@ -61,26 +64,29 @@ const MainTabs = ({
         </div>
 
         {children && (
-          <div className="bg-white rounded-lg border-gray-200 border p-10">
+          <div
+            role="tabpanel"
+            className="bg-white rounded-lg border-gray-200 border p-4 tablet:p-10"
+          >
             {children}
           </div>
         )}
-      </>
-    );
-  }
+      </div>
 
-  // --- 모바일 뷰 ---
-  return (
-    <>
-      <div className="w-full">
+      {/* 모바일 뷰 - tablet(768px) 미만에서만 표시 */}
+      <div className="block tablet:hidden w-full">
         <MobileTabsAccordion tabItems={tabItems} currentTab={tab}>
           {children}
         </MobileTabsAccordion>
       </div>
-      <FloatingActionButton
-        show={!!isCollectionTab}
-        onClick={onAddPhotoClick}
-      />
+
+      {/* FAB는 모바일에서만 표시 */}
+      <div className="block tablet:hidden">
+        <FloatingActionButton
+          show={!!isCollectionTab}
+          onClick={onAddPhotoClick}
+        />
+      </div>
     </>
   );
 };

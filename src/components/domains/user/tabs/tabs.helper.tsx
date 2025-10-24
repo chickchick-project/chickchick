@@ -39,7 +39,7 @@ export const TAB_CONFIGS: TabItemConfig[] = [
   },
 ];
 
-const getRenderableTabItems = (isMe?: boolean, nickname?: string) => {
+const getVisibleTabs = (isMe?: boolean, nickname?: string) => {
   return TAB_CONFIGS.filter((config) => {
     if (!isMe) {
       return ["collection", "bookmarks"].includes(config.value);
@@ -51,4 +51,4 @@ const getRenderableTabItems = (isMe?: boolean, nickname?: string) => {
   }));
 };
 
-export { getRenderableTabItems };
+export { getVisibleTabs };
