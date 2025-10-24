@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { useUrlTabs } from "../../useUrlTabs";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
-import { SkeletonCard, SkeletonPerfume } from "../Skeleton";
+import { SkeletonCard, SkeletonPerfume } from "../../components/skeletons";
 import { PerfumeBookmarkList } from "./components";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 

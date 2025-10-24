@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getVisibleTabs } from "./tabs.helper";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { MobileTabsAccordion } from "./MobileTabsAccordion";
-import { FloatingActionButton } from "./FAB";
+import { FloatingActionButton } from "../components/FAB";
 
 const MainTabs = ({
   tab,

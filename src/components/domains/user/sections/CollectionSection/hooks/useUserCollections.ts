@@ -1,9 +1,9 @@
 "use client";
 
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchUserCollections } from "../../user.helper";
 import { useEffect, useCallback } from "react";
-import { CollectionItem } from "../sections.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchUserCollections } from "../../../user.helper";
+import type { CollectionItem } from "../../sections.type";
 
 /**
  * 특정 사용자의 컬렉션 목록을 조회하는 React Query 커스텀 훅입니다.
