@@ -99,17 +99,6 @@ export async function getPostByIdService(
     if (!post.published) {
       return serviceForbidden("이미 삭제된 게시글입니다.");
     }
-    const { perfumeMappings, ...restOfPost } = post;
-    const perfumes = perfumeMappings.map((mapping) => {
-      const perfumeImage = mapping.perfume.perfumeImage
-        ? { imageUrl: mapping.perfume.perfumeImage.imageUrl }
-        : null;
-
-      return {
-        ...mapping.perfume,
-        perfumeImage,
-      };
-    });
     const isAuthor = post.userId === userId;
     return serviceSuccess({ ...post, isAuthor });
   } catch (error) {

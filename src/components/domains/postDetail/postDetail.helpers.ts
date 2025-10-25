@@ -3,7 +3,7 @@ import {
   ApiPostResponse,
   ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
-import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
 import { PostCategory } from "@prisma/client";
 
