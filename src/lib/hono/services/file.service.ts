@@ -3,7 +3,7 @@ import {
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 import { getImageFormat } from "../utils/service.utils";
 import { supabaseAdmin } from "@/lib/supabase/server";
 

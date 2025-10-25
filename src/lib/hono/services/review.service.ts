@@ -10,9 +10,9 @@ import {
   serviceNotFound,
   serviceAlreadyExists,
   serviceInternalError,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
-import { createCursorPaginationResult } from "../utils/pagination";
+import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 const POPULAR_REVIEW_LIMIT = 5;
 const POPULAR_REVIEW_POOL_SIZE = 20;

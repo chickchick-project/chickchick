@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import { optionalAuthMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import type { AppContext } from "@/lib/hono/app";
 import * as UserServices from "@/lib/hono/services/user.service";
@@ -8,7 +8,7 @@ import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 import { ApiPerfumeSimpleResponseSchema } from "@/lib/hono/schemas/perfume.schema";
 import { UserCollectionSchema } from "@zod/modelSchema";
 

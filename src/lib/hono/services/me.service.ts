@@ -6,7 +6,7 @@ import {
   serviceInternalError,
   serviceNotFound,
   serviceForbidden,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 import { BasePost } from "./community.service";
 import { BasePerfume } from "./perfume.service";
 import { FullReview, reviewIncludeArgs } from "./review.service";
@@ -74,9 +74,7 @@ export async function getMyBookmarkedPostsService(
  * 인증된 사용자가 최근 본 향수 목록을 조회합니다.
  * @param userId - 인증된 사용자의 ID
  */
-export async function getRecentPerfumesService(
-  userId: string
-): Promise<
+export async function getRecentPerfumesService(userId: string): Promise<
   ServiceResult<{
     items: Array<{ id: string; viewedAt: Date; perfume: BasePerfume }>;
   }>
@@ -104,9 +102,7 @@ export async function getRecentPerfumesService(
  * 인증된 사용자가 최근 본 게시글 목록을 조회합니다.
  * @param userId - 인증된 사용자의 ID
  */
-export async function getRecentPostsService(
-  userId: string
-): Promise<
+export async function getRecentPostsService(userId: string): Promise<
   ServiceResult<{
     items: Array<{ id: string; viewedAt: Date; post: BasePost }>;
   }>

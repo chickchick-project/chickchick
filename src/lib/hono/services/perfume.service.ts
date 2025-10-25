@@ -5,7 +5,7 @@ import {
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 
 import { checkResourceExists } from "../utils/service.utils";
 import { PostWithAuthor } from "./community.service";

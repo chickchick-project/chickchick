@@ -1,12 +1,8 @@
 import { Context } from "hono";
 import { ZodError } from "zod";
 import { HTTPException } from "hono/http-exception";
-import {
-  ApiSuccessResponse,
-  ApiErrorResponse,
-  HTTP_STATUS,
-  ERROR_MESSAGES,
-} from "./response.constants";
+import { HTTP_STATUS, ERROR_MESSAGES } from "./http.constants";
+import { ApiErrorResponse, ApiSuccessResponse } from "../schemas/common.schema";
 
 function createSuccessResponse<T>(
   data: T,
@@ -91,8 +87,6 @@ export function apiInternalError(
 
 // --- 전역 에러 핸들러 ---
 export function handleApiError(error: unknown, c: Context): Response {
-  console.error("API Error:", error);
-
   if (error instanceof ZodError) {
     const details = error.flatten().fieldErrors;
     return c.json(

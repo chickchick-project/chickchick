@@ -9,8 +9,8 @@ import {
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
-import { createCursorPaginationResult } from "../utils/pagination";
+} from "../utils/service.utils";
+import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 interface SupabasePerfume {
   perfume_id: string;

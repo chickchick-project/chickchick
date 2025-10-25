@@ -1,7 +1,7 @@
 import PageClient from "@/components/domains/post/PageClient";
 import { getPostDetailById } from "@/components/domains/postDetail/postDetail.helpers";
 import { getSession } from "@/lib/database/getSession";
-import getQueryClient from "@/lib/hono/utils/getQueryClient";
+import getQueryClient from "@/lib/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";

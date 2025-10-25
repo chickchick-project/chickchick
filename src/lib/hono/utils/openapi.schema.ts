@@ -1,7 +1,15 @@
 import { z } from "@hono/zod-openapi";
 import * as CommonSchemas from "@/lib/hono/schemas/common.schema";
 
-type ErrorResponses = "400" | "401" | "403" | "404" | "409";
+const getErrorResponseConfig = {
+  "400": CommonSchemas.BadRequestResponse,
+  "401": CommonSchemas.UnauthorizedResponse,
+  "403": CommonSchemas.ForbiddenResponse,
+  "404": CommonSchemas.NotFoundResponse,
+  "409": CommonSchemas.ConflictResponse,
+};
+
+type ErrorResponses = keyof typeof getErrorResponseConfig;
 
 type ResponseConfig = {
   description: string;
@@ -10,14 +18,6 @@ type ResponseConfig = {
       schema: z.ZodTypeAny;
     };
   };
-};
-
-const getErrorResponseConfig = {
-  "400": CommonSchemas.BadRequestResponse,
-  "401": CommonSchemas.UnauthorizedResponse,
-  "403": CommonSchemas.ForbiddenResponse,
-  "404": CommonSchemas.NotFoundResponse,
-  "409": CommonSchemas.ConflictResponse,
 };
 
 export function createStandardApiResponses<T extends z.ZodTypeAny>(

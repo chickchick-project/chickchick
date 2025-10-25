@@ -20,11 +20,27 @@ export const CursorPaginationSchema = z.object({
   limit: z.coerce.number().int().positive().default(12),
 });
 
+export const UploadedImageInfoSchema = z.object({
+  imageUrl: z.string().url(),
+  width: z.number().int(),
+  height: z.number().int(),
+  format: z.enum(["JPEG", "PNG", "WEBP", "HEIC", "UNKNOWN"]),
+});
+
+export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
+  dataSchema: T
+) =>
+  z.object({
+    data: z.array(dataSchema),
+    totalCount: z.number().int(),
+    nextCursor: z.string().nullable(),
+  });
+
 export const SuccessResponseSchema = (dataSchema: z.ZodType) =>
   z.object({
     success: z.literal(true),
     message: z.string(),
-    data: dataSchema || z.null(),
+    data: dataSchema,
   });
 
 export const ErrorResponseSchema = z.object({
@@ -58,3 +74,19 @@ export const ConflictResponse = {
   description: "리소스가 이미 존재합니다 (Conflict)",
   content: { "application/json": { schema: ErrorResponseSchema } },
 };
+
+export type ApiSuccessResponse<T> = {
+  success: true;
+  message: string;
+  data: T;
+};
+
+export type ApiErrorResponse = z.infer<typeof ErrorResponseSchema>;
+
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
+
+export type UploadedImageInfo = z.infer<typeof UploadedImageInfoSchema>;
+
+export type PaginatedResponse<T> = z.infer<
+  ReturnType<typeof PaginatedResponseSchema<z.ZodType<T>>>
+>;

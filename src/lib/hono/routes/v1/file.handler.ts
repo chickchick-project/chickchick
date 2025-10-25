@@ -1,18 +1,17 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import type { AppContext } from "@/lib/hono/app";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import {
   apiBadRequest,
   apiInternalError,
   apiSuccess,
-} from "../../utils/apiResponse.utils";
+} from "../../utils/api.utils";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import * as FileServices from "@/lib/hono/services/file.service";
 
 const fileApi = new OpenAPIHono<AppContext>();
 fileApi.use("*", authMiddleware);
-
 
 const UploadedImageInfoSchema = z.object({
   imageUrl: z.string().url(),

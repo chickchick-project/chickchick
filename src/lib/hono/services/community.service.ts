@@ -10,7 +10,7 @@ import type {
 import {
   createCursorPaginationResult,
   PaginationResult,
-} from "../utils/pagination";
+} from "../utils/pagination.utils";
 import {
   serviceInternalError,
   ServiceResult,
@@ -18,7 +18,7 @@ import {
   serviceNotFound,
   serviceBadRequest,
   serviceForbidden,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
 
 // --- Prisma 쿼리 인자 및 타입 정의 ---

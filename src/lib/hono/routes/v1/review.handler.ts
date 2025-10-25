@@ -7,7 +7,7 @@ import {
   PaginatedApiReviewResponseSchema,
 } from "@/lib/hono/schemas/review.schema";
 import { AppContext } from "@/lib/hono/app";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
@@ -17,7 +17,7 @@ import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 
 const reviewsApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();

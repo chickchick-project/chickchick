@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import * as MeServices from "@/lib/hono/services/me.service";
 import * as MeSchemas from "@/lib/hono/schemas/me.schema";
 import type { AppContext } from "@/lib/hono/app";
@@ -10,7 +10,7 @@ import {
   apiNotFound,
   apiForbidden,
   apiBadRequest,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const meApi = new OpenAPIHono<AppContext>();
@@ -455,7 +455,11 @@ meApi.openapi(getRecentPerfumesRoute, async (c) => {
   if (!result.success) {
     return apiInternalError(c, result.message);
   }
-  return apiSuccess(c, result.data, "최근 본 향수 목록을 성공적으로 조회했습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "최근 본 향수 목록을 성공적으로 조회했습니다."
+  );
 });
 
 /**
@@ -523,7 +527,11 @@ meApi.openapi(getRecentPostsRoute, async (c) => {
   if (!result.success) {
     return apiInternalError(c, result.message);
   }
-  return apiSuccess(c, result.data, "최근 본 게시글 목록을 성공적으로 조회했습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "최근 본 게시글 목록을 성공적으로 조회했습니다."
+  );
 });
 
 export default meApi;

@@ -1,6 +1,10 @@
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
 import { PROFILE_BUCKET_NAME } from "@/lib/constants/buckets";
+import {
+  ApiResponse,
+  UploadedImageInfo,
+} from "@/lib/hono/schemas/common.schema";
 
 interface ProfileImageUploadPayload {
   file: File;

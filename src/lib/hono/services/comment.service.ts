@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import {
   serviceBadRequest,
   serviceForbidden,
@@ -8,7 +7,9 @@ import {
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+  checkResourceExists,
+  validateUuid,
+} from "../utils/service.utils";
 import {
   CreateCommentPayload,
   DeleteCommentPayload,
@@ -17,7 +18,7 @@ import {
   PaginatedCommentResponse,
   UpdateCommentPayload,
 } from "../schemas/comment.schema";
-import { createCursorPaginationResult } from "../utils/pagination";
+import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 const commentIncludeArgs = {
   author: {

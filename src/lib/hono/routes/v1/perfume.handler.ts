@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
 import * as PerfumeServices from "@/lib/hono/services/perfume.service";
 import { AppContext } from "@/lib/hono/app";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
@@ -9,7 +9,7 @@ import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 import { ApiPostResponseSchema } from "../../schemas/community.schema";
 
 const perfumesApi = new OpenAPIHono<AppContext>();

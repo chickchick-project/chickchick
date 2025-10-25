@@ -7,7 +7,7 @@ import {
 } from "@/lib/hono/middleware/auth.middleware";
 import * as CommunityServices from "@/lib/hono/services/community.service";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "../../utils/openapi.schema";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiBadRequest,
@@ -16,7 +16,7 @@ import {
   apiInternalError,
   apiCreated,
   apiForbidden,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 
 const communityApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();

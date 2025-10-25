@@ -1,23 +1,4 @@
 /**
- * 표준 API 에러 응답 포맷 타입
- */
-export interface ApiErrorResponse {
-  success: false;
-  message: string;
-  error?: string;
-  details?: unknown;
-}
-
-/**
- * 표준 API 성공 응답 포맷 타입
- */
-export interface ApiSuccessResponse<T = unknown> {
-  success: true;
-  message: string;
-  data: T;
-}
-
-/**
  * 표준 에러 메시지 상수
  */
 export const ERROR_MESSAGES = {
