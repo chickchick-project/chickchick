@@ -3,7 +3,7 @@ import {
   ApiPostResponse,
   ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
-import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 
 export const API_BASE_URL = "http://localhost:3000/api/v1";
 export const COMMUNITY_URL = `${API_BASE_URL}/community/posts`;

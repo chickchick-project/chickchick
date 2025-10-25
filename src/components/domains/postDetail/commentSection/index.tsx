@@ -5,7 +5,7 @@ import CommentIList from "./comment/CommentIList";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import { getCommentsByPostId } from "./comment.helper";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 
 interface ICommentSectionProps {
   postId: string;

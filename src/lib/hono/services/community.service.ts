@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
-  ApiPostDetailResponse,
   ApiPostStatusResponse,
   CreatePostInput,
   GetPostsQuery,
@@ -20,41 +19,14 @@ import {
   serviceForbidden,
 } from "../utils/service.utils";
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
-
-// --- Prisma 쿼리 인자 및 타입 정의 ---
-const postIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-} satisfies Prisma.PostInclude;
+import {
+  postIncludeArgs,
+  postDetailIncludeArgs,
+  FullPost,
+  BasePost,
+} from "../utils/prisma.utils";
 
 const postWithAuthorArgs = { include: postIncludeArgs };
-
-export type PostWithAuthor = Prisma.PostGetPayload<typeof postWithAuthorArgs>;
-
-const postDetailIncludeArgs = {
-  ...postIncludeArgs,
-  perfumeMappings: {
-    select: {
-      perfume: {
-        select: {
-          id: true,
-          nameEn: true,
-          nameKo: true,
-          brand: { select: { nameEn: true, nameKo: true } },
-          perfumeImage: { select: { imageUrl: true } },
-        },
-      },
-    },
-  },
-} satisfies Prisma.PostInclude;
-
-export type BasePost = Prisma.PostGetPayload<{
-  include: typeof postIncludeArgs;
-}>;
-export type FullPost = Prisma.PostGetPayload<{
-  include: typeof postDetailIncludeArgs;
-}>;
 
 // --- 서비스 함수들 ---
 export async function getPaginatedPostListService(
@@ -91,22 +63,6 @@ export async function getPaginatedPostListService(
       prisma.post.count({ where }),
     ]);
 
-    // const transformedPosts = posts.map((post) => ({
-    //   //논의 필요
-    //   ...post,
-    //   createdAt: post.createdAt.toISOString(),
-    //   updatedAt: post.updatedAt?.toISOString() || null,
-    // }));
-    // const paginatedResult = createCursorPaginationResult(
-    //   transformedPosts,
-    //   totalCount,
-    //   limit
-    // );
-    // return serviceSuccess({
-    //   data: paginatedResult.data,
-    //   totalCount: paginatedResult.totalCount,
-    //   nextCursor: paginatedResult.nextCursor,
-    // });
     const paginatedResult = createCursorPaginationResult(
       posts,
       totalCount,
@@ -121,7 +77,7 @@ export async function getPaginatedPostListService(
 export async function getPostByIdService(
   id: string,
   userId?: string | null
-): Promise<ServiceResult<ApiPostDetailResponse>> {
+): Promise<ServiceResult<FullPost & { isAuthor: boolean }>> {
   try {
     const post = await prisma.$transaction(async (tx) => {
       await tx.post.update({
@@ -137,19 +93,8 @@ export async function getPostByIdService(
     if (!post) {
       return serviceNotFound("게시글을 찾을 수 없습니다.");
     }
-    const { perfumeMappings, ...restOfPost } = post;
-    const perfumes = perfumeMappings.map((mapping) => {
-      const perfumeImage = mapping.perfume.perfumeImage
-        ? { imageUrl: mapping.perfume.perfumeImage.imageUrl }
-        : null;
-
-      return {
-        ...mapping.perfume,
-        perfumeImage,
-      };
-    });
     const isAuthor = post.userId === userId;
-    return serviceSuccess({ ...restOfPost, perfumes, isAuthor });
+    return serviceSuccess({ ...post, isAuthor });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -196,7 +141,7 @@ export async function getPostStatusByIdService(
 
 export async function createPostService(
   payload: CreatePostInput & { authorId: string }
-): Promise<ServiceResult<PostWithAuthor>> {
+): Promise<ServiceResult<BasePost>> {
   const { authorId, perfumeIds, ...rest } = payload;
   try {
     const userCheck = await checkResourceExists("user", authorId, "사용자");

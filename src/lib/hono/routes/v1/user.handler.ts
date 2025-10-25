@@ -1,20 +1,17 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "../../utils/openapi.schema";
-import { optionalAuthMiddleware } from "@/lib/hono/middleware/auth.middleware";
-import type { AppContext } from "@/lib/hono/app";
-import * as UserServices from "@/lib/hono/services/user.service";
+import { createRoute, z } from "@hono/zod-openapi";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { ApiPerfumeSimpleResponseSchema } from "@/lib/hono/schemas/perfume.schema";
+import { ApiMyCollectionResponseSchema } from "@/lib/hono/schemas/me.schema";
 import * as UserSchemas from "@/lib/hono/schemas/user.schema";
+import * as UserServices from "@/lib/hono/services/user.service";
 import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
-import { ApiPerfumeSimpleResponseSchema } from "@/lib/hono/schemas/perfume.schema";
-import { UserCollectionSchema } from "@zod/modelSchema";
+import { createOptionalAuthRouter } from "@/lib/hono/utils/router";
 
-const usersApi = new OpenAPIHono<AppContext>();
-
-usersApi.use("*", optionalAuthMiddleware);
+const usersApi = createOptionalAuthRouter();
 
 const userIdParam = z.object({
   userId: z
@@ -107,7 +104,7 @@ const getUserCollectionsRoute = createRoute({
   summary: "사용자의 컬렉션 목록 조회",
   request: { params: userIdParam },
   responses: createStandardApiResponses({
-    schema: z.array(UserCollectionSchema),
+    schema: z.array(ApiMyCollectionResponseSchema),
   }),
   tags: ["Users"],
 });

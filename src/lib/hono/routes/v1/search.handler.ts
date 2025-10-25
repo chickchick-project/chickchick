@@ -1,10 +1,11 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import type { AppContext } from "@/lib/hono/app";
 import * as SearchSchemas from "@/lib/hono/schemas/search.schema";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { searchPerfumesService } from "@/lib/hono/services/search.service";
-import { createStandardApiResponses } from "../../utils/openapi.schema";
-import { apiInternalError, apiSuccess } from "../../utils/api.utils";
+import { apiInternalError, apiSuccess } from "@/lib/hono/utils/api.utils";
 
-const searchApi = new OpenAPIHono();
+const searchApi = new OpenAPIHono<AppContext>();
 
 /**
  * @method GET

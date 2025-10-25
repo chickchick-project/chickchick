@@ -1,24 +1,17 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
+import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
 import type { AppContext } from "@/lib/hono/app";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
-import { createStandardApiResponses } from "../../utils/openapi.schema";
+import { UploadedImageInfoSchema } from "@/lib/hono/schemas/common.schema";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import * as FileServices from "@/lib/hono/services/file.service";
 import {
   apiBadRequest,
   apiInternalError,
   apiSuccess,
-} from "../../utils/api.utils";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
-import * as FileServices from "@/lib/hono/services/file.service";
-
+} from "@/lib/hono/utils/api.utils";
 const fileApi = new OpenAPIHono<AppContext>();
 fileApi.use("*", authMiddleware);
-
-const UploadedImageInfoSchema = z.object({
-  imageUrl: z.string().url(),
-  width: z.number(),
-  height: z.number(),
-  format: z.string(),
-});
 
 const uploadRoute = createRoute({
   method: "post",

@@ -1,14 +1,7 @@
-import { OpenAPIHono, createRoute, z } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
+import * as ReviewSchemas from "@/lib/hono/schemas/review.schema";
 import * as ReviewServices from "@/lib/hono/services/review.service";
-import {
-  ApiPopularReviewResponseSchema,
-  ApiReviewResponseSchema,
-  CreateReviewInputSchema,
-  PaginatedApiReviewResponseSchema,
-} from "@/lib/hono/schemas/review.schema";
-import { AppContext } from "@/lib/hono/app";
-import { createStandardApiResponses } from "../../utils/openapi.schema";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiBadRequest,
@@ -18,11 +11,9 @@ import {
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const reviewsApi = new OpenAPIHono<AppContext>();
-const authenticatedApi = new OpenAPIHono<AppContext>();
-
-authenticatedApi.use("*", authMiddleware);
+const routers = createDomainRouters();
 
 const perfumeIdParam = z.object({
   perfumeId: z
@@ -34,18 +25,24 @@ const perfumeIdParam = z.object({
     }),
 });
 
+/**
+ * @method GET
+ * @path /popular
+ * @summary 인기 리뷰 조회
+ * @description 인기 리뷰를 조회합니다.
+ */
 const getPopularReviewsRoute = createRoute({
   method: "get",
   path: "/popular",
   summary: "인기 리뷰 조회",
   description: "인기 리뷰를 조회합니다.",
   responses: createStandardApiResponses({
-    schema: z.array(ApiPopularReviewResponseSchema),
+    schema: z.array(ReviewSchemas.ApiPopularReviewResponseSchema),
   }),
   tags: ["Review"],
 });
 
-reviewsApi.openapi(getPopularReviewsRoute, async (c) => {
+routers.public.openapi(getPopularReviewsRoute, async (c) => {
   const result = await ReviewServices.getOneRandomPopularReviewService();
 
   if (!result.success) {
@@ -55,6 +52,12 @@ reviewsApi.openapi(getPopularReviewsRoute, async (c) => {
   return apiSuccess(c, result.data, "인기 리뷰를 성공적으로 불러왔습니다.");
 });
 
+/**
+ * @method GET
+ * @path /{perfumeId}
+ * @summary 특정 향수의 모든 리뷰 조회
+ * @description 등록된 향수의 모든 리뷰 데이터를 조회.
+ */
 const getReviewRoute = createRoute({
   method: "get",
   path: "/{perfumeId}",
@@ -64,12 +67,12 @@ const getReviewRoute = createRoute({
     params: perfumeIdParam,
   },
   responses: createStandardApiResponses({
-    schema: z.array(ApiReviewResponseSchema),
+    schema: z.array(ReviewSchemas.ApiReviewResponseSchema),
   }),
   tags: ["Review"],
 });
 
-reviewsApi.openapi(getReviewRoute, async (c) => {
+routers.public.openapi(getReviewRoute, async (c) => {
   const { perfumeId } = c.req.param();
 
   const result = await ReviewServices.getReviewsByPerfumeIdService(perfumeId);
@@ -80,7 +83,12 @@ reviewsApi.openapi(getReviewRoute, async (c) => {
 
   return apiSuccess(c, result.data, "리뷰를 성공적으로 불러왔습니다.");
 });
-
+/**
+ * @method GET
+ * @path /{perfumeId}/pagination
+ * @summary 특정 향수의 리뷰 조회 (페이지네이션)
+ * @description 등록된 향수의 모든 리뷰 데이터를 페이지네이션으로 조회.
+ */
 const getReviewWithPaginationRoute = createRoute({
   method: "get",
   path: "/{perfumeId}/pagination",
@@ -94,12 +102,12 @@ const getReviewWithPaginationRoute = createRoute({
     }),
   },
   responses: createStandardApiResponses({
-    schema: PaginatedApiReviewResponseSchema,
+    schema: ReviewSchemas.PaginatedApiReviewResponseSchema,
   }),
   tags: ["Review"],
 });
 
-reviewsApi.openapi(getReviewWithPaginationRoute, async (c) => {
+routers.public.openapi(getReviewWithPaginationRoute, async (c) => {
   const { perfumeId } = c.req.param();
   const { take, cursor } = c.req.valid("query");
   const result = await ReviewServices.getPaginatedReviewsByPerfumeIdService(
@@ -114,6 +122,12 @@ reviewsApi.openapi(getReviewWithPaginationRoute, async (c) => {
   return apiSuccess(c, result.data, "리뷰를 성공적으로 불러왔습니다.");
 });
 
+/**
+ * @method POST
+ * @path /{perfumeId}
+ * @summary 새로운 리뷰 생성
+ * @description 새로운 리뷰를 생성함
+ */
 const createReviewRoute = createRoute({
   method: "post",
   path: "/{perfumeId}",
@@ -122,14 +136,18 @@ const createReviewRoute = createRoute({
   request: {
     params: perfumeIdParam,
     body: {
-      content: { "application/json": { schema: CreateReviewInputSchema } },
+      content: {
+        "application/json": { schema: ReviewSchemas.CreateReviewInputSchema },
+      },
     },
   },
-  responses: createStandardApiResponses({ schema: ApiReviewResponseSchema }),
+  responses: createStandardApiResponses({
+    schema: ReviewSchemas.ApiReviewResponseSchema,
+  }),
   tags: ["Review"],
 });
 
-authenticatedApi.openapi(createReviewRoute, async (c) => {
+routers.authenticated.openapi(createReviewRoute, async (c) => {
   const { perfumeId } = c.req.param();
   const validatedData = c.req.valid("json");
   const user = getAuthenticatedUser(c);
@@ -154,6 +172,12 @@ authenticatedApi.openapi(createReviewRoute, async (c) => {
   return apiCreated(c, result.data, "리뷰가 성공적으로 작성되었습니다.");
 });
 
+/**
+ * @method POST
+ * @path /{reviewId}/like
+ * @summary 리뷰 좋아요/싫어요 토글
+ * @description 리뷰에 대해 좋아요/싫어요를 토글합니다.
+ */
 const toggleLikeRoute = createRoute({
   method: "post",
   path: "/{reviewId}/like",
@@ -164,11 +188,13 @@ const toggleLikeRoute = createRoute({
       reviewId: z.string().uuid("유효하지 않은 리뷰 ID입니다."),
     }),
   },
-  responses: createStandardApiResponses({ schema: ApiReviewResponseSchema }),
+  responses: createStandardApiResponses({
+    schema: ReviewSchemas.ApiReviewResponseSchema,
+  }),
   tags: ["Review"],
 });
 
-authenticatedApi.openapi(toggleLikeRoute, async (c) => {
+routers.authenticated.openapi(toggleLikeRoute, async (c) => {
   const { reviewId } = c.req.param();
   const user = getAuthenticatedUser(c);
 
@@ -185,6 +211,4 @@ authenticatedApi.openapi(toggleLikeRoute, async (c) => {
   );
 });
 
-reviewsApi.route("/", authenticatedApi);
-
-export default reviewsApi;
+export default routers.merge();

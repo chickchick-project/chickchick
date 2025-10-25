@@ -1,14 +1,15 @@
 import { z } from "zod";
-import { ApiPostResponseSchema } from "./community.schema";
-import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
-import { ApiReviewResponseSchema } from "./review.schema";
-import { CommentResponseSchema } from "./comment.schema";
 import {
   UserCollectionSchema,
   CollectionImageSchema,
   UserSchema,
 } from "@zod/modelSchema";
-import { ImageFormatSchema } from "@zod/inputTypeSchemas/ImageFormatSchema";
+import { ImageFormatSchema } from "@zod/inputTypeSchemas";
+import { ApiPostResponseSchema } from "./community.schema";
+import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
+import { ApiReviewResponseSchema } from "./review.schema";
+import { CommentResponseSchema } from "./comment.schema";
+import { PaginatedResponseSchema } from "./common.schema";
 
 export const ApiMyBookmarkedPostsResponseSchema = z.array(
   ApiPostResponseSchema
@@ -17,6 +18,7 @@ export const ApiMyBookmarkedPostsResponseSchema = z.array(
 export const ApiMyBookmarkedPerfumesResponseSchema = z.array(
   ApiPerfumeSimpleResponseSchema
 );
+
 export const CreatePhotoCollectionRequestSchema = z.object({
   perfumeId: z.string().uuid(),
   comment: z.string().optional(),
@@ -30,13 +32,27 @@ export const ApiMyCollectionResponseSchema = UserCollectionSchema.pick({
   createdAt: true,
 })
   .extend({
-    image: CollectionImageSchema.pick({ id: true, imageUrl: true }).optional(),
+    image: CollectionImageSchema.pick({
+      id: true,
+      imageUrl: true,
+      width: true,
+      height: true,
+      format: true,
+    }).optional(),
+    perfume: ApiPerfumeSimpleResponseSchema.optional(),
   })
+
   .openapi("ApiMyCollectionResponse");
 
-export const ApiMyReviewsResponseSchema = z.array(ApiReviewResponseSchema);
-export const ApiMyPostsResponseSchema = z.array(ApiPostResponseSchema);
-export const ApiMyCommentsResponseSchema = z.array(CommentResponseSchema);
+export const ApiMyReviewsResponseSchema = PaginatedResponseSchema(
+  ApiReviewResponseSchema
+);
+export const ApiMyPostsResponseSchema = PaginatedResponseSchema(
+  ApiPostResponseSchema
+);
+export const ApiMyCommentsResponseSchema = PaginatedResponseSchema(
+  CommentResponseSchema
+);
 
 export const DeleteCollectionParamSchema = z.object({
   collectionId: z.string().uuid(),

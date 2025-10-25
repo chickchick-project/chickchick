@@ -19,28 +19,9 @@ import {
   UpdateCommentPayload,
 } from "../schemas/comment.schema";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
-
-const commentIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-  replies: {
-    include: {
-      author: {
-        select: { id: true, nickname: true, imageUrl: true },
-      },
-    },
-    orderBy: {
-      createdAt: "asc" as const,
-    },
-  },
-} satisfies Prisma.CommentInclude;
+import { commentIncludeArgs, CommentWithReplies } from "../utils/prisma.utils";
 
 const commentWithRepliesArgs = { include: commentIncludeArgs };
-
-export type CommentWithReplies = Prisma.CommentGetPayload<
-  typeof commentWithRepliesArgs
->;
 
 /**
  * 특정 게시글의 모든 댓글과 대댓글을 계층적으로 조회합니다.

@@ -1,14 +1,13 @@
 import { z } from "@hono/zod-openapi";
 import {
   ReviewSchema,
-  UserSchema,
-  PerfumeSchema,
-  BrandSchema,
-  PerfumeImageSchema,
   ReviewAttributeSelectionSchema,
   AttributeOptionSchema,
   ReviewAttributeSchema,
 } from "@zod/modelSchema";
+import { PaginatedResponseSchema } from "./common.schema";
+import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
+import { ApiUserProfileResponseSchema } from "./user.schema";
 
 const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
   option: AttributeOptionSchema.extend({
@@ -17,19 +16,8 @@ const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
 });
 
 export const ApiReviewResponseSchema = ReviewSchema.extend({
-  author: UserSchema.pick({
-    id: true,
-    nickname: true,
-    imageUrl: true,
-  }),
-  perfume: PerfumeSchema.pick({
-    id: true,
-    nameEn: true,
-    nameKo: true,
-  }).extend({
-    brand: BrandSchema.pick({ nameEn: true, nameKo: true }),
-    perfumeImage: PerfumeImageSchema.pick({ imageUrl: true }).nullable(),
-  }),
+  author: ApiUserProfileResponseSchema,
+  perfume: ApiPerfumeSimpleResponseSchema,
   attributeSelections: z.array(FullAttributeSelectionSchema),
 }).openapi("ApiReviewResponse");
 
@@ -43,11 +31,9 @@ export const ApiPopularReviewResponseSchema = ApiReviewResponseSchema.extend({
 }).openapi("ApiPopularReviewResponse");
 
 // --- 페이지네이션 응답 스키마 ---
-export const PaginatedApiReviewResponseSchema = z.object({
-  data: z.array(ApiReviewResponseSchema),
-  totalCount: z.number().int(),
-  nextCursor: z.string().uuid().nullable(),
-});
+export const PaginatedApiReviewResponseSchema = PaginatedResponseSchema(
+  ApiReviewResponseSchema
+);
 
 export const ReviewAttributesInputSchema = z.object({
   feeling: z.string().optional(),

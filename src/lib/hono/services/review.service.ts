@@ -13,6 +13,7 @@ import {
 } from "../utils/service.utils";
 import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
+import { reviewIncludeArgs, FullReview } from "../utils/prisma.utils";
 
 const POPULAR_REVIEW_LIMIT = 5;
 const POPULAR_REVIEW_POOL_SIZE = 20;
@@ -38,41 +39,6 @@ async function initializeOptionMap() {
 initializeOptionMap();
 
 const DEFAULT_REVIEW_LIMIT = 12;
-
-// --- Prisma 쿼리 인자 및 타입 정의 ---
-export const reviewIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-  perfume: {
-    select: {
-      id: true,
-      nameKo: true,
-      nameEn: true,
-      perfumeImage: true,
-      brand: {
-        select: {
-          nameKo: true,
-          nameEn: true,
-        },
-      },
-    },
-  },
-
-  attributeSelections: {
-    include: {
-      option: {
-        include: {
-          attribute: true,
-        },
-      },
-    },
-  },
-} satisfies Prisma.ReviewInclude;
-
-export type FullReview = Prisma.ReviewGetPayload<{
-  include: typeof reviewIncludeArgs;
-}>;
 
 function getOptionIdsFromAttributes(
   attributes: CreateReviewInput["attributes"]
