@@ -1,11 +1,6 @@
+import { ApiSuccessResponse } from "../hono/schemas/common.schema";
 import { ApiMyProfileResponse } from "../hono/schemas/me.schema";
 import { createHttpClient } from "./core-request";
-
-interface RawApiResponse {
-  success: boolean;
-  message: string;
-  data: ApiMyProfileResponse;
-}
 
 const apiClient = createHttpClient({
   baseUrl:
@@ -15,21 +10,30 @@ const apiClient = createHttpClient({
 const USER_ID_REGEX = /^[0-9a-fA-F-]{36}$/;
 
 export const getUserProfile = () => {
-  return apiClient.get<RawApiResponse, ApiMyProfileResponse>(
-    "/me/profile",
+  return apiClient.get<
+    ApiSuccessResponse<ApiMyProfileResponse>,
+    ApiMyProfileResponse
+  >(
+    "/me",
     {},
     {
-      transformResponse: (response: RawApiResponse) => response.data,
+      transformResponse: (response: ApiSuccessResponse<ApiMyProfileResponse>) =>
+        response.data,
     }
   );
 };
 
 export const getUserById = (userId: string) => {
-  return apiClient.get<RawApiResponse, ApiMyProfileResponse>(
+  return apiClient.get<
+    ApiSuccessResponse<ApiMyProfileResponse>,
+    ApiMyProfileResponse
+  >(
     `/users/${userId}`,
     {},
     {
-      transformResponse: (response: RawApiResponse) => {
+      transformResponse: (
+        response: ApiSuccessResponse<ApiMyProfileResponse>
+      ) => {
         const user = response.data;
         if (typeof user.id !== "string" || !USER_ID_REGEX.test(user.id)) {
           throw new Error(

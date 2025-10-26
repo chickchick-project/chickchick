@@ -5,6 +5,7 @@ import type {
   RecentItemsState,
 } from "../stores/createRecentItemsStore";
 import { createHttpClient } from "../utils/core-request";
+import { ApiResponse } from "../hono/schemas/common.schema";
 import {
   ApiRecentPerfumeItem,
   ApiRecentPostItem,
@@ -12,7 +13,7 @@ import {
   ApiGetRecentPostsResponseSchema,
 } from "../hono/schemas/me.schema";
 
-type RecentApiEndpoint = "recent-perfumes" | "recent-posts";
+type RecentApiEndpoint = "recents/perfumes" | "recents/posts";
 
 interface UseRecentItemsSyncOptions<T> {
   useStore: UseBoundStore<StoreApi<RecentItemsState<T>>>;
@@ -21,12 +22,6 @@ interface UseRecentItemsSyncOptions<T> {
   enabled?: boolean;
 }
 
-type ApiEnvelope<T> = {
-  success: boolean;
-  message: string;
-  data: T;
-};
-
 const API_BASE_URL = "http://localhost:3000/api/v1";
 
 const apiClient = createHttpClient({
@@ -34,8 +29,8 @@ const apiClient = createHttpClient({
 });
 
 const responseSchemaMap = {
-  "recent-perfumes": ApiGetRecentPerfumesResponseSchema,
-  "recent-posts": ApiGetRecentPostsResponseSchema,
+  "recents/perfumes": ApiGetRecentPerfumesResponseSchema,
+  "recents/posts": ApiGetRecentPostsResponseSchema,
 };
 
 export function useRecentItemsSync<T>({
@@ -55,9 +50,7 @@ export function useRecentItemsSync<T>({
     if (!enabled) return;
     // 로컬이 비어있고 아직 동기화된 적이 없다면 서버에서 가져오기
     const hydrateFromServer = async () => {
-      const res = await apiClient.get<ApiEnvelope<unknown>>(
-        `/me/${apiEndpoint}`
-      );
+      const res = await apiClient.get<ApiResponse<T>>(`/me/${apiEndpoint}`);
       if (!res || !res.success) return;
 
       const schema = responseSchemaMap[apiEndpoint];
@@ -72,7 +65,7 @@ export function useRecentItemsSync<T>({
 
       const serverItems = parsedResponse.data.items;
       const mapped: GenericRecentItem<T>[] = serverItems.map((serverItem) => {
-        if (apiEndpoint === "recent-perfumes") {
+        if (apiEndpoint === "recents/perfumes") {
           const p = (serverItem as ApiRecentPerfumeItem).perfume;
           const viewedAt = new Date(
             (serverItem as ApiRecentPerfumeItem).viewedAt
@@ -92,7 +85,7 @@ export function useRecentItemsSync<T>({
             viewedAt,
           } satisfies GenericRecentItem<T>;
         }
-        // recent-posts
+        // recents/posts
         const post = (serverItem as ApiRecentPostItem).post;
         const viewedAt = new Date(
           (serverItem as ApiRecentPostItem).viewedAt
@@ -131,16 +124,16 @@ export function useRecentItemsSync<T>({
         console.log(`Syncing ${itemsToSync.length} items to ${apiEndpoint}...`);
 
         const body =
-          apiEndpoint === "recent-perfumes"
+          apiEndpoint === "recents/perfumes"
             ? { perfumeIds: itemsToSync.map((i) => String(i.id)) }
-            : apiEndpoint === "recent-posts"
+            : apiEndpoint === "recents/posts"
             ? { postIds: itemsToSync.map((i) => String(i.id)) }
             : itemsToSync; // 확장 대비 기본 동작
 
-        const response = await apiClient.post<
-          typeof body,
-          ApiEnvelope<unknown>
-        >(`/me/${apiEndpoint}`, body);
+        const response = await apiClient.post<typeof body, ApiResponse<T>>(
+          `/me/${apiEndpoint}`,
+          body
+        );
 
         if (!response || !response.success) {
           throw new Error(`Failed to sync: ${response?.message ?? "Unknown"}`);

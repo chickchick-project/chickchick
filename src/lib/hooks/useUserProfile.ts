@@ -1,9 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfile, getUserById } from "../utils/getUserProfile";
+import { queryKeys } from "../utils/queryKeys";
 
 export const useUserProfile = (options?: { enabled?: boolean }) => {
   return useQuery({
-    queryKey: ["me", "profile"],
+    queryKey: queryKeys.user.profile("me"),
     queryFn: getUserProfile,
     enabled: options?.enabled ?? true,
     retry: (failureCount, error) => {
@@ -19,7 +20,7 @@ export const useUserProfile = (options?: { enabled?: boolean }) => {
 
 export const useUserProfileById = (userId: string) => {
   return useQuery({
-    queryKey: ["user", "profile", userId],
+    queryKey: queryKeys.user.profile(userId),
     queryFn: () => getUserById(userId),
   });
 };
