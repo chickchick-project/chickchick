@@ -1,7 +1,7 @@
 "use client";
 
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
+import { reviewApi } from "@/lib/utils/api/reviews.api";
 import { usePerfumeDetail } from "@/lib/hooks/usePerfumeDetail";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +22,10 @@ export default function PerfumeDetailPage() {
   // 리뷰 데이터 조회
   const { data: reviewData = [], isLoading: isReviewLoading } = useQuery({
     queryKey: queryKeys.perfume.reviews(id),
-    queryFn: () => getReviewData(id),
+    queryFn: async () => {
+      const res = await reviewApi.list(id);
+      return res?.data || [];
+    },
     enabled: !!id,
   });
 

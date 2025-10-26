@@ -29,24 +29,20 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
     }
   };
 
-  const useInitialize = () => {
-    const onSubmit = async (formData: ApiMyProfileResponse) => {
-      try {
-        await mutateAsync(formData);
-        alert("수정이 완료되었습니다.");
-      } catch (error) {
-        console.error("제출 실패:", error);
-      }
-    };
-
-    return { onSubmit };
+  const onSubmit = async (formData: ApiMyProfileResponse) => {
+    try {
+      await mutateAsync(formData);
+      alert("수정이 완료되었습니다.");
+    } catch (error) {
+      console.error("제출 실패:", error);
+    }
   };
 
   return (
     <Form<ApiMyProfileResponse>
       schema={ApiMyProfileResponseSchema}
       defaultValues={defaultValues}
-      useInitialize={useInitialize}
+      onSubmit={onSubmit}
     >
       <ProfileForm />
       <ProfileActions onWithdraw={handleWithdraw} isSubmitting={isPending} />

@@ -1,4 +1,4 @@
-import { createHttpClient } from "@/lib/utils/core-request";
+import { apiClient } from "./client";
 import { MyComment } from "@/lib/hono/services/me.service";
 import {
   ApiResponse,
@@ -13,11 +13,6 @@ import {
   ApiMyProfileResponse,
   ApiUpdateMyProfileRequest,
 } from "@/lib/hono/schemas/me.schema";
-
-const apiClient = createHttpClient({
-  baseUrl:
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
-});
 
 export const userApi = {
   collections: (userId: string) => {
