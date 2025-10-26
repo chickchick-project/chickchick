@@ -14,13 +14,13 @@ function RecentSyncManager() {
   // 최근 본 향수 목록 동기화
   useRecentItemsSync({
     useStore: useRecentPerfumesStore,
-    apiEndpoint: "recent-perfumes",
+    apiEndpoint: "recents/perfumes",
     enabled: shouldSync,
   });
   // 최근 본 게시글 목록 동기화
   useRecentItemsSync({
     useStore: useRecentPostsStore,
-    apiEndpoint: "recent-posts",
+    apiEndpoint: "recents/posts",
     enabled: shouldSync,
   });
 
