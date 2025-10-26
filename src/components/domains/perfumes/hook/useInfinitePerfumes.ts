@@ -5,28 +5,23 @@ import { useInfiniteQuery, InfiniteData } from "@tanstack/react-query";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { fetchPerfumes } from "@/components/commons/perfumeList/perfumes.helpers";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
+import { queryKeys } from "@/lib/utils/queryKeys";
 
-export interface SearchResponse<T> {
-  data: T[];
-  nextCursor: string | null;
-  totalCount: number | null;
-}
-
-export type PerfumesApiResponse = SearchResponse<ApiPerfumeSimpleResponse>;
+type PerfumeListQueryKey = ReturnType<typeof queryKeys.perfume.list>;
 
 export const useInfinitePerfumes = (searchKeyword: string) => {
   const filters = useFilterStore((state) => state.filters);
   const setTotalCount = useTotalStore((state) => state.setTotalCount);
 
   const { data, ...rest } = useInfiniteQuery<
-    PerfumesApiResponse,
+    PaginatedSearchResponse,
     Error,
-    InfiniteData<PerfumesApiResponse>,
-    (string | typeof filters)[],
+    InfiniteData<PaginatedSearchResponse>,
+    PerfumeListQueryKey,
     string | null
   >({
-    queryKey: ["perfumes", searchKeyword, filters],
+    queryKey: queryKeys.perfume.list(searchKeyword, filters),
     queryFn: ({ pageParam }) =>
       fetchPerfumes(pageParam, searchKeyword, filters),
     getNextPageParam: (lastPage) => lastPage.nextCursor,

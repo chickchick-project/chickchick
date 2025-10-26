@@ -1,20 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useEffect } from "react";
 import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
 import { useInfinitePerfumes } from "./hook/useInfinitePerfumes";
 import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
-
-export interface SearchResponse<T> {
-  data: T[];
-  nextCursor: string | null;
-  totalCount?: number | null;
-}
+import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
 
 export type BrandName = {
   en: string;
@@ -30,17 +23,13 @@ export default function PageClient({
   notes: PerfumeNote[];
   accords: PerfumeAccord[];
 }) {
-  const memoizedBrands = useMemo(() => brands, [brands]);
-  const memoizedNotes = useMemo(() => notes, [notes]);
-  const memoizedAccords = useMemo(() => accords, [accords]);
-
   const {
     inputValue,
     searchKeyword,
     matchedBrand,
     handleChange,
     handleSubmit,
-  } = usePerfumeSearchState(memoizedBrands);
+  } = usePerfumeSearchState(brands);
 
   const {
     perfumes,
@@ -52,16 +41,12 @@ export default function PageClient({
     isFetchingNextPage,
   } = useInfinitePerfumes(searchKeyword);
 
-  const moreRef = useRef<HTMLDivElement>(null);
-  const isIntersecting = useIntersectionObserver(moreRef);
+  const moreRef = useInfiniteScrollTrigger({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
 
-  useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // 중복 아이디 제거
   if (isError) {
     return (
       <div>
@@ -78,9 +63,9 @@ export default function PageClient({
           inputValue={inputValue}
           onChange={handleChange}
           onSubmit={handleSubmit}
-          brands={memoizedBrands}
-          notes={memoizedNotes}
-          accords={memoizedAccords}
+          brands={brands}
+          notes={notes}
+          accords={accords}
         />
         <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
           <div className="w-full flex justify-between items-center mb-5">

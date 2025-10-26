@@ -3,12 +3,7 @@ import type {
   CreateReviewInput,
 } from "@/lib/hono/schemas/review.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
-
-interface RawApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 
 const apiClient = createHttpClient({
   baseUrl:
@@ -17,7 +12,7 @@ const apiClient = createHttpClient({
 
 export async function getReviewData(id: string): Promise<ApiReviewResponse[]> {
   try {
-    const res = await apiClient.get<RawApiResponse<ApiReviewResponse[]>>(
+    const res = await apiClient.get<ApiSuccessResponse<ApiReviewResponse[]>>(
       `/reviews/${id}`
     );
     if (!res) return [];
@@ -44,7 +39,7 @@ export async function fetchReviewData(id: string, payload: CreateReviewInput) {
         }
       });
     }
-    await apiClient.post<RawApiResponse<ApiReviewResponse>>(
+    await apiClient.post<ApiSuccessResponse<ApiReviewResponse>>(
       `/reviews/${id}`,
       formData
     );

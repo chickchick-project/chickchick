@@ -1,6 +1,6 @@
 "use client";
 import { SearchBar } from "@/components/commons/search/SearchBar";
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
+import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 import { useState } from "react";
 import { MobileActionBar } from "./mobileActionBar";
 import { PerfumeOverview } from "./overview";
@@ -21,15 +21,15 @@ export const DetailClient = ({
   perfumeDetail,
   reviewData,
 }: {
-  perfumeDetail: TPerfumeDetail;
+  perfumeDetail: ApiPerfumeDetailResponse;
   reviewData: ApiReviewResponse[];
 }) => {
   const recentPerfumeData = useMemo(() => {
     return {
       id: perfumeDetail.id,
-      perfumeName: perfumeDetail.name,
-      brandName: perfumeDetail.brand,
-      imageUrl: perfumeDetail.imageUrl,
+      perfumeName: perfumeDetail.nameKo ?? perfumeDetail.nameEn,
+      brandName: perfumeDetail.brand.nameKo ?? perfumeDetail.brand.nameEn,
+      imageUrl: perfumeDetail.perfumeImage?.imageUrl ?? "",
     };
   }, [perfumeDetail]);
 

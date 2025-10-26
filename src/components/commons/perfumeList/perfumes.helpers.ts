@@ -1,14 +1,10 @@
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
 import { createHttpClient } from "@/lib/utils/core-request";
-import {
-  ApiResponse,
-  PaginatedResponse,
-} from "@/lib/hono/schemas/common.schema";
+import { ApiResponse } from "@/lib/hono/schemas/common.schema";
+import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
 
-type SearchResponse = PaginatedResponse<ApiPerfumeSimpleResponse>;
-
-type RawApiResponse = ApiResponse<SearchResponse>;
+type RawApiResponse = ApiResponse<PaginatedSearchResponse>;
 
 // --- API 클라이언트 초기화 ---
 const apiClient = createHttpClient({
@@ -23,7 +19,7 @@ export async function fetchPerfumes(
   cursor: string | null,
   searchText: string,
   filters: Record<string, string[]>
-): Promise<SearchResponse> {
+): Promise<PaginatedSearchResponse> {
   try {
     const formattedFilters = formatFilters(filters);
     const hasFilters = Object.keys(formattedFilters).length > 0;
@@ -46,9 +42,9 @@ export async function fetchPerfumes(
     } else {
       // 필터가 없을 경우 GET 요청
       const params = {
-        q: searchText || undefined,
+        searchText: searchText || undefined,
         cursor: cursor || undefined,
-        limit: "15",
+        limit: 15,
       };
 
       response = await apiClient.get<RawApiResponse>(
