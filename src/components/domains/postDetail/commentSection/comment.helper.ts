@@ -2,10 +2,10 @@ import {
   CommentResponse,
   CreateCommentBody,
   DeleteCommentResponse,
+  PaginatedCommentResponse,
   UpdateCommentBody,
 } from "@/lib/hono/schemas/comment.schema";
 import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import { createHttpClient } from "@/lib/utils/core-request";
 
 const API_BASE_URL = "http://localhost:3000/api/v1";
@@ -30,7 +30,7 @@ export async function getCommentsByPostId(
     limit: "7",
   };
   const result = await apiClient.get<
-    ApiSuccessResponse<SearchResponse<CommentResponse>>
+    ApiSuccessResponse<PaginatedCommentResponse>
   >(`/comments/${postId}/cursor`, params);
 
   if (!result) {

@@ -6,8 +6,8 @@ import {
 import {
   GetPostsQuery,
   ApiPostResponse,
+  PaginatedApiPostResponse,
 } from "@/lib/hono/schemas/community.schema";
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 
 const API_BASE_URL = "/api/v1";
 
@@ -20,7 +20,7 @@ type FetchCommunityPostListParams = {
 
 async function fetchCommunityPostList(
   params: FetchCommunityPostListParams
-): Promise<SearchResponse<ApiPostResponse>> {
+): Promise<PaginatedApiPostResponse> {
   try {
     const queryParams = new URLSearchParams();
 

@@ -1,5 +1,5 @@
-import { Post } from "@zod/modelSchema";
-import { CATEGORY_TYPES, POST_CARD_TYPES } from "./postCard.constants";
+import { POST_CARD_TYPES, CATEGORY_TYPES } from "@/lib/constants/post";
+import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export type PostCardType =
   (typeof POST_CARD_TYPES)[keyof typeof POST_CARD_TYPES];
@@ -12,21 +12,8 @@ export interface ThumbnailProps {
   isLoading?: boolean;
 }
 
-interface Author {
-  id: string;
-  nickname: string;
-  imageUrl: string | null;
-}
-
-export interface PostCardProps extends Omit<Post, "createdAt" | "updatedAt"> {
-  author: Author;
-  createdAt: Date | string;
-  updatedAt: Date | string | null;
-  thumbnail?: string | null;
-  isCategory?: boolean;
-  category: CategoryType;
+export type PostCardProps = {
+  post?: ApiPostResponse;
   cardType?: PostCardType;
-  profileImage?: string | null;
-  isAuthor: boolean;
-  published: boolean;
-}
+  isCategoryVisible?: boolean;
+};
