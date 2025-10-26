@@ -3,18 +3,14 @@
 import Image from "next/image";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
-import type { CollectionItem } from "../sections.type";
-import { useUserCollections } from "./hooks/useUserCollections";
-import { SkeletonMasonry } from "../../components/skeletons/SkeletonMasonry";
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import { useUserCollections } from "./useUserCollections";
+import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
+import {
+  ApiMyCollectionResponse,
+  ApiMyProfileResponse,
+} from "@/lib/hono/schemas/me.schema";
 
-export const CollectionSection = ({
-  user,
-  initialCollectionData,
-}: {
-  user: ApiMyProfileResponse;
-  initialCollectionData: CollectionItem[];
-}) => {
+export const CollectionSection = ({ user }: { user: ApiMyProfileResponse }) => {
   const {
     isOpen,
     imageUrl,
@@ -28,7 +24,7 @@ export const CollectionSection = ({
     data: collectionsData,
     isLoading,
     error,
-  } = useUserCollections(user!.id, initialCollectionData);
+  } = useUserCollections(user!.id);
 
   if (error) {
     console.error("CollectionSection error:", error);
@@ -51,7 +47,7 @@ export const CollectionSection = ({
     );
   }
 
-  if (!collectionsData.data || collectionsData.data.length === 0) {
+  if (!collectionsData || collectionsData?.length === 0) {
     return (
       <div className="flex justify-center items-center h-[200px]">
         <p>저장된 컬렉션이 없습니다.</p>
@@ -59,23 +55,20 @@ export const CollectionSection = ({
     );
   }
 
-  const displayData = collectionsData.data;
-  // const displayData = Array(5)
-  //   .fill(null)
-  //   .flatMap(() => collectionsData.data);
-
   return (
     <>
       <>
         <div className="columns-4 gap-4">
-          {displayData.map((item: CollectionItem, index: number) => (
-            <CollectionItem
-              key={`${item.id}-${index}`}
-              item={item}
-              index={index}
-              openModal={openModal}
-            />
-          ))}
+          {collectionsData?.map(
+            (item: ApiMyCollectionResponse, index: number) => (
+              <CollectionItem
+                key={`${item.id}-${index}`}
+                item={item}
+                index={index}
+                openModal={openModal}
+              />
+            )
+          )}
         </div>
       </>
 
@@ -97,7 +90,7 @@ function CollectionItem({
   index,
   openModal,
 }: {
-  item: CollectionItem;
+  item: ApiMyCollectionResponse;
   index: number;
   openModal: (imageUrl: string, comment: string, perfumeName: string) => void;
 }) {

@@ -3,19 +3,14 @@
 import { useEffect, useState } from "react";
 import { MyReviewList } from "../components";
 import { useUserReview } from "../hooks/useUserActivity";
-import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 
-export default function MyReviewListLoader({
-  initialData,
-}: {
-  initialData?: PaginatedApiReviewResponse;
-}) {
+export default function MyReviewListLoader() {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
-  const { data: paginatedReviews, error } = useUserReview(initialData);
+  const { data: paginatedReviews, error } = useUserReview();
 
   if (error) {
     return <p>리뷰를 불러올 수 없습니다.</p>;

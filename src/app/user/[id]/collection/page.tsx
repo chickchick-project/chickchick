@@ -1,6 +1,5 @@
 import React from "react";
 import { CollectionSection } from "@/components/domains/user/sections";
-import { fetchUserCollections } from "@/components/domains/user/user.helper";
 import { notFound } from "next/navigation";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 import { getUserById } from "@/lib/utils/getUserProfile";
@@ -23,12 +22,5 @@ export default async function UserPage({
     return notFound();
   }
 
-  const initialCollectionData = await fetchUserCollections(pageOwnerId);
-
-  return (
-    <CollectionSection
-      initialCollectionData={initialCollectionData.data}
-      user={user}
-    />
-  );
+  return <CollectionSection user={user} />;
 }

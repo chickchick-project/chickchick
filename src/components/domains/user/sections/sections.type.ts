@@ -1,16 +1,14 @@
 import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
 import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
-import { User, UserCollection, CollectionImage, Perfume } from "@prisma/client";
-import { PerfumeBookmark } from "@zod/modelSchema/PerfumeBookmarkSchema";
-
-export type CollectionItem = UserCollection & {
-  image?: CollectionImage;
-  perfume?: Perfume;
-};
+import {
+  ApiMyCollectionResponse,
+  ApiMyProfileResponse,
+  ApiMyBookmarkedPerfumesResponse,
+} from "@/lib/hono/schemas/me.schema";
 
 export type BookmarkData = {
-  perfumes: PerfumeBookmark[];
+  perfumes: ApiMyBookmarkedPerfumesResponse[];
   community: ApiPostResponse[];
 };
 
@@ -18,12 +16,12 @@ export type ActivityData = {
   myReviews: ApiReviewResponse[];
   myPosts: ApiPostResponse[];
   myComments: CommentResponse[];
-  likedPerfumes: PerfumeBookmark[];
+  likedPerfumes: ApiMyBookmarkedPerfumesResponse[];
   likedPosts: ApiPostResponse[];
 };
 
 export type TabData =
-  | { tap: "collection"; data: CollectionItem[] }
+  | { tap: "collection"; data: ApiMyCollectionResponse[] }
   | {
       tap: "bookmarks";
       data: BookmarkData;
@@ -34,5 +32,5 @@ export type TabData =
     }
   | {
       tap: "profile";
-      data: User;
+      data: ApiMyProfileResponse;
     };

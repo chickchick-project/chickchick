@@ -16,7 +16,7 @@ const apiClient = createHttpClient({
 });
 
 export const updateUserProfile = (formData: ApiMyProfileResponse) => {
-  return apiClient.patch(`/me/profile`, formData);
+  return apiClient.patch(`/me`, formData);
 };
 
 export async function uploadProfileImage({ file }: ProfileImageUploadPayload) {
@@ -41,7 +41,7 @@ export async function uploadProfileImage({ file }: ProfileImageUploadPayload) {
   const response = await apiClient.patch<
     { imageUrl: string },
     ApiResponse<ApiMyProfileResponse>
-  >("/me/profile", profilePayload);
+  >("/me", profilePayload);
 
   if (!response?.success) {
     throw new Error("프로필 이미지 업데이트에 실패했습니다.");

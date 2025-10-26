@@ -1,28 +1,29 @@
 "use client";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  fetchUserBookmarksPerfumes,
-  fetchUserBookmarksPosts,
-} from "@/components/domains/user/user.helper";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { userApi, meApi } from "@/lib/utils/api/users.api";
+import { queryKeys } from "@/lib/utils/queryKeys";
 
-export const usePerfumeBookmarks = (
-  userId: string,
-  initialData?: ApiPerfumeSimpleResponse[]
-) => {
+export const usePerfumeBookmarks = (userId: string) => {
   const queryResult = useSuspenseQuery({
-    queryKey: ["bookmarks", "perfumes", userId],
-    queryFn: async () => (await fetchUserBookmarksPerfumes(userId)).data,
-    initialData,
+    queryKey: queryKeys.user.bookmarks.perfumes(userId),
+    queryFn: () => userApi.bookmarks.perfumes(userId),
+    select: (response) => {
+      if (!response || !response.success) return [];
+      return response.data;
+    },
   });
   return queryResult;
 };
 
 export const useUserPostsBookmarks = () => {
   const queryResult = useSuspenseQuery({
-    queryKey: ["bookmarks", "posts", "me"],
-    queryFn: async () => (await fetchUserBookmarksPosts()).data,
+    queryKey: queryKeys.user.bookmarks.posts("me"),
+    queryFn: () => meApi.bookmarks.posts(),
+    select: (response) => {
+      if (!response || !response.success) return [];
+      return response.data;
+    },
   });
   return queryResult;
 };

@@ -79,7 +79,7 @@ export const MobileTabsAccordion = ({
                     <Link
                       href={`/user/${user?.id}/${value}`}
                       onClick={() => setShowAllTabs(false)}
-                      className="block h-[48px] items-center px-4 text-left font-medium text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="h-[48px] flex items-center px-4 text-left font-medium text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <span className="truncate">{label}</span>
                     </Link>

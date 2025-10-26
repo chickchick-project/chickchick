@@ -1,65 +1,77 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  fetchUserComments,
-  fetchUserLikedPerfumes,
-  fetchUserLikedPosts,
-  fetchUserPosts,
-  fetchUserReviews,
-} from "../../../user.helper";
-import { PaginatedApiReviewResponse } from "@/lib/hono/schemas/review.schema";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { meApi } from "@/lib/utils/api/users.api";
+import { queryKeys } from "@/lib/utils/queryKeys";
 
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
-import { MyComment } from "@/lib/hono/services/me.service";
-
-export const useUserReview = (initialData?: PaginatedApiReviewResponse) => {
-  const queryResult = useSuspenseQuery<PaginatedApiReviewResponse>({
-    queryKey: ["user", "reviews", "me"],
-    queryFn: fetchUserReviews,
-    initialData,
+export const useUserReview = () => {
+  const queryResult = useSuspenseQuery({
+    queryKey: queryKeys.user.reviews("me"),
+    queryFn: async () => {
+      const response = await meApi.reviews();
+      if (!response || !response.success) {
+        throw new Error(response?.message || "Failed to fetch reviews");
+      }
+      return response.data;
+    },
   });
 
   return queryResult;
 };
 
-export const useUserPost = (initialData?: PostCardProps[]) => {
-  const queryResult = useSuspenseQuery<PostCardProps[]>({
-    queryKey: ["user", "posts", "me"],
-    queryFn: async () => (await fetchUserPosts()).data,
-
-    initialData,
+export const useUserPost = () => {
+  const queryResult = useSuspenseQuery({
+    queryKey: queryKeys.user.posts("me"),
+    queryFn: async () => {
+      const response = await meApi.posts();
+      if (!response || !response.success) {
+        throw new Error(response?.message || "Failed to fetch posts");
+      }
+      return response.data;
+    },
   });
 
   return queryResult;
 };
 
-export const useUserComment = (initialData?: MyComment[]) => {
-  const queryResult = useSuspenseQuery<MyComment[]>({
-    queryKey: ["user", "comments", "me"],
-    queryFn: async () => (await fetchUserComments()).data,
-    initialData,
+export const useUserComment = () => {
+  const queryResult = useSuspenseQuery({
+    queryKey: queryKeys.user.comments("me"),
+    queryFn: async () => {
+      const response = await meApi.comments();
+      if (!response || !response.success) {
+        throw new Error(response?.message || "Failed to fetch comments");
+      }
+      return response.data;
+    },
   });
 
   return queryResult;
 };
 
-export const useUserLikedPerfume = (
-  initialData?: ApiPerfumeSimpleResponse[]
-) => {
-  const queryResult = useSuspenseQuery<ApiPerfumeSimpleResponse[]>({
-    queryKey: ["user", "liked-perfumes", "me"],
-    queryFn: async () => (await fetchUserLikedPerfumes()).data,
-    initialData,
+export const useUserLikedPerfume = () => {
+  const queryResult = useSuspenseQuery({
+    queryKey: queryKeys.user.likes.perfumes("me"),
+    queryFn: async () => {
+      const response = await meApi.likes.perfumes();
+      if (!response || !response.success) {
+        throw new Error(response?.message || "Failed to fetch liked perfumes");
+      }
+      return response.data;
+    },
   });
 
   return queryResult;
 };
 
-export const useUserLikedPost = (initialData?: PostCardProps[]) => {
-  const queryResult = useSuspenseQuery<PostCardProps[]>({
-    queryKey: ["user", "liked-posts", "me"],
-    queryFn: async () => (await fetchUserLikedPosts()).data,
-    initialData,
+export const useUserLikedPost = () => {
+  const queryResult = useSuspenseQuery({
+    queryKey: queryKeys.user.likes.posts("me"),
+    queryFn: async () => {
+      const response = await meApi.likes.posts();
+      if (!response || !response.success) {
+        throw new Error(response?.message || "Failed to fetch liked posts");
+      }
+      return response.data;
+    },
   });
 
   return queryResult;

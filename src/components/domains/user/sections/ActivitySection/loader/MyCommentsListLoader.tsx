@@ -2,14 +2,9 @@
 
 import { MyCommentsList } from "../components";
 import { useUserComment } from "../hooks/useUserActivity";
-import { MyComment } from "@/lib/hono/services/me.service";
 
-export default function MyCommentsListLoader({
-  initialData,
-}: {
-  initialData?: MyComment[];
-}) {
-  const { data: comments, error } = useUserComment(initialData);
+export default function MyCommentsListLoader() {
+  const { data: paginatedComments, error } = useUserComment();
 
   if (error) {
     return (
@@ -19,5 +14,5 @@ export default function MyCommentsListLoader({
     );
   }
 
-  return <MyCommentsList comments={comments || []} />;
+  return <MyCommentsList comments={paginatedComments?.data || []} />;
 }
