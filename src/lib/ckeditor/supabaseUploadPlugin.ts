@@ -1,8 +1,6 @@
 import { Editor, FileLoader } from "ckeditor5";
-import {
-  POST_IMAGE_MAX_SIZE,
-  getPostImageUrl,
-} from "../queries/community/postsImageUrl";
+import { fileApi } from "@/lib/utils/api/files.api";
+import { POST_IMAGES_BUCKET_NAME } from "@/lib/constants/buckets";
 
 class SupabaseUploadAdapter {
   loader: FileLoader;
@@ -12,11 +10,20 @@ class SupabaseUploadAdapter {
   async upload() {
     const file = await this.loader.file;
     if (!file) throw new Error("파일이 존재하지 않습니다.");
-    if (file.size > POST_IMAGE_MAX_SIZE) {
-      return Promise.reject("5MB 이하 이미지 파일만 업로드할 수 있습니다.");
+
+    try {
+      const result = await fileApi.upload(file, POST_IMAGES_BUCKET_NAME);
+      if (!result.success || !result.data.imageUrl) {
+        return Promise.reject("이미지 업로드에 실패했습니다.");
+      }
+      return { default: result.data.imageUrl };
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "이미지 업로드에 실패했습니다.";
+      return Promise.reject(message);
     }
-    const url = await getPostImageUrl(file);
-    return { default: url };
   }
   abort() {}
 }

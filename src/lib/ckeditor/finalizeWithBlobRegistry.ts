@@ -1,8 +1,6 @@
 import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
-import {
-  POST_IMAGE_MAX_SIZE,
-  getPostImageUrl,
-} from "@/lib/queries/community/postsImageUrl";
+import { fileApi } from "@/lib/utils/api/files.api";
+import { POST_IMAGES_BUCKET_NAME } from "@/lib/constants/buckets";
 
 export async function finalizeWithBlobRegistry(
   html: string,
@@ -18,16 +16,13 @@ export async function finalizeWithBlobRegistry(
       continue;
     }
 
-    if (file.size > POST_IMAGE_MAX_SIZE) {
-      throw new Error("5MB 이하 이미지 파일만 업로드할 수 있습니다.");
-    }
+    const result = await fileApi.upload(file, POST_IMAGES_BUCKET_NAME);
 
-    const url = await getPostImageUrl(file);
-    if (!url) {
+    if (!result.success || !result.data.imageUrl) {
       throw new Error("이미지 업로드에 실패했습니다.");
     }
 
-    img.setAttribute("src", url);
+    img.setAttribute("src", result.data.imageUrl);
     URL.revokeObjectURL(src);
     registry.delete(src);
   }

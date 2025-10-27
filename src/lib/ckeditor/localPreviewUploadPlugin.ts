@@ -1,7 +1,8 @@
 import { Editor, FileLoader } from "ckeditor5";
-import { POST_IMAGE_MAX_SIZE } from "../queries/community/postsImageUrl";
 
 export type BlobRegistry = Map<string, File>;
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 class LocalPreviewAdapter {
   private loader: FileLoader;
@@ -15,7 +16,7 @@ class LocalPreviewAdapter {
   async upload() {
     const file = await this.loader.file;
     if (!file) throw new Error("파일이 존재하지 않습니다.");
-    if (file.size > POST_IMAGE_MAX_SIZE) {
+    if (file.size > MAX_FILE_SIZE) {
       return Promise.reject("5MB 이하 이미지 파일만 업로드할 수 있습니다.");
     }
 
