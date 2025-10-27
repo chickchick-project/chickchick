@@ -4,14 +4,13 @@ import type {
   GenericRecentItem,
   RecentItemsState,
 } from "../stores/createRecentItemsStore";
-import { createHttpClient } from "../utils/core-request";
-import { ApiResponse } from "../hono/schemas/common.schema";
 import {
   ApiRecentPerfumeItem,
   ApiRecentPostItem,
   ApiGetRecentPerfumesResponseSchema,
   ApiGetRecentPostsResponseSchema,
 } from "../hono/schemas/me.schema";
+import { meApi } from "../utils/api/users.api";
 
 type RecentApiEndpoint = "recents/perfumes" | "recents/posts";
 
@@ -21,12 +20,6 @@ interface UseRecentItemsSyncOptions<T> {
   syncInterval?: number;
   enabled?: boolean;
 }
-
-const API_BASE_URL = "http://localhost:3000/api/v1";
-
-const apiClient = createHttpClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
-});
 
 const responseSchemaMap = {
   "recents/perfumes": ApiGetRecentPerfumesResponseSchema,
@@ -50,7 +43,11 @@ export function useRecentItemsSync<T>({
     if (!enabled) return;
     // 로컬이 비어있고 아직 동기화된 적이 없다면 서버에서 가져오기
     const hydrateFromServer = async () => {
-      const res = await apiClient.get<ApiResponse<T>>(`/me/${apiEndpoint}`);
+      const res =
+        apiEndpoint === "recents/perfumes"
+          ? await meApi.recents.perfumes.get()
+          : await meApi.recents.posts.get();
+
       if (!res || !res.success) return;
 
       const schema = responseSchemaMap[apiEndpoint];
@@ -123,17 +120,14 @@ export function useRecentItemsSync<T>({
         isSyncingRef.current = true;
         console.log(`Syncing ${itemsToSync.length} items to ${apiEndpoint}...`);
 
-        const body =
+        const response =
           apiEndpoint === "recents/perfumes"
-            ? { perfumeIds: itemsToSync.map((i) => String(i.id)) }
-            : apiEndpoint === "recents/posts"
-            ? { postIds: itemsToSync.map((i) => String(i.id)) }
-            : itemsToSync; // 확장 대비 기본 동작
-
-        const response = await apiClient.post<typeof body, ApiResponse<T>>(
-          `/me/${apiEndpoint}`,
-          body
-        );
+            ? await meApi.recents.perfumes.sync(
+                itemsToSync.map((i) => String(i.id))
+              )
+            : await meApi.recents.posts.sync(
+                itemsToSync.map((i) => String(i.id))
+              );
 
         if (!response || !response.success) {
           throw new Error(`Failed to sync: ${response?.message ?? "Unknown"}`);
