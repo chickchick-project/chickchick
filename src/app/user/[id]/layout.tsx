@@ -1,6 +1,6 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import getQueryClient from "@/lib/utils/getQueryClient";
-import { getUserById } from "@/lib/utils/getUserProfile";
+import { userApi } from "@/lib/utils/api/users.api";
 import UserLayoutClient from "@/components/domains/user/UserLayoutClient";
 import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 import { notFound } from "next/navigation";
@@ -18,7 +18,7 @@ export default async function UserLayout({ children, params }: LayoutProps) {
   try {
     await queryClient.prefetchQuery({
       queryKey: ["user", "profile", pageOwnerId],
-      queryFn: () => getUserById(pageOwnerId),
+      queryFn: () => userApi.getById(pageOwnerId),
     });
   } catch (error) {
     console.error("Error fetching user:", error);

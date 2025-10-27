@@ -2,7 +2,7 @@ import React from "react";
 import { CollectionSection } from "@/components/domains/user/sections";
 import { notFound } from "next/navigation";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
-import { getUserById } from "@/lib/utils/getUserProfile";
+import { userApi } from "@/lib/utils/api/users.api";
 
 export default async function UserPage({
   params,
@@ -13,7 +13,7 @@ export default async function UserPage({
   let user: ApiMyProfileResponse | null;
 
   try {
-    user = await getUserById(pageOwnerId);
+    user = await userApi.getById(pageOwnerId);
     if (!user) {
       return notFound();
     }

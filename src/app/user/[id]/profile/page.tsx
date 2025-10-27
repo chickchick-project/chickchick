@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProfileSection } from "@/components/domains/user/sections";
-import { getUserById } from "@/lib/utils/getUserProfile";
+import { userApi } from "@/lib/utils/api/users.api";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
 
@@ -16,7 +16,7 @@ export default async function ProfilePage({
   let user: ApiMyProfileResponse | null;
 
   try {
-    user = await getUserById(pageOwnerId);
+    user = await userApi.getById(pageOwnerId);
     if (!user) {
       return notFound();
     }

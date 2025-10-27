@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { getUserProfile, getUserById } from "../utils/getUserProfile";
+import { meApi, userApi } from "../utils/api/users.api";
 import { queryKeys } from "../utils/queryKeys";
 
 export const useUserProfile = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: queryKeys.user.profile("me"),
-    queryFn: getUserProfile,
+    queryFn: () => meApi.profile.get(),
     enabled: options?.enabled ?? true,
     retry: (failureCount, error) => {
       // 401, 403 에러는 재시도하지 않음 (인증 실패)
@@ -21,6 +21,6 @@ export const useUserProfile = (options?: { enabled?: boolean }) => {
 export const useUserProfileById = (userId: string) => {
   return useQuery({
     queryKey: queryKeys.user.profile(userId),
-    queryFn: () => getUserById(userId),
+    queryFn: () => userApi.getById(userId),
   });
 };
