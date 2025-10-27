@@ -1,16 +1,7 @@
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
-import { createHttpClient } from "@/lib/utils/core-request";
-import { ApiResponse } from "@/lib/hono/schemas/common.schema";
 import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
-
-type RawApiResponse = ApiResponse<PaginatedSearchResponse>;
-
-// --- API 클라이언트 초기화 ---
-const apiClient = createHttpClient({
-  baseUrl:
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1",
-});
+import { searchApi } from "@/lib/utils/api/search.api";
 
 /**
  * 향수 목록을 검색하고 필터링하는 비동기 함수입니다.
@@ -24,40 +15,35 @@ export async function fetchPerfumes(
     const formattedFilters = formatFilters(filters);
     const hasFilters = Object.keys(formattedFilters).length > 0;
 
-    let response: RawApiResponse | null = null;
+    const response = hasFilters
+      ? await searchApi.perfumesWithFilters({
+          searchText: searchText || "",
+          cursor: cursor || undefined,
+          limit: 15,
+          ...formattedFilters,
+        })
+      : await searchApi.perfumes({
+          searchText: searchText || undefined,
+          cursor: cursor || undefined,
+          limit: 15,
+        });
 
-    if (hasFilters) {
-      // 필터가 있을 경우 POST 요청
-      const requestBody = {
-        searchText: searchText || "",
-        cursor: cursor || undefined,
-        limit: 15,
-        ...formattedFilters,
-      };
-
-      response = await apiClient.post<typeof requestBody, RawApiResponse>(
-        "/search/perfumes",
-        requestBody
-      );
-    } else {
-      // 필터가 없을 경우 GET 요청
-      const params = {
-        searchText: searchText || undefined,
-        cursor: cursor || undefined,
-        limit: 15,
-      };
-
-      response = await apiClient.get<RawApiResponse>(
-        "/search/perfumes",
-        params
-      );
+    if (!response) {
+      throw new Error("향수 정보를 불러오는 데 실패했습니다.");
     }
 
-    if (response && response.success) {
+    if (
+      typeof response === "object" &&
+      "success" in response &&
+      response.success &&
+      "data" in response
+    ) {
       return response.data;
     }
+
     throw new Error(
-      response?.message || "향수 정보를 불러오는 데 실패했습니다."
+      (typeof response === "object" && "message" in response && response.message) ||
+        "향수 정보를 불러오는 데 실패했습니다."
     );
   } catch (error) {
     console.error("fetchPerfumes에서 오류 발생:", error);
