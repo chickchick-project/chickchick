@@ -4,6 +4,14 @@ import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 
 export const perfumeApi = {
   /**
+   * 향수 목록 조회
+   */
+  list: () => {
+    return apiClient.get<ApiSuccessResponse<ApiPerfumeDetailResponse>>(
+      `/perfumes`
+    );
+  },
+  /**
    * 특정 향수 상세 조회
    */
   detail: (id: string) => {

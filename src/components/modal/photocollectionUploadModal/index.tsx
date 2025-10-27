@@ -3,8 +3,9 @@ import ModalPortal from "@/lib/portal/ModalPortal";
 import { ModalContainer } from "../ModalContainer";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
-import { uploadPhotoCollection } from "./photoCollection.helper";
+import { fileApi } from "@/lib/utils/api/files.api";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { useCollectionMutation } from "./useCollectionMutation";
 
 interface PhotoCollectionUploadModalProps {
   isOpen: boolean;
@@ -17,12 +18,12 @@ function PhotoCollectionUploadModal({
   onClose,
   onUploadSuccess,
 }: PhotoCollectionUploadModalProps) {
+  const { createMutation } = useCollectionMutation();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [comment, setComment] = useState("");
   const [selectedPerfume, setSelectedPerfume] =
     useState<ApiPerfumeSimpleResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // 모달이 닫힐 때 상태 초기화
@@ -31,7 +32,6 @@ function PhotoCollectionUploadModal({
     setPreviewUrl(null);
     setComment("");
     setSelectedPerfume(null);
-    setIsLoading(false);
     setError(null);
   }, []);
 
@@ -72,14 +72,24 @@ function PhotoCollectionUploadModal({
       return;
     }
 
-    setIsLoading(true);
     setError(null);
 
     try {
-      await uploadPhotoCollection({
-        file: selectedFile,
-        comment,
-        perfume: selectedPerfume,
+      // 1단계: 파일 업로드
+      const uploadResponse = await fileApi.upload(
+        selectedFile,
+        "collection_image"
+      );
+
+      if (!uploadResponse.success) {
+        throw new Error("파일 업로드에 실패했습니다.");
+      }
+
+      // 2단계: 컬렉션 생성 (mutation 사용)
+      await createMutation.mutateAsync({
+        perfumeId: selectedPerfume.id,
+        imageInfo: uploadResponse.data,
+        comment: comment || undefined,
       });
 
       onUploadSuccess();
@@ -90,8 +100,6 @@ function PhotoCollectionUploadModal({
       } else {
         setError("알 수 없는 오류가 발생했습니다.");
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -163,13 +171,13 @@ function PhotoCollectionUploadModal({
             </button>
             <button
               type="submit"
-              disabled={isLoading || !selectedFile}
+              disabled={createMutation.isPending || !selectedFile}
               className="px-4 py-2 bg-primary-200 text-white rounded-md hover:bg-primary-300 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center"
             >
-              {isLoading && (
+              {createMutation.isPending && (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
               )}
-              {isLoading ? "업로드 중..." : "등록하기"}
+              {createMutation.isPending ? "업로드 중..." : "등록하기"}
             </button>
           </div>
         </form>

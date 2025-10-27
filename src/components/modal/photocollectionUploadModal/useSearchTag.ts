@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { searchPerfumeTags } from "./photoCollection.helper";
+import { collectionApi } from "@/lib/utils/api/collections.api";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 const initialState = { data: [] as ApiPerfumeSimpleResponse[] };
@@ -19,7 +19,7 @@ export function useSearchTag(query: string) {
     setIsSearching(true);
     const handler = setTimeout(async () => {
       try {
-        const response = await searchPerfumeTags(query);
+        const response = await collectionApi.searchPerfumes(query);
         if (isActive) {
           setResults({ data: response.data });
         }
