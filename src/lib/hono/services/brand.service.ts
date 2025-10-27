@@ -1,0 +1,104 @@
+import { prisma } from "@/lib/prisma";
+import {
+  serviceInternalError,
+  serviceNotFound,
+  ServiceResult,
+  serviceSuccess,
+} from "../utils/service.utils";
+import {
+  ApiBrandDetailResponse,
+  ApiBrandSimpleResponse,
+} from "../schemas/brand.schema";
+import { brandDetailSelect, parseMapLocation } from "../utils/prisma.utils";
+
+/**
+ * 모든 브랜드 목록 조회
+ * - 브랜드 필터링, 검색 등에 사용
+ */
+export async function getAllBrandsService(): Promise<
+  ServiceResult<ApiBrandSimpleResponse[]>
+> {
+  try {
+    const brands = await prisma.brand.findMany({
+      select: {
+        id: true,
+        nameEn: true,
+        nameKo: true,
+      },
+      orderBy: {
+        nameKo: "asc",
+      },
+    });
+
+    return serviceSuccess(brands);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 브랜드 ID로 상세 조회
+ */
+export async function getBrandByIdService(
+  brandId: string
+): Promise<ServiceResult<ApiBrandDetailResponse>> {
+  try {
+    const brand = await prisma.brand.findUnique({
+      where: { id: brandId },
+      select: brandDetailSelect,
+    });
+
+    if (!brand) {
+      return serviceNotFound("브랜드를 찾을 수 없습니다.");
+    }
+
+    // Prisma 타입을 API 타입으로 변환
+    const transformed: ApiBrandDetailResponse = {
+      id: brand.id,
+      nameEn: brand.nameEn,
+      nameKo: brand.nameKo ?? brand.nameEn,
+      description: brand.description,
+      imageUrl: brand.imageUrl,
+      brandUrl: brand.brandUrl,
+      mapLocation: parseMapLocation(brand.mapLocation),
+    };
+
+    return serviceSuccess(transformed);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 브랜드 한글 이름으로 상세 조회
+ * - brand/[name] 페이지에서 사용
+ */
+export async function getBrandByNameService(
+  nameKo: string
+): Promise<ServiceResult<ApiBrandDetailResponse>> {
+  try {
+    const brand = await prisma.brand.findUnique({
+      where: { nameKo },
+      select: brandDetailSelect,
+    });
+
+    if (!brand) {
+      return serviceNotFound("브랜드를 찾을 수 없습니다.");
+    }
+
+    // Prisma 타입을 API 타입으로 변환
+    const transformed: ApiBrandDetailResponse = {
+      id: brand.id,
+      nameEn: brand.nameEn,
+      nameKo: brand.nameKo ?? brand.nameEn,
+      description: brand.description,
+      imageUrl: brand.imageUrl,
+      brandUrl: brand.brandUrl,
+      mapLocation: parseMapLocation(brand.mapLocation),
+    };
+
+    return serviceSuccess(transformed);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}

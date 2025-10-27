@@ -1,17 +1,35 @@
 import { z } from "@hono/zod-openapi";
 import {
   PerfumeSchema,
-  BrandSchema,
   PerfumeImageSchema,
   PerfumeAccordSchema,
   PerfumeNoteSchema,
   ReviewSchema,
   UserSchema,
 } from "@zod/modelSchema";
+import { ApiBrandForEmbeddingResponseSchema } from "./brand.schema";
+
+/**
+ * API 응답용 향수 노트 스키마
+ */
+export const ApiPerfumeNoteResponseSchema = PerfumeNoteSchema.pick({
+  id: true,
+  nameEn: true,
+  nameKo: true,
+}).openapi("ApiPerfumeNoteResponse");
+
+/**
+ * API 응답용 향수 어코드 스키마
+ */
+export const ApiPerfumeAccordResponseSchema = PerfumeAccordSchema.pick({
+  id: true,
+  nameEn: true,
+  nameKo: true,
+}).openapi("ApiPerfumeAccordResponse");
 
 //API 응답용 스키마
 const PerfumeBaseResponseSchema = PerfumeSchema.extend({
-  brand: BrandSchema.pick({ nameEn: true, nameKo: true, brandUrl: true }),
+  brand: ApiBrandForEmbeddingResponseSchema,
   perfumeImage: PerfumeImageSchema.pick({ imageUrl: true }).nullable(),
 }).omit({
   brandId: true,
@@ -19,6 +37,7 @@ const PerfumeBaseResponseSchema = PerfumeSchema.extend({
   createdAt: true,
   updatedAt: true,
 });
+
 /**
  * 향수 간단 응답 스키마
  */
@@ -34,9 +53,11 @@ export const ApiPerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
  * 향수 상세 응답 스키마
  */
 export const ApiPerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
-  accordMappings: z.array(z.object({ accord: PerfumeAccordSchema })),
+  accordMappings: z.array(
+    z.object({ accord: ApiPerfumeAccordResponseSchema })
+  ),
   noteMappings: z.array(
-    z.object({ note: PerfumeNoteSchema, noteStage: z.string() })
+    z.object({ note: ApiPerfumeNoteResponseSchema, noteStage: z.string() })
   ),
   reviews: z.array(
     ReviewSchema.pick({ id: true, content: true }).extend({
@@ -77,4 +98,12 @@ export type ApiPerfumeSimpleResponse = z.infer<
 
 export type ApiPerfumeDetailResponse = z.infer<
   typeof ApiPerfumeDetailResponseSchema
+>;
+
+export type ApiPerfumeNoteResponse = z.infer<
+  typeof ApiPerfumeNoteResponseSchema
+>;
+
+export type ApiPerfumeAccordResponse = z.infer<
+  typeof ApiPerfumeAccordResponseSchema
 >;

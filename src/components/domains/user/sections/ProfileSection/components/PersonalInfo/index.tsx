@@ -30,8 +30,13 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
   };
 
   const onSubmit = async (formData: ApiMyProfileResponse) => {
+    const { imageUrl, ...rest } = formData;
+    const params = {
+      ...rest,
+      imageUrl: imageUrl ?? undefined,
+    };
     try {
-      await mutateAsync(formData);
+      await mutateAsync(params);
       alert("수정이 완료되었습니다.");
     } catch (error) {
       console.error("제출 실패:", error);

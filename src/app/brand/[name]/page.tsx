@@ -1,8 +1,12 @@
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import getQueryClient from "@/lib/utils/getQueryClient";
+import { brandApi } from "@/lib/utils/api/brands.api";
+import { perfumeApi } from "@/lib/utils/api/perfumes.api";
 import { BrandDetailImage } from "@/components/domains/brandDetail/image";
 import { BrandDetailInfo } from "@/components/domains/brandDetail/info";
 import { PageClient } from "@/components/domains/brandDetail/perfumes/PageClient";
 import { BrandDetailSearchBar } from "@/components/domains/brandDetail/searchBar";
-import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 
 export default async function BrandDetailPage({
   params,
@@ -11,51 +15,55 @@ export default async function BrandDetailPage({
 }) {
   const resolvedParams = await params;
   const brandName = decodeURIComponent(resolvedParams.name);
+  const queryClient = getQueryClient();
 
-  // TODO: 공식 사이트 컬럼 없음, 위치
-  const brandData = await prisma.brand.findUnique({
-    where: { nameKo: brandName },
-    select: {
-      id: true,
-      nameEn: true,
-      nameKo: true,
-      description: true,
-      imageUrl: true,
-      brandUrl: true,
-      mapLocation: true,
-      createdAt: true,
-      updatedAt: true,
-    },
-  });
+  // 브랜드 정보, 노트, 어코드를 prefetch
+  try {
+    const brandData = await queryClient.fetchQuery({
+      queryKey: ["brand", "detail", brandName],
+      queryFn: () => brandApi.getByName(brandName),
+    });
 
-  const brandUrl = brandData?.brandUrl;
-  const brandStores = `https://map.naver.com/p/search/${brandData?.nameKo}`;
-  const brandImages = {
-    src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&h=400&q=80",
-    alt: "1",
-  };
+    if (!brandData) {
+      return notFound();
+    }
 
-  const [notes, accords] = await Promise.all([
-    prisma.perfumeNote.findMany(),
-    prisma.perfumeAccord.findMany(),
-  ]);
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: ["perfume", "notes"],
+        queryFn: () => perfumeApi.notes(),
+      }),
+      queryClient.prefetchQuery({
+        queryKey: ["perfume", "accords"],
+        queryFn: () => perfumeApi.accords(),
+      }),
+    ]);
 
-  return (
-    <div className="flex flex-col items-center justify-centers w-full">
-      <BrandDetailSearchBar />
-      <BrandDetailInfo
-        brandName={`${brandData?.nameKo} ${brandData?.nameEn}` || "브랜드 이름"}
-        brandDescription={brandData?.description || ""}
-        brandUrl={brandUrl || ""}
-        brandStores={brandStores}
-      />
-      <BrandDetailImage images={brandImages} />
-      {/* <BrandMap /> */}
-      <PageClient
-        brandName={brandData?.nameEn ?? ""}
-        notes={notes}
-        accords={accords}
-      />
-    </div>
-  );
+    const brandUrl = brandData.brandUrl;
+    const brandStores = `https://map.naver.com/p/search/${brandData.nameKo}`;
+    const brandImages = {
+      src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&h=400&q=80",
+      alt: "1",
+    };
+
+    return (
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <div className="flex flex-col items-center justify-centers w-full">
+          <BrandDetailSearchBar />
+          <BrandDetailInfo
+            brandName={`${brandData.nameKo} ${brandData.nameEn}`}
+            brandDescription={brandData.description ?? ""}
+            brandUrl={brandUrl ?? ""}
+            brandStores={brandStores}
+          />
+          <BrandDetailImage images={brandImages} />
+          {/* <BrandMap /> */}
+          <PageClient brandName={brandData.nameEn ?? ""} />
+        </div>
+      </HydrationBoundary>
+    );
+  } catch (error) {
+    console.error("Error fetching brand data:", error);
+    return notFound();
+  }
 }

@@ -1,6 +1,10 @@
 "use client";
 
-import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
+import {
+  useBrandFilter,
+  usePerfumeNoteFilter,
+  usePerfumeAccordFilter,
+} from "@/lib/hooks/query/useFilters";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
@@ -14,22 +18,18 @@ export type BrandName = {
   ko: string;
 };
 
-export default function PageClient({
-  brands,
-  notes,
-  accords,
-}: {
-  brands: Brand[];
-  notes: PerfumeNote[];
-  accords: PerfumeAccord[];
-}) {
+export default function PageClient() {
+  const { data: brands } = useBrandFilter();
+  const { data: notes } = usePerfumeNoteFilter();
+  const { data: accords } = usePerfumeAccordFilter();
+
   const {
     inputValue,
     searchKeyword,
     matchedBrand,
     handleChange,
     handleSubmit,
-  } = usePerfumeSearchState(brands);
+  } = usePerfumeSearchState(brands ?? []);
 
   const {
     perfumes,
@@ -63,9 +63,9 @@ export default function PageClient({
           inputValue={inputValue}
           onChange={handleChange}
           onSubmit={handleSubmit}
-          brands={brands}
-          notes={notes}
-          accords={accords}
+          brands={brands ?? undefined}
+          notes={notes ?? []}
+          accords={accords ?? []}
         />
         <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
           <div className="w-full flex justify-between items-center mb-5">

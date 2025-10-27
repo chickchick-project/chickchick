@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@hono/zod-openapi";
 import { UserSchema } from "@zod/modelSchema";
 
 export const ApiUserProfileResponseSchema = UserSchema.pick({

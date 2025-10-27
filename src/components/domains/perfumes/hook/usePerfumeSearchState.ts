@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useMemo, ChangeEvent, FormEvent } from "react";
-import { Brand } from "@prisma/client";
+import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 
-export const usePerfumeSearchState = (brands: Brand[]) => {
+export const usePerfumeSearchState = (
+  brands: ApiBrandSimpleResponse[]
+) => {
   const [inputValue, setInputValue] = useState("");
   const [searchKeyword, setSearchKeyword] = useState("");
 

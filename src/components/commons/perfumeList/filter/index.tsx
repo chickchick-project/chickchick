@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import FilterItem from "./FilterItem";
-import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
+import { PerfumeAccord, PerfumeNote } from "@zod/modelSchema";
+import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
@@ -12,7 +13,7 @@ export default function PerFumeFilter({
   notes,
   accords,
 }: {
-  brands?: Brand[];
+  brands?: ApiBrandSimpleResponse[];
   notes: PerfumeNote[];
   accords: PerfumeAccord[];
 }) {

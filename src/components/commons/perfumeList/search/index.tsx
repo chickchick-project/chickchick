@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FormEvent } from "react";
-import { Brand, PerfumeAccord, PerfumeNote } from "@prisma/client";
+import { PerfumeAccord, PerfumeNote } from "@zod/modelSchema";
+import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import PerFumeFilter from "../filter";
 
@@ -7,7 +8,7 @@ interface SearchHeaderProps {
   inputValue?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubmit?: (e?: FormEvent) => void;
-  brands?: Brand[];
+  brands?: ApiBrandSimpleResponse[];
   notes: PerfumeNote[];
   accords: PerfumeAccord[];
   isSearch?: boolean;

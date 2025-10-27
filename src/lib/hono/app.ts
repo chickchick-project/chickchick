@@ -7,6 +7,7 @@ import communityApi from "./routes/v1/community.handler";
 import meApi from "./routes/v1/me.handler";
 import usersApi from "./routes/v1/user.handler";
 import commentsApi from "./routes/v1/comment.handler";
+import brandsApi from "./routes/v1/brand.handler";
 import { handleApiError } from "./utils/api.utils";
 import fileApi from "./routes/v1/file.handler";
 
@@ -40,6 +41,7 @@ if (process.env.NODE_ENV === "development") {
 
 const v1 = new OpenAPIHono<AppContext>();
 v1.route("/perfumes", perfumesApi);
+v1.route("/brands", brandsApi);
 v1.route("/search", searchApi);
 v1.route("/reviews", reviewsApi);
 v1.route("/community", communityApi);

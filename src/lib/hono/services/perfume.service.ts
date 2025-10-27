@@ -5,7 +5,6 @@ import {
   ServiceResult,
   serviceSuccess,
 } from "../utils/service.utils";
-
 import { checkResourceExists } from "../utils/service.utils";
 import {
   perfumeBaseInclude,
@@ -14,6 +13,10 @@ import {
   FullPerfume,
   BasePost,
 } from "../utils/prisma.utils";
+import {
+  ApiPerfumeNoteResponse,
+  ApiPerfumeAccordResponse,
+} from "../schemas/perfume.schema";
 
 /**
  * 향수 목록 조회
@@ -198,6 +201,46 @@ export async function togglePerfumeLikeService(
       await prisma.perfumeLike.create({ data: { perfumeId, userId } });
       return serviceSuccess({ liked: true });
     }
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 모든 향수 노트 목록 조회
+ */
+export async function getAllNotesService(): Promise<
+  ServiceResult<ApiPerfumeNoteResponse[]>
+> {
+  try {
+    const notes = await prisma.perfumeNote.findMany({
+      select: {
+        id: true,
+        nameEn: true,
+        nameKo: true,
+      },
+    });
+    return serviceSuccess(notes);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 모든 향수 어코드 목록 조회
+ */
+export async function getAllAccordsService(): Promise<
+  ServiceResult<ApiPerfumeAccordResponse[]>
+> {
+  try {
+    const accords = await prisma.perfumeAccord.findMany({
+      select: {
+        id: true,
+        nameEn: true,
+        nameKo: true,
+      },
+    });
+    return serviceSuccess(accords);
   } catch (error) {
     return serviceInternalError(error);
   }

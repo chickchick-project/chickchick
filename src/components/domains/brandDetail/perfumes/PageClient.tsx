@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { PerfumeAccord, PerfumeNote } from "@prisma/client";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-
+import {
+  usePerfumeNoteFilter,
+  usePerfumeAccordFilter,
+} from "@/lib/hooks/query/useFilters";
 import { useFilterStore } from "@/lib/stores/useFilterStore";
 import { useTotalStore } from "@/lib/stores/useCountStore";
 import { SearchHeader } from "../../../commons/perfumeList/search";
@@ -19,17 +21,12 @@ import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
 
 type BrandDetailQueryKey = ReturnType<typeof queryKeys.perfume.brandDetail>;
 
-export const PageClient = ({
-  brandName,
-  notes,
-  accords,
-}: {
-  brandName: string;
-  notes: PerfumeNote[];
-  accords: PerfumeAccord[];
-}) => {
-  const memoizedNotes = useMemo(() => notes, [notes]);
-  const memoizedAccords = useMemo(() => accords, [accords]);
+export const PageClient = ({ brandName }: { brandName: string }) => {
+  const { data: notes } = usePerfumeNoteFilter();
+  const { data: accords } = usePerfumeAccordFilter();
+
+  const memoizedNotes = useMemo(() => notes ?? [], [notes]);
+  const memoizedAccords = useMemo(() => accords ?? [], [accords]);
 
   const filters = useFilterStore((state) => state.filters);
   const setCount = useTotalStore((state) => state.setTotalCount);
