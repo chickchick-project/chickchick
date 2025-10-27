@@ -1,7 +1,7 @@
 "use client";
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MobileActionBar } from "./mobileActionBar";
 import { PerfumeOverview } from "./overview";
 import { InteractionStates } from "./overview/perfumeInfo";
@@ -12,7 +12,6 @@ import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPerfumesStore } from "@/lib/stores/useRecentPerfumesStore";
-import { useMemo } from "react";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
