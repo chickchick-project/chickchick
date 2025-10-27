@@ -28,6 +28,8 @@ import View from "./meta/View.svg";
 import CloseCircle from "./CloseCircle.svg";
 import Reply from "./Reply.svg";
 
+import Insta from "./insta.svg";
+
 import DislikeGray from "./review/DislikeGray.svg";
 import DislikePrimary from "./review/DislikePrimary.svg";
 import BadGray from "./review/BadGray.svg";
@@ -72,6 +74,7 @@ export {
   View,
   CloseCircle,
   Reply,
+  Insta,
   DislikeGray,
   DislikePrimary,
   BadGray,

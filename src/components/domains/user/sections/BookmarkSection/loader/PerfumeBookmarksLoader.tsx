@@ -1,7 +1,7 @@
 "use client";
 
 import { PerfumeBookmarkList } from "../components";
-import { usePerfumeBookmarks } from "../hooks/useUserBookmarks";
+import { usePerfumeBookmarks } from "@/lib/hooks/query/useUserQuery";
 
 export default function PerfumeBookmarksLoader({ userId }: { userId: string }) {
   const { data: perfumeData } = usePerfumeBookmarks(userId);

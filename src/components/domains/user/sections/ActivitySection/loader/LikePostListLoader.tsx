@@ -1,7 +1,7 @@
 "use client";
 
 import { LikePostList } from "../components";
-import { useUserLikedPost } from "../hooks/useUserActivity";
+import { useUserLikedPost } from "@/lib/hooks/query/useUserQuery";
 
 export default function LikePostListLoader() {
   const { data: likedPosts, error } = useUserLikedPost();

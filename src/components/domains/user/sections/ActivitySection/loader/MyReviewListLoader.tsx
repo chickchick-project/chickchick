@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MyReviewList } from "../components";
-import { useUserReview } from "../hooks/useUserActivity";
+import { useUserReview } from "@/lib/hooks/query/useUserQuery";
 
 export default function MyReviewListLoader() {
   const [isMounted, setIsMounted] = useState(false);

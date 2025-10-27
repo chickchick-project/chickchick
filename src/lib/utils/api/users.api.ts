@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { fileApi } from "./files.api";
 import { MyComment } from "@/lib/hono/services/me.service";
 import {
   ApiResponse,
@@ -15,32 +16,15 @@ import {
   ApiUpdateMyProfileRequest,
 } from "@/lib/hono/schemas/me.schema";
 
-const USER_ID_REGEX = /^[0-9a-fA-F-]{36}$/;
+export const USER_ID_REGEX = /^[0-9a-fA-F-]{36}$/;
 
 export const userApi = {
   /**
    * 특정 사용자 프로필 조회
    */
   getById: (userId: string) => {
-    return apiClient.get<
-      ApiSuccessResponse<ApiMyProfileResponse>,
-      ApiMyProfileResponse
-    >(
-      `/users/${userId}`,
-      {},
-      {
-        transformResponse: (
-          response: ApiSuccessResponse<ApiMyProfileResponse>
-        ) => {
-          const user = response.data;
-          if (typeof user.id !== "string" || !USER_ID_REGEX.test(user.id)) {
-            throw new Error(
-              "서버로부터 받은 사용자 ID 형식이 올바르지 않습니다."
-            );
-          }
-          return user;
-        },
-      }
+    return apiClient.get<ApiSuccessResponse<ApiMyProfileResponse>>(
+      `/users/${userId}`
     );
   },
   /**
@@ -69,18 +53,7 @@ export const meApi = {
      * 내 프로필 정보 조회
      */
     get: () => {
-      return apiClient.get<
-        ApiSuccessResponse<ApiMyProfileResponse>,
-        ApiMyProfileResponse
-      >(
-        `/me`,
-        {},
-        {
-          transformResponse: (
-            response: ApiSuccessResponse<ApiMyProfileResponse>
-          ) => response.data,
-        }
-      );
+      return apiClient.get<ApiSuccessResponse<ApiMyProfileResponse>>(`/me`);
     },
     /**
      * 내 프로필 정보 수정
@@ -90,6 +63,42 @@ export const meApi = {
         ApiUpdateMyProfileRequest,
         ApiResponse<ApiMyProfileResponse>
       >(`/me`, data);
+    },
+    /**
+     * 프로필 이미지 업로드
+     */
+    uploadImage: (file: File) => {
+      const formData = new FormData();
+      formData.append("image", file);
+      return apiClient.post<FormData, ApiResponse<ApiMyProfileResponse>>(
+        `/me/profile/image`,
+        formData
+      );
+    },
+    /**
+     * 프로필 이미지 업로드 및 프로필 업데이트 (통합 함수)
+     * 파일 업로드 후 프로필 정보를 자동으로 업데이트합니다.
+     */
+    uploadAndUpdateImage: async (file: File, bucketName: string) => {
+      // 파일 업로드
+      const uploadResponse = await fileApi.upload(file, bucketName);
+
+      if (!uploadResponse?.success) {
+        throw new Error("파일 업로드에 실패했습니다.");
+      }
+
+      const profilePayload = {
+        imageUrl: uploadResponse.data.imageUrl,
+      };
+
+      // 프로필 이미지 URL 업데이트
+      const response = await meApi.profile.update(profilePayload);
+
+      if (!response?.success) {
+        throw new Error("프로필 이미지 업데이트에 실패했습니다.");
+      }
+
+      return response;
     },
   },
 

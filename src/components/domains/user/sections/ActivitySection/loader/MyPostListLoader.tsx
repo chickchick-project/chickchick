@@ -1,7 +1,7 @@
 "use client";
 
 import { MyPostList } from "../components";
-import { useUserPost } from "../hooks/useUserActivity";
+import { useUserPost } from "@/lib/hooks/query/useUserQuery";
 
 export default function MyPostListLoader() {
   const { data: paginatedPosts, error } = useUserPost();

@@ -8,10 +8,10 @@ import {
   ApiMyProfileResponseSchema,
 } from "@/lib/hono/schemas/me.schema";
 import Form from "@/components/commons/form";
-import { useUpdateProfileMutation } from "../../useUpdateProfile";
+import { useUpdateProfile } from "@/lib/hooks/query/useUserQuery";
 
 export const PersonalInfo = (user: ApiMyProfileResponse) => {
-  const { mutateAsync, isPending } = useUpdateProfileMutation();
+  const { mutateAsync, isPending } = useUpdateProfile();
   const defaultValues = {
     id: user.id,
     nickname: user.nickname || "",

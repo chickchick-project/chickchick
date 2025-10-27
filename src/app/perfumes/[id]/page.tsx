@@ -1,11 +1,9 @@
 "use client";
 
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { reviewApi } from "@/lib/utils/api/reviews.api";
-import { usePerfumeDetail } from "@/lib/hooks/usePerfumeDetail";
+import { usePerfumeDetail } from "@/lib/hooks/query/usePerfumeQuery";
+import { usePerfumeReviews } from "@/lib/hooks/query/useReviewQuery";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/utils/queryKeys";
 import { Spinner } from "@/components/commons/loading/Spinner";
 
 export default function PerfumeDetailPage() {
@@ -20,14 +18,8 @@ export default function PerfumeDetailPage() {
   } = usePerfumeDetail(id);
 
   // 리뷰 데이터 조회
-  const { data: reviewData = [], isLoading: isReviewLoading } = useQuery({
-    queryKey: queryKeys.perfume.reviews(id),
-    queryFn: async () => {
-      const res = await reviewApi.list(id);
-      return res?.data || [];
-    },
-    enabled: !!id,
-  });
+  const { data: reviewData = [], isLoading: isReviewLoading } =
+    usePerfumeReviews(id);
 
   if (isPerfumeLoading || isReviewLoading) {
     return <Spinner />;

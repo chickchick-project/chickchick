@@ -1,8 +1,5 @@
 import React from "react";
 import { CollectionSection } from "@/components/domains/user/sections";
-import { notFound } from "next/navigation";
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
-import { userApi } from "@/lib/utils/api/users.api";
 
 export default async function UserPage({
   params,
@@ -10,17 +7,6 @@ export default async function UserPage({
   params: Promise<{ id: string }>;
 }) {
   const { id: pageOwnerId } = await params;
-  let user: ApiMyProfileResponse | null;
 
-  try {
-    user = await userApi.getById(pageOwnerId);
-    if (!user) {
-      return notFound();
-    }
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    return notFound();
-  }
-
-  return <CollectionSection user={user} />;
+  return <CollectionSection userId={pageOwnerId} />;
 }

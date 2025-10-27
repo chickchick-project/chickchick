@@ -3,14 +3,11 @@
 import Image from "next/image";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
-import { useUserCollections } from "./useUserCollections";
+import { useUserCollections } from "@/lib/hooks/query/useUserQuery";
 import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
-import {
-  ApiMyCollectionResponse,
-  ApiMyProfileResponse,
-} from "@/lib/hono/schemas/me.schema";
+import { ApiMyCollectionResponse } from "@/lib/hono/schemas/me.schema";
 
-export const CollectionSection = ({ user }: { user: ApiMyProfileResponse }) => {
+export const CollectionSection = ({ userId }: { userId: string }) => {
   const {
     isOpen,
     imageUrl,
@@ -24,8 +21,7 @@ export const CollectionSection = ({ user }: { user: ApiMyProfileResponse }) => {
     data: collectionsData,
     isLoading,
     error,
-  } = useUserCollections(user!.id);
-
+  } = useUserCollections(userId);
   if (error) {
     console.error("CollectionSection error:", error);
     return (
