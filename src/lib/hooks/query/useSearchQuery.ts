@@ -6,23 +6,15 @@ import {
 import { searchApi } from "../../utils/api/search.api";
 import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
 import { queryKeys } from "@/lib/utils/queryKeys";
-
-interface SearchPerfumesParams {
-  searchText?: string;
-  cursor?: string;
-  limit?: number;
-}
-
-interface SearchPerfumesWithFiltersParams extends SearchPerfumesParams {
-  brandFilter?: string[];
-  notesFilter?: string[];
-  accordsFilter?: string[];
-}
+import {
+  SearchPerfumesParams,
+  SearchPerfumesWithFiltersParams,
+} from "@/lib/types/search.types";
 
 // 향수 검색 (필터 없이)
 export const useSearchPerfumes = (params: SearchPerfumesParams) => {
   return useQuery({
-    queryKey: ["search", "perfumes", params],
+    queryKey: queryKeys.search.perfumes(params),
     queryFn: () => searchApi.perfumes(params),
     enabled: !!params.searchText && params.searchText.trim().length > 0,
     select: (response) => {
@@ -37,7 +29,7 @@ export const useSearchPerfumesWithFilters = (
   params: SearchPerfumesWithFiltersParams
 ) => {
   return useQuery({
-    queryKey: ["search", "perfumes", "filtered", params],
+    queryKey: queryKeys.search.perfumesFiltered(params),
     queryFn: () => searchApi.perfumesWithFilters(params),
     select: (response) => {
       if (!response || !response.success) return null;
@@ -46,7 +38,13 @@ export const useSearchPerfumesWithFilters = (
   });
 };
 
-type PerfumeListQueryKey = ReturnType<typeof queryKeys.perfume.list>;
+type PerfumeListQueryKey = ReturnType<typeof queryKeys.perfume.searchResult>;
+
+interface PerfumeFilters {
+  brands?: string[];
+  notes?: string[];
+  accords?: string[];
+}
 
 /**
  * 무한 스크롤을 위한 향수 검색 쿼리
@@ -65,7 +63,10 @@ export const useInfiniteSearchPerfumesQuery = (
     PerfumeListQueryKey,
     string | null
   >({
-    queryKey: queryKeys.perfume.list(searchKeyword, filters),
+    queryKey: queryKeys.perfume.searchResult({
+      searchKeyword,
+      filters: filters as PerfumeFilters,
+    }),
     queryFn: ({ pageParam }) =>
       searchApi.fetchPerfumes(pageParam, searchKeyword, filters),
     getNextPageParam: (lastPage) => lastPage.nextCursor,

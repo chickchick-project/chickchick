@@ -17,7 +17,7 @@ export const usePerfumeReviews = (perfumeId: string) => {
 // 인기 리뷰 목록 조회
 export const usePopularReviews = () => {
   return useQuery({
-    queryKey: ["reviews", "popular"],
+    queryKey: queryKeys.review.popular(),
     queryFn: () => reviewApi.popular(),
     select: (response) => {
       if (!response || !response.success) return null;

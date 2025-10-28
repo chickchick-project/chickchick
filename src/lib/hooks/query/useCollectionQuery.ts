@@ -12,7 +12,7 @@ interface CreateCollectionParams {
 // 컬렉션 추가 시 향수 검색
 export const useCollectionPerfumeSearch = (query: string) => {
   return useQuery({
-    queryKey: ["collection", "search", query],
+    queryKey: queryKeys.collection.searchByPerfume(query),
     queryFn: () => collectionApi.searchPerfumes(query),
     enabled: !!query && query.trim().length > 0,
   });
@@ -34,12 +34,12 @@ export const useCollectionMutation = (userId?: string) => {
     onMutate: async () => {
       // 진행 중인 쿼리들을 취소하여 옵티미스틱 업데이트를 덮어쓰지 않도록 함
       await queryClient.cancelQueries({
-        queryKey: queryKeys.user.collections.all(),
+        queryKey: queryKeys.collection.all,
       });
 
       // 이전 데이터를 백업 (롤백용)
       const previousCollections = queryClient.getQueryData(
-        queryKeys.user.collections.byUserId(userId ?? "me")
+        queryKeys.collection.byUserId(userId ?? "me")
       );
 
       // 옵티미스틱 업데이트 적용
@@ -53,12 +53,12 @@ export const useCollectionMutation = (userId?: string) => {
     onSuccess: () => {
       // 모든 컬렉션 쿼리 무효화 - 자동으로 리프레시됨
       queryClient.invalidateQueries({
-        queryKey: queryKeys.user.collections.all(),
+        queryKey: queryKeys.collection.all,
       });
 
       // 현재 사용자의 컬렉션도 무효화
       queryClient.invalidateQueries({
-        queryKey: queryKeys.user.collections.byUserId(userId ?? "me"),
+        queryKey: queryKeys.collection.byUserId(userId ?? "me"),
       });
     },
 
@@ -66,7 +66,7 @@ export const useCollectionMutation = (userId?: string) => {
       // 에러 발생 시 이전 상태로 롤백
       if (context?.previousCollections) {
         queryClient.setQueryData(
-          queryKeys.user.collections.byUserId(userId ?? "me"),
+          queryKeys.collection.byUserId(userId ?? "me"),
           context.previousCollections
         );
       }
@@ -76,7 +76,7 @@ export const useCollectionMutation = (userId?: string) => {
     onSettled: () => {
       // 성공/실패 여부와 관계없이 최종적으로 쿼리 무효화하여 서버 상태와 동기화
       queryClient.invalidateQueries({
-        queryKey: queryKeys.user.collections.all(),
+        queryKey: queryKeys.collection.all,
       });
     },
   });

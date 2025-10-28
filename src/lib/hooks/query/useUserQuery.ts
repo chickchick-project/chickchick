@@ -45,7 +45,7 @@ export const useUserProfileById = (userId: string) => {
 // 특정 사용자의 컬렉션 목록 조회
 export const useUserCollections = (userId: string) => {
   return useQuery({
-    queryKey: queryKeys.user.collections.byUserId(userId),
+    queryKey: queryKeys.collection.byUserId(userId),
     queryFn: () => userApi.collections(userId),
     select: (response) => {
       if (!response || !response.success) return [];

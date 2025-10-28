@@ -1,18 +1,10 @@
+import { apiClient } from "./client";
 import { ApiResponse } from "@/lib/hono/schemas/common.schema";
 import { PaginatedSearchResponse } from "@/lib/hono/schemas/search.schema";
-import { apiClient } from "./client";
-
-interface SearchPerfumesParams {
-  searchText?: string;
-  cursor?: string;
-  limit?: number;
-}
-
-interface SearchPerfumesWithFiltersParams extends SearchPerfumesParams {
-  brandFilter?: string[];
-  notesFilter?: string[];
-  accordsFilter?: string[];
-}
+import {
+  SearchPerfumesParams,
+  SearchPerfumesWithFiltersParams,
+} from "@/lib/types/search.types";
 
 const formatFilters = (filters: Record<string, string[]>) => {
   const result: {

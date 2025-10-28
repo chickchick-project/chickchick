@@ -46,8 +46,14 @@ export async function uploadImage(
   }
 
   // 파일 타입 검증
-  if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.type as any)) {
-    return serviceBadRequest("지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP, GIF만 가능)");
+  if (
+    !ALLOWED_IMAGE_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_IMAGE_MIME_TYPES)[number]
+    )
+  ) {
+    return serviceBadRequest(
+      "지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP, GIF만 가능)"
+    );
   }
 
   // 파일 크기 검증

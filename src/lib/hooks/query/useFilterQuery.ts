@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { brandApi } from "@/lib/utils/api/brands.api";
 import { perfumeApi } from "@/lib/utils/api/perfumes.api";
 import { filterApi } from "@/lib/utils/api/filter.api";
+import { queryKeys } from "@/lib/utils/queryKeys";
 import type { FilterRequestBody } from "@/lib/hono/schemas/filter.schema";
 
 const FILTER_STALE_TIME = {
@@ -16,7 +17,7 @@ const FILTER_STALE_TIME = {
  */
 export function useBrandFilter(enabled?: boolean) {
   return useQuery({
-    queryKey: ["brand", "list"],
+    queryKey: queryKeys.filter.brands(),
     queryFn: () => brandApi.list(),
     select: (response) => response?.data ?? [],
     staleTime: FILTER_STALE_TIME.brands,
@@ -29,7 +30,7 @@ export function useBrandFilter(enabled?: boolean) {
  */
 export function usePerfumeNoteFilter(enabled?: boolean) {
   return useQuery({
-    queryKey: ["perfume", "notes"],
+    queryKey: queryKeys.filter.notes(),
     queryFn: () => perfumeApi.notes(),
     select: (response) => response?.data ?? [],
     staleTime: FILTER_STALE_TIME.notes,
@@ -42,7 +43,7 @@ export function usePerfumeNoteFilter(enabled?: boolean) {
  */
 export function usePerfumeAccordFilter(enabled?: boolean) {
   return useQuery({
-    queryKey: ["perfume", "accords"],
+    queryKey: queryKeys.filter.accords(),
     queryFn: () => perfumeApi.accords(),
     select: (response) => response?.data ?? [],
     staleTime: FILTER_STALE_TIME.accords,
@@ -59,7 +60,7 @@ export function useAvailableFilters(
   enabled: boolean = true
 ) {
   return useQuery({
-    queryKey: ["filter", "available", params],
+    queryKey: queryKeys.filter.available(params),
     queryFn: () => filterApi.getAvailable(params),
     select: (response) =>
       response?.data ?? { notes: [], accords: [], brands: [] },
@@ -77,7 +78,7 @@ export function useAvailableFiltersTotal(
   enabled: boolean = true
 ) {
   return useQuery({
-    queryKey: ["filter", "total", params],
+    queryKey: queryKeys.filter.total(params),
     queryFn: () => filterApi.getTotal(params),
     select: (response) => response?.data ?? [],
     staleTime: FILTER_STALE_TIME.dynamic,

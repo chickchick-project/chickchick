@@ -6,9 +6,12 @@ import { GetPostsQuery } from "@/lib/hono/schemas/community.schema";
 // 커뮤니티 게시글 목록 조회
 export const useCommunityPosts = (params?: GetPostsQuery) => {
   return useQuery({
-    queryKey: queryKeys.community.posts(params?.q || "", {
-      category: params?.category,
-      sortBy: params?.sortBy,
+    queryKey: queryKeys.community.posts({
+      searchKeyword: params?.q || "",
+      filters: {
+        category: params?.category,
+        sortBy: params?.sortBy,
+      },
     }),
     queryFn: () => communityApi.list(params),
     select: (response) => {
