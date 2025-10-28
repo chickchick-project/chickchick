@@ -17,16 +17,17 @@ export default async function BrandDetailPage({
   const brandName = decodeURIComponent(resolvedParams.name);
   const queryClient = getQueryClient();
 
-  // 브랜드 정보, 노트, 어코드를 prefetch
   try {
-    const brandData = await queryClient.fetchQuery({
+    const brandResponse = await queryClient.fetchQuery({
       queryKey: ["brand", "detail", brandName],
       queryFn: () => brandApi.getByName(brandName),
     });
 
-    if (!brandData) {
+    if (!brandResponse) {
       return notFound();
     }
+
+    const brandData = brandResponse.data;
 
     await Promise.all([
       queryClient.prefetchQuery({

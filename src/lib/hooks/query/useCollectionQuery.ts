@@ -1,15 +1,22 @@
-"use client";
-
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { collectionApi } from "@/lib/utils/api/collections.api";
-import { UploadedImageInfo } from "@/lib/hono/schemas/common.schema";
-import { queryKeys } from "@/lib/utils/queryKeys";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { collectionApi } from "../../utils/api/collections.api";
+import { queryKeys } from "../../utils/queryKeys";
+import type { UploadedImageInfo } from "@/lib/hono/schemas/common.schema";
 
 interface CreateCollectionParams {
   perfumeId: string;
   imageInfo: UploadedImageInfo;
   comment?: string;
 }
+
+// 컬렉션 추가 시 향수 검색
+export const useCollectionPerfumeSearch = (query: string) => {
+  return useQuery({
+    queryKey: ["collection", "search", query],
+    queryFn: () => collectionApi.searchPerfumes(query),
+    enabled: !!query && query.trim().length > 0,
+  });
+};
 
 /**
  * 컬렉션 생성/수정/삭제를 위한 mutation hook

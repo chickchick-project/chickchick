@@ -5,7 +5,7 @@ import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
 import { fileApi } from "@/lib/utils/api/files.api";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
-import { useCollectionMutation } from "./useCollectionMutation";
+import { useCollectionMutation } from "@/lib/hooks/query/useCollectionQuery";
 
 interface PhotoCollectionUploadModalProps {
   isOpen: boolean;
