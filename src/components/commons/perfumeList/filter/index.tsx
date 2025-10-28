@@ -1,7 +1,10 @@
 import React, { useMemo } from "react";
 import FilterItem from "./FilterItem";
-import { PerfumeAccord, PerfumeNote } from "@zod/modelSchema";
 import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
+import {
+  ApiPerfumeNoteResponse,
+  ApiPerfumeAccordResponse,
+} from "@/lib/hono/schemas/perfume.schema";
 import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";
@@ -14,8 +17,8 @@ export default function PerFumeFilter({
   accords,
 }: {
   brands?: ApiBrandSimpleResponse[];
-  notes: PerfumeNote[];
-  accords: PerfumeAccord[];
+  notes: ApiPerfumeNoteResponse[];
+  accords: ApiPerfumeAccordResponse[];
 }) {
   const pathname = usePathname();
   const isBrandPage = pathname.includes("brand");
@@ -38,8 +41,7 @@ export default function PerFumeFilter({
         value: item.id,
       })),
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [brands, notes, accords]
+    [brands, notes, accords, isBrandPage]
   );
 
   return (

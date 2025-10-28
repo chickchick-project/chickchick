@@ -24,32 +24,14 @@ export const perfumeApi = {
    * 모든 향수 노트 목록 조회
    */
   notes: () => {
-    return apiClient.get<
-      ApiSuccessResponse<PerfumeNote[]>,
-      PerfumeNote[]
-    >(
-      `/perfumes/notes`,
-      {},
-      {
-        transformResponse: (response: ApiSuccessResponse<PerfumeNote[]>) =>
-          response.data,
-      }
-    );
+    return apiClient.get<ApiSuccessResponse<PerfumeNote[]>>(`/perfumes/notes`);
   },
   /**
    * 모든 향수 어코드 목록 조회
    */
   accords: () => {
-    return apiClient.get<
-      ApiSuccessResponse<PerfumeAccord[]>,
-      PerfumeAccord[]
-    >(
-      `/perfumes/accords`,
-      {},
-      {
-        transformResponse: (response: ApiSuccessResponse<PerfumeAccord[]>) =>
-          response.data,
-      }
+    return apiClient.get<ApiSuccessResponse<PerfumeAccord[]>>(
+      `/perfumes/accords`
     );
   },
 };

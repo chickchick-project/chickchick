@@ -18,12 +18,12 @@ const FilterItem = ({
   options: Option[];
 }) => {
   const EMPTY_SET = new Set<string>();
-  const filterSet = useFilterStore(
-    (state) => state.filters[category] ?? EMPTY_SET
+  const committedFilters = useFilterStore((state) => state.committedFilters);
+  const handlePendingChange = useFilterStore(
+    (state) => state.handlePendingChange
   );
-  const handleFilterChange = useFilterStore(
-    (state) => state.handleFilterChange
-  );
+
+  const filterSet = committedFilters[category] ?? EMPTY_SET;
 
   const { selectedOption, currentOption } = getFilterOptionMeta(
     filterSet,
@@ -62,8 +62,7 @@ const FilterItem = ({
           options={options}
           currentOption={currentOption}
           handleChangeOption={(option: Option) => {
-            handleFilterChange(category, option.value);
-            setIsSelected(true);
+            handlePendingChange(category, option.value);
           }}
         />
       )}

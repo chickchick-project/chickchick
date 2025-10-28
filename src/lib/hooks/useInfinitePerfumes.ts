@@ -9,12 +9,12 @@ import { useInfiniteSearchPerfumesQuery } from "@/lib/hooks/query/useSearchQuery
  * 향수 검색 페이지용 커스텀 훅
  */
 export const useInfinitePerfumes = (searchKeyword: string) => {
-  const filters = useFilterStore((state) => state.filters);
+  const committedFilters = useFilterStore((state) => state.committedFilters);
   const setTotalCount = useTotalStore((state) => state.setTotalCount);
 
   const { data, ...rest } = useInfiniteSearchPerfumesQuery(
     searchKeyword,
-    filters
+    committedFilters
   );
 
   useEffect(() => {
