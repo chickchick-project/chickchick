@@ -7,6 +7,7 @@ import {
   ApiPostDetailResponse,
   ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
+import Link from "next/link";
 
 type PostDetailHeaderProps = Omit<ApiPostDetailResponse, "content"> & {
   postStatus: ApiPostStatusResponse;
@@ -34,10 +35,12 @@ export default function PostDetailHeader(props: PostDetailHeaderProps) {
   return (
     <header className="mobile:mt-10 pc:mt-[60px] px-4">
       <div className="flex item-center justify-between">
-        <BoardChip type={category} />
+        <Link href={`/community?tab=${category}`}>
+          <BoardChip type={category} />
+        </Link>
         <PostInteractions
-          initialIsLiked={isLiked}
-          initialIsBookmarked={isBookmarked}
+          isLiked={isLiked}
+          isBookmarked={isBookmarked}
           postId={postId}
         />
       </div>
