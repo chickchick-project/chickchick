@@ -1,12 +1,12 @@
+import React from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import React, { ButtonHTMLAttributes } from "react";
-import { createPortal } from "react-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { logout } from "@/lib/database/action/login";
-import { useRouter } from "next/navigation";
 
 interface DropdownProps {
   onClose: () => void;
@@ -14,9 +14,14 @@ interface DropdownProps {
   userId: string;
 }
 
+interface DropdownFooterItem {
+  label: string;
+  onClick?: () => void;
+}
+
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   const { user, reset } = useUserStore();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   if (!parentRef.current) return null;
 
@@ -26,30 +31,26 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   const handleLogout = async () => {
     try {
       await logout();
+
       reset();
-      router.push("/");
-      onClose();
+
+      queryClient.clear();
+
+      window.location.reload();
     } catch (error) {
       console.error("Logout failed:", error);
     }
   };
 
-  const NAV_ITEMS_FOOTER: {
-    label: string;
-    type: ButtonHTMLAttributes<HTMLButtonElement>["type"];
-    onClick?: () => void;
-    action?: () => void;
-  }[] = [
+  const NAV_ITEMS_FOOTER: DropdownFooterItem[] = [
     {
       label: "의견 보내기",
-      type: "button",
       onClick: () => {
         console.log("의견 보내기");
       },
     },
     {
       label: "로그아웃",
-      type: "submit",
       onClick: handleLogout,
     },
   ];
@@ -87,14 +88,13 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         <div className="flex items-center justify-center py-5 border-t border-gray-200 w-[400px]">
           {NAV_ITEMS_FOOTER.map((item, index) => (
             <React.Fragment key={item.label}>
-              <form onSubmit={item.onClick}>
-                <button
-                  className="text-body-2 font-medium text-black-300 cursor-pointer"
-                  type={item.type}
-                >
-                  {item.label}
-                </button>
-              </form>
+              <button
+                className="text-body-2 font-medium text-black-300 cursor-pointer"
+                type="button"
+                onClick={item.onClick}
+              >
+                {item.label}
+              </button>
               {index < NAV_ITEMS_FOOTER.length - 1 && (
                 <div className="w-0.5 h-4 mx-[60px] bg-gray-200" />
               )}
