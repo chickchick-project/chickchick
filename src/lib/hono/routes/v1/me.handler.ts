@@ -1,21 +1,18 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
-import * as MeServices from "@/lib/hono/services/me.service";
+import { createRoute, z } from "@hono/zod-openapi";
 import * as MeSchemas from "@/lib/hono/schemas/me.schema";
-import type { AppContext } from "@/lib/hono/app";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import * as MeServices from "@/lib/hono/services/me.service";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiInternalError,
   apiSuccess,
   apiNotFound,
   apiForbidden,
   apiBadRequest,
-} from "@/lib/hono/utils/apiResponse.utils";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+} from "@/lib/hono/utils/api.utils";
+import { createAuthenticatedRouter } from "@/lib/hono/utils/router";
 
-const meApi = new OpenAPIHono<AppContext>();
-
-meApi.use("*", authMiddleware);
+const meApi = createAuthenticatedRouter();
 
 const collectionIdParam = z.object({
   collectionId: z
@@ -174,13 +171,19 @@ meApi.openapi(deletePhotoCollectionRoute, async (c) => {
 
 /**
  * @method GET
- * @path /me/activity/reviews
+ * @path /me/reviews
  * @summary 내가 작성한 리뷰 목록 조회
  */
 const getMyReviewsRoute = createRoute({
   method: "get",
-  path: "/activity/reviews",
+  path: "/reviews",
   summary: "내가 작성한 리뷰 목록 조회",
+  request: {
+    query: z.object({
+      cursor: z.string().uuid().optional(),
+      limit: z.coerce.number().int().positive().default(12).optional(),
+    }),
+  },
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyReviewsResponseSchema,
   }),
@@ -189,8 +192,9 @@ const getMyReviewsRoute = createRoute({
 
 meApi.openapi(getMyReviewsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
+  const options = c.req.valid("query");
 
-  const result = await MeServices.getMyReviewsService(user.id);
+  const result = await MeServices.getMyReviewsService(user.id, options);
 
   if (!result.success) {
     return apiInternalError(c, result.message);
@@ -204,13 +208,19 @@ meApi.openapi(getMyReviewsRoute, async (c) => {
 
 /**
  * @method GET
- * @path /me/activity/posts
+ * @path /me/posts
  * @summary 내가 작성한 게시글 목록 조회
  */
 const getMyPostsRoute = createRoute({
   method: "get",
-  path: "/activity/posts",
+  path: "/posts",
   summary: "내가 작성한 게시글 목록 조회",
+  request: {
+    query: z.object({
+      cursor: z.string().uuid().optional(),
+      limit: z.coerce.number().int().positive().default(12).optional(),
+    }),
+  },
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyPostsResponseSchema,
   }),
@@ -219,8 +229,9 @@ const getMyPostsRoute = createRoute({
 
 meApi.openapi(getMyPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
+  const options = c.req.valid("query");
 
-  const result = await MeServices.getMyPostsService(user.id);
+  const result = await MeServices.getMyPostsService(user.id, options);
 
   if (!result.success) {
     return apiInternalError(c, result.message);
@@ -234,13 +245,19 @@ meApi.openapi(getMyPostsRoute, async (c) => {
 
 /**
  * @method GET
- * @path /me/activity/comments
+ * @path /me/comments
  * @summary 내가 작성한 댓글 목록 조회
  */
 const getMyCommentsRoute = createRoute({
   method: "get",
-  path: "/activity/comments",
+  path: "/comments",
   summary: "내가 작성한 댓글 목록 조회",
+  request: {
+    query: z.object({
+      cursor: z.string().uuid().optional(),
+      limit: z.coerce.number().int().positive().default(12).optional(),
+    }),
+  },
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyCommentsResponseSchema,
   }),
@@ -249,8 +266,9 @@ const getMyCommentsRoute = createRoute({
 
 meApi.openapi(getMyCommentsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
+  const options = c.req.valid("query");
 
-  const result = await MeServices.getMyCommentsService(user.id);
+  const result = await MeServices.getMyCommentsService(user.id, options);
 
   if (!result.success) {
     return apiInternalError(c, result.message);
@@ -264,12 +282,12 @@ meApi.openapi(getMyCommentsRoute, async (c) => {
 
 /**
  * @method GET
- * @path /me/activity/liked-perfumes
+ * @path /me/likes/perfumes
  * @summary 내가 좋아요한 향수 목록 조회
  */
 const getMyLikedPerfumesRoute = createRoute({
   method: "get",
-  path: "/activity/liked-perfumes",
+  path: "/likes/perfumes",
   summary: "내가 좋아요한 향수 목록 조회",
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyLikedPerfumesResponseSchema,
@@ -294,12 +312,12 @@ meApi.openapi(getMyLikedPerfumesRoute, async (c) => {
 
 /**
  * @method GET
- * @path /me/activity/liked-posts
+ * @path /me/likes/posts
  * @summary 내가 좋아요한 게시글 목록 조회
  */
 const getMyLikedPostsRoute = createRoute({
   method: "get",
-  path: "/activity/liked-posts",
+  path: "/likes/posts",
   summary: "내가 좋아요한 게시글 목록 조회",
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyLikedPostsResponseSchema,
@@ -324,12 +342,12 @@ meApi.openapi(getMyLikedPostsRoute, async (c) => {
 
 /**
  * @method get
- * @path /me/profile
+ * @path /me
  * @summary 내 정보 조회
  */
 const getMyProfileRoute = createRoute({
   method: "get",
-  path: "/profile",
+  path: "/",
   summary: "내 정보 조회",
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiMyProfileResponseSchema,
@@ -353,12 +371,12 @@ meApi.openapi(getMyProfileRoute, async (c) => {
 
 /**
  * @method patch
- * @path /me/profile
+ * @path /me
  * @summary 내 정보 수정
  */
 const patchMyProfileRoute = createRoute({
   method: "patch",
-  path: "/profile",
+  path: "/",
   summary: "내 정보 수정",
   request: {
     body: {
@@ -391,7 +409,7 @@ meApi.openapi(patchMyProfileRoute, async (c) => {
 
 /**
  * @method post
- * @path /me/recent-perfumes
+ * @path /me/recents/perfumes
  * @summary 최근 본 향수 목록 동기화
  * @request
  * @responses
@@ -399,7 +417,7 @@ meApi.openapi(patchMyProfileRoute, async (c) => {
  */
 const postRecentPerfumesRoute = createRoute({
   method: "post",
-  path: "/recent-perfumes",
+  path: "/recents/perfumes",
   summary: "최근 본 향수 목록 동기화",
   request: {
     body: {
@@ -436,12 +454,12 @@ meApi.openapi(postRecentPerfumesRoute, async (c) => {
 
 /**
  * @method get
- * @path /me/recent-perfumes
+ * @path /me/recents/perfumes
  * @summary 최근 본 향수 목록 조회 (하이드레이션)
  */
 const getRecentPerfumesRoute = createRoute({
   method: "get",
-  path: "/recent-perfumes",
+  path: "/recents/perfumes",
   summary: "최근 본 향수 목록 조회",
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiGetRecentPerfumesResponseSchema,
@@ -455,12 +473,16 @@ meApi.openapi(getRecentPerfumesRoute, async (c) => {
   if (!result.success) {
     return apiInternalError(c, result.message);
   }
-  return apiSuccess(c, result.data, "최근 본 향수 목록을 성공적으로 조회했습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "최근 본 향수 목록을 성공적으로 조회했습니다."
+  );
 });
 
 /**
  * @method post
- * @path /me/recent-posts
+ * @path /me/recents/posts
  * @summary 최근 본 게시글 목록 동기화
  * @request
  * @responses
@@ -468,7 +490,7 @@ meApi.openapi(getRecentPerfumesRoute, async (c) => {
  */
 const postRecentPostsRoute = createRoute({
   method: "post",
-  path: "/recent-posts",
+  path: "/recents/posts",
   summary: "최근 본 게시글 목록 동기화",
   request: {
     body: {
@@ -504,12 +526,12 @@ meApi.openapi(postRecentPostsRoute, async (c) => {
 
 /**
  * @method get
- * @path /me/recent-posts
+ * @path /me/recents/posts
  * @summary 최근 본 게시글 목록 조회 (하이드레이션)
  */
 const getRecentPostsRoute = createRoute({
   method: "get",
-  path: "/recent-posts",
+  path: "/recents/posts",
   summary: "최근 본 게시글 목록 조회",
   responses: createStandardApiResponses({
     schema: MeSchemas.ApiGetRecentPostsResponseSchema,
@@ -523,7 +545,11 @@ meApi.openapi(getRecentPostsRoute, async (c) => {
   if (!result.success) {
     return apiInternalError(c, result.message);
   }
-  return apiSuccess(c, result.data, "최근 본 게시글 목록을 성공적으로 조회했습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "최근 본 게시글 목록을 성공적으로 조회했습니다."
+  );
 });
 
 export default meApi;

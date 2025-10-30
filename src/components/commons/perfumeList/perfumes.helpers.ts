@@ -1,6 +1,10 @@
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
 import { createHttpClient } from "@/lib/utils/core-request";
+import {
+  ApiResponse,
+  PaginatedResponse,
+} from "@/lib/hono/schemas/common.schema";
 
 type SearchResponse = PaginatedResponse<ApiPerfumeSimpleResponse>;
 

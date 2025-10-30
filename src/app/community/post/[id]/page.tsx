@@ -5,7 +5,7 @@ import {
 } from "@/components/domains/postDetail/postDetail.helpers";
 import PageClient from "@/components/domains/postDetail/PageClient";
 import { getCommentsByPostId } from "@/components/domains/postDetail/commentSection/comment.helper";
-import getQueryClient from "@/lib/hono/utils/getQueryClient";
+import getQueryClient from "@/lib/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function Page({

@@ -189,6 +189,7 @@ export const DEFAULT_POPULAR_REVIEW = {
     brand: {
       nameKo: "소중한 리뷰를 기다리고 있어요",
       nameEn: "Waiting for your precious review",
+      brandUrl: null,
     },
   },
   attributeSelections: [],

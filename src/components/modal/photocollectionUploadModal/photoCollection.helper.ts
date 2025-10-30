@@ -1,5 +1,10 @@
 import { createHttpClient } from "@/lib/utils/core-request";
 import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import {
+  ApiResponse,
+  PaginatedResponse,
+  UploadedImageInfo,
+} from "@/lib/hono/schemas/common.schema";
 
 type SearchResponse = PaginatedResponse<ApiPerfumeSimpleResponse>;
 

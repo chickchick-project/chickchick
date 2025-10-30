@@ -7,7 +7,7 @@ import communityApi from "./routes/v1/community.handler";
 import meApi from "./routes/v1/me.handler";
 import usersApi from "./routes/v1/user.handler";
 import commentsApi from "./routes/v1/comment.handler";
-import { handleApiError } from "./utils/apiResponse.utils";
+import { handleApiError } from "./utils/api.utils";
 import fileApi from "./routes/v1/file.handler";
 
 export type AuthenticatedUser = User;

@@ -1,44 +1,19 @@
-import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 
 import { checkResourceExists } from "../utils/service.utils";
-import { PostWithAuthor } from "./community.service";
-
-const perfumeBaseInclude = {
-  brand: { select: { nameEn: true, nameKo: true } },
-  perfumeImage: { select: { imageUrl: true } },
-} satisfies Prisma.PerfumeInclude;
-
-const perfumeDetailInclude = {
-  ...perfumeBaseInclude,
-  accordMappings: { select: { accord: true } },
-  noteMappings: { select: { note: true, noteStage: true } },
-  reviews: {
-    select: {
-      id: true,
-      content: true,
-      author: { select: { id: true, nickname: true, imageUrl: true } },
-    },
-    orderBy: { createdAt: "desc" as const },
-    take: 5, // 최신 리뷰 5개만 포함
-  },
-  _count: {
-    select: { bookmarks: true, reviews: true, collectedByUsers: true },
-  },
-} satisfies Prisma.PerfumeInclude;
-
-export type BasePerfume = Prisma.PerfumeGetPayload<{
-  include: typeof perfumeBaseInclude;
-}>;
-export type FullPerfume = Prisma.PerfumeGetPayload<{
-  include: typeof perfumeDetailInclude;
-}>;
+import {
+  perfumeBaseInclude,
+  perfumeDetailInclude,
+  BasePerfume,
+  FullPerfume,
+  BasePost,
+} from "../utils/prisma.utils";
 
 /**
  * 향수 목록 조회
@@ -126,7 +101,7 @@ export async function getPerfumeByIdService(
 export async function getPostsTaggedWithPerfumeService(
   perfumeId: string,
   options: { limit?: number; cursor?: string } = {}
-): Promise<ServiceResult<PostWithAuthor[]>> {
+): Promise<ServiceResult<BasePost[]>> {
   try {
     const perfumeCheck = await checkResourceExists(
       "perfume",
@@ -155,7 +130,7 @@ export async function getPostsTaggedWithPerfumeService(
       },
     });
 
-    const posts: PostWithAuthor[] = mappings.map((mapping) => mapping.post);
+    const posts: BasePost[] = mappings.map((mapping) => mapping.post);
 
     return serviceSuccess(posts);
   } catch (error) {

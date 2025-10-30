@@ -4,8 +4,8 @@ import {
   UpdatePostInput,
 } from "@/lib/hono/schemas/community.schema";
 import { API_BASE_URL, COMMUNITY_URL } from "../postDetail/postDetail.helpers";
-import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 import { createHttpClient } from "@/lib/utils/core-request";
 
 const apiClient = createHttpClient({

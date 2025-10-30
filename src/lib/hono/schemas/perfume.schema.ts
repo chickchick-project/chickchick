@@ -11,7 +11,7 @@ import {
 
 //API 응답용 스키마
 const PerfumeBaseResponseSchema = PerfumeSchema.extend({
-  brand: BrandSchema.pick({ nameEn: true, nameKo: true }),
+  brand: BrandSchema.pick({ nameEn: true, nameKo: true, brandUrl: true }),
   perfumeImage: PerfumeImageSchema.pick({ imageUrl: true }).nullable(),
 }).omit({
   brandId: true,

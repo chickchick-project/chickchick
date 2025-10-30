@@ -1,11 +1,16 @@
 import { z } from "@hono/zod-openapi";
 import { PostSchema, UserSchema } from "@zod/modelSchema";
-import { CursorPaginationSchema } from "./common.schema";
+import {
+  CursorPaginationSchema,
+  PaginatedResponse,
+  PaginatedResponseSchema,
+} from "./common.schema";
 import { PostCategory } from "@prisma/client";
 
 const BrandForPerfumeSchema = z.object({
   nameEn: z.string(),
   nameKo: z.string().nullable(),
+  brandUrl: z.string().nullable(),
 });
 
 const PerfumeImageForPerfumeSchema = z.object({
@@ -26,6 +31,8 @@ export const ApiPostResponseSchema = PostSchema.extend({
     nickname: true,
     imageUrl: true,
   }),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime().nullable(),
 }).omit({
   userId: true,
 });
@@ -44,11 +51,9 @@ export const ApiPostStatusResponseSchema = PostSchema.pick({
   isBookmarked: z.boolean(),
 });
 
-export const PaginatedApiPostResponseSchema = z.object({
-  data: z.array(ApiPostResponseSchema),
-  totalCount: z.number().int(),
-  nextCursor: z.string().uuid().nullable(),
-});
+export const PaginatedApiPostResponseSchema = PaginatedResponseSchema(
+  ApiPostResponseSchema
+);
 
 export const GetPostsQuerySchema = CursorPaginationSchema.extend({
   q: z.string().optional(),
@@ -86,9 +91,7 @@ export const PostIdParamSchema = z.object({
 export type ApiPostResponse = z.infer<typeof ApiPostResponseSchema>;
 export type ApiPostDetailResponse = z.infer<typeof ApiPostDetailResponseSchema>;
 export type ApiPostStatusResponse = z.infer<typeof ApiPostStatusResponseSchema>;
-export type PaginatedApiPostResponse = z.infer<
-  typeof PaginatedApiPostResponseSchema
->;
+export type PaginatedApiPostResponse = PaginatedResponse<ApiPostResponse>;
 export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type CreatePostInput = z.infer<typeof CreatePostInputSchema>;
 export type UpdatePostInput = z.infer<typeof UpdatePostInputSchema>;

@@ -4,7 +4,7 @@ import {
   DeleteCommentResponse,
   UpdateCommentBody,
 } from "@/lib/hono/schemas/comment.schema";
-import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import { createHttpClient } from "@/lib/utils/core-request";
 

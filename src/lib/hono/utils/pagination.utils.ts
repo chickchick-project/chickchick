@@ -23,17 +23,14 @@ export function createCursorPaginationResult<T extends { id: string }>(
   totalCount: number,
   limit: number
 ): PaginationResult<T> {
-  let hasMore = false;
-
-  if (data.length > limit) {
-    hasMore = true;
-    data.pop();
-  }
-
-  const nextCursor = hasMore ? data[data.length - 1]?.id ?? null : null;
+  const hasMore = data.length > limit;
+  const resultData = hasMore ? data.slice(0, limit) : data;
+  const nextCursor = hasMore
+    ? resultData[resultData.length - 1]?.id ?? null
+    : null;
 
   return {
-    data,
+    data: resultData,
     totalCount,
     nextCursor,
   };

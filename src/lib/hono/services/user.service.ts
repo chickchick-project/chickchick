@@ -1,29 +1,19 @@
-import { Prisma, UserCollection } from "@prisma/client";
+import { UserCollection } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+} from "../utils/service.utils";
 import { checkResourceExists } from "../utils/service.utils";
-import { BasePost } from "./community.service";
-import { BasePerfume } from "./perfume.service";
-
-const userProfileSelect = {
-  id: true,
-  nickname: true,
-  imageUrl: true,
-} satisfies Prisma.UserSelect;
-
-export type UserProfile = Prisma.UserGetPayload<{
-  select: typeof userProfileSelect;
-}>;
-
-const perfumeBaseInclude = {
-  brand: { select: { nameEn: true, nameKo: true } },
-  perfumeImage: { select: { imageUrl: true } },
-} satisfies Prisma.PerfumeInclude;
+import {
+  BasePost,
+  BasePerfume,
+  UserProfile,
+  authorSelect,
+  perfumeBaseInclude,
+} from "../utils/prisma.utils";
 
 export async function getUserProfileService(
   userId: string
@@ -31,7 +21,7 @@ export async function getUserProfileService(
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: userProfileSelect,
+      select: authorSelect,
     });
 
     if (!user) {

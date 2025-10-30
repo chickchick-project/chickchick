@@ -1,5 +1,5 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import getQueryClient from "@/lib/hono/utils/getQueryClient";
+import getQueryClient from "@/lib/utils/getQueryClient";
 import { getUserById } from "@/lib/utils/getUserProfile";
 import UserLayoutClient from "@/components/domains/user/UserLayoutClient";
 import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";

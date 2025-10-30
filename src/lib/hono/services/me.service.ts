@@ -1,4 +1,4 @@
-import { ImageFormat, Prisma } from "@prisma/client";
+import { ImageFormat } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   ServiceResult,
@@ -6,48 +6,33 @@ import {
   serviceInternalError,
   serviceNotFound,
   serviceForbidden,
-} from "../utils/serviceResult.utils";
-import { BasePost } from "./community.service";
-import { BasePerfume } from "./perfume.service";
-import { FullReview, reviewIncludeArgs } from "./review.service";
+} from "../utils/service.utils";
 import {
   ApiMyProfileResponse,
   ApiUpdateMyProfileRequest,
   ApiUpdateMyProfileRequestSchema,
 } from "../schemas/me.schema";
-import { deleteImageByUrl } from "./file.service";
 import {
   COLLECTION_BUCKET_NAME,
   PROFILE_BUCKET_NAME,
 } from "@/lib/constants/buckets";
+import { PaginatedResponse } from "../schemas/common.schema";
+import { deleteImageByUrl } from "./file.service";
+import {
+  BasePost,
+  BasePerfume,
+  FullReview,
+  MyCollection,
+  MyComment,
+  perfumeBaseInclude,
+  postIncludeArgs,
+  myCollectionInclude,
+  myCommentInclude,
+  reviewIncludeArgs,
+} from "../utils/prisma.utils";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-
-const postIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-} satisfies Prisma.PostInclude;
-
-const perfumeBaseInclude = {
-  brand: { select: { nameEn: true, nameKo: true } },
-  perfumeImage: { select: { imageUrl: true } },
-} satisfies Prisma.PerfumeInclude;
-
-const myCollectionInclude = {
-  image: true,
-} satisfies Prisma.UserCollectionInclude;
-export type MyCollection = Prisma.UserCollectionGetPayload<{
-  include: typeof myCollectionInclude;
-}>;
-
-const myCommentInclude = {
-  post: { select: { id: true, title: true } },
-} satisfies Prisma.CommentInclude;
-export type MyComment = Prisma.CommentGetPayload<{
-  include: typeof myCommentInclude;
-}>;
 
 /**
  * 인증된 사용자가 북마크한 게시글 목록을 조회합니다.
@@ -74,9 +59,7 @@ export async function getMyBookmarkedPostsService(
  * 인증된 사용자가 최근 본 향수 목록을 조회합니다.
  * @param userId - 인증된 사용자의 ID
  */
-export async function getRecentPerfumesService(
-  userId: string
-): Promise<
+export async function getRecentPerfumesService(userId: string): Promise<
   ServiceResult<{
     items: Array<{ id: string; viewedAt: Date; perfume: BasePerfume }>;
   }>
@@ -104,9 +87,7 @@ export async function getRecentPerfumesService(
  * 인증된 사용자가 최근 본 게시글 목록을 조회합니다.
  * @param userId - 인증된 사용자의 ID
  */
-export async function getRecentPostsService(
-  userId: string
-): Promise<
+export async function getRecentPostsService(userId: string): Promise<
   ServiceResult<{
     items: Array<{ id: string; viewedAt: Date; post: BasePost }>;
   }>
@@ -357,15 +338,27 @@ export async function deletePhotoCollectionService(payload: {
  * @returns 사용자의 향수 컬렉션
  */
 export async function getMyReviewsService(
-  userId: string
-): Promise<ServiceResult<FullReview[]>> {
+  userId: string,
+  options: { limit?: number; cursor?: string }
+): Promise<ServiceResult<PaginatedResponse<FullReview>>> {
   try {
-    const reviews = await prisma.review.findMany({
-      where: { authorId: userId },
-      include: reviewIncludeArgs,
-      orderBy: { createdAt: "desc" },
-    });
-    return serviceSuccess(reviews);
+    const { limit = 12, cursor } = options;
+    const [reviews, totalCount] = await Promise.all([
+      prisma.review.findMany({
+        where: { authorId: userId },
+        include: reviewIncludeArgs,
+        orderBy: { createdAt: "desc" },
+        take: limit + 1,
+        ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+      }),
+      prisma.review.count({ where: { authorId: userId } }),
+    ]);
+
+    const hasMore = reviews.length > limit;
+    const data = hasMore ? reviews.slice(0, limit) : reviews;
+    const nextCursor = hasMore ? data[data.length - 1].id : null;
+
+    return serviceSuccess({ data, totalCount, nextCursor });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -376,15 +369,27 @@ export async function getMyReviewsService(
  * @returns 사용자의 작성한 게시글 목록
  */
 export async function getMyPostsService(
-  userId: string
-): Promise<ServiceResult<BasePost[]>> {
+  userId: string,
+  options: { limit?: number; cursor?: string }
+): Promise<ServiceResult<PaginatedResponse<BasePost>>> {
   try {
-    const posts = await prisma.post.findMany({
-      where: { userId },
-      include: postIncludeArgs,
-      orderBy: { createdAt: "desc" },
-    });
-    return serviceSuccess(posts);
+    const { limit = 12, cursor } = options;
+    const [posts, totalCount] = await Promise.all([
+      prisma.post.findMany({
+        where: { userId },
+        include: postIncludeArgs,
+        orderBy: { createdAt: "desc" },
+        take: limit + 1,
+        ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+      }),
+      prisma.post.count({ where: { userId } }),
+    ]);
+
+    const hasMore = posts.length > limit;
+    const data = hasMore ? posts.slice(0, limit) : posts;
+    const nextCursor = hasMore ? data[data.length - 1].id : null;
+
+    return serviceSuccess({ data, totalCount, nextCursor });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -396,19 +401,32 @@ export async function getMyPostsService(
  * @returns 사용자의 작성한 댓글 목록
  */
 export async function getMyCommentsService(
-  userId: string
-): Promise<ServiceResult<MyComment[]>> {
+  userId: string,
+  options: { limit?: number; cursor?: string }
+): Promise<ServiceResult<PaginatedResponse<MyComment>>> {
   try {
-    const comments = await prisma.comment.findMany({
-      where: { authorId: userId },
-      include: myCommentInclude,
-      orderBy: { createdAt: "desc" },
-    });
-    return serviceSuccess(comments);
+    const { limit = 12, cursor } = options;
+    const [comments, totalCount] = await Promise.all([
+      prisma.comment.findMany({
+        where: { authorId: userId },
+        include: myCommentInclude,
+        orderBy: { createdAt: "desc" },
+        take: limit + 1,
+        ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+      }),
+      prisma.comment.count({ where: { authorId: userId } }),
+    ]);
+
+    const hasMore = comments.length > limit;
+    const data = hasMore ? comments.slice(0, limit) : comments;
+    const nextCursor = hasMore ? data[data.length - 1].id : null;
+
+    return serviceSuccess({ data, totalCount, nextCursor });
   } catch (error) {
     return serviceInternalError(error);
   }
 }
+
 /**
  * 사용자가 좋아요한 향수 목록을 조회합니다.
  * @param userId - 사용자의 ID
@@ -525,3 +543,5 @@ export async function updateMyProfileService(
     return serviceInternalError(error);
   }
 }
+
+export type { MyComment, MyCollection };

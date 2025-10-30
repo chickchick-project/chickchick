@@ -1,13 +1,12 @@
 import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-
 import type { AppContext } from "@/lib/hono/app";
 import {
   authMiddleware,
   optionalAuthMiddleware,
 } from "@/lib/hono/middleware/auth.middleware";
-import * as CommunityServices from "@/lib/hono/services/community.service";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import * as CommunityServices from "@/lib/hono/services/community.service";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiBadRequest,
@@ -16,7 +15,7 @@ import {
   apiInternalError,
   apiCreated,
   apiForbidden,
-} from "@/lib/hono/utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 import { PostCategory } from "@prisma/client";
 
 const communityApi = new OpenAPIHono<AppContext>();
@@ -249,7 +248,7 @@ const deletePostRoute = createRoute({
 
 authenticatedApi.openapi(deletePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
+  const user = getAuthenticatedUser(c);
   const result = await CommunityServices.deletePostService(id, user.id);
 
   if (!result.success) {
@@ -283,7 +282,7 @@ const likePostRoute = createRoute({
 
 authenticatedApi.openapi(likePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
+  const user = getAuthenticatedUser(c);
   const result = await CommunityServices.togglePostLikeService(id, user.id);
 
   if (!result.success) {
@@ -317,7 +316,7 @@ const bookmarkPostRoute = createRoute({
 
 authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
+  const user = getAuthenticatedUser(c);
   const result = await CommunityServices.togglePostBookmarkService(id, user.id);
 
   if (!result.success) {

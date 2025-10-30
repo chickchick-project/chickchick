@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import {
   serviceBadRequest,
   serviceForbidden,
@@ -8,7 +7,9 @@ import {
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
+  checkResourceExists,
+  validateUuid,
+} from "../utils/service.utils";
 import {
   CreateCommentPayload,
   DeleteCommentPayload,
@@ -17,29 +18,10 @@ import {
   PaginatedCommentResponse,
   UpdateCommentPayload,
 } from "../schemas/comment.schema";
-import { createCursorPaginationResult } from "../utils/pagination";
-
-const commentIncludeArgs = {
-  author: {
-    select: { id: true, nickname: true, imageUrl: true },
-  },
-  replies: {
-    include: {
-      author: {
-        select: { id: true, nickname: true, imageUrl: true },
-      },
-    },
-    orderBy: {
-      createdAt: "asc" as const,
-    },
-  },
-} satisfies Prisma.CommentInclude;
+import { createCursorPaginationResult } from "../utils/pagination.utils";
+import { commentIncludeArgs, CommentWithReplies } from "../utils/prisma.utils";
 
 const commentWithRepliesArgs = { include: commentIncludeArgs };
-
-export type CommentWithReplies = Prisma.CommentGetPayload<
-  typeof commentWithRepliesArgs
->;
 
 /**
  * 특정 게시글의 모든 댓글과 대댓글을 계층적으로 조회합니다.

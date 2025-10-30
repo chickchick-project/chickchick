@@ -1,10 +1,9 @@
-import { OpenAPIHono } from "@hono/zod-openapi";
+import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import type { AppContext } from "@/lib/hono/app";
-import { createRoute } from "@hono/zod-openapi";
 import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
 import * as CommentSchemas from "@/lib/hono/schemas/comment.schema";
 import * as CommentServices from "@/lib/hono/services/comment.service";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiInternalError,
@@ -14,7 +13,7 @@ import {
   apiBadRequest,
   apiCreated,
   apiForbidden,
-} from "../../utils/apiResponse.utils";
+} from "@/lib/hono/utils/api.utils";
 
 const commentsApi = new OpenAPIHono<AppContext>();
 const authenticatedApi = new OpenAPIHono<AppContext>();
@@ -238,7 +237,7 @@ commentsApi.use(deleteCommentRoute.getRoutingPath(), authMiddleware);
 
 commentsApi.openapi(deleteCommentRoute, async (c) => {
   const { commentId } = c.req.valid("param");
-  const user = await getAuthenticatedUser(c);
+  const user = getAuthenticatedUser(c);
   const payload: CommentSchemas.DeleteCommentPayload = {
     id: commentId,
     authorId: user.id,

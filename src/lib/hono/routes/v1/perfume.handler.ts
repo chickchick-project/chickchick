@@ -1,21 +1,17 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import * as PerfumeServices from "@/lib/hono/services/perfume.service";
-import { AppContext } from "@/lib/hono/app";
-import { createStandardApiResponses } from "@/lib/hono/utils/createStandardApiResponses";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import { createRoute, z } from "@hono/zod-openapi";
+import { ApiPostResponseSchema } from "@/lib/hono/schemas/community.schema";
 import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
+import * as PerfumeServices from "@/lib/hono/services/perfume.service";
 import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
-} from "@/lib/hono/utils/apiResponse.utils";
-import { ApiPostResponseSchema } from "../../schemas/community.schema";
+} from "@/lib/hono/utils/api.utils";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const perfumesApi = new OpenAPIHono<AppContext>();
-const authenticatedApi = new OpenAPIHono<AppContext>();
-
-authenticatedApi.use("*", authMiddleware);
+const routers = createDomainRouters();
 
 const perfumeIdParam = z.object({
   id: z
@@ -42,7 +38,7 @@ const getPerfumesListRoute = createRoute({
   }),
   tags: ["Perfume"],
 });
-perfumesApi.openapi(getPerfumesListRoute, async (c) => {
+routers.public.openapi(getPerfumesListRoute, async (c) => {
   const result = await PerfumeServices.getPerfumesListService();
   if (!result.success) return apiInternalError(c, result.message);
   return apiSuccess(c, result.data, "향수 목록을 성공적으로 불러왔습니다.");
@@ -65,7 +61,7 @@ const getPerfumesByThemeRoute = createRoute({
   tags: ["Perfume"],
 });
 
-perfumesApi.openapi(getPerfumesByThemeRoute, async (c) => {
+routers.public.openapi(getPerfumesByThemeRoute, async (c) => {
   const { themeName } = c.req.valid("query");
   const result = await PerfumeServices.getPerfumesListByThemeService(themeName);
   if (!result.success) return apiInternalError(c, result.message);
@@ -93,7 +89,7 @@ const getPerfumeByIdRoute = createRoute({
   tags: ["Perfume"],
 });
 
-perfumesApi.openapi(getPerfumeByIdRoute, async (c) => {
+routers.public.openapi(getPerfumeByIdRoute, async (c) => {
   const { id } = c.req.valid("param");
   const result = await PerfumeServices.getPerfumeByIdService(id);
 
@@ -130,7 +126,7 @@ const getPerfumePostsRoute = createRoute({
   tags: ["Perfume"],
 });
 
-perfumesApi.openapi(getPerfumePostsRoute, async (c) => {
+routers.public.openapi(getPerfumePostsRoute, async (c) => {
   const { id: perfumeId } = c.req.valid("param");
   const { take, cursor } = c.req.valid("query");
 
@@ -168,7 +164,7 @@ const toggleBookmarkRoute = createRoute({
   tags: ["Perfume"],
 });
 
-authenticatedApi.openapi(toggleBookmarkRoute, async (c) => {
+routers.authenticated.openapi(toggleBookmarkRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
   const result = await PerfumeServices.togglePerfumeBookmarkService(
@@ -206,7 +202,7 @@ const toggleLikeRoute = createRoute({
   tags: ["Perfume"],
 });
 
-authenticatedApi.openapi(toggleLikeRoute, async (c) => {
+routers.authenticated.openapi(toggleLikeRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
   const result = await PerfumeServices.togglePerfumeLikeService(id, user.id);
@@ -222,6 +218,4 @@ authenticatedApi.openapi(toggleLikeRoute, async (c) => {
   return apiSuccess(c, result.data, message);
 });
 
-perfumesApi.route("/", authenticatedApi);
-
-export default perfumesApi;
+export default routers.merge();

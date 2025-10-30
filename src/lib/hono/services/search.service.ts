@@ -3,23 +3,15 @@ import type {
   SearchGetQuery,
   SearchPostBody,
   PaginatedSearchResponse,
+  SupabasePerfume,
 } from "../schemas/search.schema";
 import type { ApiPerfumeSimpleResponse } from "../schemas/perfume.schema";
 import {
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
-} from "../utils/serviceResult.utils";
-import { createCursorPaginationResult } from "../utils/pagination";
-
-interface SupabasePerfume {
-  perfume_id: string;
-  perfume_name_en: string;
-  perfume_name_ko: string;
-  brand_name_en: string;
-  brand_name_ko: string;
-  image_url: string;
-}
+} from "../utils/service.utils";
+import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 function transformSupabasePerfume(
   p: SupabasePerfume
@@ -31,6 +23,7 @@ function transformSupabasePerfume(
     brand: {
       nameEn: p.brand_name_en,
       nameKo: p.brand_name_ko,
+      brandUrl: p.brand_url,
     },
     perfumeImage: {
       imageUrl: p.image_url,
@@ -66,17 +59,17 @@ function processFilters(params: SearchGetQuery | SearchPostBody) {
       ? postParams.accordsFilter
       : null;
 
-  console.log("원본 필터 값들:", {
-    brandFilter: postParams.brandFilter,
-    notesFilter: postParams.notesFilter,
-    accordsFilter: postParams.accordsFilter,
-  });
+  // console.log("원본 필터 값들:", {
+  //   brandFilter: postParams.brandFilter,
+  //   notesFilter: postParams.notesFilter,
+  //   accordsFilter: postParams.accordsFilter,
+  // });
 
-  console.log("처리된 필터 값들:", {
-    brandFilter,
-    notesFilter,
-    accordsFilter,
-  });
+  // console.log("처리된 필터 값들:", {
+  //   brandFilter,
+  //   notesFilter,
+  //   accordsFilter,
+  // });
 
   return {
     brandFilter,
@@ -89,8 +82,6 @@ export async function searchPerfumesService(
   params: SearchGetQuery | SearchPostBody
 ): Promise<ServiceResult<PaginatedSearchResponse>> {
   try {
-    const isPost = "searchText" in params;
-    const searchText = isPost ? params.searchText : params.q;
     const limit = params.limit ?? 15;
     const cursor = params.cursor;
     const fetchLimit = limit + 1;
@@ -100,7 +91,7 @@ export async function searchPerfumesService(
 
     // Supabase RPC 함수가 예상하는 형태로 변환
     const rpcParams = {
-      search_text: searchText || "",
+      search_text: params.searchText || "",
       brand_filter: brandFilter,
       notes_filter: notesFilter,
       accords_filter: accordsFilter,
@@ -109,7 +100,7 @@ export async function searchPerfumesService(
     };
 
     const rpcParamsTotal = {
-      search_text: searchText || "",
+      search_text: params.searchText || "",
       brand_filter: brandFilter,
       notes_filter: notesFilter,
       accords_filter: accordsFilter,
