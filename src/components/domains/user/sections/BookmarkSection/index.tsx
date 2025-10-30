@@ -4,7 +4,7 @@ import React, { useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { useUrlTabs } from "../../useUrlTabs";
-import { SkeletonCard, SkeletonPerfume } from "../Skeleton";
+import { SkeletonCard, SkeletonPerfume } from "../../components/skeletons";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 const PerfumeBookmarksLoader = dynamic(
   () => import("./loader/PerfumeBookmarksLoader"),
