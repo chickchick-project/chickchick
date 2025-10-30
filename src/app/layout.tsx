@@ -1,7 +1,7 @@
 import NavBarWrapper from "@/components/commons/navBar/Wrapper";
 import "./globals.css";
 import localFont from "next/font/local";
-import { BodyWrapper } from "@/components/commons/bodyWrapper/BodyWrapper";
+import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
 import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import Providers from "@/components/commons/Provider/TanstackProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";

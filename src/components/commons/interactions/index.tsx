@@ -14,6 +14,7 @@ interface InteractionItem {
   type: InteractionType;
   isActive?: boolean;
   onClick: () => void;
+  disabled?: boolean;
   icon: ReactElement<{ isActive: boolean }>;
   label?: string;
 }
@@ -26,10 +27,11 @@ export const Interactions = ({ items }: InteractionsProps) => {
   return (
     <nav aria-label="상호작용 버튼 모음">
       <ul className="flex gap-3 items-center">
-        {items.map(({ type, isActive, icon, onClick, label }) => (
+        {items.map(({ type, isActive, icon, onClick, label, disabled }) => (
           <li key={type}>
             <button
               onClick={onClick}
+              disabled={disabled}
               aria-label={label ?? type}
               className={clsx(
                 "transition-colors duration-200 hover:text-secondary",

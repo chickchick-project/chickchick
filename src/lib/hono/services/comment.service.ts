@@ -146,9 +146,18 @@ export const createCommentService = async (
 ): Promise<ServiceResult<CommentWithReplies>> => {
   try {
     const { authorId, postId, parentId } = payload;
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { published: true },
+    });
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (!post.published) {
+      return serviceForbidden("이미 삭제된 게시글입니다.");
+    }
 
     const checks = await Promise.all([
-      checkResourceExists("post", postId, "게시글"),
       checkResourceExists("user", authorId, "사용자"),
       parentId
         ? checkResourceExists("comment", parentId, "부모 댓글")

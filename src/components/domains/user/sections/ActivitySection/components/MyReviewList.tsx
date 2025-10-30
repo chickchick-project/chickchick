@@ -4,7 +4,7 @@ import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 
 export const MyReviewList = ({ reviews }: { reviews: ApiReviewResponse[] }) => {
   return reviews.length > 0 ? (
-    <div className="flex flex-col gap-4 tablet:grid tablet:grid-cols-2 tablet:justify-items-center tablet:gap-5">
+    <div className="flex flex-col gap-4 tablet:grid pc:grid-cols-2 tablet:grid-cols-1 tablet:justify-items-center tablet:gap-5">
       {reviews.map((item) => {
         return (
           <ReviewCard

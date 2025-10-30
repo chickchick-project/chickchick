@@ -149,6 +149,8 @@ commentsApi.openapi(createCommentRoute, async (c) => {
         return apiNotFound(c, result.message);
       case "ALREADY_EXISTS":
         return apiConflict(c, result.message);
+      case "FORBIDDEN":
+        return apiForbidden(c, result.message);
       case "BAD_REQUEST":
         return apiBadRequest(c, result.message);
       default:

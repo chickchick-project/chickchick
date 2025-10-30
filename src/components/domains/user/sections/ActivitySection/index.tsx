@@ -5,7 +5,11 @@ import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "../../tabs/SubTabs";
 import { useUrlTabs } from "../../useUrlTabs";
 
-import { SkeletonCard, SkeletonComment, SkeletonPerfume } from "../Skeleton";
+import {
+  SkeletonCard,
+  SkeletonComment,
+  SkeletonPerfume,
+} from "../../components/skeletons";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
 
 const MyReviewListLoader = dynamic(

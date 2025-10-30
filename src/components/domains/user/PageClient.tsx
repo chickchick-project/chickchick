@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import MainTabs from "./tabs/MainTabs";
 import PhotoCollectionUploadModal from "@/components/modal/photocollectionUploadModal";
 import { usePathname } from "next/navigation";
@@ -17,9 +17,9 @@ export default function PageClient({
   children,
 }: PageClientProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleUploadSuccess = () => {
+  const handleModalClose = useCallback(() => {
     setIsModalOpen(false);
-  };
+  }, []);
 
   const pathname = usePathname();
   const pathSegments = pathname.split("/").filter(Boolean);
@@ -36,8 +36,8 @@ export default function PageClient({
         {children}
         <PhotoCollectionUploadModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onUploadSuccess={handleUploadSuccess}
+          onClose={handleModalClose}
+          onUploadSuccess={handleModalClose}
         />
       </MainTabs>
     </>

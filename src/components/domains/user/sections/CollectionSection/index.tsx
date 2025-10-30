@@ -4,8 +4,8 @@ import Image from "next/image";
 import ImageDetailModal from "@/components/modal/imageDetailModal";
 import { useImageDetailModal } from "@/components/modal/imageDetailModal/useImageDetailModal";
 import type { CollectionItem } from "../sections.type";
-import { useUserCollections } from "./useUserCollections";
-import { SkeletonMasonry } from "../Skeleton/SkeletonMasonry";
+import { useUserCollections } from "./hooks/useUserCollections";
+import { SkeletonMasonry } from "../../components/skeletons/SkeletonMasonry";
 import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 
 export const CollectionSection = ({

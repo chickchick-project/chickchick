@@ -3,187 +3,72 @@ import {
   ApiPostResponse,
   ApiPostStatusResponse,
 } from "@/lib/hono/schemas/community.schema";
-import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
+import { ApiSuccessResponse } from "@/lib/hono/utils/response.constants";
+import { createHttpClient } from "@/lib/utils/core-request";
+import { PostCategory } from "@prisma/client";
 
 export const API_BASE_URL = "http://localhost:3000/api/v1";
-export const COMMUNITY_URL = `${API_BASE_URL}/community/posts`;
+export const COMMUNITY_URL = `/community/posts`;
+
+const apiClient = createHttpClient({
+  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
+});
 
 export async function getPostDetailById(
   postId: string,
   headers?: HeadersInit
 ): Promise<ApiPostDetailResponse> {
-  try {
-    const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
-      method: "GET",
-      ...(headers && { headers }),
-    });
+  const result = await apiClient.get<ApiSuccessResponse<ApiPostDetailResponse>>(
+    `${COMMUNITY_URL}/${postId}`,
+    {},
+    { headers }
+  );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("서버 응답 오류:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      });
-
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = {
-          error: `HTTP ${response.status}: ${response.statusText}`,
-        };
-      }
-
-      throw new Error(
-        errorData.error || `Failed to fetch data: ${response.status}`
-      );
-    }
-
-    const result = await response.json();
-    return result.data;
-  } catch (error) {
-    console.error(`Error fetching post ${postId}:`, error);
-    throw error;
+  if (!result || !result.success) {
+    throw new Error(
+      result?.message || "게시글 상세 정보를 불러오지 못했습니다."
+    );
   }
+  return result.data;
 }
 
 export async function getPostDetailStatusById(
   postId: string,
   headers?: HeadersInit
 ): Promise<ApiPostStatusResponse> {
-  try {
-    const response = await fetch(`${COMMUNITY_URL}/${postId}/status`, {
-      method: "GET",
-      cache: "no-store",
-      ...(headers && { headers }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("서버 응답 오류:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      });
-
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = {
-          error: `HTTP ${response.status}: ${response.statusText}`,
-        };
-      }
-
-      throw new Error(
-        errorData.error || `Failed to fetch data: ${response.status}`
-      );
-    }
-
-    const result = await response.json();
-
-    return result.data;
-  } catch (error) {
-    console.error("Error fetching post status:", error);
-    throw error;
+  const result = await apiClient.get<ApiSuccessResponse<ApiPostStatusResponse>>(
+    `${COMMUNITY_URL}/${postId}/status`,
+    {},
+    { headers }
+  );
+  if (!result || !result.success) {
+    throw new Error(
+      result?.message || "게시글 상태 정보를 불러오지 못했습니다."
+    );
   }
+  return result.data;
 }
 
 export async function deletePostById(
   postId: string
-): Promise<ApiSuccessResponse<ApiPostResponse>> {
-  try {
-    const response = await fetch(`${COMMUNITY_URL}/${postId}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "게시글 삭제에 실패했습니다.");
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error("게시글 삭제 API 호출 실패:", error);
-    throw error;
+): Promise<{ category: PostCategory }> {
+  const result = await apiClient.delete<
+    ApiSuccessResponse<{ category: PostCategory }>
+  >(`${COMMUNITY_URL}/${postId}`);
+  if (!result || !result.success) {
+    throw new Error(result?.message || "게시글 삭제에 실패했습니다.");
   }
+  return result.data;
 }
 
 export async function toggleBookmarkedPostById(
   postId: string
-): Promise<ApiSuccessResponse<ApiPostResponse>> {
-  try {
-    const response = await fetch(`${COMMUNITY_URL}/${postId}/bookmark`, {
-      method: "POST",
-    });
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("서버 응답 오류:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      });
-
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = {
-          error: `HTTP ${response.status}: ${response.statusText}`,
-        };
-      }
-
-      throw new Error(
-        errorData.error || `Failed to fetch data: ${response.status}`
-      );
-    }
-
-    const result = await response.json();
-
-    return result;
-  } catch (error) {
-    console.error("Error fetching bookmarked posts:", error);
-    throw error;
-  }
+): Promise<ApiSuccessResponse<ApiPostResponse> | null> {
+  return await apiClient.post(`${COMMUNITY_URL}/${postId}/bookmark`, {});
 }
 
 export async function toggleLikedPostById(
   postId: string
-): Promise<ApiSuccessResponse<ApiPostResponse>> {
-  try {
-    const response = await fetch(`${COMMUNITY_URL}/${postId}/like`, {
-      method: "POST",
-      cache: "no-store",
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("서버 응답 오류:", {
-        status: response.status,
-        statusText: response.statusText,
-        body: errorText,
-      });
-
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        errorData = {
-          error: `HTTP ${response.status}: ${response.statusText}`,
-        };
-      }
-
-      throw new Error(
-        errorData.error || `Failed to fetch data: ${response.status}`
-      );
-    }
-
-    const result = await response.json();
-
-    return result;
-  } catch (error) {
-    console.error("Error fetching liked posts:", error);
-    throw error;
-  }
+): Promise<ApiSuccessResponse<ApiPostResponse> | null> {
+  return await apiClient.post(`${COMMUNITY_URL}/${postId}/like`, {});
 }

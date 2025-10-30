@@ -52,7 +52,7 @@ function SubTabSwitcherInner<T extends string = string>(
   return (
     <div
       ref={ref}
-      className="sticky top-[108px] z-10 bg-white pt-2 -mt-2 flex space-x-2 border-b mb-4"
+      className="tablet:static sticky top-[108px] z-10 bg-white pt-2 -mt-2 flex space-x-2 border-b mb-4"
     >
       {tabs.map(({ key, label }) => (
         <button
