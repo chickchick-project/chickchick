@@ -4,11 +4,8 @@ import React, { useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { useUrlTabs } from "../../useUrlTabs";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { SkeletonCard, SkeletonPerfume } from "../../components/skeletons";
-import { PerfumeBookmarkList } from "./components";
 import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
-
 const PerfumeBookmarksLoader = dynamic(
   () => import("./loader/PerfumeBookmarksLoader"),
   {
@@ -29,15 +26,7 @@ const BOOKMARK_TABS_CONFIG = [
   {
     key: "bookmarkPerfumes",
     label: "향수",
-    component: (
-      userId: string,
-      initialPerfumeData?: ApiPerfumeSimpleResponse[]
-    ) => (
-      <PerfumeBookmarksLoader
-        userId={userId}
-        initialData={initialPerfumeData}
-      />
-    ),
+    component: (userId: string) => <PerfumeBookmarksLoader userId={userId} />,
   },
   {
     key: "bookmarkPosts",
@@ -51,11 +40,9 @@ type BookmarkTabKey = (typeof BOOKMARK_TABS_CONFIG)[number]["key"];
 export const BookmarkSection = ({
   isMe,
   userId,
-  initialPerfumeData,
 }: {
   isMe?: boolean;
   userId: string;
-  initialPerfumeData?: ApiPerfumeSimpleResponse[];
 }) => {
   const subTabRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -71,7 +58,7 @@ export const BookmarkSection = ({
 
   const TABS = BOOKMARK_TABS_CONFIG.reduce((acc, tab) => {
     if (tab.key === "bookmarkPerfumes") {
-      acc[tab.key] = tab.component(userId, initialPerfumeData);
+      acc[tab.key] = tab.component(userId);
     } else {
       acc[tab.key] = tab.component();
     }
@@ -79,7 +66,7 @@ export const BookmarkSection = ({
   }, {} as Record<BookmarkTabKey, React.ReactNode>);
 
   if (!isMe) {
-    return <PerfumeBookmarkList perfumes={initialPerfumeData || []} />;
+    return <PerfumeBookmarksLoader userId={userId} />;
   }
 
   return (

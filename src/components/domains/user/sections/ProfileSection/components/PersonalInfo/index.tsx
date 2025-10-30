@@ -8,10 +8,10 @@ import {
   ApiMyProfileResponseSchema,
 } from "@/lib/hono/schemas/me.schema";
 import Form from "@/components/commons/form";
-import { useUpdateProfileMutation } from "../../useUpdateProfile";
+import { useUpdateProfile } from "@/lib/hooks/query/useUserQuery";
 
 export const PersonalInfo = (user: ApiMyProfileResponse) => {
-  const { mutateAsync, isPending } = useUpdateProfileMutation();
+  const { mutateAsync, isPending } = useUpdateProfile();
   const defaultValues = {
     id: user.id,
     nickname: user.nickname || "",
@@ -29,24 +29,25 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
     }
   };
 
-  const useInitialize = () => {
-    const onSubmit = async (formData: ApiMyProfileResponse) => {
-      try {
-        await mutateAsync(formData);
-        alert("수정이 완료되었습니다.");
-      } catch (error) {
-        console.error("제출 실패:", error);
-      }
+  const onSubmit = async (formData: ApiMyProfileResponse) => {
+    const { imageUrl, ...rest } = formData;
+    const params = {
+      ...rest,
+      imageUrl: imageUrl ?? undefined,
     };
-
-    return { onSubmit };
+    try {
+      await mutateAsync(params);
+      alert("수정이 완료되었습니다.");
+    } catch (error) {
+      console.error("제출 실패:", error);
+    }
   };
 
   return (
     <Form<ApiMyProfileResponse>
       schema={ApiMyProfileResponseSchema}
       defaultValues={defaultValues}
-      useInitialize={useInitialize}
+      onSubmit={onSubmit}
     >
       <ProfileForm />
       <ProfileActions onWithdraw={handleWithdraw} isSubmitting={isPending} />

@@ -27,6 +27,20 @@ export const UploadedImageInfoSchema = z.object({
   format: z.enum(["JPEG", "PNG", "WEBP", "HEIC", "UNKNOWN"]),
 });
 
+export const MapLocationSchema = z
+  .object({
+    latitude: z.number().openapi({
+      example: 37.5665,
+      description: "위도",
+    }),
+    longitude: z.number().openapi({
+      example: 126.978,
+      description: "경도",
+    }),
+  })
+  .nullable()
+  .openapi("MapLocation");
+
 export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
 ) =>
@@ -90,3 +104,5 @@ export type UploadedImageInfo = z.infer<typeof UploadedImageInfoSchema>;
 export type PaginatedResponse<T> = z.infer<
   ReturnType<typeof PaginatedResponseSchema<z.ZodType<T>>>
 >;
+
+export type MapLocation = z.infer<typeof MapLocationSchema>;

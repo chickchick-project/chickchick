@@ -3,10 +3,10 @@ import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
+import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 interface ICommunityCardsProps {
-  postData: PostCardProps[];
+  postData: ApiPostResponse[];
   selectedTab: string;
   isLoading?: boolean;
   isIdle?: boolean;
@@ -35,8 +35,7 @@ export default function CommunityCards({
               >
                 <PostCard
                   key={item.id}
-                  {...item}
-                  isCategory={true}
+                  post={item}
                   cardType={POST_CARD_TYPES.SMALL}
                 />
               </Link>

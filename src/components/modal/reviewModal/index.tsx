@@ -13,7 +13,7 @@ import {
   PriceSection,
   DetailReviewSection,
 } from "./components/sections";
-import { useInitialize } from "./form.initialize";
+import { useReviewSubmit } from "./useReviewSubmit";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import {
   CreateReviewInput,
@@ -31,6 +31,9 @@ interface IReviewModalProps {
 //  2. 각 섹션 순서대로 보여주기 => tags 내부에 새로운 배열 필요할 듯
 export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
   const { user } = useUserStore();
+
+  // 리뷰 제출 로직
+  const { onSubmit } = useReviewSubmit(closeModal);
 
   const getInitialData = () => {
     return {
@@ -79,7 +82,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
           <Form
             schema={CreateReviewInputSchema}
             defaultValues={defaultValues}
-            useInitialize={useInitialize}
+            onSubmit={onSubmit}
           >
             <div className="flex flex-col gap-10 p-5">
               <StatusSection />

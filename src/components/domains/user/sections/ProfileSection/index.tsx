@@ -3,16 +3,16 @@
 import { useState, useCallback, useEffect } from "react";
 import { PersonalInfo } from "./components/PersonalInfo";
 import { ProfileImage } from "./components/ProfileImage";
-import { useUploadProfileImageMutation } from "./useUpdateProfile";
-import { useUserProfile } from "@/lib/hooks/useUserProfile";
+import { useUploadProfileImage, useUserProfile } from "@/lib/hooks/query/useUserQuery";
 import { ProfileSectionSkeleton } from "./components/ProfileSectionSkeleton";
+import { PROFILE_BUCKET_NAME } from "@/lib/constants/buckets";
 
 export const ProfileSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const { data: user, isLoading } = useUserProfile();
-  const uploadProfileImageMutation = useUploadProfileImageMutation();
+  const uploadProfileImageMutation = useUploadProfileImage();
 
   const resetState = useCallback(() => {
     setSelectedFile(null);
@@ -37,7 +37,7 @@ export const ProfileSection = () => {
   const onSaveImage = () => {
     if (selectedFile) {
       uploadProfileImageMutation.mutate(
-        { file: selectedFile },
+        { file: selectedFile, bucketName: PROFILE_BUCKET_NAME },
         {
           onSuccess: () => {
             resetState();

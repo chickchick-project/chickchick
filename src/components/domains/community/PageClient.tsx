@@ -1,7 +1,8 @@
 "use client";
-import { useCallback, useMemo, useState, useEffect, useRef } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { COMMUNITY_BOARDS } from "@/lib/constants/communityBoard";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { PostCategory } from "@prisma/client";
 import { Header } from "./header";
 import CommunityCards from "./communityCards";
 import {
@@ -9,17 +10,10 @@ import {
   getApiSortBy,
   getUniquePostList,
 } from "./community.helpers";
-import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 import { Option, TSortBy } from "@/lib/constants/options";
-import { PostCategory } from "@prisma/client";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { useIntersectionObserver } from "@/lib/hooks/useIntersectionObserver";
-
-export interface SearchResponse<T> {
-  data: T[]; // 검색된 목록
-  nextCursor: string | null; // 다음 페이지를 위한 커서 (없으면 null)
-  totalCount?: number | null;
-}
+import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
+import { COMMUNITY_BOARDS } from "@/lib/constants/communityBoard";
+import { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export default function PageClient() {
   const router = useRouter();
@@ -30,7 +24,6 @@ export default function PageClient() {
   const searchKeyword = searchParams.get("q") || "";
 
   const [inputValue, setInputValue] = useState(searchKeyword);
-  const moreRef = useRef<HTMLDivElement>(null);
 
   const boards = Object.entries(COMMUNITY_BOARDS).map(([key, value]) => ({
     key,
@@ -72,28 +65,11 @@ export default function PageClient() {
     setInputValue(searchKeyword);
   }, [searchKeyword]);
 
-  // const fetcher = useMemo(
-  //   () =>
-  //     withCache((cursor: string | null) =>
-  //       fetchCommunityPostList({
-  //         cursor,
-  //         searchText: searchKeyword,
-  //         category:
-  //           selectedTab === "BEST" ? undefined : (selectedTab as PostCategory),
-  //         sortBy: sortByForApi,
-  //       })
-  //     ),
-  //   [searchKeyword, selectedTab, sortByForApi]
-  // );
-
-  // const { data, isLoading, moreRef, isIdle } =
-  //   useInfiniteScroll<ApiPostResponse>(fetcher);
-
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery<
-      SearchResponse<ApiPostResponse>,
+      PaginatedApiPostResponse,
       Error,
-      InfiniteData<SearchResponse<ApiPostResponse>>,
+      InfiniteData<PaginatedApiPostResponse>,
       (string | null)[],
       string | null
     >({
@@ -110,13 +86,11 @@ export default function PageClient() {
       initialPageParam: null,
     });
 
-  const isIntersecting = useIntersectionObserver(moreRef);
-
-  useEffect(() => {
-    if (isIntersecting && hasNextPage && !isFetchingNextPage) {
-      fetchNextPage();
-    }
-  }, [isIntersecting, hasNextPage, isFetchingNextPage, fetchNextPage]);
+  const moreRef = useInfiniteScrollTrigger({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
 
   const uniquePostData = useMemo(() => {
     const allPosts = data?.pages.flatMap((page) => page.data) ?? [];

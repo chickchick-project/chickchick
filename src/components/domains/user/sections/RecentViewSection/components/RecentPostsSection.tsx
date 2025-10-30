@@ -30,13 +30,7 @@ export const RecentPostsSection = ({
           </span>
         ) : (
           recentPosts.posts.map((item) => (
-            <PostCard
-              key={item.id}
-              {...item.post}
-              updatedAt={item.updatedAt}
-              isAuthor={false}
-              cardType={"small"}
-            />
+            <PostCard key={item.id} post={item.post} cardType={"small"} />
           ))
         )}
       </div>

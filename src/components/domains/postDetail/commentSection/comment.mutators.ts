@@ -5,10 +5,10 @@ import {
   UpdateCommentBody,
 } from "@/lib/hono/schemas/comment.schema";
 import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
+import { PaginatedCommentResponse } from "@/lib/hono/schemas/comment.schema";
 
 export type CommentsQueryData = InfiniteData<
-  ApiSuccessResponse<SearchResponse<CommentResponse>>
+  ApiSuccessResponse<PaginatedCommentResponse>
 >;
 
 export function updateCommentInCache(

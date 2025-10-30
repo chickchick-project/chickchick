@@ -1,10 +1,9 @@
 "use client";
-import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import CommentForm from "./comment/CommentForm";
 import CommentIList from "./comment/CommentIList";
-import { SearchResponse } from "@/lib/hooks/useInfinityScroll";
 import { getCommentsByPostId } from "./comment.helper";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { PaginatedCommentResponse } from "@/lib/hono/schemas/comment.schema";
 import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 
 interface ICommentSectionProps {
@@ -25,9 +24,9 @@ export default function CommentSection({
     isLoading,
     isError,
   } = useInfiniteQuery<
-    ApiSuccessResponse<SearchResponse<CommentResponse>>,
+    ApiSuccessResponse<PaginatedCommentResponse>,
     Error,
-    InfiniteData<ApiSuccessResponse<SearchResponse<CommentResponse>>>,
+    InfiniteData<ApiSuccessResponse<PaginatedCommentResponse>>,
     string[],
     string | null
   >({

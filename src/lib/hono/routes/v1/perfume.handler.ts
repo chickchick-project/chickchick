@@ -74,6 +74,50 @@ routers.public.openapi(getPerfumesByThemeRoute, async (c) => {
 
 /**
  * @method GET
+ * @path /perfumes/notes
+ * @description 모든 향수 노트 목록을 조회합니다.
+ * @summary 향수 노트 목록 조회
+ */
+const getAllNotesRoute = createRoute({
+  method: "get",
+  path: "/notes",
+  summary: "모든 향수 노트 목록 조회",
+  responses: createStandardApiResponses({
+    schema: z.array(PerfumeSchemas.ApiPerfumeNoteResponseSchema),
+  }),
+  tags: ["Perfume"],
+});
+
+routers.public.openapi(getAllNotesRoute, async (c) => {
+  const result = await PerfumeServices.getAllNotesService();
+  if (!result.success) return apiInternalError(c, result.message);
+  return apiSuccess(c, result.data, "향수 노트 목록을 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method GET
+ * @path /perfumes/accords
+ * @description 모든 향수 어코드 목록을 조회합니다.
+ * @summary 향수 어코드 목록 조회
+ */
+const getAllAccordsRoute = createRoute({
+  method: "get",
+  path: "/accords",
+  summary: "모든 향수 어코드 목록 조회",
+  responses: createStandardApiResponses({
+    schema: z.array(PerfumeSchemas.ApiPerfumeAccordResponseSchema),
+  }),
+  tags: ["Perfume"],
+});
+
+routers.public.openapi(getAllAccordsRoute, async (c) => {
+  const result = await PerfumeServices.getAllAccordsService();
+  if (!result.success) return apiInternalError(c, result.message);
+  return apiSuccess(c, result.data, "향수 어코드 목록을 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method GET
  * @path /perfumes/{id}
  * @description 요청된 향수 ID에 해당하는 단일 향수의 상세 정보를 조회합니다.
  * @summary 특정 향수 상세 조회

@@ -1,15 +1,10 @@
 "use client";
 
 import { LikePostList } from "../components";
-import { useUserLikedPost } from "../hooks/useUserActivity";
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
+import { useUserLikedPost } from "@/lib/hooks/query/useUserQuery";
 
-export default function LikePostListLoader({
-  initialData,
-}: {
-  initialData?: PostCardProps[];
-}) {
-  const { data: likedPosts, error } = useUserLikedPost(initialData);
+export default function LikePostListLoader() {
+  const { data: likedPosts, error } = useUserLikedPost();
 
   if (error) {
     return (

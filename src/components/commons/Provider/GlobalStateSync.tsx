@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUserProfile } from "@/lib/hooks/useUserProfile";
+import { useUserProfile } from "@/lib/hooks/query/useUserQuery";
 import { useUserStore } from "@/lib/stores/useUserStore";
 
 //전역으로 사용하는 상태 동기화

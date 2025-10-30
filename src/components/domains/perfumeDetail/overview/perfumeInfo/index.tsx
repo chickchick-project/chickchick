@@ -1,6 +1,6 @@
 "use client";
 
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
+import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 import { PerfumeInfoHeader } from "./header";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";
@@ -14,17 +14,27 @@ export type InteractionStates = {
 };
 
 interface PerfumeInfoProps {
-  perfumeInfo: Omit<TPerfumeDetail, "imageUrl">;
+  perfumeDetail: ApiPerfumeDetailResponse;
   interactionStates: InteractionStates;
   onToggleInteraction: (type: keyof InteractionStates) => void;
 }
 
 export const PerfumeInfo = ({
-  perfumeInfo,
+  perfumeDetail,
   interactionStates,
   onToggleInteraction,
 }: PerfumeInfoProps) => {
-  const { name, brand, officialUrl, accords, notes } = perfumeInfo;
+  const officialUrl = perfumeDetail.brand.brandUrl;
+  const name = perfumeDetail.nameKo ?? perfumeDetail.nameEn;
+  const brand = perfumeDetail.brand.nameKo ?? perfumeDetail.brand.nameEn;
+  const accords = perfumeDetail.accordMappings.map((m) => ({
+    id: m.accord.id,
+    name: m.accord.nameKo ?? m.accord.nameEn,
+  }));
+  const notes = perfumeDetail.noteMappings.map((m) => ({
+    id: m.note.id,
+    name: m.note.nameKo ?? m.note.nameEn,
+  }));
   const isAccordAvailable = accords.length !== 0;
   const isNoteAvailable = notes.length !== 0;
 

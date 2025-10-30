@@ -10,6 +10,7 @@ import {
   apiInternalError,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
+
 const fileApi = new OpenAPIHono<AppContext>();
 fileApi.use("*", authMiddleware);
 

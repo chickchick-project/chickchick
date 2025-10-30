@@ -4,38 +4,47 @@ import AuthorInfo from "../../author/AuthorInfo";
 import BoardChip from "../../chip/BoardChip";
 import PostMeta from "../../author/PostMeta";
 import Thumbnail from "./Thumbnail";
-import { POST_CARD_STYLES, POST_CARD_TYPES } from "./postCard.constants";
+import { POST_CARD_STYLES, POST_CARD_TYPES } from "@/lib/constants/post";
 import { PostCardProps } from "./postCard.types";
 import { PostMetaItem } from "../../author/author.types";
 
 export function PostCard({
-  title,
-  contentText,
-  author,
-  createdAt,
-  thumbnailUrl,
-  isCategory = false,
-  category,
+  post,
   cardType = POST_CARD_TYPES.DEFAULT,
-  isAuthor = false,
-  ...rest
+  isCategoryVisible = true,
 }: PostCardProps) {
+  if (!post) {
+    return null;
+  }
+
+  const {
+    title,
+    contentText,
+    author,
+    createdAt,
+    thumbnailUrl,
+    category,
+    likeCount,
+    commentCount,
+    viewCount,
+  } = post;
+
   const contentClamp =
     cardType === POST_CARD_TYPES.DEFAULT ? "line-clamp-4" : "line-clamp-3";
   const cardStyle = POST_CARD_STYLES[cardType];
-
+  const isAuthor = author.id === localStorage.getItem("userId");
   const meta: PostMetaItem[] = [
     {
       type: "Like",
-      count: rest.likeCount as number,
+      count: likeCount as number,
     },
     {
       type: "Comment",
-      count: rest.commentCount as number,
+      count: commentCount as number,
     },
     {
       type: "View",
-      count: rest.viewCount as number,
+      count: viewCount as number,
     },
   ];
   return (
@@ -43,7 +52,7 @@ export function PostCard({
       className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 tablet:max-w-full h-full shadow-card ${cardStyle}`}
     >
       {/* 헤더 */}
-      {isCategory && (
+      {isCategoryVisible && (
         <header className="flex justify-between items-center">
           <BoardChip type={category} />
         </header>

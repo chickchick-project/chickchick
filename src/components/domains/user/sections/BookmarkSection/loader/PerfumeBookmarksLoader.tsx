@@ -1,17 +1,10 @@
 "use client";
 
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { PerfumeBookmarkList } from "../components";
-import { usePerfumeBookmarks } from "../hooks/useUserBookmarks";
+import { usePerfumeBookmarks } from "@/lib/hooks/query/useUserQuery";
 
-export default function PerfumeBookmarksLoader({
-  userId,
-  initialData,
-}: {
-  userId: string;
-  initialData?: ApiPerfumeSimpleResponse[];
-}) {
-  const { data: perfumes } = usePerfumeBookmarks(userId, initialData);
+export default function PerfumeBookmarksLoader({ userId }: { userId: string }) {
+  const { data: perfumeData } = usePerfumeBookmarks(userId);
 
-  return <PerfumeBookmarkList perfumes={perfumes || []} />;
+  return <PerfumeBookmarkList perfumes={perfumeData || []} />;
 }

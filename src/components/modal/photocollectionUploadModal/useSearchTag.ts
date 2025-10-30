@@ -1,45 +1,38 @@
 import { useState, useEffect } from "react";
-import { searchPerfumeTags } from "./photoCollection.helper";
+import { useCollectionPerfumeSearch } from "@/lib/hooks/query/useCollectionQuery";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 const initialState = { data: [] as ApiPerfumeSimpleResponse[] };
 
 export function useSearchTag(query: string) {
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [results, setResults] = useState(initialState);
-  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    let isActive = true;
     if (query.trim().length < 2) {
+      setDebouncedQuery("");
       setResults(initialState);
-      setIsSearching(false);
       return;
     }
 
-    setIsSearching(true);
-    const handler = setTimeout(async () => {
-      try {
-        const response = await searchPerfumeTags(query);
-        if (isActive) {
-          setResults({ data: response.data });
-        }
-      } catch (error) {
-        console.error("검색 실패:", error);
-        if (isActive) {
-          setResults(initialState);
-        }
-      } finally {
-        if (isActive) {
-          setIsSearching(false);
-        }
-      }
-    }, 500);
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
 
     return () => {
       clearTimeout(handler);
-      isActive = false;
     };
   }, [query]);
 
-  return { results, isSearching };
+  const { data, isLoading } = useCollectionPerfumeSearch(debouncedQuery);
+
+  useEffect(() => {
+    if (data?.data) {
+      setResults({ data: data.data });
+    } else if (!debouncedQuery) {
+      setResults(initialState);
+    }
+  }, [data, debouncedQuery]);
+
+  return { results, isSearching: isLoading };
 }

@@ -1,7 +1,7 @@
 "use client";
 import { SearchBar } from "@/components/commons/search/SearchBar";
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
-import { useState } from "react";
+import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import { useState, useMemo } from "react";
 import { MobileActionBar } from "./mobileActionBar";
 import { PerfumeOverview } from "./overview";
 import { InteractionStates } from "./overview/perfumeInfo";
@@ -12,7 +12,6 @@ import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPerfumesStore } from "@/lib/stores/useRecentPerfumesStore";
-import { useMemo } from "react";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
@@ -21,15 +20,15 @@ export const DetailClient = ({
   perfumeDetail,
   reviewData,
 }: {
-  perfumeDetail: TPerfumeDetail;
+  perfumeDetail: ApiPerfumeDetailResponse;
   reviewData: ApiReviewResponse[];
 }) => {
   const recentPerfumeData = useMemo(() => {
     return {
       id: perfumeDetail.id,
-      perfumeName: perfumeDetail.name,
-      brandName: perfumeDetail.brand,
-      imageUrl: perfumeDetail.imageUrl,
+      perfumeName: perfumeDetail.nameKo ?? perfumeDetail.nameEn,
+      brandName: perfumeDetail.brand.nameKo ?? perfumeDetail.brand.nameEn,
+      imageUrl: perfumeDetail.perfumeImage?.imageUrl ?? "",
     };
   }, [perfumeDetail]);
 

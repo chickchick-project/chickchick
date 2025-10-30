@@ -1,5 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import type { Session, User } from "next-auth";
+
 import perfumesApi from "./routes/v1/perfume.handler";
 import searchApi from "./routes/v1/search.handler";
 import reviewsApi from "./routes/v1/review.handler";
@@ -7,8 +8,11 @@ import communityApi from "./routes/v1/community.handler";
 import meApi from "./routes/v1/me.handler";
 import usersApi from "./routes/v1/user.handler";
 import commentsApi from "./routes/v1/comment.handler";
-import { handleApiError } from "./utils/api.utils";
+import brandsApi from "./routes/v1/brand.handler";
 import fileApi from "./routes/v1/file.handler";
+import filterApi from "./routes/v1/filter.handler";
+
+import { handleApiError } from "./utils/api.utils";
 
 export type AuthenticatedUser = User;
 
@@ -40,7 +44,9 @@ if (process.env.NODE_ENV === "development") {
 
 const v1 = new OpenAPIHono<AppContext>();
 v1.route("/perfumes", perfumesApi);
+v1.route("/brands", brandsApi);
 v1.route("/search", searchApi);
+v1.route("/filters", filterApi);
 v1.route("/reviews", reviewsApi);
 v1.route("/community", communityApi);
 v1.route("/comments", commentsApi);

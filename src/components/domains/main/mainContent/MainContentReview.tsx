@@ -1,10 +1,10 @@
 import Link from "next/link";
 import ReviewCard from "@/components/commons/card/reviewCard";
-import { fetchPopularReviews } from "../main.helper";
+import { reviewApi } from "@/lib/utils/api/reviews.api";
 import { DEFAULT_POPULAR_REVIEW } from "@/lib/constants/review";
 
 export const MainContentReview = async () => {
-  const review = await fetchPopularReviews();
+  const review = await reviewApi.popular();
   const hasRealReview = review?.success && review.data;
   const reviewData = hasRealReview ? review.data : DEFAULT_POPULAR_REVIEW;
   return (

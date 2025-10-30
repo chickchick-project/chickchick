@@ -1,9 +1,9 @@
-import { TPerfumeDetail } from "@/lib/types/perfumeDetail";
+import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 import { PerfumeImage } from "./perfumeImage";
 import { InteractionStates, PerfumeInfo } from "./perfumeInfo";
 
 interface PerfumeOverviewProps {
-  perfumeDetail: TPerfumeDetail;
+  perfumeDetail: ApiPerfumeDetailResponse;
   interactionStates: InteractionStates;
   onToggleInteraction: (type: keyof InteractionStates) => void;
 }
@@ -13,13 +13,14 @@ export const PerfumeOverview = ({
   interactionStates,
   onToggleInteraction,
 }: PerfumeOverviewProps) => {
-  const { imageUrl, ...perfumeInfo } = perfumeDetail;
+  const imageUrl = perfumeDetail.perfumeImage?.imageUrl ?? "";
+  const perfumeName = perfumeDetail.nameKo ?? perfumeDetail.nameEn;
 
   return (
     <section className="w-full flex flex-col gap-10 tablet:grid tablet:grid-cols-[minmax(0,400px)_1fr]">
-      <PerfumeImage src={imageUrl} alt={perfumeInfo.name} />
+      <PerfumeImage src={imageUrl} alt={perfumeName} />
       <PerfumeInfo
-        perfumeInfo={perfumeInfo}
+        perfumeDetail={perfumeDetail}
         interactionStates={interactionStates}
         onToggleInteraction={onToggleInteraction}
       />

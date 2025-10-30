@@ -1,15 +1,10 @@
 "use client";
 
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
 import { MyPostList } from "../components";
-import { useUserPost } from "../hooks/useUserActivity";
+import { useUserPost } from "@/lib/hooks/query/useUserQuery";
 
-export default function MyPostListLoader({
-  initialData,
-}: {
-  initialData?: PostCardProps[];
-}) {
-  const { data: posts, error } = useUserPost(initialData);
+export default function MyPostListLoader() {
+  const { data: paginatedPosts, error } = useUserPost();
 
   if (error) {
     return (
@@ -19,5 +14,5 @@ export default function MyPostListLoader({
     );
   }
 
-  return <MyPostList posts={posts || []} />;
+  return <MyPostList posts={paginatedPosts?.data || []} />;
 }

@@ -4,6 +4,12 @@ export const POST_CARD_TYPES = {
   DETAIL: "detail",
 } as const;
 
+export const THUMBNAIL_SIZES = {
+  [POST_CARD_TYPES.SMALL]: { width: 80, height: 80 },
+  [POST_CARD_TYPES.DEFAULT]: { width: 100, height: 100 },
+  [POST_CARD_TYPES.DETAIL]: { width: 307, height: 180 },
+} as const;
+
 export const CATEGORY_TYPES = {
   QUESTION: "QUESTION",
   FREEBOARD: "FREEBOARD",

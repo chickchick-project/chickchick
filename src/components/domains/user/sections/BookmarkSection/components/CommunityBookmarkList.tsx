@@ -1,12 +1,12 @@
-import { PostCard } from "@/components/commons/card/postCard";
-import { PostCardProps } from "@/components/commons/card/postCard/postCard.types";
-import { POST_CARD_TYPES } from "@/lib/constants/post";
 import Link from "next/link";
+import { PostCard } from "@/components/commons/card/postCard";
+import { POST_CARD_TYPES } from "@/lib/constants/post";
+import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export const CommunityBookmarkList = ({
   communityPosts,
 }: {
-  communityPosts: PostCardProps[];
+  communityPosts: ApiPostResponse[];
 }) => {
   if (communityPosts.length === 0) {
     return (
@@ -20,9 +20,8 @@ export const CommunityBookmarkList = ({
       {communityPosts.map((item) => (
         <Link key={item.id} href={`/community/post/${item.id}`}>
           <PostCard
-            {...item}
-            isAuthor={false}
-            isCategory={true}
+            post={item}
+            isCategoryVisible={true}
             cardType={POST_CARD_TYPES.SMALL}
           />
         </Link>

@@ -1,5 +1,6 @@
 import sharp from "sharp";
 import {
+  serviceBadRequest,
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
@@ -13,6 +14,17 @@ export interface UploadedImageInfo {
   height: number;
   format: string; // 혹은 enum 타입
 }
+
+// 허용된 이미지 MIME 타입
+const ALLOWED_IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+] as const;
+
+// 최대 파일 크기: 5MB
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const filePath = (userId: string, file: File) =>
   `/${userId}/${crypto.randomUUID()}-${file.name}`;
@@ -31,6 +43,22 @@ export async function uploadImage(
 ): Promise<ServiceResult<UploadedImageInfo>> {
   if (!file || !(file instanceof File)) {
     return serviceInternalError(new Error("이미지 파일이 필요합니다."));
+  }
+
+  // 파일 타입 검증
+  if (
+    !ALLOWED_IMAGE_MIME_TYPES.includes(
+      file.type as (typeof ALLOWED_IMAGE_MIME_TYPES)[number]
+    )
+  ) {
+    return serviceBadRequest(
+      "지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP, GIF만 가능)"
+    );
+  }
+
+  // 파일 크기 검증
+  if (file.size > MAX_FILE_SIZE) {
+    return serviceBadRequest("파일 크기는 5MB 이하여야 합니다.");
   }
 
   try {

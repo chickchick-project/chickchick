@@ -1,29 +1,35 @@
-import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { getReviewData } from "@/components/domains/perfumeDetail/review/review.helper";
-import { TPerfumeDetailRaw } from "@/lib/types/perfumeDetail";
-import { getPerfumeDetailRaw } from "@/lib/utils/getPerfumeById";
+"use client";
 
-export default async function PerfumeDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
-  const perfumeDetailRaw: TPerfumeDetailRaw | null = await getPerfumeDetailRaw(
-    id
-  );
-  if (!perfumeDetailRaw) {
+import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
+import { usePerfumeDetail } from "@/lib/hooks/query/usePerfumeQuery";
+import { usePerfumeReviews } from "@/lib/hooks/query/useReviewQuery";
+import { useParams } from "next/navigation";
+import { Spinner } from "@/components/commons/loading/Spinner";
+
+export default function PerfumeDetailPage() {
+  const params = useParams();
+  const id = params.id as string;
+
+  // 향수 상세 정보 조회
+  const {
+    data: perfumeDetail,
+    isLoading: isPerfumeLoading,
+    error: perfumeError,
+  } = usePerfumeDetail(id);
+
+  // 리뷰 데이터 조회
+  const { data: reviewData = [], isLoading: isReviewLoading } =
+    usePerfumeReviews(id);
+
+  if (isPerfumeLoading || isReviewLoading) {
+    return <Spinner />;
+  }
+
+  if (perfumeError || !perfumeDetail) {
     return <div>향수를 찾을 수 없습니다.</div>;
   }
 
-  const perfumeReviewData = await getReviewData(id);
-
-  return (
-    <DetailClient
-      perfumeDetail={perfumeDetailRaw}
-      reviewData={perfumeReviewData}
-    />
-  );
+  return <DetailClient perfumeDetail={perfumeDetail} reviewData={reviewData} />;
 }
 
 // temp: SEO 개선 하기

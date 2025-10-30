@@ -13,10 +13,14 @@ type FilterOptions = {
 };
 
 const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
-  const { filters, closeFilter, resetFilters } = useFilterStore();
+  const committedFilters = useFilterStore((state) => state.committedFilters);
+  const closeFilter = useFilterStore((state) => state.closeFilter);
+  const resetFilters = useFilterStore((state) => state.resetFilters);
   const { isOpen, open, close } = useVisibilityStore();
 
-  const hasActiveFilters = Object.values(filters).some((set) => set.length > 0);
+  const hasActiveFilters = Object.values(committedFilters).some(
+    (set) => set.length > 0
+  );
 
   const filterIcon = hasActiveFilters ? ICONS.FilterPrimary : ICONS.FilterGray;
 
@@ -44,7 +48,7 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
       <ListModal
         visible={isOpen("list")}
         close={() => close("list")}
-        filters={filters}
+        filters={committedFilters}
         filterOptions={filterOptions}
         closeFilter={closeFilter}
         resetFilters={resetFilters}
