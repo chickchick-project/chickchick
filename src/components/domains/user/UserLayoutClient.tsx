@@ -1,7 +1,7 @@
 "use client";
 
-import UserHeader from "@/components/domains/user/layouts/UserHeader";
-import UserFooter from "@/components/domains/user/layouts/UserFooter";
+import UserHeader from "@/components/domains/user/sections/ProfileHeaderSection";
+import UserFooter from "@/components/domains/user/sections/RecentViewSection";
 import PageClient from "@/components/domains/user/PageClient";
 import { useUserProfileById } from "@/lib/hooks/useUserProfile";
 import { notFound } from "next/navigation";
@@ -24,7 +24,7 @@ export default function UserLayoutClient({
   }
 
   return (
-    <div className="w-[1200px] mx-auto my-10">
+    <div className="max-w-[1200px] w-full mx-auto my-10">
       <UserHeader user={user} />
       <PageClient pageOwnerId={pageOwnerId} isMe={isMe}>
         {children}

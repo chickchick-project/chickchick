@@ -10,14 +10,12 @@ import { TabItem } from "./tabs.type";
 interface MobileTabsAccordionProps {
   tabItems: TabItem[];
   currentTab: string;
-  subTabs?: React.ReactNode;
   children?: React.ReactNode;
 }
 
 export const MobileTabsAccordion = ({
   tabItems,
   currentTab,
-  subTabs,
   children,
 }: MobileTabsAccordionProps) => {
   const user = useUserStore((state) => state.user);
@@ -55,7 +53,6 @@ export const MobileTabsAccordion = ({
 
         {/* 다른 탭들 드롭다운 */}
         <div className="mt-2">
-          {subTabs}
           <button
             type="button"
             onClick={() => setShowAllTabs(!showAllTabs)}
@@ -82,7 +79,7 @@ export const MobileTabsAccordion = ({
                     <Link
                       href={`/user/${user?.id}/${value}`}
                       onClick={() => setShowAllTabs(false)}
-                      className="block h-[48px] flex items-center px-4 text-left font-medium text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="block h-[48px] items-center px-4 text-left font-medium text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <span className="truncate">{label}</span>
                     </Link>

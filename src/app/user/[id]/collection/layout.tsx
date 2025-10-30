@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { SkeletonMasonry } from "@/components/domains/user/sections/Skeleton";
+import { SkeletonMasonry } from "@/components/domains/user/components/skeletons";
 
 export default function CollectionLayout({
   children,
