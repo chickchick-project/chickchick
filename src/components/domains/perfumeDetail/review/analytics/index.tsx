@@ -10,6 +10,7 @@ import { ReviewModal } from "@/components/modal/reviewModal";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { calculateReviewCounts } from "./analytics.helpers";
 import { ReviewAnalyticsProps } from "../review.type";
+import ReviewMobileSection from "./ReviewMobileSection";
 // TODO: 리뷰 수정 기능 검토
 export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -26,7 +27,7 @@ export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
         <ReviewBarSection counts={counts} />
       </section>
       <section className="tablet:hidden">
-        {/* <ReviewMobileSection /> */}
+        <ReviewMobileSection counts={counts} />
       </section>
       <section className="hidden tablet:block w-60 self-center">
         <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
