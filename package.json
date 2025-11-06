@@ -84,5 +84,5 @@
     "typescript": "^5",
     "zod-prisma-types": "^3.2.4"
   },
-  "packageManager": "yarn@3.6.1"
+  "packageManager": "yarn@4.10.3"
 }
