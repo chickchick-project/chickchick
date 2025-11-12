@@ -17,7 +17,7 @@ type BarChartProps = {
   data: {
     label: string;
     count: number;
-    color: string;
+    color?: string | undefined;
   }[];
 };
 

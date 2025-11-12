@@ -9,7 +9,7 @@ type DoughnutChartProps = {
   data: {
     label: string;
     value: number;
-    color: string;
+    color?: string;
   }[];
   centerText?: string;
 };
