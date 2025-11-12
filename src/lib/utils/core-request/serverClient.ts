@@ -3,7 +3,9 @@ import { createHttpClient } from "./httpClient";
 
 export const createApiServerClient = async () => {
   const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("next-auth.session-token")?.value;
+  const sessionToken =
+    cookieStore.get("authjs.session-token")?.value ||
+    cookieStore.get("__Secure-authjs.session-token")?.value;
 
   const apiClient = createHttpClient({
     baseUrl:

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@/auth";
 
 // 비로그인 상태에서도 접근 가능한 페이지 경로
 const PUBLIC_ROUTES = ["/", "/perfumes", "/community"];
@@ -48,19 +47,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const session = await auth();
+  const sessionToken =
+    request.cookies.get("authjs.session-token")?.value ||
+    request.cookies.get("__Secure-authjs.session-token")?.value;
+
   const isPublic = isPublicRoute(pathname);
 
   // 개발 모드에서만 로깅 (production에서는 로깅 제거)
   if (process.env.NODE_ENV === "development") {
     console.log("🔐 [Middleware]", pathname, {
-      session: !!session,
+      session: !!sessionToken,
       public: isPublic,
     });
   }
 
   // 로그인 필요한 페이지에 비로그인 상태로 접근
-  if (!session && !isPublic) {
+  if (!sessionToken && !isPublic) {
     const url = request.nextUrl.clone();
 
     const originalUrl = request.nextUrl.search

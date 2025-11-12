@@ -13,6 +13,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Enable Corepack
+        run: corepack enable
+
       - name: Use Node.js 20.9.0
         uses: actions/setup-node@v4
         with:
@@ -35,10 +38,7 @@ jobs:
           sudo apt-get install -y libvips-dev
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile --include=optional
-
-      - name: Ensure sharp is installed
-        run: yarn add sharp --force
+        run: yarn install --immutable
 
       - name: Build
         run: yarn build
