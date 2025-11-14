@@ -3,12 +3,13 @@ generator client {
 }
 
 generator zod {
-  provider = "zod-prisma-types"
+  provider          = "zod-prisma-types"
   output            = "./zod"
   createInputTypes  = false
   createModelSchema = true
-  useMultipleFiles  = true 
+  useMultipleFiles  = true
 }
+
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
@@ -89,29 +90,34 @@ model Perfume {
 }
 
 model User {
-  id               String            @id @default(uuid()) @db.Uuid
-  name             String
-  authId           String            @unique @map("auth_id") @db.Uuid
-  email            String?           @unique
-  nickname         String            @unique
-  age              Int?
-  gender           Gender            @default(UNKNOWN)
-  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isActive         Boolean           @default(true) @map("is_active")
-  role             String?           @default("user")
-  imageUrl         String?           @map("image_url")
-  deletedAt        DateTime?         @map("deleted_at") @db.Timestamptz(6)
-  comments         Comment[]         @relation("UserToComments")
-  perfumeBookmarks PerfumeBookmark[] @relation("UserToPerfumeBookmarks")
-  perfumeLikes     PerfumeLike[]     @relation("UserToPerfumeLikes")
-  postBookmarks    PostBookmark[]    @relation("UserToPostBookmarks")
-  postLikes        PostLike[]        @relation("UserToPostLikes")
-  posts            Post[]            @relation("UserToPosts")
-  reviewLikes      ReviewLike[]      @relation("UserToReviewLikes")
-  reviews          Review[]          @relation("UserToReviews")
-  activities       UserActivity[]    @relation("UserToActivities")
-  collections      UserCollection[]  @relation("UserToCollections")
+  id                   String            @id @default(uuid()) @db.Uuid
+  name                 String
+  authId               String            @unique @map("auth_id") @db.Uuid
+  email                String?           @unique
+  nickname             String            @unique
+  age                  Int?
+  gender               Gender            @default(UNKNOWN)
+  createdAt            DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isActive             Boolean           @default(true) @map("is_active")
+  role                 String?           @default("user")
+  imageUrl             String?           @map("image_url")
+  deletedAt            DateTime?         @map("deleted_at") @db.Timestamptz(6)
+  totalPoints          Int               @default(0) @map("total_points")
+  lastLoginDate        DateTime?         @map("last_login_date") @db.Timestamptz(6)
+  consecutiveLoginDays Int               @default(0) @map("consecutive_login_days")
+  comments             Comment[]         @relation("UserToComments")
+  perfumeBookmarks     PerfumeBookmark[] @relation("UserToPerfumeBookmarks")
+  perfumeLikes         PerfumeLike[]     @relation("UserToPerfumeLikes")
+  postBookmarks        PostBookmark[]    @relation("UserToPostBookmarks")
+  postLikes            PostLike[]        @relation("UserToPostLikes")
+  posts                Post[]            @relation("UserToPosts")
+  reviewLikes          ReviewLike[]      @relation("UserToReviewLikes")
+  reviews              Review[]          @relation("UserToReviews")
+  activities           UserActivity[]    @relation("UserToActivities")
+  collections          UserCollection[]  @relation("UserToCollections")
+  pointHistories       PointHistory[]    @relation("UserToPointHistories")
+
   recentPerfumeViews RecentPerfumeView[]
   recentPostViews    RecentPostView[]
 
@@ -128,7 +134,7 @@ model PerfumeLike {
 
   // Constraints
   // @@unique([userId, perfumeId], name: "perfume_likes_user_id_perfume_id_key")
-  @@unique([userId, perfumeId], name:"perfume_likes_user_id_perfume_id_key")
+  @@unique([userId, perfumeId], name: "perfume_likes_user_id_perfume_id_key")
   @@map("perfume_likes")
 }
 
@@ -383,6 +389,22 @@ model RecentPostView {
   @@map("recent_post_views")
 }
 
+model PointHistory {
+  id           String            @id @default(uuid()) @db.Uuid
+  userId       String            @map("user_id") @db.Uuid
+  pointAmount  Int               @map("point_amount")
+  activityType PointActivityType @map("activity_type")
+  referenceId  String?           @map("reference_id") @db.Uuid
+  description  String?
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation("UserToPointHistories", fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId, createdAt])
+  @@index([activityType])
+  @@map("point_histories")
+}
+
 enum ImageFormat {
   JPEG
   PNG
@@ -431,4 +453,13 @@ enum PerfumeUsageStatus {
   CURRENTLY_USING
   USED_BEFORE
   NOT_USED_YET
+}
+
+enum PointActivityType {
+  CREATE_POST
+  CREATE_COMMENT
+  LIKE_POST
+  CONSECUTIVE_LOGIN_2
+  CONSECUTIVE_LOGIN_3
+  CONSECUTIVE_LOGIN_7
 }
