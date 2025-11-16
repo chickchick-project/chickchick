@@ -87,6 +87,8 @@ export const ApiMyProfileResponseSchema = UserSchema.pick({
   age: true,
   gender: true,
   imageUrl: true,
+  totalPoints: true,
+  consecutiveLoginDays: true,
 }).openapi("ApiMyProfileResponse");
 
 export const ApiUpdateMyProfileRequestSchema = z
