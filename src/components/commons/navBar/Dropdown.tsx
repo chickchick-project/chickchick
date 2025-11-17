@@ -73,7 +73,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
             height={80}
             alt="프로필"
           />
-          <LevelChip level={1} />
+          <LevelChip level={user?.level ?? 0} />
           <span className="text-title-2 font-semibold text-black-100">
             {user?.nickname}
           </span>

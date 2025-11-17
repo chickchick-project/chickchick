@@ -39,6 +39,7 @@ const findOrCreateUser = async (providerData: UserData) => {
       nickname: nickname || name || "",
       email,
       imageUrl,
+      totalPoints: 100,
     },
   });
 
