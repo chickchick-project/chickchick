@@ -11,6 +11,7 @@ import {
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
 import { Spinner } from "@/components/commons/loading/Spinner";
+import CommunityListSection from "./communityListSection";
 
 export default function PageClient({ postId }: { postId: string }) {
   const {
@@ -53,11 +54,14 @@ export default function PageClient({ postId }: { postId: string }) {
         isAuthor={postDetail.isAuthor}
         relatedPerfumes={postDetail.perfumes}
       />
+      <div className="divider-horizontal-thick block tablet:hidden mb-10" />
       <CommentSection
         postId={postId}
         postAuthorId={postDetail.author.id}
         totalCommentCount={postStatus.commentCount}
       />
+      <div className="divider-horizontal-thick block tablet:hidden mt-10" />
+      <CommunityListSection category={postDetail.category} />
     </article>
   );
 }
