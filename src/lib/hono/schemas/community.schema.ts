@@ -55,6 +55,19 @@ export const PaginatedApiPostResponseSchema = PaginatedResponseSchema(
   ApiPostResponseSchema
 );
 
+//상세 게시글의 카테고리 게시글 스키마
+export const ApiPostDetailCategoryPostResponseSchema = PostSchema.pick({
+  id: true,
+  title: true,
+  commentCount: true,
+  createdAt: true,
+}).extend({
+  author: UserSchema.pick({
+    id: true,
+    nickname: true,
+  }),
+});
+
 export const GetPostsQuerySchema = CursorPaginationSchema.extend({
   q: z.string().optional(),
   category: z.nativeEnum(PostCategory).optional(),
@@ -91,6 +104,9 @@ export const PostIdParamSchema = z.object({
 export type ApiPostResponse = z.infer<typeof ApiPostResponseSchema>;
 export type ApiPostDetailResponse = z.infer<typeof ApiPostDetailResponseSchema>;
 export type ApiPostStatusResponse = z.infer<typeof ApiPostStatusResponseSchema>;
+export type ApiPostDetailCategoryPostResponse = z.infer<
+  typeof ApiPostDetailCategoryPostResponseSchema
+>;
 export type PaginatedApiPostResponse = PaginatedResponse<ApiPostResponse>;
 export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type CreatePostInput = z.infer<typeof CreatePostInputSchema>;

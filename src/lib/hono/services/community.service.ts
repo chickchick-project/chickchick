@@ -1,6 +1,7 @@
 import { PostCategory, Prisma, PointActivityType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
+  ApiPostDetailCategoryPostResponse,
   ApiPostStatusResponse,
   CreatePostInput,
   GetPostsQuery,
@@ -142,6 +143,66 @@ export async function getPostStatusByIdService(
       isBookmarked: !!bookmark,
     };
 
+    return serviceSuccess(result);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getPostDetailCategoryPostsService(
+  postId: string
+): Promise<ServiceResult<ApiPostDetailCategoryPostResponse[]>> {
+  const uuidValidation = validateUuid(postId, "게시글");
+  if (!uuidValidation.success) return uuidValidation;
+  try {
+    const currentPost = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, createdAt: true, category: true },
+    });
+    if (!currentPost) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+
+    const { category, createdAt } = currentPost;
+    const TOTAL_LIMIT = 15;
+    const PREV_LIMIT_GOAL = 2;
+
+    const prevPosts = await prisma.post.findMany({
+      where: {
+        category,
+        published: true,
+        createdAt: { gt: createdAt },
+      },
+      orderBy: { createdAt: "asc" },
+      take: PREV_LIMIT_GOAL,
+      include: { author: { select: { nickname: true } } },
+    });
+    const missingCount = PREV_LIMIT_GOAL - prevPosts.length;
+    const nextLimitBase = TOTAL_LIMIT - PREV_LIMIT_GOAL;
+    const nextPosts = await prisma.post.findMany({
+      where: {
+        category,
+        published: true,
+        createdAt: { lte: createdAt },
+      },
+      orderBy: { createdAt: "desc" },
+      take: nextLimitBase + (missingCount > 0 ? missingCount : 0),
+      include: { author: { select: { nickname: true } } },
+    });
+    const combinedPosts = [...prevPosts.reverse(), ...nextPosts];
+
+    const result: ApiPostDetailCategoryPostResponse[] = combinedPosts.map(
+      (post) => ({
+        id: post.id,
+        title: post.title,
+        commentCount: post.commentCount,
+        createdAt: post.createdAt,
+        author: {
+          id: post.userId,
+          nickname: post.author.nickname,
+        },
+      })
+    );
     return serviceSuccess(result);
   } catch (error) {
     return serviceInternalError(error);
