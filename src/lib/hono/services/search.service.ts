@@ -59,18 +59,6 @@ function processFilters(params: SearchGetQuery | SearchPostBody) {
       ? postParams.accordsFilter
       : null;
 
-  // console.log("원본 필터 값들:", {
-  //   brandFilter: postParams.brandFilter,
-  //   notesFilter: postParams.notesFilter,
-  //   accordsFilter: postParams.accordsFilter,
-  // });
-
-  // console.log("처리된 필터 값들:", {
-  //   brandFilter,
-  //   notesFilter,
-  //   accordsFilter,
-  // });
-
   return {
     brandFilter,
     notesFilter,
@@ -123,8 +111,6 @@ export async function searchPerfumesService(
     const rawData: SupabasePerfume[] = perfumesResult.data || [];
     const totalCount: number = totalResult.data || 0;
 
-    // console.log(`Found ${rawData.length} perfumes, total: ${totalCount}`);
-
     const transformedData = rawData.map(transformSupabasePerfume);
     const paginatedResult = createCursorPaginationResult(
       transformedData,
@@ -138,7 +124,6 @@ export async function searchPerfumesService(
       nextCursor: paginatedResult.nextCursor,
     });
   } catch (error) {
-    console.error("Search service error:", error);
     return serviceInternalError(error);
   }
 }

@@ -104,7 +104,13 @@ export async function getAvailableFiltersTotalService(
 
     if (error) throw error;
 
-    return serviceSuccess(data ?? []);
+    // total_count를 totalCount로 변환
+    const transformedData = (data ?? []).map((item: { category: string; total_count: number }) => ({
+      category: item.category,
+      totalCount: item.total_count,
+    }));
+
+    return serviceSuccess(transformedData);
   } catch (error) {
     console.error("Available filters total service error:", error);
     return serviceInternalError(error);
