@@ -30,7 +30,13 @@ export async function getAllBrandsService(): Promise<
       },
     });
 
-    return serviceSuccess(brands);
+    const transformed = brands.map((brand) => ({
+      id: brand.id,
+      nameEn: brand.nameEn,
+      nameKo: brand.nameKo ?? brand.nameEn,
+    }));
+
+    return serviceSuccess(transformed);
   } catch (error) {
     return serviceInternalError(error);
   }
