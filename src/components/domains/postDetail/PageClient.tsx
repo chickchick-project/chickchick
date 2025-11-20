@@ -11,7 +11,7 @@ import {
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
 import { Spinner } from "@/components/commons/loading/Spinner";
-import CommunityListSection from "./communityListSection";
+import CategoryPostListSection from "./categoryPostListSection";
 
 export default function PageClient({ postId }: { postId: string }) {
   const {
@@ -61,7 +61,8 @@ export default function PageClient({ postId }: { postId: string }) {
         totalCommentCount={postStatus.commentCount}
       />
       <div className="divider-horizontal-thick block tablet:hidden mt-10" />
-      <CommunityListSection category={postDetail.category} />
+      <CategoryPostListSection category={postDetail.category} />
+      <div className="divider-horizontal-thick block tablet:hidden mt-1" />
     </article>
   );
 }
