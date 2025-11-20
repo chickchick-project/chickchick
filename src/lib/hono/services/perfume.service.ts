@@ -38,27 +38,28 @@ export async function getPerfumesListService(): Promise<
 }
 
 /**
- * 향수 목록 테마별 조회
- * @param themeName
- * @description 향수 목록을 테마별로 조회. TODO: 테마별로 조회하는 로직 구현 필요
+ * 향수 목록 테마별 조회 (MVP: 인기 향수)
+ * @param themeName - 테마 이름 (MVP에서는 "mostLike"만 지원)
+ * @description 좋아요가 가장 많은 향수 5개를 반환합니다.
  * @returns 향수 목록
  */
 export async function getPerfumesListByThemeService(
   themeName: string
 ): Promise<ServiceResult<BasePerfume[]>> {
-  console.log(themeName);
   try {
-    // TODO: 테마에 따른 필터링 로직 구현 (예: 특정 어코드나 노트를 포함하는 향수 검색)
-    // const perfumes = await prisma.perfume.findMany({
-    //   where: {
-    //     // 예시: 'citrus' 어코드를 포함하는 향수
-    //     accordMappings: {
-    //       some: { accord: { nameEn: { equals: theme, mode: "insensitive" } } },
-    //     },
-    //   },
-    //   include: perfumeBaseInclude,
-    //   take: 5,
-    // });
+    // MVP: "mostLike"만 지원, 좋아요 많은 순으로 정렬
+    if (themeName === "mostLike") {
+      const perfumes = await prisma.perfume.findMany({
+        include: perfumeBaseInclude,
+        orderBy: {
+          likedByUsers: { _count: "desc" },
+        },
+        take: 5,
+      });
+      return serviceSuccess(perfumes);
+    }
+
+    // 다른 테마는 향후 구현 예정
     const perfumes = await prisma.perfume.findMany({
       include: perfumeBaseInclude,
       orderBy: { nameKo: "asc" },
