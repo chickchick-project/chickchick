@@ -1,4 +1,3 @@
-import { UserCollection } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import {
   serviceInternalError,
@@ -11,6 +10,7 @@ import {
   BasePost,
   BasePerfume,
   perfumeBaseInclude,
+  UserCollectionWithRelations,
 } from "../utils/prisma.utils";
 import { calculateLevel } from "../../utils/level.utils";
 import { ApiUserProfileResponse } from "../schemas/user.schema";
@@ -95,7 +95,7 @@ export async function getUserPublicBookmarkedPerfumesService(
 
 export async function getUserCollectionsService(
   targetUserId: string
-): Promise<ServiceResult<UserCollection[]>> {
+): Promise<ServiceResult<UserCollectionWithRelations[]>> {
   try {
     const userCheck = await checkResourceExists("user", targetUserId, "사용자");
     if (!userCheck.success) return userCheck;

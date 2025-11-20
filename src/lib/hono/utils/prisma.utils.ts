@@ -181,6 +181,11 @@ export type BrandWithPerfumes = Prisma.BrandGetPayload<{
   include: typeof brandWithPerfumesInclude;
 }>;
 
+// User Collection Types
+export type UserCollectionWithRelations = Prisma.UserCollectionGetPayload<{
+  include: { image: true; perfume: true };
+}>;
+
 // ==================== Type Transform Utilities ====================
 
 /**
@@ -196,10 +201,7 @@ export function parseMapLocation(
   if (typeof value === "object" && value !== null && !Array.isArray(value)) {
     const obj = value as Record<string, unknown>;
 
-    if (
-      typeof obj.latitude === "number" &&
-      typeof obj.longitude === "number"
-    ) {
+    if (typeof obj.latitude === "number" && typeof obj.longitude === "number") {
       return {
         latitude: obj.latitude,
         longitude: obj.longitude,
