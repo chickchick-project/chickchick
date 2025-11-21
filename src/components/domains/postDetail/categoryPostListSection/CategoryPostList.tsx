@@ -1,8 +1,8 @@
 import CommunityListItem from "@/components/commons/list/CommunityListItem";
-import { ICommunityListItemMock } from ".";
+import { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
 
 interface ICategoryPostListProps {
-  posts: ICommunityListItemMock[];
+  posts: ApiPostDetailCategoryPostResponse[] | [];
   currentPostId: string;
 }
 
@@ -22,7 +22,7 @@ export default function CategoryPostList({
             commentCount={post.commentCount}
             createdAt={post.createdAt}
             isCurrent={post.id === currentPostId}
-            authorName={post.authorName}
+            authorName={post.author.nickname}
           />
         ))}
     </div>

@@ -46,3 +46,16 @@ export const useCommunityPostStatus = (id: string) => {
     },
   });
 };
+
+// 커뮤니티 게시글 카테고리 내 다른 게시글 조회
+export const useCommunityPostCategoryPosts = (id: string) => {
+  return useQuery({
+    queryKey: queryKeys.community.postCategoryPosts(id),
+    queryFn: () => communityApi.getCategoryPosts(id),
+    enabled: !!id,
+    select: (response) => {
+      if (!response || !response.success) return null;
+      return response.data;
+    },
+  });
+};

@@ -1,13 +1,10 @@
 import Link from "next/link";
 import PostTime from "../author/PostTime";
-import PostMeta from "../author/PostMeta";
-import IconBadge from "../author/IconBadge";
-import ICONS from "@/lib/constants/icons";
 
 interface ICommunityListItem {
   title: string;
-  commentCount: string;
-  createdAt: string;
+  commentCount: number;
+  createdAt: string | Date;
   authorName: string;
   postId: string;
   isCurrent?: boolean;
@@ -21,9 +18,11 @@ const CommunityListItem = ({
   isCurrent = false,
 }: ICommunityListItem) => {
   const MAX_COUNT = 999;
-  const commentCountNumber = Number(commentCount);
+  const commentCountNumber = commentCount;
   const formattedCount =
     commentCountNumber > MAX_COUNT ? `${MAX_COUNT}+` : commentCountNumber;
+  const createdAtToString =
+    createdAt instanceof Date ? createdAt.toISOString() : createdAt;
   return (
     <article
       className={`relative w-full px-3 py-2 tablet:py-2 tablet:px-2 flex items-center justify-between tablet:grid tablet:grid-cols-[1fr_160px_100px] tablet:items-center tablet:text-body-2 ${
@@ -32,7 +31,7 @@ const CommunityListItem = ({
     >
       <div className="flex items-baseline min-w-0">
         <h2
-          className={`text-black line-clamp-2 text-body-2 leading-normal tablet:text-body-2 tablet:line-clamp-none tablet:truncate  ${
+          className={`text-black line-clamp-2 text-body-2 leading-normal tablet:ml-2 tablet:text-body-2 tablet:line-clamp-none tablet:truncate  ${
             isCurrent && "tablet:font-semibold"
           }`}
         >
@@ -52,7 +51,7 @@ const CommunityListItem = ({
           {authorName}
         </span>
         <div className="tablet:pl-5 tablet:flex tablet:justify-center">
-          <PostTime type="post" time={createdAt} size="medium" />
+          <PostTime type="post" time={createdAtToString} size="medium" />
         </div>
       </div>
       <div

@@ -12,6 +12,7 @@ import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import CategoryPostListSection from "./categoryPostListSection";
+import { useCommunityPostCategoryPosts } from "@/lib/hooks/query/useCommunityQuery";
 
 export default function PageClient({ postId }: { postId: string }) {
   const {
@@ -35,12 +36,19 @@ export default function PageClient({ postId }: { postId: string }) {
     queryFn: () => getPostDetailStatusById(postId),
   });
 
+  const {
+    data: categoryPosts,
+    isPending: isCategoryPostsPending,
+    isError: isCategoryPostsError,
+    error: CategoryPostsError,
+  } = useCommunityPostCategoryPosts(postId);
+
   useLogRecentItem(postDetail, useRecentPostsStore);
-  const error = postDetailError || postStatusError;
-  if (isPostDetailPending || isPostStatusPending) {
+  const error = postDetailError || postStatusError || CategoryPostsError;
+  if (isPostDetailPending || isPostStatusPending || isCategoryPostsPending) {
     return <Spinner />;
   }
-  if (isPostDetailError || isPostStatusError) {
+  if (isPostDetailError || isPostStatusError || isCategoryPostsError) {
     return <div>{error?.message}</div>;
   }
   const { content, ...postDetailHeader } = postDetail;
@@ -61,7 +69,13 @@ export default function PageClient({ postId }: { postId: string }) {
         totalCommentCount={postStatus.commentCount}
       />
       <div className="divider-horizontal-thick block tablet:hidden mt-10" />
-      <CategoryPostListSection category={postDetail.category} />
+      {categoryPosts && categoryPosts.length > 0 && (
+        <CategoryPostListSection
+          category={postDetail.category}
+          postId={postId}
+          posts={categoryPosts}
+        />
+      )}
       <div className="divider-horizontal-thick block tablet:hidden mt-1" />
     </article>
   );

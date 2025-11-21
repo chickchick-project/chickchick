@@ -4,11 +4,14 @@ import {
   ApiPostResponse,
   ApiPostDetailResponse,
   ApiPostStatusResponse,
+  ApiPostDetailCategoryPostResponse,
   PaginatedApiPostResponse,
   GetPostsQuery,
   CreatePostInput,
   UpdatePostInput,
 } from "@/lib/hono/schemas/community.schema";
+
+export const COMMUNITY_URL = `/community`;
 
 export const communityApi = {
   /**
@@ -16,7 +19,7 @@ export const communityApi = {
    */
   list: (params?: GetPostsQuery) => {
     return apiClient.get<ApiSuccessResponse<PaginatedApiPostResponse>>(
-      `/posts`,
+      `${COMMUNITY_URL}/posts`,
       params
     );
   },
@@ -24,19 +27,32 @@ export const communityApi = {
   /**
    * 커뮤니티 게시글 단일 조회
    */
-  getById: (id: string) => {
+  getById: (id: string, headers?: HeadersInit) => {
     return apiClient.get<ApiSuccessResponse<ApiPostDetailResponse>>(
-      `/posts/${id}`
+      `${COMMUNITY_URL}/posts/${id}`,
+      {},
+      { headers }
     );
   },
 
   /**
    * 커뮤니티 게시글 상태 정보 조회
    */
-  getStatus: (id: string) => {
+  getStatus: (id: string, headers?: HeadersInit) => {
     return apiClient.get<ApiSuccessResponse<ApiPostStatusResponse>>(
-      `/posts/${id}/status`
+      `${COMMUNITY_URL}/posts/${id}/status`,
+      {},
+      { headers }
     );
+  },
+
+  /**
+   * 커뮤니티 게시글 카테고리 내 다른 게시글 조회
+   */
+  getCategoryPosts: (id: string) => {
+    return apiClient.get<
+      ApiSuccessResponse<ApiPostDetailCategoryPostResponse[]>
+    >(`${COMMUNITY_URL}/posts/${id}/category-posts`);
   },
 
   /**
@@ -44,7 +60,7 @@ export const communityApi = {
    */
   create: (data: CreatePostInput) => {
     return apiClient.post<CreatePostInput, ApiSuccessResponse<ApiPostResponse>>(
-      `/posts`,
+      `${COMMUNITY_URL}/posts`,
       data
     );
   },
@@ -56,7 +72,7 @@ export const communityApi = {
     return apiClient.patch<
       UpdatePostInput,
       ApiSuccessResponse<ApiPostResponse>
-    >(`/posts/${id}`, data);
+    >(`${COMMUNITY_URL}/posts/${id}`, data);
   },
 
   /**
@@ -64,7 +80,7 @@ export const communityApi = {
    */
   delete: (id: string) => {
     return apiClient.delete<ApiSuccessResponse<{ message: string }>>(
-      `/posts/${id}`
+      `${COMMUNITY_URL}/posts/${id}`
     );
   },
 
@@ -75,7 +91,7 @@ export const communityApi = {
     return apiClient.post<
       object,
       ApiSuccessResponse<{ liked: boolean; likeCount: number }>
-    >(`/posts/${id}/like`, {});
+    >(`${COMMUNITY_URL}/posts/${id}/like`, {});
   },
 
   /**
@@ -83,7 +99,7 @@ export const communityApi = {
    */
   toggleBookmark: (id: string) => {
     return apiClient.post<object, ApiSuccessResponse<{ bookmarked: boolean }>>(
-      `/posts/${id}/bookmark`,
+      `${COMMUNITY_URL}/posts/${id}/bookmark`,
       {}
     );
   },

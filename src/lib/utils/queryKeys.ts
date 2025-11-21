@@ -102,6 +102,8 @@ export const queryKeys = {
     post: (id: string) => [...communityBase, "post", id] as const,
     postStatus: (id: string) =>
       [...communityBase, "post", id, "status"] as const,
+    postCategoryPosts: (id: string) =>
+      [...communityBase, "post", id, "categoryPosts"] as const,
     comments: (postId: string) =>
       [...communityBase, "post", postId, "comments"] as const,
   },
