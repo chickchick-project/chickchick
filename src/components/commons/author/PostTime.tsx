@@ -31,13 +31,17 @@ export default function PostTime({ time, type, size }: PostTimeProps) {
     formattedTime = postDate.format("YYYY.M.D");
   }
 
+  const SIZE_STYLES = {
+    [SIZE_STATUSES.DEFAULT]: "text-label-4 tablet:text-label-2",
+    [SIZE_STATUSES.MEDIUM]: "text-label-2",
+    [SIZE_STATUSES.LARGE]: "text-body-1",
+  };
+
   return (
     <span
-      className={`${
-        size === SIZE_STATUSES.DEFAULT
-          ? "text-label-4 tablet:text-label-2"
-          : "text-body-1"
-      } font-medium ${type === "comment" ? "text-gray-100" : "text-black-300"}`}
+      className={`${SIZE_STYLES[size]} font-medium ${
+        type === "comment" ? "text-gray-100" : "text-black-300"
+      }`}
     >
       {formattedTime}
     </span>

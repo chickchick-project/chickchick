@@ -9,11 +9,12 @@ import {
   editCommentById,
 } from "./comment.helper";
 import { CommentsQueryData, updateCommentInCache } from "./comment.mutators";
+import { queryKeys } from "@/lib/utils/queryKeys";
 
 export default function useCommentMutation(postId: string) {
   const queryClient = useQueryClient();
   const commentsQueryKey = ["post", postId, "comments"];
-  const statusQueryKey = ["post", postId, "status"];
+  const statusQueryKey = queryKeys.community.postStatus(postId);
   const invalidateComments = () =>
     queryClient.invalidateQueries({ queryKey: commentsQueryKey });
   const invalidatePostStatus = () =>

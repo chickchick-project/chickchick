@@ -8,6 +8,7 @@ export const REVIEW_STATUSES = {
 
 export const SIZE_STATUSES = {
   DEFAULT: "default",
+  MEDIUM: "medium",
   LARGE: "large",
 } as const;
 

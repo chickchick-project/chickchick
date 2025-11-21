@@ -4,10 +4,11 @@ import {
   toggleLikedPostById,
 } from "../postDetail.helpers";
 import { ApiPostStatusResponse } from "@/lib/hono/schemas/community.schema";
+import { queryKeys } from "@/lib/utils/queryKeys";
 
 export default function usePostInteractionMutation(postId: string) {
   const queryClient = useQueryClient();
-  const postStatusQueryKey = ["post", postId, "status"];
+  const postStatusQueryKey = queryKeys.community.postStatus(postId);
 
   const invalidatePostStatus = () =>
     queryClient.invalidateQueries({ queryKey: postStatusQueryKey });

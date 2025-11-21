@@ -126,6 +126,47 @@ const getPostStatusRoute = createRoute({
   tags: ["Community"],
 });
 
+/**
+ * @method GET
+ * @path /posts/{id}/category-posts
+ * @summary 커뮤니티 게시글 카테고리 게시글 목록 조회
+ */
+
+const getPostCategoryPostsRoute = createRoute({
+  method: "get",
+  path: "/posts/{id}/category-posts",
+  summary: "커뮤니티 게시글 카테고리 게시글 목록 조회",
+  description:
+    "해당 게시글과 같은 카테고리의 게시글 목록을 조회합니다. 현재 게시글을 포함한 앞의 글 2개, 뒤의 글 12개를 가져옵니다. 최대(15개)",
+  request: {
+    params: postIdParam,
+  },
+  responses: createStandardApiResponses(
+    {
+      schema: z.array(CommunitySchemas.ApiPostDetailCategoryPostResponseSchema),
+      description: "상세페이지와 같은 카테고리 게시글 목록",
+    },
+    ["400", "404"]
+  ),
+  tags: ["Community"],
+});
+
+communityApi.openapi(getPostCategoryPostsRoute, async (c) => {
+  const { id } = c.req.valid("param");
+  const result = await CommunityServices.getPostDetailCategoryPostsService(id);
+
+  if (!result.success) {
+    if (result.error === "NOT_FOUND") return apiNotFound(c, result.message);
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
+    return apiInternalError(c, result.message);
+  }
+  return apiSuccess(
+    c,
+    result.data,
+    "상세페이지에 필요한 카테고리 게시글 목록을 성공적으로 불러왔습니다."
+  );
+});
+
 communityApi.openapi(getPostStatusRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = c.get("user");

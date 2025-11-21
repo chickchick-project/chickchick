@@ -34,11 +34,39 @@ export const useCommunityPost = (id: string) => {
   });
 };
 
+export const useCommunityPostForEdit = (
+  id: string | undefined,
+  type: "edit" | "create"
+) => {
+  return useQuery({
+    queryKey: queryKeys.community.post(id || ""),
+    queryFn: () => communityApi.getById(id!),
+    enabled: type === "edit" && !!id,
+    select: (response) => {
+      if (!response || !response.success) return null;
+      return response.data;
+    },
+  });
+};
+
 // 커뮤니티 게시글 상태 정보 조회
 export const useCommunityPostStatus = (id: string) => {
   return useQuery({
     queryKey: queryKeys.community.postStatus(id),
     queryFn: () => communityApi.getStatus(id),
+    enabled: !!id,
+    select: (response) => {
+      if (!response || !response.success) return null;
+      return response.data;
+    },
+  });
+};
+
+// 커뮤니티 게시글 카테고리 내 다른 게시글 조회
+export const useCommunityPostCategoryPosts = (id: string) => {
+  return useQuery({
+    queryKey: queryKeys.community.postCategoryPosts(id),
+    queryFn: () => communityApi.getCategoryPosts(id),
     enabled: !!id,
     select: (response) => {
       if (!response || !response.success) return null;

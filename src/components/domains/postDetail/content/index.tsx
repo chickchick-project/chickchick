@@ -40,7 +40,6 @@ export default function PostContent({
         {hasRelatedPerfumes && <RelatedPerfume perfumes={relatedPerfumes} />}
         {/* <PostNavigation /> */}
       </div>
-      <div className="divider-horizontal-thick block tablet:hidden mb-10" />
     </section>
   );
 }
