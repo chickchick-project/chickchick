@@ -2,6 +2,7 @@ import { PostCategory, Prisma, PointActivityType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
   ApiPostDetailCategoryPostResponse,
+  ApiPostDetailResponse,
   ApiPostStatusResponse,
   CreatePostInput,
   GetPostsQuery,
@@ -79,7 +80,7 @@ export async function getPaginatedPostListService(
 export async function getPostByIdService(
   id: string,
   userId?: string | null
-): Promise<ServiceResult<FullPost & { isAuthor: boolean }>> {
+): Promise<ServiceResult<ApiPostDetailResponse>> {
   try {
     const uuidValidation = validateUuid(id, "게시글");
     if (!uuidValidation.success) return uuidValidation;
@@ -101,8 +102,18 @@ export async function getPostByIdService(
     if (!post.published) {
       return serviceForbidden("이미 삭제된 게시글입니다.");
     }
+    const { perfumeMappings, ...restOfPost } = post;
     const isAuthor = post.userId === userId;
-    return serviceSuccess({ ...post, isAuthor });
+
+    const result = {
+      ...restOfPost,
+      isAuthor,
+      perfumes: perfumeMappings.map((mapping) => mapping.perfume),
+      createdAt: post.createdAt.toISOString(),
+      updatedAt: post.updatedAt?.toISOString() || null,
+    };
+
+    return serviceSuccess(result);
   } catch (error) {
     return serviceInternalError(error);
   }
