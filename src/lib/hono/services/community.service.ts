@@ -1,4 +1,4 @@
-import { PostCategory, Prisma } from "@prisma/client";
+import { PostCategory, Prisma, PointActivityType } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import type {
   ApiPostStatusResponse,
@@ -25,6 +25,7 @@ import {
   FullPost,
   BasePost,
 } from "../utils/prisma.utils";
+import { earnPointsService } from "./point.service";
 
 const postWithAuthorArgs = { include: postIncludeArgs };
 
@@ -165,6 +166,14 @@ export async function createPostService(
       },
       include: postIncludeArgs,
     });
+
+    // 포인트 적립 (비동기, 실패해도 게시글 작성은 성공)
+    earnPointsService(authorId, PointActivityType.CREATE_POST, newPost.id).catch(
+      (error) => {
+        console.error("[Point] Failed to earn points for post creation:", error);
+      }
+    );
+
     return serviceSuccess(newPost);
   } catch (error) {
     return serviceInternalError(error);
@@ -273,7 +282,7 @@ export async function togglePostLikeService(
 
     const post = await prisma.post.findUnique({
       where: { id: postId },
-      select: { published: true },
+      select: { published: true, userId: true },
     });
 
     if (!post) {
@@ -298,7 +307,7 @@ export async function togglePostLikeService(
       ]);
       return serviceSuccess({ liked: false, likeCount: updatedPost.likeCount });
     } else {
-      const [, updatedPost] = await prisma.$transaction([
+      const [createdLike, updatedPost] = await prisma.$transaction([
         prisma.postLike.create({ data: { postId, userId } }),
         prisma.post.update({
           where: { id: postId },
@@ -306,6 +315,16 @@ export async function togglePostLikeService(
           select: { likeCount: true },
         }),
       ]);
+
+      // 포인트 적립: 글 작성자에게 지급 (비동기, 실패해도 좋아요는 성공)
+      earnPointsService(
+        post.userId, // 좋아요를 누른 사람(userId)이 아닌, 글 작성자(post.userId)에게 포인트 지급
+        PointActivityType.LIKE_POST,
+        createdLike.id
+      ).catch((error) => {
+        console.error("[Point] Failed to earn points for post like:", error);
+      });
+
       return serviceSuccess({ liked: true, likeCount: updatedPost.likeCount });
     }
   } catch (error) {

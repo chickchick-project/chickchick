@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Prisma, PointActivityType } from "@prisma/client";
 import {
   serviceBadRequest,
   serviceForbidden,
@@ -20,6 +20,7 @@ import {
 } from "../schemas/comment.schema";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
 import { commentIncludeArgs, CommentWithReplies } from "../utils/prisma.utils";
+import { earnPointsService } from "./point.service";
 
 const commentWithRepliesArgs = { include: commentIncludeArgs };
 
@@ -180,6 +181,15 @@ export const createCommentService = async (
       });
 
       return createdComment;
+    });
+
+    // 포인트 적립 (비동기, 실패해도 댓글 작성은 성공)
+    earnPointsService(
+      authorId,
+      PointActivityType.CREATE_COMMENT,
+      newComment.id
+    ).catch((error) => {
+      console.error("[Point] Failed to earn points for comment creation:", error);
     });
 
     return serviceSuccess(newComment);

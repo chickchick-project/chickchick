@@ -30,6 +30,7 @@ import {
   myCommentInclude,
   reviewIncludeArgs,
 } from "../utils/prisma.utils";
+import { calculateLevel, getPointsForNextLevel } from "../../utils/level.utils";
 
 const UUID_REGEX =
   /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
@@ -481,6 +482,8 @@ export async function getMyProfileService(
         age: true,
         gender: true,
         imageUrl: true,
+        totalPoints: true,
+        consecutiveLoginDays: true,
       },
     });
 
@@ -488,7 +491,15 @@ export async function getMyProfileService(
       return serviceNotFound("사용자를 찾을 수 없습니다.");
     }
 
-    return serviceSuccess(user);
+    // 포인트 기반으로 레벨 계산
+    const level = calculateLevel(user.totalPoints);
+    const nextLevelPoints = getPointsForNextLevel(user.totalPoints);
+
+    return serviceSuccess({
+      ...user,
+      level,
+      nextLevelPoints,
+    });
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -534,10 +545,20 @@ export async function updateMyProfileService(
         age: true,
         gender: true,
         imageUrl: true,
+        totalPoints: true,
+        consecutiveLoginDays: true,
       },
     });
 
-    return serviceSuccess(updatedUser);
+    // 포인트 기반으로 레벨 계산
+    const level = calculateLevel(updatedUser.totalPoints);
+    const nextLevelPoints = getPointsForNextLevel(updatedUser.totalPoints);
+
+    return serviceSuccess({
+      ...updatedUser,
+      level,
+      nextLevelPoints,
+    });
   } catch (error) {
     console.error("[updateMyProfileService] 에러 발생:", error);
     return serviceInternalError(error);

@@ -10,24 +10,36 @@ import { checkResourceExists } from "../utils/service.utils";
 import {
   BasePost,
   BasePerfume,
-  UserProfile,
-  authorSelect,
   perfumeBaseInclude,
 } from "../utils/prisma.utils";
+import { calculateLevel } from "../../utils/level.utils";
+import { ApiUserProfileResponse } from "../schemas/user.schema";
 
 export async function getUserProfileService(
   userId: string
-): Promise<ServiceResult<UserProfile>> {
+): Promise<ServiceResult<ApiUserProfileResponse>> {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: authorSelect,
+      select: {
+        id: true,
+        nickname: true,
+        imageUrl: true,
+        totalPoints: true,
+      },
     });
 
     if (!user) {
       return serviceNotFound("사용자를 찾을 수 없습니다.");
     }
-    return serviceSuccess(user);
+
+    // 포인트 기반으로 레벨 계산
+    const level = calculateLevel(user.totalPoints);
+
+    return serviceSuccess({
+      ...user,
+      level,
+    });
   } catch (error) {
     return serviceInternalError(error);
   }

@@ -174,7 +174,7 @@ export const DEFAULT_POPULAR_REVIEW = {
   author: {
     id: "admin",
     nickname: "CHICKCHICK",
-    imageUrl: "",
+    imageUrl: null,
   },
   perfume: {
     id: "",

@@ -7,7 +7,7 @@ import {
 } from "@zod/modelSchema";
 import { PaginatedResponseSchema } from "./common.schema";
 import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
-import { ApiUserProfileResponseSchema } from "./user.schema";
+import { ApiReviewAuthorResponseSchema } from "./user.schema";
 
 const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
   option: AttributeOptionSchema.extend({
@@ -16,7 +16,7 @@ const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
 });
 
 export const ApiReviewResponseSchema = ReviewSchema.extend({
-  author: ApiUserProfileResponseSchema,
+  author: ApiReviewAuthorResponseSchema,
   perfume: ApiPerfumeSimpleResponseSchema,
   attributeSelections: z.array(FullAttributeSelectionSchema),
 }).openapi("ApiReviewResponse");

@@ -87,7 +87,14 @@ export const ApiMyProfileResponseSchema = UserSchema.pick({
   age: true,
   gender: true,
   imageUrl: true,
-}).openapi("ApiMyProfileResponse");
+  totalPoints: true,
+  consecutiveLoginDays: true,
+})
+  .extend({
+    level: z.number().int().min(0),
+    nextLevelPoints: z.number().int().min(0),
+  })
+  .openapi("ApiMyProfileResponse");
 
 export const ApiUpdateMyProfileRequestSchema = z
   .object({
