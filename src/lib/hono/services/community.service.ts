@@ -24,7 +24,6 @@ import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import {
   postIncludeArgs,
   postDetailIncludeArgs,
-  FullPost,
   BasePost,
 } from "../utils/prisma.utils";
 import { earnPointsService } from "./point.service";
@@ -240,11 +239,13 @@ export async function createPostService(
     });
 
     // 포인트 적립 (비동기, 실패해도 게시글 작성은 성공)
-    earnPointsService(authorId, PointActivityType.CREATE_POST, newPost.id).catch(
-      (error) => {
-        console.error("[Point] Failed to earn points for post creation:", error);
-      }
-    );
+    earnPointsService(
+      authorId,
+      PointActivityType.CREATE_POST,
+      newPost.id
+    ).catch((error) => {
+      console.error("[Point] Failed to earn points for post creation:", error);
+    });
 
     return serviceSuccess(newPost);
   } catch (error) {

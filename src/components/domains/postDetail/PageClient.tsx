@@ -36,7 +36,7 @@ export default function PageClient({ postId }: { postId: string }) {
   } = useCommunityPostCategoryPosts(postId);
 
   const error = postDetailError || postStatusError || CategoryPostsError;
-
+  useLogRecentItem(postDetail, useRecentPostsStore);
   if (isPostDetailPending || isPostStatusPending || isCategoryPostsPending) {
     return <Spinner />;
   }
@@ -47,8 +47,6 @@ export default function PageClient({ postId }: { postId: string }) {
   if (!postDetail || !postStatus) {
     return <div>게시글을 찾을 수 없습니다.</div>; // 디자인 필요
   }
-
-  useLogRecentItem(postDetail, useRecentPostsStore);
 
   const { content, ...postDetailHeader } = postDetail;
 
