@@ -1,8 +1,4 @@
 import { cookies } from "next/headers";
-import {
-  getPostDetailById,
-  getPostDetailStatusById,
-} from "@/components/domains/postDetail/postDetail.helpers";
 import PageClient from "@/components/domains/postDetail/PageClient";
 import { getCommentsByPostId } from "@/components/domains/postDetail/commentSection/comment.helper";
 import getQueryClient from "@/lib/utils/getQueryClient";
@@ -26,12 +22,12 @@ export default async function Page({
 
   await Promise.all([
     queryClient.prefetchQuery({
-      queryKey: ["post", id],
-      queryFn: () => getPostDetailById(id, requestHeaders),
+      queryKey: queryKeys.community.post(id),
+      queryFn: () => communityApi.getById(id, requestHeaders),
     }),
     queryClient.prefetchQuery({
-      queryKey: ["post", id, "status"],
-      queryFn: () => getPostDetailStatusById(id, requestHeaders),
+      queryKey: queryKeys.community.postStatus(id),
+      queryFn: () => communityApi.getStatus(id, requestHeaders),
     }),
     queryClient.prefetchQuery({
       queryKey: queryKeys.community.postCategoryPosts(id),

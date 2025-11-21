@@ -1,7 +1,7 @@
 import PageClient from "@/components/domains/post/PageClient";
-import { getPostDetailById } from "@/components/domains/postDetail/postDetail.helpers";
-import { getSession } from "@/lib/database/getSession";
+import { communityApi } from "@/lib/utils/api/community.api";
 import getQueryClient from "@/lib/utils/getQueryClient";
+import { queryKeys } from "@/lib/utils/queryKeys";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
@@ -12,11 +12,6 @@ export default async function Page({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const session = await getSession();
-
-  // if (!session) {
-  //   return <div>로그인이 필요한 서비스 입니다.</div>; //로그인 하지 않은경우 로그인 모달띄우기
-  // }
 
   const cookieStore = await cookies();
   const requestHeaders = {
@@ -25,11 +20,11 @@ export default async function Page({
   const queryClient = getQueryClient();
 
   const post = await queryClient.fetchQuery({
-    queryKey: ["post", id],
-    queryFn: () => getPostDetailById(id, requestHeaders),
+    queryKey: queryKeys.community.post(id),
+    queryFn: () => communityApi.getById(id, requestHeaders),
   });
 
-  if (!post || post.author.id !== session?.user?.id) {
+  if (!post || !post.data.isAuthor) {
     return notFound();
   }
 

@@ -1,10 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import PostForm, { TPostFormInitialData } from "./form";
 import Header from "./header";
-import { getPostDetailById } from "../postDetail/postDetail.helpers";
 import { useUserStore } from "@/lib/stores/useUserStore";
+import { useCommunityPostForEdit } from "@/lib/hooks/query/useCommunityQuery";
 
 interface IPostFormPageProps {
   type: "create" | "edit";
@@ -14,11 +13,7 @@ interface IPostFormPageProps {
 export default function PageClient({ type, postId }: IPostFormPageProps) {
   const { user, isLoading: isAuthLoading } = useUserStore();
 
-  const { data: post, isError } = useQuery({
-    queryKey: ["post", postId],
-    queryFn: () => getPostDetailById(postId!),
-    enabled: type === "edit" && !!postId && !!user,
-  });
+  const { data: post, isError } = useCommunityPostForEdit(postId, type);
 
   if (isAuthLoading || !user) {
     return <div>로그인이 필요한 서비스 입니다.</div>;

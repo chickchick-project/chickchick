@@ -97,6 +97,7 @@ export const queryKeys = {
   // Community
   community: {
     all: communityBase,
+    lists: () => [...communityBase, "posts"] as const,
     posts: (params: { searchKeyword: string; filters?: PostFilters }) =>
       [...communityBase, "posts", stableStringify(params)] as const,
     post: (id: string) => [...communityBase, "post", id] as const,

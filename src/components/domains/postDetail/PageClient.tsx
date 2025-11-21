@@ -3,16 +3,15 @@
 import CommentSection from "./commentSection";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
-import { useQuery } from "@tanstack/react-query";
-import {
-  getPostDetailById,
-  getPostDetailStatusById,
-} from "./postDetail.helpers";
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import CategoryPostListSection from "./categoryPostListSection";
-import { useCommunityPostCategoryPosts } from "@/lib/hooks/query/useCommunityQuery";
+import {
+  useCommunityPost,
+  useCommunityPostCategoryPosts,
+  useCommunityPostStatus,
+} from "@/lib/hooks/query/useCommunityQuery";
 
 export default function PageClient({ postId }: { postId: string }) {
   const {
@@ -20,21 +19,14 @@ export default function PageClient({ postId }: { postId: string }) {
     isPending: isPostDetailPending,
     isError: isPostDetailError,
     error: postDetailError,
-  } = useQuery({
-    queryKey: ["post", postId],
-    queryFn: () => getPostDetailById(postId),
-    staleTime: 1000 * 60 * 5,
-  });
+  } = useCommunityPost(postId);
 
   const {
     data: postStatus,
     isPending: isPostStatusPending,
     isError: isPostStatusError,
     error: postStatusError,
-  } = useQuery({
-    queryKey: ["post", postId, "status"],
-    queryFn: () => getPostDetailStatusById(postId),
-  });
+  } = useCommunityPostStatus(postId);
 
   const {
     data: categoryPosts,
@@ -43,14 +35,21 @@ export default function PageClient({ postId }: { postId: string }) {
     error: CategoryPostsError,
   } = useCommunityPostCategoryPosts(postId);
 
-  useLogRecentItem(postDetail, useRecentPostsStore);
   const error = postDetailError || postStatusError || CategoryPostsError;
+
   if (isPostDetailPending || isPostStatusPending || isCategoryPostsPending) {
     return <Spinner />;
   }
   if (isPostDetailError || isPostStatusError || isCategoryPostsError) {
     return <div>{error?.message}</div>;
   }
+
+  if (!postDetail || !postStatus) {
+    return <div>게시글을 찾을 수 없습니다.</div>; // 디자인 필요
+  }
+
+  useLogRecentItem(postDetail, useRecentPostsStore);
+
   const { content, ...postDetailHeader } = postDetail;
 
   return (

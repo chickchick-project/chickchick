@@ -34,6 +34,21 @@ export const useCommunityPost = (id: string) => {
   });
 };
 
+export const useCommunityPostForEdit = (
+  id: string | undefined,
+  type: "edit" | "create"
+) => {
+  return useQuery({
+    queryKey: queryKeys.community.post(id || ""),
+    queryFn: () => communityApi.getById(id!),
+    enabled: type === "edit" && !!id,
+    select: (response) => {
+      if (!response || !response.success) return null;
+      return response.data;
+    },
+  });
+};
+
 // 커뮤니티 게시글 상태 정보 조회
 export const useCommunityPostStatus = (id: string) => {
   return useQuery({
