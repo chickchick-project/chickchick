@@ -1,15 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import { ICommunityListItemMock } from ".";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CategoryPostList from "./CategoryPostList";
 import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
+import { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
 
 interface IPostListMobileSwiperProps {
-  posts: ICommunityListItemMock[];
+  posts: ApiPostDetailCategoryPostResponse[] | [];
   currentPostId: string;
 }
 
