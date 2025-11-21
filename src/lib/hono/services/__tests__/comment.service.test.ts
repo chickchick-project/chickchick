@@ -471,7 +471,7 @@ describe("Comment Service", () => {
 
   describe("에러 처리", () => {
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      const { ids, mockPost, mockUser, createCommentPayload } = getTestData();
+      const { mockPost, mockUser, createCommentPayload } = getTestData();
 
       vi.mocked(prisma.post.findUnique).mockResolvedValue(mockPost as never);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser as never);

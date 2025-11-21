@@ -86,13 +86,14 @@ describe("Point Service - validateTimestamp", () => {
     it("정확히 경계값에서 ±1ms 검증", () => {
       const boundary = FIVE_MINUTES;
 
-      expect(validateTimestamp(new Date(Date.now() - boundary))).toBe(false); // 경계값 (5분 정확히)
+      expect(validateTimestamp(new Date(Date.now() - boundary))).toBe(false); // 5분 정확히 (유효하지 않음)
+      expect(validateTimestamp(new Date(Date.now() + boundary))).toBe(false); // 5분 정확히 (미래, 유효하지 않음)
       expect(validateTimestamp(new Date(Date.now() - (boundary + 1)))).toBe(
         false
-      ); // 경계값 + 1ms
+      ); // 5분 + 1ms (유효하지 않음)
       expect(validateTimestamp(new Date(Date.now() - (boundary - 1)))).toBe(
         true
-      ); // 경계값 - 1ms
+      ); // 5분 - 1ms (유효함, 4분 59초 999ms)
     });
   });
 });
