@@ -251,7 +251,6 @@ export async function postPhotoCollectionService(
       },
       include: { image: true },
     });
-    // console.log("existingCollection", existingCollection);
     if (existingCollection?.image) {
       await deleteImageByUrl(
         COLLECTION_BUCKET_NAME,
@@ -266,7 +265,6 @@ export async function postPhotoCollectionService(
       format: payload.imageInfo.format,
     };
 
-    // // 3. DB 저장
     const resultCollection = await prisma.userCollection.upsert({
       where: {
         user_collections_user_id_perfume_id_key: {
@@ -291,11 +289,8 @@ export async function postPhotoCollectionService(
     });
 
     return serviceSuccess(resultCollection);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      return serviceInternalError(err.message);
-    }
-    return serviceInternalError("알 수 없는 오류가 발생했습니다.");
+  } catch (error) {
+    return serviceInternalError(error);
   }
 }
 
@@ -442,7 +437,6 @@ export async function getMyLikedPerfumesService(
       include: { perfume: { include: perfumeBaseInclude } },
       orderBy: { createdAt: "desc" },
     });
-    // 5. 사용자가 원하는 '향수' 데이터를 반환
     return serviceSuccess(likes.map((like) => like.perfume));
   } catch (error) {
     return serviceInternalError(error);
@@ -462,7 +456,6 @@ export async function getMyLikedPostsService(
       include: { post: { include: postIncludeArgs } },
       orderBy: { createdAt: "desc" },
     });
-    // 5. 사용자가 원하는 '게시글' 데이터를 반환
     return serviceSuccess(likes.map((like) => like.post));
   } catch (error) {
     return serviceInternalError(error);
@@ -525,15 +518,9 @@ export async function updateMyProfileService(
       await deleteImageByUrl(PROFILE_BUCKET_NAME, user.imageUrl);
     }
     // undefined 값 제거
-    let cleanedData;
-    try {
-      cleanedData = ApiUpdateMyProfileRequestSchema.partial()
-        .strip()
-        .parse(updateData);
-    } catch (parseError) {
-      console.error("[updateMyProfileService] Schema parse 에러:", parseError);
-      throw parseError;
-    }
+    const cleanedData = ApiUpdateMyProfileRequestSchema.partial()
+      .strip()
+      .parse(updateData);
 
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -560,7 +547,6 @@ export async function updateMyProfileService(
       nextLevelPoints,
     });
   } catch (error) {
-    console.error("[updateMyProfileService] 에러 발생:", error);
     return serviceInternalError(error);
   }
 }

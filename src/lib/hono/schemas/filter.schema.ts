@@ -25,10 +25,16 @@ export const AvailableFiltersResponseSchema = z.object({
   brands: z.array(ApiFilterOptionSchema),
 });
 
-// API 응답 스키마
+// DB 응답 스키마
 export const FilterTotalCountSchema = z.object({
   category: z.string(),
   total_count: z.number().int(),
+});
+
+// API 응답 스키마
+export const ApiFilterTotalCountSchema = z.object({
+  category: z.string(),
+  totalCount: z.number().int(),
 });
 
 export const FilterRequestBodySchema = SearchPostBodySchema.omit({
@@ -37,7 +43,7 @@ export const FilterRequestBodySchema = SearchPostBodySchema.omit({
 });
 
 export const AvailableFiltersTotalResponseSchema = z.array(
-  FilterTotalCountSchema
+  ApiFilterTotalCountSchema
 );
 
 export type RawFilterOption = z.infer<typeof FilterOptionSchema>;

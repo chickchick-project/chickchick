@@ -20,7 +20,6 @@ const ALLOWED_IMAGE_MIME_TYPES = [
   "image/jpeg",
   "image/png",
   "image/webp",
-  "image/gif",
 ] as const;
 
 // 최대 파일 크기: 5MB
@@ -52,7 +51,7 @@ export async function uploadImage(
     )
   ) {
     return serviceBadRequest(
-      "지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP, GIF만 가능)"
+      "지원하지 않는 이미지 형식입니다. (JPEG, PNG, WebP만 가능)"
     );
   }
 

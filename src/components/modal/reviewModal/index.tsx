@@ -35,39 +35,27 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
   // 리뷰 제출 로직
   const { onSubmit } = useReviewSubmit(closeModal);
 
-  const getInitialData = () => {
-    return {
-      usageStatus: "NOT_USED_YET" as PerfumeUsageStatus,
-      content: "",
-      feeling: undefined,
-      longevity: undefined,
-      sillage: undefined,
-      genderTone: undefined,
-      season: undefined,
-      timeOfDay: undefined,
-      pricePerception: undefined,
-    };
-  };
-
   const defaultValues = useMemo((): CreateReviewInput => {
-    const initialData = getInitialData();
-
     return {
-      content: initialData.content,
-      usageStatus: initialData.usageStatus,
+      content: "",
+      usageStatus: "NOT_USED_YET" as PerfumeUsageStatus,
       attributes: {
-        feeling: initialData.feeling,
-        longevity: initialData.longevity,
-        sillage: initialData.sillage,
-        genderTone: initialData.genderTone,
-        season: initialData.season || [],
-        timeOfDay: initialData.timeOfDay,
-        pricePerception: initialData.pricePerception,
+        feeling: "",
+        longevity: "",
+        sillage: "",
+        genderTone: "",
+        season: [],
+        timeOfDay: "",
+        pricePerception: "",
       },
     };
   }, []);
 
-  if (!user) alert("로그인 후 리뷰 작성이 가능합니다.");
+  if (!user) {
+    alert("로그인 후 리뷰 작성이 가능합니다.");
+    closeModal();
+    return;
+  }
   return (
     <ModalContainer
       className="tablet:w-[688px] tablet:h-[620px] w-full h-full absolute bottom-0 left-0"

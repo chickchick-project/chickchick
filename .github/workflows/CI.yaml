@@ -40,6 +40,12 @@ jobs:
       - name: Install dependencies
         run: yarn install --immutable
 
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Run tests
+        run: yarn test
+
       - name: Build
         run: yarn build
         env:

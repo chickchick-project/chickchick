@@ -35,15 +35,21 @@ export const PaginatedApiReviewResponseSchema = PaginatedResponseSchema(
   ApiReviewResponseSchema
 );
 
+/**
+ * 리뷰 속성 스키마
+ */
 export const ReviewAttributesInputSchema = z.object({
-  feeling: z.string().optional(),
-  longevity: z.string().optional(),
-  sillage: z.string().optional(),
-  genderTone: z.string().optional(),
-  season: z.array(z.string()).optional(),
-  timeOfDay: z.string().optional(),
-  pricePerception: z.string().optional(),
+  feeling: z.string().min(1, "이 향수에 대한 느낌을 선택해주세요."),
+  longevity: z.string().min(1, "지속시간을 선택해주세요."),
+  sillage: z.string().min(1, "잔향감을 선택해주세요."),
+  genderTone: z.string().min(1, "향수가 떠오르게 하는 이미지를 선택해주세요."),
+  season: z.array(z.string()).min(1, "계절을 최소 1개 이상 선택해야 합니다."),
+  timeOfDay: z.string().min(1, "어울리는 시간대를 선택해주세요."),
+  pricePerception: z.string().min(1, "가격에 대한 의견을 선택해주세요."),
 });
+/**
+ * 리뷰 생성 스키마
+ */
 
 export const CreateReviewInputSchema = ReviewSchema.pick({
   content: true,
@@ -51,8 +57,17 @@ export const CreateReviewInputSchema = ReviewSchema.pick({
 }).extend({
   attributes: ReviewAttributesInputSchema,
 });
-
-export const UpdateReviewInputSchema = CreateReviewInputSchema.partial();
+/**
+ * 리뷰 수정 스키마
+ */
+export const UpdateReviewInputSchema = ReviewSchema.pick({
+  content: true,
+  usageStatus: true,
+})
+  .partial()
+  .extend({
+    attributes: ReviewAttributesInputSchema.partial().optional(),
+  });
 
 export type PaginatedApiReviewResponse = z.infer<
   typeof PaginatedApiReviewResponseSchema

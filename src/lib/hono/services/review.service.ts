@@ -162,6 +162,7 @@ export async function createReviewService(
     }
 
     const selectionIds = getOptionIdsFromAttributes(attributes);
+
     // 트랜잭션 시작
     const newReview = await prisma.$transaction(async (tx) => {
       // 1. 핵심 Review 레코드 생성
@@ -170,14 +171,12 @@ export async function createReviewService(
       });
 
       // 2. ReviewAttributeSelection 레코드들 생성
-      if (selectionIds.length > 0) {
-        await tx.reviewAttributeSelection.createMany({
-          data: selectionIds.map((optionId) => ({
-            reviewId: createdReview.id,
-            attributeOptionId: optionId,
-          })),
-        });
-      }
+      await tx.reviewAttributeSelection.createMany({
+        data: selectionIds.map((optionId) => ({
+          reviewId: createdReview.id,
+          attributeOptionId: optionId,
+        })),
+      });
 
       // 3. 완성된 리뷰 데이터를 조회하여 반환
       return tx.review.findUniqueOrThrow({
@@ -223,7 +222,9 @@ export async function updateReviewService(
 
       if (attributes) {
         await tx.reviewAttributeSelection.deleteMany({ where: { reviewId } });
-        const selectionIds = getOptionIdsFromAttributes(attributes);
+        const selectionIds = getOptionIdsFromAttributes(
+          attributes as CreateReviewInput["attributes"]
+        );
 
         if (selectionIds.length > 0) {
           await tx.reviewAttributeSelection.createMany({
