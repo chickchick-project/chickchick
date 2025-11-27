@@ -5,6 +5,10 @@ import { LikeIcon } from "@/components/commons/interactions/icons/LikeIcon";
 import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
 import { Interactions } from "@/components/commons/interactions";
 import usePostInteractionMutation from "./usePostInteractionMutation";
+import { useRef } from "react";
+import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
+import ShareDropdownMenu from "@/components/commons/dropdown/ShareDropdownMenu";
+import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
 
 interface IPostInteractionsProps {
   isLiked: boolean;
@@ -21,6 +25,11 @@ export default function PostInteractions({
     usePostInteractionMutation(postId);
   const { isPending: isBookmarkPending } = toggleBookmarkMutation;
   const { isPending: isLikePending } = toggleLikeMutation;
+
+  const dropdownId = "shareDropdown";
+  const { isOpen, open, close } = useVisibilityStore();
+  const shareDropdownRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(shareDropdownRef, () => close(dropdownId));
 
   const interactions = [
     {
@@ -41,15 +50,21 @@ export default function PostInteractions({
     },
     {
       type: "share",
-      onClick: () => alert("공유!"),
+      onClick: () => open(dropdownId),
       label: "공유",
       icon: <ShareIcon />,
     },
   ];
 
   return (
-    <>
+    <div className="relative">
       <Interactions items={interactions} />
-    </>
+      {isOpen(dropdownId) && (
+        <ShareDropdownMenu
+          ref={shareDropdownRef}
+          closeMenu={() => close(dropdownId)}
+        />
+      )}
+    </div>
   );
 }
