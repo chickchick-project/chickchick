@@ -1,0 +1,33 @@
+import kakaoShare from "@/lib/utils/share/kakaoShare";
+import handleShare from "@/lib/utils/share/linkShare";
+import { Option } from "../../../lib/constants/options";
+import DropdownMenu from "./DropdownMenu";
+export default function ShareDropdownMenu({
+  closeMenu,
+  ref,
+}: {
+  closeMenu: () => void;
+  ref: React.RefObject<HTMLDivElement>;
+}) {
+  const shareOptions: Option[] = [
+    { label: "카카오톡 공유", value: "kakao" },
+    { label: "링크 복사", value: "link" },
+  ];
+
+  const handleSelectOption = (option: Option) => {
+    if (option.value === "kakao") {
+      kakaoShare();
+    } else if (option.value === "link") {
+      handleShare();
+    }
+    closeMenu();
+  };
+  return (
+    <div ref={ref} className="absolute right-0 top-full mt-1 w-32 z-50">
+      <DropdownMenu
+        options={shareOptions}
+        handleSelectOption={handleSelectOption}
+      />
+    </div>
+  );
+}

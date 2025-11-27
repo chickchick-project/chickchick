@@ -5,7 +5,35 @@ import getQueryClient from "@/lib/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/utils/queryKeys";
 import { communityApi } from "@/lib/utils/api/community.api";
+import { Metadata } from "next";
+import { generateSeo } from "@/lib/utils/generateSeo";
+type Props = {
+  params: Promise<{ id: string }>;
+};
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
 
+  try {
+    const post = await communityApi.getById(id);
+    if (!post || !post.data) {
+      return generateSeo({
+        title: "게시글 없음",
+        description: "존재하지 않거나 삭제된 게시글입니다.",
+      });
+    }
+    return generateSeo({
+      title: post.data.title,
+      description: post.data.contentText,
+      image: post.data.thumbnailUrl,
+    });
+  } catch (error) {
+    console.error("메타데이터 생성 중 오류 발생:", error);
+    return generateSeo({
+      title: "커뮤니티",
+      description: "chickchick 커뮤니티 페이지입니다.",
+    });
+  }
+}
 export default async function Page({
   params,
 }: {
