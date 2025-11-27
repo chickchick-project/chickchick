@@ -27,6 +27,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       image: post.data.thumbnailUrl,
     });
   } catch (error) {
+    console.error("메타데이터 생성 중 오류 발생:", error);
     return generateSeo({
       title: "커뮤니티",
       description: "chickchick 커뮤니티 페이지입니다.",
