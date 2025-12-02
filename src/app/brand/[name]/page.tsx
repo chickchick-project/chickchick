@@ -7,6 +7,7 @@ import { BrandDetailInfo } from "@/components/domains/brandDetail/info";
 import { PageClient } from "@/components/domains/brandDetail/perfumes/PageClient";
 import { BrandDetailSearchBar } from "@/components/domains/brandDetail/searchBar";
 import { notFound } from "next/navigation";
+import { BrandMap } from "@/components/domains/brandDetail/map";
 
 export default async function BrandDetailPage({
   params,
@@ -58,7 +59,7 @@ export default async function BrandDetailPage({
             brandStores={brandStores}
           />
           <BrandDetailImage images={brandImages} />
-          {/* <BrandMap /> */}
+          <BrandMap />
           <PageClient brandName={brandData.nameEn ?? ""} />
         </div>
       </HydrationBoundary>

@@ -54,7 +54,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           prevEl: ".custom-prev",
         }}
         modules={[Pagination, Autoplay, Navigation]}
-        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        // autoplay={{ delay: 5000, disableOnInteraction: false }}
         onSlideChange={(swiper) => {
           setIsBeginning(swiper.isBeginning);
           setIsEnd(swiper.isEnd);
@@ -69,16 +69,16 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
             src={images.src}
             alt={images.alt}
             width={1200}
-            height={400}
+            height={500}
             quality={100}
             placeholder="blur"
             blurDataURL="/images/BlurShimmer.svg"
             className="rounded-xl"
           />
         </SwiperSlide>
-        <SwiperSlide className="pc:px-0 px-5">
+        {/* <SwiperSlide className="pc:px-0 px-5">
           <BrandMap />
-        </SwiperSlide>
+        </SwiperSlide> */}
       </Swiper>
       <div
         className={`custom-prev absolute tablet:left-4 left-6 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${
