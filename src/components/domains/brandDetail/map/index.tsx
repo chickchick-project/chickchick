@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import Script from "next/script";
 import { useParams } from "next/navigation";
 
-interface Store {
+export interface Store {
   name: string;
   address: string;
   roadAddress?: string;
@@ -13,6 +13,7 @@ interface Store {
   y: string;
   category?: string;
   link?: string;
+  distance?: number;
 }
 
 export const BrandMap = () => {

@@ -8,7 +8,6 @@ import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import Image from "next/image";
 import { useState } from "react";
 import ICONS from "@/lib/constants/icons";
-import { BrandMap } from "../map";
 
 interface IBrandDetailImageProps {
   images: {
