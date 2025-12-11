@@ -49,7 +49,7 @@ export function PostCard({
   ];
   return (
     <article
-      className={`border border-gray-200 rounded-lg p-6 text-body-2 flex flex-col gap-3 tablet:max-w-full h-full shadow-card ${cardStyle}`}
+      className={`mobile:border-t-0 mobile:border-x-0 border border-gray-200 mobile:rounded-none rounded-lg p-6 text-body-2 flex flex-col gap-3 mobile:w-full tablet:max-w-full h-full tablet:shadow-card ${cardStyle}`}
     >
       {/* 헤더 */}
       {isCategoryVisible && (

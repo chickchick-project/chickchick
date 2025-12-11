@@ -42,7 +42,7 @@ export function Header({
         />
       </header>
       <nav className="flex flex-col items-center gap-5 w-full max-w-[1200px]">
-        <div className="tablet:w-[460px]">
+        <div className="mobile:w-full mobile:px-5 tablet:w-[460px]">
           <BoardTabBar
             boards={boards}
             selectedTab={selectedTab}
@@ -50,7 +50,7 @@ export function Header({
           />
         </div>
         <div
-          className={`flex w-full items-center ${
+          className={`flex w-full mobile:px-5 items-center ${
             !isBestPostTab
               ? "justify-end tablet:justify-between"
               : "justify-end"
