@@ -106,7 +106,7 @@ export default function PageClient() {
 
   const isIdle = !isLoading && uniquePostData.length === 0;
   return (
-    <div className="px-4 w-full flex flex-col  gap-5">
+    <div className="mobile:p-0 px-4 w-full flex flex-col gap-5">
       <Header
         boards={boards}
         selectedTab={selectedTab}
@@ -117,7 +117,7 @@ export default function PageClient() {
         handleSearchChange={(e) => setInputValue(e.target.value)}
         handleSearchSubmit={handleSearchSubmit}
       />
-      <main className="pb-[280px] tablet:max-w-[1200px]">
+      <main className="flex-1 h-full mobile:pb-0 pb-[280px] tablet:px-5 mobile:w-full pc:max-w-[1200px]">
         <CommunityCards
           postData={uniquePostData}
           selectedTab={selectedTab}

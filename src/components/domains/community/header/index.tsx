@@ -31,7 +31,7 @@ export function Header({
   const isBestPostTab = selectedTab === "BEST";
   return (
     <>
-      <header className="w-full flex flex-col items-center gap-10 pt-10 pb-5 tablet:py-10">
+      <header className="w-full flex flex-col items-center gap-10 pt-10 pb-5 tablet:py-10 px-5 pc:px-0">
         <h1 className="text-headline-1 font-bold text-black-100 hidden tablet:block">
           커뮤니티
         </h1>
@@ -42,7 +42,7 @@ export function Header({
         />
       </header>
       <nav className="flex flex-col items-center gap-5 w-full max-w-[1200px]">
-        <div className="tablet:w-[460px]">
+        <div className="mobile:w-full mobile:px-5 tablet:w-[460px]">
           <BoardTabBar
             boards={boards}
             selectedTab={selectedTab}
@@ -50,7 +50,7 @@ export function Header({
           />
         </div>
         <div
-          className={`flex w-full items-center ${
+          className={`flex w-full mobile:px-5 items-center ${
             !isBestPostTab
               ? "justify-end tablet:justify-between"
               : "justify-end"

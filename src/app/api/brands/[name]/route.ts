@@ -1,5 +1,17 @@
 // app/api/brands/[name]/route.ts
+import { Store } from "@/components/domains/brandDetail/map";
 import { NextRequest, NextResponse } from "next/server";
+
+interface NaverLocalItem {
+  title: string;
+  address: string;
+  roadAddress: string;
+  telephone: string;
+  mapx: string;
+  mapy: string;
+  category: string;
+  link: string;
+}
 
 export async function GET(
   request: NextRequest,
@@ -57,7 +69,7 @@ export async function GET(
         errorDetails = errorJson.errorCode
           ? `${errorJson.errorCode}: ${errorJson.errorMessage}`
           : errorBody;
-      } catch (e) {
+      } catch {
         // JSON 파싱 실패 시 원본 텍스트 사용
       }
 
@@ -126,7 +138,7 @@ export async function GET(
     }
 
     // 데이터 정제
-    const stores = data.items.map((item: any, index: number) => {
+    const stores = data.items.map((item: NaverLocalItem, index: number) => {
       console.log(`    - Item ${index + 1}:`, item.title?.substring(0, 30));
       return {
         name: item.title?.replace(/<[^>]*>/g, "") || "Unknown",
@@ -145,7 +157,7 @@ export async function GET(
       const userLat = parseFloat(y);
       const userLng = parseFloat(x);
 
-      stores.forEach((store: any) => {
+      stores.forEach((store: Store) => {
         const storeLat = parseInt(store.y) / 10000000;
         const storeLng = parseInt(store.x) / 10000000;
 
@@ -162,7 +174,9 @@ export async function GET(
         store.distance = Math.round(R * c * 1000); // meters
       });
 
-      stores.sort((a: any, b: any) => (a.distance || 0) - (b.distance || 0));
+      stores.sort(
+        (a: Store, b: Store) => (a.distance || 0) - (b.distance || 0)
+      );
     }
 
     return NextResponse.json({

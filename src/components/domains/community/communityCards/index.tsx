@@ -26,7 +26,7 @@ export default function CommunityCards({
           검색 결과가 없습니다.
         </div>
       ) : (
-        <div className="grid grid-col-1 tablet:grid-cols-2 tablet:gap-y-5 tablet:gap-x-5 pc:gap-x-10 max-w-[1200px]">
+        <div className="grid mobile:grid-col-1 tablet:grid-cols-2 tablet:gap-y-5 tablet:gap-x-5 pc:gap-x-10 max-w-[1200px]">
           {postData.length > 0 &&
             postData.map((item) => (
               <Link
@@ -42,9 +42,9 @@ export default function CommunityCards({
             ))}
         </div>
       )}
-      <div ref={moreRef} className="py-10 text-center">
+      <div ref={moreRef} className="mobile:py-0 py-10 text-center flex-1">
         {isLoading && (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-center items-center h-full">
             <Spinner />
           </div>
         )}
