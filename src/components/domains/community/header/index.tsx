@@ -31,7 +31,7 @@ export function Header({
   const isBestPostTab = selectedTab === "BEST";
   return (
     <>
-      <header className="w-full flex flex-col items-center gap-10 pt-10 pb-5 tablet:py-10">
+      <header className="w-full flex flex-col items-center gap-10 pt-10 pb-5 tablet:py-10 px-5 pc:px-0">
         <h1 className="text-headline-1 font-bold text-black-100 hidden tablet:block">
           커뮤니티
         </h1>

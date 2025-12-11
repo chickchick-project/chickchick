@@ -117,7 +117,7 @@ export default function PageClient() {
         handleSearchChange={(e) => setInputValue(e.target.value)}
         handleSearchSubmit={handleSearchSubmit}
       />
-      <main className="flex-1 h-full mobile:pb-0 pb-[280px] mobile:w-full tablet:max-w-[1200px]">
+      <main className="flex-1 h-full mobile:pb-0 pb-[280px] tablet:px-5 mobile:w-full pc:max-w-[1200px]">
         <CommunityCards
           postData={uniquePostData}
           selectedTab={selectedTab}
