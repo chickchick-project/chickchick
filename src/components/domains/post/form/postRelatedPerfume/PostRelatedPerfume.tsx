@@ -1,24 +1,27 @@
-import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFilled";
-import SubTitleLabel from "../element/SubTitleLabel";
-import InputBase from "@/components/commons/input";
-import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
-import PerfumeResultItem from "./PerfumeResultItem";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import PerfumeCard from "@/components/commons/card/perfumeCard";
-import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
-import useDebounce from "@/lib/hooks/useDebounce";
 import { useFormContext } from "react-hook-form";
-import { searchPerfumesByName } from "../../post.helpers";
-import usePerfumeSearch from "./usePerfumeSearch";
-import { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
 
-interface IPostRelatedPerfumeProps {
+import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFilled";
+import PerfumeCard from "@/components/commons/card/perfumeCard";
+import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
+import InputBase from "@/components/commons/input";
+import { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
+import useDebounce from "@/lib/hooks/useDebounce";
+import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
+import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
+import { searchApi } from "@/lib/utils/api/search.api";
+
+import SubTitleLabel from "../element/SubTitleLabel";
+import PerfumeResultItem from "./PerfumeResultItem";
+import usePerfumeSearch from "./usePerfumeSearch";
+
+interface PostRelatedPerfumeProps {
   initialPerfumes?: PerfumeForPost[] | [];
 }
+
 export default function PostRelatedPerfume({
   initialPerfumes,
-}: IPostRelatedPerfumeProps) {
+}: PostRelatedPerfumeProps) {
   const { setValue } = useFormContext();
   const {
     searchQuery,
@@ -63,8 +66,13 @@ export default function PostRelatedPerfume({
       }
       setIsLoading(true);
       try {
-        const response = await searchPerfumesByName(debouncedSearchQuery);
-        setSearchResults(response.data);
+        const response = await searchApi.perfumes({
+          searchText: debouncedSearchQuery,
+          limit: 50,
+        });
+        if (response && response.success && "data" in response) {
+          setSearchResults(response.data.data);
+        }
       } catch (error) {
         console.error("향수 검색 실패:", error);
         alert("향수를 불러오는 데 실패했습니다.");

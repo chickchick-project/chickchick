@@ -9,13 +9,15 @@ import {
   DeleteCommentResponse,
 } from "@/lib/hono/schemas/comment.schema";
 
+export const COMMENT_URL = `/comments`;
+
 export const commentApi = {
   /**
    * 댓글 목록 조회
    */
   list: (postId: string) => {
-    return apiClient.get<ApiSuccessResponse<CommentResponse>>(
-      `/${postId}`
+    return apiClient.get<ApiSuccessResponse<CommentResponse[]>>(
+      `${COMMENT_URL}/${postId}`
     );
   },
 
@@ -24,7 +26,7 @@ export const commentApi = {
    */
   listWithCursor: (postId: string, params?: GetCommentQuery) => {
     return apiClient.get<ApiSuccessResponse<PaginatedCommentResponse>>(
-      `/${postId}/cursor`,
+      `${COMMENT_URL}/${postId}/cursor`,
       params
     );
   },
@@ -33,20 +35,20 @@ export const commentApi = {
    * 댓글 생성
    */
   create: (postId: string, data: CreateCommentBody) => {
-    return apiClient.post<CreateCommentBody, ApiSuccessResponse<CommentResponse>>(
-      `/${postId}`,
-      data
-    );
+    return apiClient.post<
+      CreateCommentBody,
+      ApiSuccessResponse<CommentResponse>
+    >(`${COMMENT_URL}/${postId}`, data);
   },
 
   /**
    * 댓글 수정
    */
   update: (commentId: string, data: UpdateCommentBody) => {
-    return apiClient.patch<UpdateCommentBody, ApiSuccessResponse<CommentResponse>>(
-      `/${commentId}`,
-      data
-    );
+    return apiClient.patch<
+      UpdateCommentBody,
+      ApiSuccessResponse<CommentResponse>
+    >(`${COMMENT_URL}/${commentId}`, data);
   },
 
   /**
@@ -54,7 +56,7 @@ export const commentApi = {
    */
   delete: (commentId: string) => {
     return apiClient.delete<ApiSuccessResponse<DeleteCommentResponse>>(
-      `/${commentId}`
+      `${COMMENT_URL}/${commentId}`
     );
   },
 };
