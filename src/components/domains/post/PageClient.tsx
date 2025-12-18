@@ -1,16 +1,17 @@
 "use client";
 
-import PostForm, { TPostFormInitialData } from "./form";
-import Header from "./header";
-import { useUserStore } from "@/lib/stores/useUserStore";
 import { useCommunityPostForEdit } from "@/lib/hooks/query/useCommunityQuery";
+import { useUserStore } from "@/lib/stores/useUserStore";
 
-interface IPostFormPageProps {
+import PostForm, { PostFormInitialData } from "./form";
+import Header from "./header";
+
+interface PostFormPageProps {
   type: "create" | "edit";
   postId?: string;
 }
 
-export default function PageClient({ type, postId }: IPostFormPageProps) {
+export default function PageClient({ type, postId }: PostFormPageProps) {
   const { user, isLoading: isAuthLoading } = useUserStore();
 
   const { data: post, isError } = useCommunityPostForEdit(postId, type);
@@ -21,7 +22,7 @@ export default function PageClient({ type, postId }: IPostFormPageProps) {
 
   if (isError) return <div>데이터를 불러오는 데 실패했습니다.</div>;
 
-  const initialData: TPostFormInitialData | undefined =
+  const initialData: PostFormInitialData | undefined =
     type === "edit" && post
       ? {
           category: post.category,

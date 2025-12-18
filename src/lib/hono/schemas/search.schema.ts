@@ -9,22 +9,36 @@ import {
   PaginatedResponseSchema,
 } from "./common.schema";
 
-// GET 요청의 쿼리 파라미터 스키마
+/**
+ * 검색 GET 요청 쿼리 파라미터 스키마
+ * @description 기본 검색 요청 시 사용되는 쿼리 파라미터 (검색어, 페이지네이션)
+ */
 export const SearchGetQuerySchema = CursorPaginationSchema.extend({
   searchText: z.string().optional().default(""),
 });
 
-// POST 요청의 Body 스키마
+/**
+ * 검색 POST 요청 바디 스키마
+ * @description 필터링이 포함된 향수 검색 요청 시 사용되는 바디 파라미터
+ */
 export const SearchPostBodySchema = SearchGetQuerySchema.extend({
   brandFilter: z.array(z.string().uuid()).optional(),
   notesFilter: z.array(z.string().uuid()).optional(),
   accordsFilter: z.array(z.string().uuid()).optional(),
 });
 
+/**
+ * 페이지네이션된 검색 결과 응답 스키마
+ * @description 커서 기반 페이지네이션이 적용된 향수 검색 결과 응답
+ */
 export const PaginatedSearchResponseSchema = PaginatedResponseSchema(
   ApiPerfumeSimpleResponseSchema
 );
 
+/**
+ * Supabase 향수 스키마
+ * @description Supabase에서 반환되는 향수 검색 결과의 원시 데이터 형식
+ */
 export const SupabasePerfumeSchema = z.object({
   perfume_id: z.string().uuid(),
   perfume_name_en: z.string(),

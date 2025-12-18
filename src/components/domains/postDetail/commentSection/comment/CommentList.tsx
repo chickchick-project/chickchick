@@ -1,11 +1,12 @@
 "use client";
 
-import { ButtonFilledGrayLFixed } from "@/components/commons/button/ButtonFilled";
-import CommentListItem from "./CommentListItem";
-import { ICommentIListProps, TCommentActionState } from "./postComment.types";
 import { useState } from "react";
+
 import ArrowIcon from "@/components/commons/icons/arrowIcon";
-import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import { ButtonFilledGrayLFixed } from "@/components/commons/button/ButtonFilled";
+
+import { CommentActionState, CommentListProps } from "./postComment.types";
+import CommentListItem from "./CommentListItem";
 
 export default function CommentList({
   commentList,
@@ -13,41 +14,41 @@ export default function CommentList({
   hasNextCursor,
   isLoadingComments,
   postAuthorId,
-}: ICommentIListProps) {
+}: CommentListProps) {
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [replyingCommentId, setReplyingCommentId] = useState<string | null>(
     null
   );
 
-  const commentActionState: TCommentActionState = {
+  const commentActionState: CommentActionState = {
     editingCommentId,
     setEditingCommentId,
     replyingCommentId,
     setReplyingCommentId,
   };
+
   return (
     <section className="flex flex-col items-center">
       <ul className="flex flex-col w-full">
-        {commentList.length > 0 &&
-          commentList.map((comment: CommentResponse) => (
-            <CommentListItem
-              key={comment.id}
-              postAuthorId={postAuthorId}
-              commentActionState={commentActionState}
-              comment={comment}
-            />
-          ))}
+        {commentList.map((comment) => (
+          <CommentListItem
+            key={comment.id}
+            postAuthorId={postAuthorId}
+            commentActionState={commentActionState}
+            comment={comment}
+          />
+        ))}
       </ul>
       {hasNextCursor && (
         <ButtonFilledGrayLFixed
-          disabled={isLoadingComments || !hasNextCursor}
+          disabled={isLoadingComments}
           onClick={onLoadMore}
           iconTrailing={
             <ArrowIcon color="gray-100" size="16" direction="down" />
           }
           className="w-full tablet:w-[280px] mt-5 h-12"
         >
-          더보기
+          {isLoadingComments ? "로딩 중..." : "더보기"}
         </ButtonFilledGrayLFixed>
       )}
     </section>

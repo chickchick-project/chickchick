@@ -14,6 +14,7 @@ import { brandDetailSelect, parseMapLocation } from "../utils/prisma.utils";
 /**
  * 모든 브랜드 목록 조회
  * - 브랜드 필터링, 검색 등에 사용
+ * @returns 모든 브랜드의 간단 응답 목록을 담은 ServiceResult
  */
 export async function getAllBrandsService(): Promise<
   ServiceResult<ApiBrandSimpleResponse[]>
@@ -44,6 +45,8 @@ export async function getAllBrandsService(): Promise<
 
 /**
  * 브랜드 ID로 상세 조회
+ * @param brandId 조회할 브랜드 ID
+ * @returns 브랜드 상세 정보를 담은 ServiceResult
  */
 export async function getBrandByIdService(
   brandId: string
@@ -78,6 +81,8 @@ export async function getBrandByIdService(
 /**
  * 브랜드 한글 이름으로 상세 조회
  * - brand/[name] 페이지에서 사용
+ * @param nameKo 조회할 브랜드의 한글 이름
+ * @returns 브랜드 상세 정보를 담은 ServiceResult
  */
 export async function getBrandByNameService(
   nameKo: string

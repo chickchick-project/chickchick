@@ -1,9 +1,11 @@
 "use client";
-import { ActionItem, Actions } from "@/components/commons/actions";
-import { useRouter } from "next/navigation";
-import usePostMutation from "../../post/usePostMutation";
 
-interface IPostActions {
+import { useRouter } from "next/navigation";
+
+import { ActionItem, Actions } from "@/components/commons/actions";
+import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
+
+interface PostActionsProps {
   section?: "header" | "content";
   postId: string;
 }
@@ -11,7 +13,7 @@ interface IPostActions {
 export default function PostActions({
   section = "header",
   postId,
-}: IPostActions) {
+}: PostActionsProps) {
   const { deleteMutation } = usePostMutation(postId);
   const router = useRouter();
 

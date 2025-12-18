@@ -9,6 +9,16 @@ import { PaginatedResponseSchema } from "./common.schema";
 import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
 import { ApiReviewAuthorResponseSchema } from "./user.schema";
 
+/**
+ * 리뷰 ID 경로 파라미터 스키마
+ */
+export const ReviewIdParamSchema = z.object({
+  reviewId: ReviewSchema.shape.id.openapi({
+    param: { name: "reviewId", in: "path" },
+    example: "b1c2d3e4-f5a6-7890-1234-abcdef567890",
+  }),
+});
+
 const FullAttributeSelectionSchema = ReviewAttributeSelectionSchema.extend({
   option: AttributeOptionSchema.extend({
     attribute: ReviewAttributeSchema,

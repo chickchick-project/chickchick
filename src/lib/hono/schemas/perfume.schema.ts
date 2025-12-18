@@ -53,9 +53,7 @@ export const ApiPerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
  * 향수 상세 응답 스키마
  */
 export const ApiPerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
-  accordMappings: z.array(
-    z.object({ accord: ApiPerfumeAccordResponseSchema })
-  ),
+  accordMappings: z.array(z.object({ accord: ApiPerfumeAccordResponseSchema })),
   noteMappings: z.array(
     z.object({ note: ApiPerfumeNoteResponseSchema, noteStage: z.string() })
   ),
@@ -70,16 +68,6 @@ export const ApiPerfumeDetailResponseSchema = PerfumeBaseResponseSchema.extend({
     collectedByUsers: z.number().int(),
   }),
 }).openapi("ApiPerfumeDetailResponse");
-
-/**
- * 향수 ID 파라미터 스키마
- */
-export const PerfumeIdParamSchema = z.object({
-  id: PerfumeSchema.shape.id.openapi({
-    param: { name: "id", in: "path" },
-    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  }),
-});
 
 /**
  * 향수 테마 쿼리 스키마

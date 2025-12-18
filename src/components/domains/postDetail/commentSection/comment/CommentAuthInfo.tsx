@@ -1,12 +1,13 @@
-import { ICommentAuthInfoProps } from "./postComment.types";
 import AuthorProfile from "@/components/commons/author/AuthorProfile";
+
+import { CommentAuthInfoProps } from "./postComment.types";
 
 export function CommentAuthInfo({
   author,
   profileImage,
   size,
   isPostAuthor,
-}: ICommentAuthInfoProps) {
+}: CommentAuthInfoProps) {
   return (
     <div className="text-black-200 flex items-center justify-center gap-2">
       <AuthorProfile name={author} profileImage={profileImage} size={size} />

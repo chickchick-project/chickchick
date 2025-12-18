@@ -13,14 +13,15 @@ import {
   PaginationResult,
 } from "../utils/pagination.utils";
 import {
-  serviceInternalError,
-  ServiceResult,
-  serviceSuccess,
-  serviceNotFound,
+  checkResourceExists,
   serviceBadRequest,
   serviceForbidden,
+  serviceInternalError,
+  serviceNotFound,
+  ServiceResult,
+  serviceSuccess,
+  validateUuid,
 } from "../utils/service.utils";
-import { checkResourceExists, validateUuid } from "../utils/service.utils";
 import {
   postIncludeArgs,
   postDetailIncludeArgs,
@@ -30,7 +31,10 @@ import { earnPointsService } from "./point.service";
 
 const postWithAuthorArgs = { include: postIncludeArgs };
 
-// --- 서비스 함수들 ---
+/**
+ * 게시글 목록을 페이지네이션하여 조회합니다.
+ * @param params - 게시글 조회 쿼리 (카테고리, 정렬, 검색어, 커서, 제한)
+ */
 export async function getPaginatedPostListService(
   params: GetPostsQuery
 ): Promise<ServiceResult<PaginationResult<BasePost>>> {
@@ -76,6 +80,11 @@ export async function getPaginatedPostListService(
   }
 }
 
+/**
+ * 게시글 ID로 상세 정보를 조회합니다.
+ * @param id - 게시글 ID
+ * @param userId - 인증된 사용자 ID (작성자 여부 확인용)
+ */
 export async function getPostByIdService(
   id: string,
   userId?: string | null
@@ -118,13 +127,18 @@ export async function getPostByIdService(
   }
 }
 
+/**
+ * 게시글의 조회수, 좋아요, 댓글 수 등 상태 정보를 조회합니다.
+ * @param postId - 게시글 ID
+ * @param userId - 인증된 사용자 ID (좋아요/북마크 여부 확인용)
+ */
 export async function getPostStatusByIdService(
   postId: string,
   userId?: string | null
 ): Promise<ServiceResult<ApiPostStatusResponse>> {
-  const uuidValidation = validateUuid(postId, "게시글");
-  if (!uuidValidation.success) return uuidValidation;
   try {
+    const uuidValidation = validateUuid(postId, "게시글");
+    if (!uuidValidation.success) return uuidValidation;
     const [postCounts, like, bookmark] = await Promise.all([
       prisma.post.findUnique({
         where: { id: postId },
@@ -159,12 +173,16 @@ export async function getPostStatusByIdService(
   }
 }
 
+/**
+ * 게시글과 같은 카테고리의 다른 게시글 목록을 조회합니다.
+ * @param postId - 현재 게시글 ID
+ */
 export async function getPostDetailCategoryPostsService(
   postId: string
 ): Promise<ServiceResult<ApiPostDetailCategoryPostResponse[]>> {
-  const uuidValidation = validateUuid(postId, "게시글");
-  if (!uuidValidation.success) return uuidValidation;
   try {
+    const uuidValidation = validateUuid(postId, "게시글");
+    if (!uuidValidation.success) return uuidValidation;
     const currentPost = await prisma.post.findUnique({
       where: { id: postId },
       select: { id: true, createdAt: true, category: true },
@@ -219,11 +237,15 @@ export async function getPostDetailCategoryPostsService(
   }
 }
 
+/**
+ * 새 게시글을 생성합니다.
+ * @param payload - 게시글 생성 데이터 (작성자 ID 포함)
+ */
 export async function createPostService(
   payload: CreatePostInput & { authorId: string }
 ): Promise<ServiceResult<BasePost>> {
-  const { authorId, perfumeIds, ...rest } = payload;
   try {
+    const { authorId, perfumeIds, ...rest } = payload;
     const userCheck = await checkResourceExists("user", authorId, "사용자");
     if (!userCheck.success) return userCheck;
 
@@ -253,6 +275,12 @@ export async function createPostService(
   }
 }
 
+/**
+ * 게시글을 수정합니다.
+ * @param postId - 수정할 게시글 ID
+ * @param authorId - 작성자 ID (권한 확인용)
+ * @param updateData - 수정할 데이터
+ */
 export async function updatePostService(
   postId: string,
   authorId: string,
@@ -310,6 +338,11 @@ export async function updatePostService(
   }
 }
 
+/**
+ * 게시글을 삭제합니다 (소프트 삭제).
+ * @param postId - 삭제할 게시글 ID
+ * @param authorId - 작성자 ID (권한 확인용)
+ */
 export async function deletePostService(
   postId: string,
   authorId: string
@@ -341,6 +374,11 @@ export async function deletePostService(
   }
 }
 
+/**
+ * 게시글 좋아요를 토글합니다.
+ * @param postId - 게시글 ID
+ * @param userId - 사용자 ID
+ */
 export async function togglePostLikeService(
   postId: string,
   userId: string
@@ -404,6 +442,12 @@ export async function togglePostLikeService(
     return serviceInternalError(error);
   }
 }
+
+/**
+ * 게시글 북마크를 토글합니다.
+ * @param postId - 게시글 ID
+ * @param userId - 사용자 ID
+ */
 export async function togglePostBookmarkService(
   postId: string,
   userId: string

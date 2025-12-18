@@ -1,27 +1,30 @@
 import { ActionItem, Actions } from "@/components/commons/actions";
-import { CommentAuthInfo } from "./CommentAuthInfo";
-import { TCommentActionState } from "./postComment.types";
-import CommentForm from "./CommentForm";
-import ReplyIcon from "./ReplyIcon";
+import PostTime from "@/components/commons/author/PostTime";
 import {
   CommentReplyResponse,
   CommentResponse,
 } from "@/lib/hono/schemas/comment.schema";
+import { useCommentMutation } from "@/lib/hooks/query/useCommentQuery";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import useCommentMutation from "../useCommentMutation";
-import PostTime from "@/components/commons/author/PostTime";
+
+import { CommentAuthInfo } from "./CommentAuthInfo";
+import CommentForm from "./CommentForm";
+import { CommentActionState } from "./postComment.types";
+import ReplyIcon from "./ReplyIcon";
+
+interface CommentListItemProps {
+  commentActionState: CommentActionState;
+  comment: CommentResponse | CommentReplyResponse;
+  postAuthorId: string;
+  isReplyType?: boolean;
+}
 
 export default function CommentListItem({
   commentActionState,
   comment,
   postAuthorId,
   isReplyType = false,
-}: {
-  commentActionState: TCommentActionState;
-  comment: CommentResponse | CommentReplyResponse;
-  postAuthorId: string;
-  isReplyType?: boolean;
-}) {
+}: CommentListItemProps) {
   const {
     editingCommentId,
     setEditingCommentId,

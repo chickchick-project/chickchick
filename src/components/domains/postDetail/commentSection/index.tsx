@@ -1,48 +1,40 @@
 "use client";
-import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import CommentForm from "./comment/CommentForm";
-import CommentIList from "./comment/CommentIList";
-import { getCommentsByPostId } from "./comment.helper";
-import { PaginatedCommentResponse } from "@/lib/hono/schemas/comment.schema";
-import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
 
-interface ICommentSectionProps {
+import { useInfiniteComments } from "@/lib/hooks/query/useCommentQuery";
+
+import CommentForm from "./comment/CommentForm";
+import CommentList from "./comment/CommentList";
+
+interface CommentSectionProps {
   postId: string;
   postAuthorId: string;
   totalCommentCount: number;
 }
+
 export default function CommentSection({
   postId,
   postAuthorId,
   totalCommentCount,
-}: ICommentSectionProps) {
+}: CommentSectionProps) {
   const {
-    data: commentResult,
+    data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
     isError,
-  } = useInfiniteQuery<
-    ApiSuccessResponse<PaginatedCommentResponse>,
-    Error,
-    InfiniteData<ApiSuccessResponse<PaginatedCommentResponse>>,
-    string[],
-    string | null
-  >({
-    queryKey: ["post", postId, "comments"],
-    queryFn: ({ pageParam }) => getCommentsByPostId(postId, pageParam),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => {
-      return lastPage?.data?.nextCursor || undefined;
-    },
-  });
+  } = useInfiniteComments(postId);
 
-  const commentList =
-    commentResult?.pages.flatMap((page) => page.data.data) || [];
+  const commentList = data?.pages.flatMap((page) => page?.data?.data ?? []) ?? [];
 
   if (isError) {
-    return <div>댓글을 불러오는 중 오류가 발생했습니다.</div>;
+    return (
+      <section className="px-4">
+        <div className="text-body-1 text-red-500">
+          댓글을 불러오는 중 오류가 발생했습니다.
+        </div>
+      </section>
+    );
   }
 
   return (
@@ -52,7 +44,7 @@ export default function CommentSection({
       </h2>
       <CommentForm type="create" postId={postId} />
       {!isLoading && commentList.length > 0 && (
-        <CommentIList
+        <CommentList
           postAuthorId={postAuthorId}
           isLoadingComments={isFetchingNextPage}
           hasNextCursor={hasNextPage}

@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
+
 import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOutlined";
 import Comment from "@/components/commons/comment";
-import { useState } from "react";
-import { ICommentFormProps } from "./postComment.types";
-import useCommentMutation from "../useCommentMutation";
+import { useCommentMutation } from "@/lib/hooks/query/useCommentQuery";
+
+import { CommentFormProps } from "./postComment.types";
 
 export default function CommentForm({
   type,
@@ -14,7 +16,7 @@ export default function CommentForm({
   parentId,
   onSuccess,
   postId,
-}: ICommentFormProps) {
+}: CommentFormProps) {
   const [inputValue, setInputValue] = useState(value || "");
 
   const onChange = (inputValue: string) => {

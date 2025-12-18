@@ -1,13 +1,13 @@
-import { prisma } from "@/lib/prisma";
 import { Prisma, PointActivityType } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import {
+  checkResourceExists,
   serviceBadRequest,
   serviceForbidden,
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-  checkResourceExists,
   validateUuid,
 } from "../utils/service.utils";
 import {
@@ -27,6 +27,7 @@ const commentWithRepliesArgs = { include: commentIncludeArgs };
 /**
  * 특정 게시글의 모든 댓글과 대댓글을 계층적으로 조회합니다.
  * @param postId - 댓글을 조회할 게시글의 ID
+ * @returns 계층 구조의 댓글 및 대댓글 목록을 담은 ServiceResult
  */
 export const getCommentService = async (
   postId: string
@@ -57,6 +58,7 @@ export const getCommentService = async (
  * @param postId - 댓글을 조회할 게시글의 ID
  * @param cursor - 페이지네이션 커서
  * @param limit - 페이지당 댓글 수
+ * @returns 커서 기반 페이지네이션 결과를 담은 ServiceResult
  */
 export const getPaginatedCommentService = async (
   postId: string,
@@ -141,6 +143,7 @@ export const getPaginatedCommentService = async (
 /**
  * 새로운 댓글 또는 대댓글을 생성합니다.
  * @param payload - 댓글 생성에 필요한 완전한 데이터
+ * @returns 생성된 댓글(대댓글 포함)을 담은 ServiceResult
  */
 export const createCommentService = async (
   payload: CreateCommentPayload
@@ -189,7 +192,10 @@ export const createCommentService = async (
       PointActivityType.CREATE_COMMENT,
       newComment.id
     ).catch((error) => {
-      console.error("[Point] Failed to earn points for comment creation:", error);
+      console.error(
+        "[Point] Failed to earn points for comment creation:",
+        error
+      );
     });
 
     return serviceSuccess(newComment);
@@ -201,6 +207,7 @@ export const createCommentService = async (
 /**
  * 댓글 또는 대댓글의 내용을 수정합니다.
  * @param payload - 수정할 댓글 정보 (id, authorId, content, parentId?)
+ * @returns 수정된 댓글(대댓글 포함)을 담은 ServiceResult
  */
 export const updateCommentService = async (
   payload: UpdateCommentPayload
@@ -212,12 +219,12 @@ export const updateCommentService = async (
     if (!content?.trim()) {
       return serviceBadRequest("댓글 내용이 비어있습니다.");
     }
-    const existenceCheck = await checkResourceExists(
+    const commentCheck = await checkResourceExists(
       "comment",
       commentId,
       "댓글"
     );
-    if (!existenceCheck.success) return existenceCheck;
+    if (!commentCheck.success) return commentCheck;
 
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
@@ -243,8 +250,11 @@ export const updateCommentService = async (
   }
 };
 
-/** * 댓글 또는 대댓글을 삭제합니다.(softDelete) 댓글 내용을 "삭제된 댓글 입니다."로 변경하고, published 필드를 false로 설정합니다.
+/**
+ * 댓글 또는 대댓글을 삭제합니다 (소프트 삭제).
+ * 댓글 내용을 "삭제된 댓글 입니다."로 변경하고, published 필드를 false로 설정합니다.
  * @param params - 삭제할 댓글의 ID와 작성자 ID
+ * @returns 삭제 처리된 댓글(대댓글 포함)을 담은 ServiceResult
  */
 export const deleteCommentService = async (
   params: DeleteCommentPayload
@@ -254,12 +264,12 @@ export const deleteCommentService = async (
     const uuidValidation = validateUuid(commentId, "댓글");
     if (!uuidValidation.success) return uuidValidation;
 
-    const existenceCheck = await checkResourceExists(
+    const commentCheck = await checkResourceExists(
       "comment",
       commentId,
       "댓글"
     );
-    if (!existenceCheck.success) return existenceCheck;
+    if (!commentCheck.success) return commentCheck;
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
       select: { authorId: true, postId: true, published: true },

@@ -291,7 +291,7 @@ describe("Comment Service", () => {
 
       const result = await getPaginatedCommentService(ids.postId, {
         limit: 12,
-        cursor: null,
+        cursor: undefined,
       });
 
       expect(result.success).toBe(true);
@@ -352,7 +352,7 @@ describe("Comment Service", () => {
 
       const result = await getPaginatedCommentService(ids.postId, {
         limit: 10,
-        cursor: null,
+        cursor: undefined,
       });
 
       expect(result.success).toBe(true);
@@ -374,7 +374,7 @@ describe("Comment Service", () => {
 
       const result = await getPaginatedCommentService(ids.postId, {
         limit: 10,
-        cursor: null,
+        cursor: undefined,
       });
 
       expect(result.success).toBe(true);
@@ -397,7 +397,7 @@ describe("Comment Service", () => {
 
       const result = await getPaginatedCommentService(ids.postId, {
         limit: 10,
-        cursor: null,
+        cursor: undefined,
       });
 
       expect(result.success).toBe(true);

@@ -1,6 +1,5 @@
 import { createRoute } from "@hono/zod-openapi";
 import { z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import * as BrandSchemas from "@/lib/hono/schemas/brand.schema";
 import * as BrandServices from "@/lib/hono/services/brand.service";
 import {
@@ -8,9 +7,10 @@ import {
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
-import { createOptionalAuthRouter } from "@/lib/hono/utils/router";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const brandsApi = createOptionalAuthRouter();
+const routers = createDomainRouters();
 
 /**
  * @method GET
@@ -28,7 +28,7 @@ const getAllBrandsRoute = createRoute({
   tags: ["Brands"],
 });
 
-brandsApi.openapi(getAllBrandsRoute, async (c) => {
+routers.optionalAuth.openapi(getAllBrandsRoute, async (c) => {
   const result = await BrandServices.getAllBrandsService();
 
   if (!result.success) {
@@ -55,7 +55,7 @@ const getBrandByIdRoute = createRoute({
   tags: ["Brands"],
 });
 
-brandsApi.openapi(getBrandByIdRoute, async (c) => {
+routers.optionalAuth.openapi(getBrandByIdRoute, async (c) => {
   const { id } = c.req.valid("param");
   const result = await BrandServices.getBrandByIdService(id);
 
@@ -88,7 +88,7 @@ const getBrandByNameRoute = createRoute({
   tags: ["Brands"],
 });
 
-brandsApi.openapi(getBrandByNameRoute, async (c) => {
+routers.optionalAuth.openapi(getBrandByNameRoute, async (c) => {
   const { nameKo } = c.req.valid("param");
   const result = await BrandServices.getBrandByNameService(nameKo);
 
@@ -104,4 +104,4 @@ brandsApi.openapi(getBrandByNameRoute, async (c) => {
   return apiSuccess(c, result.data, "브랜드 정보를 성공적으로 불러왔습니다.");
 });
 
-export default brandsApi;
+export default routers.merge();

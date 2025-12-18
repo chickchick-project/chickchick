@@ -1,14 +1,14 @@
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import type { AppContext } from "@/lib/hono/app";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { apiInternalError, apiSuccess } from "@/lib/hono/utils/api.utils";
-import * as FilterSchemas from "../../schemas/filter.schema";
+import { createRoute } from "@hono/zod-openapi";
+import * as FilterSchemas from "@/lib/hono/schemas/filter.schema";
 import {
   getAvailableFiltersService,
   getAvailableFiltersTotalService,
-} from "../../services/filter.service";
+} from "@/lib/hono/services/filter.service";
+import { apiInternalError, apiSuccess } from "@/lib/hono/utils/api.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const filterApi = new OpenAPIHono<AppContext>();
+const routers = createDomainRouters();
 
 /**
  * @method POST
@@ -32,7 +32,7 @@ const postAvailableFiltersRoute = createRoute({
   tags: ["Filter"],
 });
 
-filterApi.openapi(postAvailableFiltersRoute, async (c) => {
+routers.public.openapi(postAvailableFiltersRoute, async (c) => {
   const bodyParams = c.req.valid("json");
   const result = await getAvailableFiltersService(bodyParams);
 
@@ -64,7 +64,7 @@ const postAvailableFiltersTotalRoute = createRoute({
   tags: ["Filter"],
 });
 
-filterApi.openapi(postAvailableFiltersTotalRoute, async (c) => {
+routers.public.openapi(postAvailableFiltersTotalRoute, async (c) => {
   const bodyParams = c.req.valid("json");
   const result = await getAvailableFiltersTotalService(bodyParams);
 
@@ -74,4 +74,4 @@ filterApi.openapi(postAvailableFiltersTotalRoute, async (c) => {
   return apiSuccess(c, result.data, "필터별 총 개수를 조회했습니다.");
 });
 
-export default filterApi;
+export default routers.merge();

@@ -1,11 +1,11 @@
 import { cookies } from "next/headers";
 import PageClient from "@/components/domains/postDetail/PageClient";
-import { getCommentsByPostId } from "@/components/domains/postDetail/commentSection/comment.helper";
 import getQueryClient from "@/lib/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { queryKeys } from "@/lib/utils/queryKeys";
+import { commentApi } from "@/lib/utils/api/comment.api";
 import { communityApi } from "@/lib/utils/api/community.api";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { generateSeo } from "@/lib/utils/generateSeo";
 type Props = {
   params: Promise<{ id: string }>;
@@ -62,9 +62,13 @@ export default async function Page({
       queryFn: () => communityApi.getCategoryPosts(id),
     }),
     queryClient.prefetchInfiniteQuery({
-      queryKey: ["post", id, "comments"],
-      queryFn: () => getCommentsByPostId(id),
-      initialPageParam: null,
+      queryKey: [...queryKeys.community.comments(id), "infinite"],
+      queryFn: ({ pageParam }) =>
+        commentApi.listWithCursor(id, {
+          cursor: pageParam ?? undefined,
+          limit: 7,
+        }),
+      initialPageParam: null as string | null,
     }),
   ]);
 
