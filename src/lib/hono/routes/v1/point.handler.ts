@@ -1,17 +1,17 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as PointSchemas from "@/lib/hono/schemas/point.schema";
 import * as PointServices from "@/lib/hono/services/point.service";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
-  apiInternalError,
-  apiSuccess,
-  apiNotFound,
   apiBadRequest,
+  apiInternalError,
+  apiNotFound,
+  apiSuccess,
 } from "@/lib/hono/utils/api.utils";
-import { createAuthenticatedRouter } from "@/lib/hono/utils/router";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
-const pointApi = createAuthenticatedRouter();
+const routers = createDomainRouters();
 
 /**
  * @method GET
@@ -29,7 +29,7 @@ const getUserPointsRoute = createRoute({
   tags: ["Points"],
 });
 
-pointApi.openapi(getUserPointsRoute, async (c) => {
+routers.authenticated.openapi(getUserPointsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const result = await PointServices.getUserPointsService(user.id);
 
@@ -52,7 +52,8 @@ const getPointHistoryRoute = createRoute({
   method: "get",
   path: "/history",
   summary: "포인트 이력 조회",
-  description: "사용자의 포인트 적립/사용 이력을 커서 기반 페이지네이션으로 조회합니다.",
+  description:
+    "사용자의 포인트 적립/사용 이력을 커서 기반 페이지네이션으로 조회합니다.",
   request: {
     query: PointSchemas.GetPointHistoryQuerySchema,
   },
@@ -62,7 +63,7 @@ const getPointHistoryRoute = createRoute({
   tags: ["Points"],
 });
 
-pointApi.openapi(getPointHistoryRoute, async (c) => {
+routers.authenticated.openapi(getPointHistoryRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const query = c.req.valid("query");
 
@@ -98,7 +99,7 @@ const getPointStatisticsRoute = createRoute({
   tags: ["Points"],
 });
 
-pointApi.openapi(getPointStatisticsRoute, async (c) => {
+routers.authenticated.openapi(getPointStatisticsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const result = await PointServices.getPointStatisticsService(user.id);
 
@@ -137,7 +138,7 @@ const processLoginRoute = createRoute({
   tags: ["Points"],
 });
 
-pointApi.openapi(processLoginRoute, async (c) => {
+routers.authenticated.openapi(processLoginRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const body = c.req.valid("json");
 
@@ -181,4 +182,4 @@ pointApi.openapi(processLoginRoute, async (c) => {
   return apiSuccess(c, result.data, message);
 });
 
-export default pointApi;
+export default routers.merge();

@@ -20,6 +20,12 @@ type ResponseConfig = {
   };
 };
 
+/**
+ * 표준화된 API 응답 스키마 맵을 생성합니다.
+ * @param success - 성공 응답 설정 (스키마, 설명, 상태코드)
+ * @param errors - 추가할 오류 응답 코드 목록 (예: ["400", "401"])
+ * @returns OpenAPI용 responses 객체 맵
+ */
 export function createStandardApiResponses<T extends z.ZodTypeAny>(
   success: {
     schema: T;

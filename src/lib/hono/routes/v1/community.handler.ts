@@ -1,13 +1,7 @@
-import { createRoute, OpenAPIHono, z } from "@hono/zod-openapi";
-import type { AppContext } from "@/lib/hono/app";
-import {
-  authMiddleware,
-  optionalAuthMiddleware,
-} from "@/lib/hono/middleware/auth.middleware";
+import { createRoute, z } from "@hono/zod-openapi";
+import { PostCategory } from "@prisma/client";
 import * as CommunitySchemas from "@/lib/hono/schemas/community.schema";
 import * as CommunityServices from "@/lib/hono/services/community.service";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
   apiBadRequest,
   apiNotFound,
@@ -16,29 +10,17 @@ import {
   apiCreated,
   apiForbidden,
 } from "@/lib/hono/utils/api.utils";
-import { PostCategory } from "@prisma/client";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
-const communityApi = new OpenAPIHono<AppContext>();
-const authenticatedApi = new OpenAPIHono<AppContext>();
-
-authenticatedApi.use("*", authMiddleware);
-communityApi.use("/posts/:id", optionalAuthMiddleware);
-communityApi.use("/posts/:id/status", optionalAuthMiddleware);
-
-const postIdParam = z.object({
-  id: z
-    .string()
-    .uuid()
-    .openapi({
-      param: { name: "id", in: "path" },
-      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    }),
-});
+const routers = createDomainRouters();
 
 /**
  * @method GET
  * @path /posts
  * @summary 커뮤니티 게시글 목록 조회
+ * @description 검색, 카테고리 필터, 정렬 옵션을 사용하여 게시글 목록을 조회합니다
  */
 const getPostListRoute = createRoute({
   method: "get",
@@ -54,7 +36,7 @@ const getPostListRoute = createRoute({
   tags: ["Community"],
 });
 
-communityApi.openapi(getPostListRoute, async (c) => {
+routers.public.openapi(getPostListRoute, async (c) => {
   const queryParams = c.req.valid("query");
   const result = await CommunityServices.getPaginatedPostListService(
     queryParams
@@ -69,6 +51,7 @@ communityApi.openapi(getPostListRoute, async (c) => {
  * @method GET
  * @path /posts/{id}
  * @summary 커뮤니티 게시글 단일 조회
+ * @description 게시글 ID로 게시글 상세 정보를 조회합니다 (선택적 인증)
  */
 const getPostRoute = createRoute({
   method: "get",
@@ -76,7 +59,7 @@ const getPostRoute = createRoute({
   summary: "커뮤니티 게시글 단일 조회",
   description: "요청된 게시글 ID에 해당하는 단일 게시글 정보 조회",
   request: {
-    params: postIdParam,
+    params: CommunitySchemas.PostIdParamSchema,
   },
   responses: createStandardApiResponses(
     {
@@ -88,7 +71,7 @@ const getPostRoute = createRoute({
   tags: ["Community"],
 });
 
-communityApi.openapi(getPostRoute, async (c) => {
+routers.optionalAuth.openapi(getPostRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = c.get("user");
   const result = await CommunityServices.getPostByIdService(id, user?.id);
@@ -106,6 +89,7 @@ communityApi.openapi(getPostRoute, async (c) => {
  * @method GET
  * @path /posts/{id}/status
  * @summary 커뮤니티 게시글 상태 정보 조회
+ * @description 게시글의 조회수, 좋아요, 댓글 수 및 사용자의 좋아요/북마크 상태를 조회합니다 (선택적 인증)
  */
 const getPostStatusRoute = createRoute({
   method: "get",
@@ -114,7 +98,7 @@ const getPostStatusRoute = createRoute({
   description:
     "게시글의 카운트 정보(조회수, 좋아요, 댓글)와 현재 사용자의 좋아요/북마크 여부를 조회합니다.",
   request: {
-    params: postIdParam,
+    params: CommunitySchemas.PostIdParamSchema,
   },
   responses: createStandardApiResponses(
     {
@@ -130,6 +114,7 @@ const getPostStatusRoute = createRoute({
  * @method GET
  * @path /posts/{id}/category-posts
  * @summary 커뮤니티 게시글 카테고리 게시글 목록 조회
+ * @description 해당 게시글과 같은 카테고리의 다른 게시글 목록을 조회합니다
  */
 
 const getPostCategoryPostsRoute = createRoute({
@@ -139,7 +124,7 @@ const getPostCategoryPostsRoute = createRoute({
   description:
     "해당 게시글과 같은 카테고리의 게시글 목록을 조회합니다. 현재 게시글을 포함한 앞의 글 2개, 뒤의 글 12개를 가져옵니다. 최대(15개)",
   request: {
-    params: postIdParam,
+    params: CommunitySchemas.PostIdParamSchema,
   },
   responses: createStandardApiResponses(
     {
@@ -151,7 +136,7 @@ const getPostCategoryPostsRoute = createRoute({
   tags: ["Community"],
 });
 
-communityApi.openapi(getPostCategoryPostsRoute, async (c) => {
+routers.public.openapi(getPostCategoryPostsRoute, async (c) => {
   const { id } = c.req.valid("param");
   const result = await CommunityServices.getPostDetailCategoryPostsService(id);
 
@@ -167,7 +152,7 @@ communityApi.openapi(getPostCategoryPostsRoute, async (c) => {
   );
 });
 
-communityApi.openapi(getPostStatusRoute, async (c) => {
+routers.optionalAuth.openapi(getPostStatusRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = c.get("user");
   const result = await CommunityServices.getPostStatusByIdService(id, user?.id);
@@ -188,12 +173,13 @@ communityApi.openapi(getPostStatusRoute, async (c) => {
  * @method POST
  * @path /posts
  * @summary 커뮤니티 게시글 생성
+ * @description 새로운 커뮤니티 게시글을 생성합니다 (인증 필요)
  */
 const createPostRoute = createRoute({
   method: "post",
   path: "/posts",
   summary: "커뮤니티 게시글 생성",
-  description: "커뮤니티 게시글 생성",
+  description: "새로운 커뮤니티 게시글을 생성합니다",
   request: {
     body: {
       content: {
@@ -211,7 +197,7 @@ const createPostRoute = createRoute({
   tags: ["Community"],
 });
 
-authenticatedApi.openapi(createPostRoute, async (c) => {
+routers.authenticated.openapi(createPostRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const body = c.req.valid("json");
 
@@ -228,13 +214,19 @@ authenticatedApi.openapi(createPostRoute, async (c) => {
   return apiCreated(c, result.data, "게시글을 성공적으로 생성했습니다.");
 });
 
+/**
+ * @method PATCH
+ * @path /posts/{id}
+ * @summary 커뮤니티 게시글 수정
+ * @description 기존 게시글을 수정합니다 (인증 필요, 작성자만 가능)
+ */
 const editPostRoute = createRoute({
   method: "patch",
   path: "/posts/{id}",
   summary: "커뮤니티 게시글 수정",
-  description: "커뮤니티 게시글 수정",
+  description: "기존 게시글을 수정합니다",
   request: {
-    params: postIdParam,
+    params: CommunitySchemas.PostIdParamSchema,
     body: {
       content: {
         "application/json": { schema: CommunitySchemas.UpdatePostInputSchema },
@@ -248,7 +240,7 @@ const editPostRoute = createRoute({
   tags: ["Community"],
 });
 
-authenticatedApi.openapi(editPostRoute, async (c) => {
+routers.authenticated.openapi(editPostRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
 
@@ -269,13 +261,19 @@ authenticatedApi.openapi(editPostRoute, async (c) => {
   return apiSuccess(c, result.data, "게시글을 성공적으로 수정했습니다.");
 });
 
+/**
+ * @method DELETE
+ * @path /posts/{id}
+ * @summary 커뮤니티 게시글 삭제
+ * @description 게시글을 소프트 삭제합니다 (인증 필요, 작성자만 가능)
+ */
 const deletePostRoute = createRoute({
   method: "delete",
   path: "/posts/{id}",
   summary: "커뮤니티 게시글 삭제",
-  description: "커뮤니티 게시글 비공개 처리로 삭제",
+  description: "게시글을 비공개 처리로 소프트 삭제합니다",
   request: {
-    params: postIdParam,
+    params: CommunitySchemas.PostIdParamSchema,
   },
   responses: createStandardApiResponses(
     {
@@ -287,7 +285,7 @@ const deletePostRoute = createRoute({
   tags: ["Community"],
 });
 
-authenticatedApi.openapi(deletePostRoute, async (c) => {
+routers.authenticated.openapi(deletePostRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
   const result = await CommunityServices.deletePostService(id, user.id);
@@ -305,13 +303,14 @@ authenticatedApi.openapi(deletePostRoute, async (c) => {
  * @method POST
  * @path /posts/{id}/like
  * @summary 커뮤니티 게시글 좋아요 추가 / 제거
+ * @description 게시글 좋아요를 토글합니다 (인증 필요)
  */
 const likePostRoute = createRoute({
   method: "post",
   path: "/posts/{id}/like",
   summary: "게시글 좋아요",
   description: "게시글 좋아요 추가 한번 더 요청하면 자동으로 제거",
-  request: { params: postIdParam },
+  request: { params: CommunitySchemas.PostIdParamSchema },
   responses: createStandardApiResponses(
     {
       schema: z.object({ liked: z.boolean(), likeCount: z.number() }),
@@ -321,7 +320,7 @@ const likePostRoute = createRoute({
   tags: ["Community"],
 });
 
-authenticatedApi.openapi(likePostRoute, async (c) => {
+routers.authenticated.openapi(likePostRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
   const result = await CommunityServices.togglePostLikeService(id, user.id);
@@ -339,13 +338,14 @@ authenticatedApi.openapi(likePostRoute, async (c) => {
  * @method POST
  * @path /posts/{id}/bookmark
  * @summary 커뮤니티 게시글 북마크 추가 / 제거
+ * @description 게시글 북마크를 토글합니다 (인증 필요)
  */
 const bookmarkPostRoute = createRoute({
   method: "post",
   path: "/posts/{id}/bookmark",
   summary: "게시글 북마크",
   description: "게시글 북마크 추가 한번 더 요청하면 자동으로 제거",
-  request: { params: postIdParam },
+  request: { params: CommunitySchemas.PostIdParamSchema },
   responses: createStandardApiResponses(
     {
       schema: z.object({ bookmarked: z.boolean() }),
@@ -355,7 +355,7 @@ const bookmarkPostRoute = createRoute({
   tags: ["Community"],
 });
 
-authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
+routers.authenticated.openapi(bookmarkPostRoute, async (c) => {
   const { id } = c.req.valid("param");
   const user = getAuthenticatedUser(c);
   const result = await CommunityServices.togglePostBookmarkService(id, user.id);
@@ -370,6 +370,4 @@ authenticatedApi.openapi(bookmarkPostRoute, async (c) => {
   return apiSuccess(c, result.data, "게시글 북마크를 성공적으로 추가했습니다.");
 });
 
-communityApi.route("/", authenticatedApi);
-
-export default communityApi;
+export default routers.merge();

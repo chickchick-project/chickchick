@@ -1,7 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { ApiPerfumeSimpleResponseSchema } from "@/lib/hono/schemas/perfume.schema";
 import { ApiMyCollectionResponseSchema } from "@/lib/hono/schemas/me.schema";
+import { ApiPerfumeSimpleResponseSchema } from "@/lib/hono/schemas/perfume.schema";
 import * as UserSchemas from "@/lib/hono/schemas/user.schema";
 import * as UserServices from "@/lib/hono/services/user.service";
 import {
@@ -9,19 +8,12 @@ import {
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
-import { createOptionalAuthRouter } from "@/lib/hono/utils/router";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const usersApi = createOptionalAuthRouter();
+const routers = createDomainRouters();
 
-const userIdParam = z.object({
-  userId: z
-    .string()
-    .uuid()
-    .openapi({
-      param: { name: "userId", in: "path" },
-      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    }),
-});
+// params schema moved to UserSchemas.UserIdParamSchema
 
 /**
  * @method GET
@@ -33,14 +25,14 @@ const getUserProfileRoute = createRoute({
   method: "get",
   path: "/{userId}",
   summary: "특정 사용자 프로필 조회",
-  request: { params: userIdParam },
+  request: { params: UserSchemas.UserIdParamSchema },
   responses: createStandardApiResponses({
     schema: UserSchemas.ApiUserProfileResponseSchema,
   }),
   tags: ["Users"],
 });
 
-usersApi.openapi(getUserProfileRoute, async (c) => {
+routers.optionalAuth.openapi(getUserProfileRoute, async (c) => {
   const { userId } = c.req.valid("param");
   const result = await UserServices.getUserProfileService(userId);
 
@@ -65,13 +57,13 @@ const getUserPerfumeBookmarksRoute = createRoute({
   method: "get",
   path: "/{userId}/bookmarks/perfumes",
   summary: "사용자의 공개 북마크 향수 목록 조회",
-  request: { params: userIdParam },
+  request: { params: UserSchemas.UserIdParamSchema },
   responses: createStandardApiResponses({
     schema: z.array(ApiPerfumeSimpleResponseSchema),
   }),
   tags: ["Users"],
 });
-usersApi.openapi(getUserPerfumeBookmarksRoute, async (c) => {
+routers.optionalAuth.openapi(getUserPerfumeBookmarksRoute, async (c) => {
   const { userId } = c.req.valid("param");
   const result = await UserServices.getUserPublicBookmarkedPerfumesService(
     userId
@@ -102,14 +94,14 @@ const getUserCollectionsRoute = createRoute({
   method: "get",
   path: "/{userId}/collections",
   summary: "사용자의 컬렉션 목록 조회",
-  request: { params: userIdParam },
+  request: { params: UserSchemas.UserIdParamSchema },
   responses: createStandardApiResponses({
     schema: z.array(ApiMyCollectionResponseSchema),
   }),
   tags: ["Users"],
 });
 
-usersApi.openapi(getUserCollectionsRoute, async (c) => {
+routers.optionalAuth.openapi(getUserCollectionsRoute, async (c) => {
   const { userId } = c.req.valid("param");
   const result = await UserServices.getUserCollectionsService(userId);
 
@@ -123,4 +115,4 @@ usersApi.openapi(getUserCollectionsRoute, async (c) => {
   );
 });
 
-export default usersApi;
+export default routers.merge();

@@ -55,7 +55,13 @@ export const ApiMyCommentsResponseSchema = PaginatedResponseSchema(
 );
 
 export const DeleteCollectionParamSchema = z.object({
-  collectionId: z.string().uuid(),
+  collectionId: z
+    .string()
+    .uuid()
+    .openapi({
+      param: { name: "collectionId", in: "path" },
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    }),
 });
 
 export const ApiMyLikedPerfumesResponseSchema = z.array(

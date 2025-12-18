@@ -1,16 +1,17 @@
-import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import type { AppContext } from "@/lib/hono/app";
+import { createRoute } from "@hono/zod-openapi";
 import * as SearchSchemas from "@/lib/hono/schemas/search.schema";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { searchPerfumesService } from "@/lib/hono/services/search.service";
 import { apiInternalError, apiSuccess } from "@/lib/hono/utils/api.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
 
-const searchApi = new OpenAPIHono<AppContext>();
+const routers = createDomainRouters();
 
 /**
  * @method GET
  * @path /search/perfumes
- * @summary 향수 검색 페이지네이션으로 가져오기
+ * @summary 향수 검색 (간단)
+ * @description 검색어를 사용하여 향수를 검색합니다 (필터 없음)
  */
 const getSearchRoute = createRoute({
   method: "get",
@@ -25,7 +26,7 @@ const getSearchRoute = createRoute({
   tags: ["Search"],
 });
 
-searchApi.openapi(getSearchRoute, async (c) => {
+routers.public.openapi(getSearchRoute, async (c) => {
   const queryParams = c.req.valid("query");
   const result = await searchPerfumesService(queryParams);
 
@@ -38,7 +39,8 @@ searchApi.openapi(getSearchRoute, async (c) => {
 /**
  * @method POST
  * @path /search/perfumes
- * @summary 필터가 적용된 향수 검색 페이지네이션으로 가져오기
+ * @summary 향수 검색 (상세 필터)
+ * @description 브랜드, 노트, 어코드 필터를 적용하여 향수를 검색합니다
  */
 const postSearchRoute = createRoute({
   method: "post",
@@ -57,7 +59,7 @@ const postSearchRoute = createRoute({
   tags: ["Search"],
 });
 
-searchApi.openapi(postSearchRoute, async (c) => {
+routers.public.openapi(postSearchRoute, async (c) => {
   const bodyParams = c.req.valid("json");
   const result = await searchPerfumesService(bodyParams);
 
@@ -71,4 +73,4 @@ searchApi.openapi(postSearchRoute, async (c) => {
   );
 });
 
-export default searchApi;
+export default routers.merge();

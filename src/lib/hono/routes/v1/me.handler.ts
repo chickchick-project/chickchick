@@ -1,28 +1,20 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as MeSchemas from "@/lib/hono/schemas/me.schema";
 import * as MeServices from "@/lib/hono/services/me.service";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 import {
-  apiInternalError,
-  apiSuccess,
-  apiNotFound,
-  apiForbidden,
   apiBadRequest,
+  apiForbidden,
+  apiInternalError,
+  apiNotFound,
+  apiSuccess,
 } from "@/lib/hono/utils/api.utils";
-import { createAuthenticatedRouter } from "@/lib/hono/utils/router";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
-const meApi = createAuthenticatedRouter();
+const routers = createDomainRouters();
 
-const collectionIdParam = z.object({
-  collectionId: z
-    .string()
-    .uuid()
-    .openapi({
-      param: { name: "collectionId", in: "path" },
-      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    }),
-});
+// params moved to MeSchemas.DeleteCollectionParamSchema
 
 /**
  * @method GET
@@ -39,7 +31,7 @@ const getMyBookmarkedPostsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyBookmarkedPostsRoute, async (c) => {
+routers.authenticated.openapi(getMyBookmarkedPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const result = await MeServices.getMyBookmarkedPostsService(user.id);
 
@@ -68,7 +60,7 @@ const getMyBookmarkedPerfumesRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
+routers.authenticated.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
   const result = await MeServices.getMyBookmarkedPerfumesService(user.id);
@@ -107,7 +99,7 @@ const postPhotoCollectionRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(postPhotoCollectionRoute, async (c) => {
+routers.authenticated.openapi(postPhotoCollectionRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const body = c.req.valid("json");
 
@@ -139,7 +131,7 @@ const deletePhotoCollectionRoute = createRoute({
   path: "/collections/{collectionId}",
   summary: "내 향수 컬렉션 삭제",
   request: {
-    params: collectionIdParam,
+    params: MeSchemas.DeleteCollectionParamSchema,
   },
   responses: createStandardApiResponses({
     schema: z.object({ message: z.string() }),
@@ -147,7 +139,7 @@ const deletePhotoCollectionRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(deletePhotoCollectionRoute, async (c) => {
+routers.authenticated.openapi(deletePhotoCollectionRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const { collectionId } = c.req.valid("param");
 
@@ -190,7 +182,7 @@ const getMyReviewsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyReviewsRoute, async (c) => {
+routers.authenticated.openapi(getMyReviewsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const options = c.req.valid("query");
 
@@ -227,7 +219,7 @@ const getMyPostsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyPostsRoute, async (c) => {
+routers.authenticated.openapi(getMyPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const options = c.req.valid("query");
 
@@ -264,7 +256,7 @@ const getMyCommentsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyCommentsRoute, async (c) => {
+routers.authenticated.openapi(getMyCommentsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const options = c.req.valid("query");
 
@@ -295,7 +287,7 @@ const getMyLikedPerfumesRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyLikedPerfumesRoute, async (c) => {
+routers.authenticated.openapi(getMyLikedPerfumesRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
   const result = await MeServices.getMyLikedPerfumesService(user.id);
@@ -325,7 +317,7 @@ const getMyLikedPostsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyLikedPostsRoute, async (c) => {
+routers.authenticated.openapi(getMyLikedPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
   const result = await MeServices.getMyLikedPostsService(user.id);
@@ -355,7 +347,7 @@ const getMyProfileRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getMyProfileRoute, async (c) => {
+routers.authenticated.openapi(getMyProfileRoute, async (c) => {
   const user = getAuthenticatedUser(c);
 
   const result = await MeServices.getMyProfileService(user.id);
@@ -393,7 +385,7 @@ const patchMyProfileRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(patchMyProfileRoute, async (c) => {
+routers.authenticated.openapi(patchMyProfileRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = c.req.valid("json");
   const result = await MeServices.updateMyProfileService({
@@ -434,7 +426,7 @@ const postRecentPerfumesRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(postRecentPerfumesRoute, async (c) => {
+routers.authenticated.openapi(postRecentPerfumesRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = c.req.valid("json");
   // DB에 최근 본 향수 기록 동기화
@@ -467,7 +459,7 @@ const getRecentPerfumesRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getRecentPerfumesRoute, async (c) => {
+routers.authenticated.openapi(getRecentPerfumesRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const result = await MeServices.getRecentPerfumesService(user.id);
   if (!result.success) {
@@ -507,7 +499,7 @@ const postRecentPostsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(postRecentPostsRoute, async (c) => {
+routers.authenticated.openapi(postRecentPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = c.req.valid("json");
   const result = await MeServices.syncRecentPostsService({
@@ -539,7 +531,7 @@ const getRecentPostsRoute = createRoute({
   tags: ["Me"],
 });
 
-meApi.openapi(getRecentPostsRoute, async (c) => {
+routers.authenticated.openapi(getRecentPostsRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const result = await MeServices.getRecentPostsService(user.id);
   if (!result.success) {
@@ -552,4 +544,4 @@ meApi.openapi(getRecentPostsRoute, async (c) => {
   );
 });
 
-export default meApi;
+export default routers.merge();

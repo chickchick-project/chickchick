@@ -1,19 +1,23 @@
-import { createRoute, OpenAPIHono } from "@hono/zod-openapi";
-import type { AppContext } from "@/lib/hono/app";
-import { authMiddleware } from "@/lib/hono/middleware/auth.middleware";
+import { createRoute } from "@hono/zod-openapi";
 import { UploadedImageInfoSchema } from "@/lib/hono/schemas/common.schema";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import * as FileServices from "@/lib/hono/services/file.service";
 import {
   apiBadRequest,
   apiInternalError,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
-const fileApi = new OpenAPIHono<AppContext>();
-fileApi.use("*", authMiddleware);
+const routers = createDomainRouters();
 
+/**
+ * @method POST
+ * @path /upload
+ * @summary 파일 업로드
+ * @description 이미지 파일을 지정된 버킷에 업로드합니다 (인증 필요)
+ */
 const uploadRoute = createRoute({
   method: "post",
   path: "/upload",
@@ -38,7 +42,7 @@ const uploadRoute = createRoute({
   tags: ["File"],
 });
 
-fileApi.openapi(uploadRoute, async (c) => {
+routers.authenticated.openapi(uploadRoute, async (c) => {
   const user = getAuthenticatedUser(c);
   const formData = await c.req.formData();
   const file = formData.get("file");
@@ -65,4 +69,4 @@ fileApi.openapi(uploadRoute, async (c) => {
   return apiSuccess(c, uploadResult.data);
 });
 
-export default fileApi;
+export default routers.merge();

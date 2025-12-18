@@ -1,31 +1,37 @@
 import { z } from "@hono/zod-openapi";
 
-export const PaginationSchema = z.object({
-  page: z.coerce
-    .number()
-    .int()
-    .openapi({ example: 1, description: "페이지 번호" }),
-  limit: z.coerce
-    .number()
-    .int()
-    .openapi({ example: 10, description: "페이지 당 아이템 수" }),
-  total: z.coerce
-    .number()
-    .int()
-    .openapi({ example: 100, description: "총 아이템 수" }),
-});
+export const PaginationSchema = z
+  .object({
+    page: z.coerce
+      .number()
+      .int()
+      .openapi({ example: 1, description: "페이지 번호" }),
+    limit: z.coerce
+      .number()
+      .int()
+      .openapi({ example: 10, description: "페이지 당 아이템 수" }),
+    total: z.coerce
+      .number()
+      .int()
+      .openapi({ example: 100, description: "총 아이템 수" }),
+  })
+  .openapi("Pagination");
 
-export const CursorPaginationSchema = z.object({
-  cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
-  limit: z.coerce.number().int().positive().default(12),
-});
+export const CursorPaginationSchema = z
+  .object({
+    cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
+    limit: z.coerce.number().int().positive().default(12),
+  })
+  .openapi("CursorPagination");
 
-export const UploadedImageInfoSchema = z.object({
-  imageUrl: z.string().url(),
-  width: z.number().int(),
-  height: z.number().int(),
-  format: z.enum(["JPEG", "PNG", "WEBP", "HEIC", "UNKNOWN"]),
-});
+export const UploadedImageInfoSchema = z
+  .object({
+    imageUrl: z.string().url(),
+    width: z.number().int(),
+    height: z.number().int(),
+    format: z.enum(["JPEG", "PNG", "WEBP", "HEIC", "UNKNOWN"]),
+  })
+  .openapi("UploadedImageInfo");
 
 export const MapLocationSchema = z
   .object({
@@ -40,6 +46,19 @@ export const MapLocationSchema = z
   })
   .nullable()
   .openapi("MapLocation");
+
+/**
+ * 향수 ID 경로 파라미터 스키마 (공통)
+ */
+export const PerfumeIdParamSchema = z.object({
+  id: z
+    .string()
+    .uuid()
+    .openapi({
+      param: { name: "id", in: "path" },
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    }),
+});
 
 export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
@@ -57,12 +76,14 @@ export const SuccessResponseSchema = (dataSchema: z.ZodType) =>
     data: dataSchema,
   });
 
-export const ErrorResponseSchema = z.object({
-  success: z.literal(false),
-  message: z.string(),
-  error: z.string().optional(),
-  details: z.unknown().optional(),
-});
+export const ErrorResponseSchema = z
+  .object({
+    success: z.literal(false),
+    message: z.string(),
+    error: z.string().optional(),
+    details: z.unknown().optional(),
+  })
+  .openapi("ErrorResponse");
 
 export const BadRequestResponse = {
   description: "잘못된 요청 데이터 (Bad Request)",

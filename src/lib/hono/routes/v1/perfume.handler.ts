@@ -1,27 +1,21 @@
 import { createRoute, z } from "@hono/zod-openapi";
+
 import { ApiPostResponseSchema } from "@/lib/hono/schemas/community.schema";
+import * as CommonSchemas from "@/lib/hono/schemas/common.schema";
 import * as PerfumeSchemas from "@/lib/hono/schemas/perfume.schema";
+
 import * as PerfumeServices from "@/lib/hono/services/perfume.service";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
+
 import {
   apiInternalError,
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const routers = createDomainRouters();
-
-const perfumeIdParam = z.object({
-  id: z
-    .string()
-    .uuid()
-    .openapi({
-      param: { name: "id", in: "path" },
-      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    }),
-});
 
 /**
  * @method GET
@@ -91,7 +85,11 @@ const getAllNotesRoute = createRoute({
 routers.public.openapi(getAllNotesRoute, async (c) => {
   const result = await PerfumeServices.getAllNotesService();
   if (!result.success) return apiInternalError(c, result.message);
-  return apiSuccess(c, result.data, "향수 노트 목록을 성공적으로 불러왔습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "향수 노트 목록을 성공적으로 불러왔습니다."
+  );
 });
 
 /**
@@ -113,7 +111,11 @@ const getAllAccordsRoute = createRoute({
 routers.public.openapi(getAllAccordsRoute, async (c) => {
   const result = await PerfumeServices.getAllAccordsService();
   if (!result.success) return apiInternalError(c, result.message);
-  return apiSuccess(c, result.data, "향수 어코드 목록을 성공적으로 불러왔습니다.");
+  return apiSuccess(
+    c,
+    result.data,
+    "향수 어코드 목록을 성공적으로 불러왔습니다."
+  );
 });
 
 /**
@@ -126,7 +128,7 @@ const getPerfumeByIdRoute = createRoute({
   method: "get",
   path: "/{id}",
   summary: "특정 향수 상세 조회",
-  request: { params: perfumeIdParam },
+  request: { params: CommonSchemas.PerfumeIdParamSchema },
   responses: createStandardApiResponses({
     schema: PerfumeSchemas.ApiPerfumeDetailResponseSchema,
   }),
@@ -158,7 +160,7 @@ const getPerfumePostsRoute = createRoute({
   path: "/{id}/posts",
   summary: "특정 향수를 태그한 게시글 목록 조회",
   request: {
-    params: perfumeIdParam,
+    params: CommonSchemas.PerfumeIdParamSchema,
     query: z.object({
       take: z.string().optional().default("10").transform(Number),
       cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
@@ -201,7 +203,7 @@ const toggleBookmarkRoute = createRoute({
   method: "post",
   path: "/{id}/bookmark",
   summary: "향수 북마크 토글",
-  request: { params: perfumeIdParam },
+  request: { params: CommonSchemas.PerfumeIdParamSchema },
   responses: createStandardApiResponses({
     schema: z.object({ bookmarked: z.boolean() }),
   }),
@@ -239,7 +241,7 @@ const toggleLikeRoute = createRoute({
   method: "post",
   path: "/{id}/like",
   summary: "향수 좋아요 토글",
-  request: { params: perfumeIdParam },
+  request: { params: CommonSchemas.PerfumeIdParamSchema },
   responses: createStandardApiResponses({
     schema: z.object({ liked: z.boolean() }),
   }),

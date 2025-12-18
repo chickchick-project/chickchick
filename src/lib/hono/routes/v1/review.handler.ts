@@ -1,8 +1,10 @@
 import { createRoute, z } from "@hono/zod-openapi";
+
+import * as CommonSchemas from "@/lib/hono/schemas/common.schema";
 import * as ReviewSchemas from "@/lib/hono/schemas/review.schema";
+
 import * as ReviewServices from "@/lib/hono/services/review.service";
-import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
-import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
+
 import {
   apiBadRequest,
   apiConflict,
@@ -11,19 +13,11 @@ import {
   apiNotFound,
   apiSuccess,
 } from "@/lib/hono/utils/api.utils";
+import { createStandardApiResponses } from "@/lib/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/lib/hono/utils/router";
+import { getAuthenticatedUser } from "@/lib/hono/utils/service.utils";
 
 const routers = createDomainRouters();
-
-const perfumeIdParam = z.object({
-  perfumeId: z
-    .string()
-    .uuid()
-    .openapi({
-      param: { name: "perfumeId", in: "path" },
-      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-    }),
-});
 
 /**
  * @method GET
@@ -64,7 +58,7 @@ const getReviewRoute = createRoute({
   summary: "특정 향수의 모든 리뷰 조회",
   description: "등록된 향수의 모든 리뷰 데이터를 조회합니다.",
   request: {
-    params: perfumeIdParam,
+    params: CommonSchemas.PerfumeIdParamSchema,
   },
   responses: createStandardApiResponses({
     schema: z.array(ReviewSchemas.ApiReviewResponseSchema),
@@ -95,7 +89,7 @@ const getReviewWithPaginationRoute = createRoute({
   summary: "특정 향수의 리뷰 조회 (페이지네이션)",
   description: "등록된 향수의 모든 리뷰 데이터를 페이지네이션으로 조회합니다.",
   request: {
-    params: perfumeIdParam,
+    params: CommonSchemas.PerfumeIdParamSchema,
     query: z.object({
       take: z.string().optional().default("12").transform(Number),
       cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
@@ -134,7 +128,7 @@ const createReviewRoute = createRoute({
   summary: "새로운 리뷰 생성",
   description: "새로운 리뷰를 생성함",
   request: {
-    params: perfumeIdParam,
+    params: CommonSchemas.PerfumeIdParamSchema,
     body: {
       content: {
         "application/json": { schema: ReviewSchemas.CreateReviewInputSchema },
@@ -184,9 +178,7 @@ const toggleLikeRoute = createRoute({
   summary: "리뷰 좋아요/싫어요 토글",
   description: "리뷰에 대해 좋아요/싫어요를 토글합니다.",
   request: {
-    params: z.object({
-      reviewId: z.string().uuid("유효하지 않은 리뷰 ID입니다."),
-    }),
+    params: ReviewSchemas.ReviewIdParamSchema,
   },
   responses: createStandardApiResponses({
     schema: ReviewSchemas.ApiReviewResponseSchema,
