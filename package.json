@@ -48,7 +48,7 @@
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.53.2",
     "react-naver-maps": "^0.1.4",
-    "sharp": "^0.34.4",
+    "sharp": "^0.33.5",
     "swagger-ui-react": "^5.25.3",
     "swiper": "^11.2.7",
     "tailwind-merge": "^2.5.5",
@@ -73,7 +73,6 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "@types/sharp": "^0.32.0",
     "@types/swagger-ui-react": "^5.18.0",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/ui": "^4.0.9",
@@ -89,6 +88,9 @@
     "typescript": "^5",
     "vitest": "^4.0.9",
     "zod-prisma-types": "^3.2.4"
+  },
+  "resolutions": {
+    "sharp": "0.33.5"
   },
   "packageManager": "yarn@4.10.3"
 }
