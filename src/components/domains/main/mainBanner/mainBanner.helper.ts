@@ -1,3 +1,8 @@
+/**
+ * @deprecated
+ * 더 이상 사용되지 않음. 점진적 제거 필요
+ *
+ */
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { apiClient } from "@/lib/utils/api/client";
 

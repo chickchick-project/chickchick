@@ -35,6 +35,17 @@ export const usePerfumeDetail = (perfumeId: string) => {
   });
 };
 
+export const usePerfumeByTheme = (themeName: string) => {
+  return useQuery({
+    queryKey: ["perfumes", "theme", themeName],
+    queryFn: async () => {
+      const response = await perfumeApi.byTheme(themeName);
+      return response?.data || [];
+    },
+    staleTime: 60 * 1000, // 60초
+  });
+};
+
 /**
  * 브랜드 상세 페이지의 향수 목록을 무한 스크롤로 조회하는 쿼리
  *
@@ -43,7 +54,7 @@ export const usePerfumeDetail = (perfumeId: string) => {
  */
 export const useInfiniteBrandPerfumesQuery = (
   brandName: string,
-  filters: Record<string, string[]>
+  filters: Record<string, string[]>,
 ) => {
   return useInfiniteQuery<
     PaginatedSearchResponse,
