@@ -1,14 +1,9 @@
 import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
-import { createHttpClient } from "@/lib/utils/core-request";
+import { apiClient } from "@/lib/utils/api/client";
 import { PostCategory } from "@prisma/client";
 
-export const API_BASE_URL = "http://localhost:3000/api/v1";
 export const COMMUNITY_URL = `/community/posts`;
-
-const apiClient = createHttpClient({
-  baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL || API_BASE_URL,
-});
 
 export async function deletePostById(
   postId: string

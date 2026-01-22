@@ -1,12 +1,12 @@
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import { apiClient } from "@/lib/utils/api/client";
 
 export async function getBannerData(
   themeName: string
 ): Promise<ApiPerfumeSimpleResponse[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(
-      `${baseUrl}/api/v1/perfumes/theme?themeName=${themeName}`,
+    const result = await apiClient.get<{ data: ApiPerfumeSimpleResponse[] }>(
+      `/perfumes/theme?themeName=${themeName}`,
       {
         cache: "no-store",
         next: {
@@ -14,13 +14,13 @@ export async function getBannerData(
         },
       }
     );
-    const { data } = await res.json();
-    if (!res.ok) {
-      console.error("Failed to fetch banner data:", res.statusText);
+
+    if (!result) {
+      console.error("Failed to fetch banner data");
       return [];
     }
 
-    return data;
+    return result.data;
   } catch (error) {
     console.error("Error in getBannerData:", error);
     return [];
