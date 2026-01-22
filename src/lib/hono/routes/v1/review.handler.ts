@@ -58,7 +58,7 @@ const getReviewRoute = createRoute({
   summary: "특정 향수의 모든 리뷰 조회",
   description: "등록된 향수의 모든 리뷰 데이터를 조회합니다.",
   request: {
-    params: CommonSchemas.PerfumeIdParamSchema,
+    params: CommonSchemas.ReviewPerfumeIdParamSchema,
   },
   responses: createStandardApiResponses({
     schema: z.array(ReviewSchemas.ApiReviewResponseSchema),
@@ -89,7 +89,7 @@ const getReviewWithPaginationRoute = createRoute({
   summary: "특정 향수의 리뷰 조회 (페이지네이션)",
   description: "등록된 향수의 모든 리뷰 데이터를 페이지네이션으로 조회합니다.",
   request: {
-    params: CommonSchemas.PerfumeIdParamSchema,
+    params: CommonSchemas.ReviewPerfumeIdParamSchema,
     query: z.object({
       take: z.string().optional().default("12").transform(Number),
       cursor: z.string().uuid("유효하지 않은 커서 ID입니다.").optional(),
@@ -128,7 +128,7 @@ const createReviewRoute = createRoute({
   summary: "새로운 리뷰 생성",
   description: "새로운 리뷰를 생성함",
   request: {
-    params: CommonSchemas.PerfumeIdParamSchema,
+    params: CommonSchemas.ReviewPerfumeIdParamSchema,
     body: {
       content: {
         "application/json": { schema: ReviewSchemas.CreateReviewInputSchema },

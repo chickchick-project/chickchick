@@ -60,6 +60,19 @@ export const PerfumeIdParamSchema = z.object({
     }),
 });
 
+/**
+ * Review API용 향수 ID 경로 파라미터 스키마
+ */
+export const ReviewPerfumeIdParamSchema = z.object({
+  perfumeId: z
+    .string()
+    .uuid()
+    .openapi({
+      param: { name: "perfumeId", in: "path" },
+      example: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    }),
+});
+
 export const PaginatedResponseSchema = <T extends z.ZodTypeAny>(
   dataSchema: T
 ) =>
