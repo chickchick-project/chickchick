@@ -13,19 +13,6 @@ export const MainBannerPerfumeList = ({
 }: IMainBannerPerfumesListProps) => {
   return (
     <div className="overflow-auto w-full">
-      {/* <style jsx global>{`
-        @keyframes left-right {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-20vw);
-          }
-        }
-        .animate-left-right {
-          animation: left-right 1s linear infinite alternate;
-        }
-      `}</style> */}
       <div className="flex gap-5 justify-between w-full px-5 tablet:py-5 py-4">
         {data.map((item) => (
           <Link key={item.id} href={`/perfumes/${item.id}`}>

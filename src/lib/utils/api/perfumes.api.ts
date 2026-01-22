@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
-import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import { ApiPerfumeDetailResponse, ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { PerfumeNote, PerfumeAccord } from "@prisma/client";
 
 export const perfumeApi = {
@@ -18,6 +18,14 @@ export const perfumeApi = {
   detail: (id: string) => {
     return apiClient.get<ApiSuccessResponse<ApiPerfumeDetailResponse>>(
       `/perfumes/${id}`
+    );
+  },
+  /**
+   * 테마별 향수 목록 조회
+   */
+  byTheme: (themeName: string) => {
+    return apiClient.get<ApiSuccessResponse<ApiPerfumeSimpleResponse[]>>(
+      `/perfumes/theme?themeName=${themeName}`
     );
   },
   /**
