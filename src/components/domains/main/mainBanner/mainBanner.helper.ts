@@ -8,8 +8,8 @@ export async function getBannerData(
     const result = await apiClient.get<{ data: ApiPerfumeSimpleResponse[] }>(
       `/perfumes/theme?themeName=${themeName}`,
       {
-        cache: "no-store",
         next: {
+          revalidate: 60, // 60초마다 재검증
           tags: ["main-banner", `theme-${themeName}`],
         },
       }

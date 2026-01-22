@@ -5,7 +5,7 @@ import { MainSearchBar } from "@/components/domains/main/MainSearchBar";
 import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { getBannerData } from "@/components/domains/main/mainBanner/mainBanner.helper";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // 60초마다 재검증
 
 export default async function Home() {
   const data: ApiPerfumeSimpleResponse[] = await getBannerData("FRESH");
