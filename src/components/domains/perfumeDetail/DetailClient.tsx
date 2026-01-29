@@ -47,7 +47,6 @@ export const DetailClient = ({
       [type]: !prev[type],
     }));
   };
-
   return (
     <div className="w-full flex flex-col items-center my-10">
       <section className="w-full px-5 flex flex-col gap-[60px] items-center">
