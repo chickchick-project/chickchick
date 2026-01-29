@@ -6,11 +6,12 @@ import {
   LinearScale,
   BarElement,
   ChartOptions,
+  BarController,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "react-chartjs-2";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement);
+ChartJS.register(CategoryScale, LinearScale, BarElement, BarController);
 
 type BarChartProps = {
   title: string;
