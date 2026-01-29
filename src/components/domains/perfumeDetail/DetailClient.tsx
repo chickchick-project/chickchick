@@ -38,7 +38,7 @@ export const DetailClient = ({
     {
       liked: false,
       bookmarked: false,
-    }
+    },
   );
 
   const toggleInteraction = (type: keyof InteractionStates) => {
@@ -61,7 +61,7 @@ export const DetailClient = ({
       <MobileSeparator className="pc:h-px pc:bg-gray-200" mobileOnly={false} />
       <section className="w-full flex flex-col pc:flex-row pc:justify-between">
         <div className="flex flex-col pc:gap-[60px]">
-          <PerfumeReviews data={reviewData} />
+          {/* <PerfumeReviews data={reviewData} /> */}
           <MobileSeparator />
           <PerfumeRecentViewList />
         </div>
