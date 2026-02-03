@@ -20,16 +20,23 @@ function hasSessionToken(): boolean {
 export default function GlobalStateSync() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const { setUser, reset } = useUserStore();
+
   // 클라이언트에서만 세션 체크
   useEffect(() => {
-    setIsLoggedIn(hasSessionToken());
-  }, []);
+    const hasSession = hasSessionToken();
+    setIsLoggedIn(hasSession);
+
+    // 세션이 없으면 즉시 사용자 상태 초기화
+    if (!hasSession) {
+      reset();
+    }
+  }, [reset]);
 
   // 로그인된 사용자만 프로필 조회
   const { data: userProfile, isFetched } = useUserProfile({
     enabled: isLoggedIn,
   });
-  const { setUser, reset } = useUserStore();
 
   // 사용자 프로필 동기화
   useEffect(() => {
