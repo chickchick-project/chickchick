@@ -1,13 +1,34 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useUserProfile } from "@/lib/hooks/query/useUserQuery";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { pointApi } from "@/lib/utils/api/points.api";
 
+/**
+ * 클라이언트에서 세션 토큰 존재 여부 확인
+ */
+function hasSessionToken(): boolean {
+  if (typeof document === "undefined") return false;
+  return (
+    document.cookie.includes("authjs.session-token=") ||
+    document.cookie.includes("__Secure-authjs.session-token=")
+  );
+}
+
 //전역으로 사용하는 상태 동기화
 export default function GlobalStateSync() {
-  const { data: userProfile, isFetched } = useUserProfile();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // 클라이언트에서만 세션 체크
+  useEffect(() => {
+    setIsLoggedIn(hasSessionToken());
+  }, []);
+
+  // 로그인된 사용자만 프로필 조회
+  const { data: userProfile, isFetched } = useUserProfile({
+    enabled: isLoggedIn,
+  });
   const { setUser, reset } = useUserStore();
 
   // 사용자 프로필 동기화
