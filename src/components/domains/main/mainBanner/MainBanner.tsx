@@ -1,11 +1,9 @@
-"use client";
-
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
-import { SkeletonBanner } from "@/components/domains/user/components/skeletons/SkeletonBanner";
-import { usePerfumeByTheme } from "@/lib/hooks/query/usePerfumeQuery";
+import { getPerfumesListByThemeService } from "@/lib/hono/services/perfume.service";
 
-export const MainBanner = () => {
-  const { data = [], isLoading } = usePerfumeByTheme("FRESH");
+export const MainBanner = async () => {
+  const result = await getPerfumesListByThemeService("mostLike");
+  const data = result.success ? result.data : [];
 
   return (
     <section className="flex flex-col items-center justify-center tablet:px-10 px-5 tablet:py-9 py-5 bg-gray-300 w-full">
@@ -13,11 +11,7 @@ export const MainBanner = () => {
         <div className="tablet:text-headline-2 text-title-2 font-semibold text-black-100">
           현재 가장 인기가 많은 향수 TOP 5
         </div>
-        {isLoading ? (
-          <SkeletonBanner />
-        ) : (
-          data && <MainBannerPerfumeList data={data} />
-        )}
+        <MainBannerPerfumeList data={data} />
       </div>
     </section>
   );

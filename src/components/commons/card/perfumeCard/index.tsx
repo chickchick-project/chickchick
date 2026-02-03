@@ -14,6 +14,7 @@ export default function PerfumeCard({
   onClick,
   onClose,
   className = "",
+  priority = false,
 }: PerfumeCardProps) {
   return (
     <article
@@ -37,13 +38,14 @@ export default function PerfumeCard({
           alt={perfumeName || "Perfume Image"}
           fill
           sizes={`
-            (max-width: 768px) 100vw, 
-            (max-width: 1200px) 50vw, 
+            (max-width: 768px) 100vw,
+            (max-width: 1200px) 50vw,
             33vw
           `}
           placeholder="blur"
           blurDataURL="/images/BlurShimmer.svg"
           className="object-contain"
+          priority={priority}
         />
       </figure>
 
