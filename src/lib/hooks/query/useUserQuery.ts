@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { meApi, userApi, USER_ID_REGEX } from "../../utils/api/users.api";
 import { queryKeys } from "../../utils/queryKeys";
 import type { ApiUpdateMyProfileRequest } from "@/lib/hono/schemas/me.schema";
@@ -7,7 +12,19 @@ import type { ApiUpdateMyProfileRequest } from "@/lib/hono/schemas/me.schema";
 export const useUserProfile = (options?: { enabled?: boolean }) => {
   return useQuery({
     queryKey: queryKeys.user.profile("me"),
-    queryFn: () => meApi.profile.get(),
+    queryFn: async () => {
+      try {
+        const response = await meApi.profile.get();
+        if (!response || !response.success) return null;
+        return response.data;
+      } catch (error) {
+        const errorStatus = (error as { status?: number })?.status;
+        if (errorStatus === 401 || errorStatus === 403) {
+          return null;
+        }
+        throw error;
+      }
+    },
     enabled: options?.enabled ?? true,
     retry: (failureCount, error) => {
       // 401, 403 에러는 재시도하지 않음 (인증 실패)
@@ -17,10 +34,9 @@ export const useUserProfile = (options?: { enabled?: boolean }) => {
       }
       return failureCount < 3;
     },
-    select: (response) => {
-      if (!response || !response.success) return null;
-      return response.data;
-    },
+    refetchOnWindowFocus: true, // OAuth 콜백 후 윈도우 포커스 시 재검증
+    refetchOnMount: true, // 페이지 이동 후 마운트 시 재검증
+    staleTime: 1000, // 1초 후 stale 처리 (OAuth 콜백 빠른 감지)
   });
 };
 
@@ -188,7 +204,7 @@ export const useUploadProfileImage = () => {
       queryClient.setQueryData(queryKeys.user.profile("me"), response);
       queryClient.setQueryData(
         queryKeys.user.profile(response.data.id),
-        response
+        response,
       );
     },
     onError: (error) => {

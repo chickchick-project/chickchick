@@ -7,6 +7,7 @@ import Providers from "@/components/commons/Provider/TanstackProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
 import KakaoScript from "@/lib/script/KakaoScript";
+import { auth } from "@/auth";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -15,11 +16,14 @@ const pretendard = localFont({
   variable: "--font-pretendard",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  const isAuthenticated = !!session?.user;
+
   return (
     <html lang="kr" className="h-dvh overflow-y-scroll">
       <body className={`${pretendard.variable} font-pretendard h-full`}>
@@ -27,7 +31,7 @@ export default function RootLayout({
           <RecentSyncManager />
           <NavBarWrapper />
           <BodyWrapper>
-            <GlobalStateSync />
+            <GlobalStateSync isAuthenticated={isAuthenticated} />
             {children}
           </BodyWrapper>
           <LoginModalProvider />

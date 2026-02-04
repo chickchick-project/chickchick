@@ -1,53 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUserProfile } from "@/lib/hooks/query/useUserQuery";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { pointApi } from "@/lib/utils/api/points.api";
 
-/**
- * 클라이언트에서 세션 토큰 존재 여부 확인
- */
-function hasSessionToken(): boolean {
-  if (typeof document === "undefined") return false;
-  return (
-    document.cookie.includes("authjs.session-token=") ||
-    document.cookie.includes("__Secure-authjs.session-token=")
-  );
+interface GlobalStateSyncProps {
+  isAuthenticated: boolean;
 }
 
 //전역으로 사용하는 상태 동기화
-export default function GlobalStateSync() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+export default function GlobalStateSync({ isAuthenticated }: GlobalStateSyncProps) {
   const { setUser, reset } = useUserStore();
 
-  // 클라이언트에서만 세션 체크
-  useEffect(() => {
-    const hasSession = hasSessionToken();
-    setIsLoggedIn(hasSession);
+  // 서버에서 인증된 경우에만 프로필 조회
+  const { data: userProfile, isFetched } = useUserProfile({
+    enabled: isAuthenticated,
+  });
 
-    // 세션이 없으면 즉시 사용자 상태 초기화
-    if (!hasSession) {
+  // 인증되지 않은 경우 즉시 reset
+  useEffect(() => {
+    if (!isAuthenticated) {
       reset();
     }
-  }, [reset]);
-
-  // 로그인된 사용자만 프로필 조회
-  const { data: userProfile, isFetched } = useUserProfile({
-    enabled: isLoggedIn,
-  });
+  }, [isAuthenticated, reset]);
 
   // 사용자 프로필 동기화
   useEffect(() => {
-    if (isFetched) {
+    // 인증된 경우에만 프로필 동기화
+    if (isAuthenticated && isFetched) {
       if (userProfile) {
         setUser(userProfile);
       } else {
         reset();
       }
     }
-  }, [isFetched, userProfile, setUser, reset]);
+  }, [isAuthenticated, isFetched, userProfile, setUser, reset]);
 
   // 일일 로그인 체크
   useEffect(() => {
