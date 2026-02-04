@@ -1,13 +1,25 @@
 "use client";
 
-import { useState, useMemo, ChangeEvent, FormEvent } from "react";
+import { useState, useMemo, ChangeEvent, FormEvent, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 
 export const usePerfumeSearchState = (
   brands: ApiBrandSimpleResponse[]
 ) => {
-  const [inputValue, setInputValue] = useState("");
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchParams = useSearchParams();
+  const queryParam = searchParams.get("q");
+
+  const [inputValue, setInputValue] = useState(queryParam || "");
+  const [searchKeyword, setSearchKeyword] = useState(queryParam || "");
+
+  // URL의 query parameter가 변경되면 검색어 업데이트
+  useEffect(() => {
+    if (queryParam !== null) {
+      setInputValue(queryParam);
+      setSearchKeyword(queryParam);
+    }
+  }, [queryParam]);
 
   // 검색어 제출 핸들러
   const handleSubmit = (e?: FormEvent) => {

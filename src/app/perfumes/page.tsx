@@ -1,4 +1,5 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { Suspense } from "react";
 import getQueryClient from "@/lib/utils/getQueryClient";
 import { brandApi } from "@/lib/utils/api/brands.api";
 import { perfumeApi } from "@/lib/utils/api/perfumes.api";
@@ -24,7 +25,9 @@ export default async function Page() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <PageClient />
+      <Suspense>
+        <PageClient />
+      </Suspense>
     </HydrationBoundary>
   );
 }

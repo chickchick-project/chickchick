@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
+import { createPortal } from "react-dom";
 import { useModalStore } from "@/lib/stores/useModalStore";
 import { LoginModal } from "@/components/modal/LoginModal";
 import { MODAL_KEYS } from "@/lib/stores/useModalStore";
-import { createPortal } from "react-dom";
 
 export default function LoginModalProvider() {
   const { loginModal, closeModal } = useModalStore();
@@ -20,7 +20,9 @@ export default function LoginModalProvider() {
   if (!modalRoot) return null;
 
   return createPortal(
-    <LoginModal closeModal={() => closeModal(MODAL_KEYS.LOGIN)} />,
-    modalRoot
+    <Suspense fallback={null}>
+      <LoginModal closeModal={() => closeModal(MODAL_KEYS.LOGIN)} />
+    </Suspense>,
+    modalRoot,
   );
 }

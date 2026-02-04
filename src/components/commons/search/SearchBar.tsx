@@ -8,6 +8,9 @@ export interface SearchBarProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   buttonType?: "submit" | "button";
+  maxWidth?: string;
+  className?: string;
+  isLoading?: boolean;
   [key: string]: unknown;
 }
 
@@ -22,16 +25,22 @@ export function SearchBar({
   onClick,
   placeholder,
   buttonType = "button",
+  maxWidth = "840px",
+  className = "",
+  isLoading = false,
   ...rest
 }: SearchBarProps) {
   const baseStyle = `
-    w-full max-w-[840px] max-h-10 tablet:h-12 tablet:max-h-[48px]
+    w-full max-h-10 tablet:h-12 tablet:max-h-[48px]
     rounded-lg px-5 py-3 border flex items-center
     focus:outline-none focus:border-primary-300 text-label-1 tablet:text-body-1
     `;
 
   return (
-    <div className="relative w-full max-w-[840px] flex items-center">
+    <div
+      className={`relative w-full flex items-center ${className}`}
+      style={{ maxWidth }}
+    >
       <input
         className={`${baseStyle} pr-10`}
         placeholder={
@@ -43,14 +52,20 @@ export function SearchBar({
         onChange={onChange}
         {...rest}
       />
-      <button onClick={onClick} type={buttonType}>
-        <Image
-          src={ICONS.Search.src}
-          alt="Search"
-          width={20}
-          height={20}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2"
-        />
+      <button onClick={onClick} type={buttonType} disabled={isLoading}>
+        {isLoading ? (
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+            <div className="w-5 h-5 border-2 border-primary-300 border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : (
+          <Image
+            src={ICONS.Search.src}
+            alt="Search"
+            width={20}
+            height={20}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2"
+          />
+        )}
       </button>
     </div>
   );

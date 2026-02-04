@@ -15,6 +15,7 @@ interface SearchHeaderProps {
   notes: ApiPerfumeNoteResponse[];
   accords: ApiPerfumeAccordResponse[];
   isSearch?: boolean;
+  searchBarMaxWidth?: string;
 }
 
 export function SearchHeader({
@@ -25,6 +26,7 @@ export function SearchHeader({
   notes,
   accords,
   isSearch = true,
+  searchBarMaxWidth = "840px",
 }: SearchHeaderProps) {
   return (
     <header className="w-full px-4">
@@ -34,6 +36,7 @@ export function SearchHeader({
             value={inputValue}
             onChange={onChange}
             onClick={onSubmit}
+            maxWidth={searchBarMaxWidth}
           />
         )}
         <nav className="w-full mt-7">

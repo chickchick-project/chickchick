@@ -9,13 +9,16 @@ import Link from "next/link";
 import { useCommunityPosts } from "@/lib/hooks/query/useCommunityQuery";
 import { PostCategory } from "@prisma/client";
 import { Indicator } from "@/components/commons/loading/Indicator";
+import { BasePost } from "@/lib/hono/utils/prisma.utils";
 
 interface IMainContentCommunityList {
   size: "s" | "m";
+  initialData?: BasePost[];
 }
 
 export const MainContentCommunityList = ({
   size,
+  initialData = [],
 }: IMainContentCommunityList) => {
   const boards = Object.entries(BOARD_TYPES).map(([key, value]) => ({
     key,
@@ -23,18 +26,22 @@ export const MainContentCommunityList = ({
   }));
 
   const [selectedTab, setSelectedTab] = useState(boards[0].key);
+  const [hasChangedTab, setHasChangedTab] = useState(false);
 
-  // API 호출
-  const { data: apiData, isLoading } = useCommunityPosts({
-    category: selectedTab as PostCategory,
-    sortBy: "popular",
-    limit: 8,
-  });
+  const { data: apiData, isLoading } = useCommunityPosts(
+    {
+      category: selectedTab as PostCategory,
+      sortBy: "popular",
+      limit: 8,
+    },
+    hasChangedTab,
+  );
 
-  const posts = apiData?.data || [];
+  const posts = !hasChangedTab ? initialData : apiData?.data || [];
 
   const handleTabClick = (key: string) => {
     setSelectedTab(key);
+    setHasChangedTab(true);
   };
 
   return (

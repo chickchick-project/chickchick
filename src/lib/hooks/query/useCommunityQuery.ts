@@ -10,7 +10,7 @@ import { communityApi } from "../../utils/api/community.api";
 import { queryKeys } from "../../utils/queryKeys";
 
 // 커뮤니티 게시글 목록 조회
-export const useCommunityPosts = (params?: GetPostsQuery) => {
+export const useCommunityPosts = (params?: GetPostsQuery, enabled: boolean = true) => {
   return useQuery({
     queryKey: queryKeys.community.posts({
       searchKeyword: params?.q || "",
@@ -20,6 +20,7 @@ export const useCommunityPosts = (params?: GetPostsQuery) => {
       },
     }),
     queryFn: () => communityApi.list(params),
+    enabled,
     select: (response) => {
       if (!response || !response.success) return null;
       return response.data;
