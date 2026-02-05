@@ -4,6 +4,7 @@ import {
   ReviewCategory,
   ReviewOptionKey,
 } from "../types/review.types";
+import { PlaceHolder } from "../../../public/images";
 
 export const REVIEW_CONFIG = {
   feeling: {
@@ -159,7 +160,7 @@ export const ATTRIBUTE_ID_TO_CATEGORY_MAP = Object.fromEntries(
   Object.entries(REVIEW_CONFIG).map(([category, config]) => [
     config.id,
     category,
-  ])
+  ]),
 ) as Record<number, ReviewCategory>;
 
 export const DEFAULT_POPULAR_REVIEW = {
@@ -182,7 +183,7 @@ export const DEFAULT_POPULAR_REVIEW = {
     nameEn: "Review is being prepared",
     perfumeImage: {
       id: "placeholder",
-      imageUrl: "/images/PlaceHolder.png",
+      imageUrl: PlaceHolder.src,
       createdAt: new Date("2024-01-01T00:00:00"),
       perfumeId: "",
     },
@@ -226,7 +227,7 @@ export const REVIEW_OPTIONS = {
 
 // 특정 카테고리의 옵션 생성
 function createCategoryOptions<K extends ReviewCategory>(
-  category: K
+  category: K,
 ): Array<{
   key: ReviewOptionKey<K>;
   label: string;

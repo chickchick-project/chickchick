@@ -3,11 +3,12 @@ import {
   Google,
   Kakao,
   Logo,
-  MainButton1,
-  MainButton2,
+  Community,
   Naver,
+  PerfumeSearch,
   Profile,
-} from "../../../public/images/images";
+  PlaceHolder,
+} from "../../../public/images";
 
 type TImage = {
   src: StaticImageData;
@@ -20,8 +21,9 @@ const IMAGES: { [key: string]: TImage } = {
   Google: { src: Google, alt: "google" },
   Naver: { src: Naver, alt: "naver" },
   Kakao: { src: Kakao, alt: "kakao" },
-  SearchButton: { src: MainButton1, alt: "search button" },
-  RecommendButton: { src: MainButton2, alt: "recommend button" },
+  SearchButton: { src: PerfumeSearch, alt: "search button" },
+  CommunityButton: { src: Community, alt: "community button" },
+  PlaceHolder: { src: PlaceHolder, alt: "place holder" },
 };
 
 export default IMAGES;
