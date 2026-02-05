@@ -6,7 +6,6 @@ import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import Providers from "@/components/commons/Provider/TanstackProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
-import KakaoScript from "@/lib/script/KakaoScript";
 import { auth } from "@/auth";
 
 const pretendard = localFont({
@@ -37,7 +36,6 @@ export default async function RootLayout({
           <LoginModalProvider />
         </Providers>
         <div id="modal"></div>
-        <KakaoScript />
       </body>
     </html>
   );

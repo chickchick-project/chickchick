@@ -1,9 +1,6 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
 import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import Image from "next/image";
 import { useState } from "react";
@@ -27,18 +24,6 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
         .swiper-button-prev::after {
           display: none !important;
         }
-        .swiper-pagination-bullet {
-          width: 4px;
-          height: 4px;
-          background: rgba(255, 255, 255, 0.5);
-          opacity: 1;
-        }
-        .swiper-pagination-bullet-active {
-          background: #dbc0b0;
-          width: 8px;
-          height: 4px;
-          border-radius: 10px;
-        }
       `}</style>
       <Swiper
         spaceBetween={10}
@@ -53,6 +38,9 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           prevEl: ".custom-prev",
         }}
         modules={[Pagination, Autoplay, Navigation]}
+        observer={true}
+        observeParents={true}
+        watchOverflow={false}
         // autoplay={{ delay: 5000, disableOnInteraction: false }}
         onSlideChange={(swiper) => {
           setIsBeginning(swiper.isBeginning);

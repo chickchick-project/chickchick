@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "swiper/css";
+@import "swiper/css/pagination";
+@import "swiper/css/navigation";
+
 @layer utilities {
   .shadow-card {
     @apply shadow-[0_4px_20px_rgba(0,0,0,0.08)];
@@ -19,4 +23,18 @@
   .divider-horizontal-thick {
     @apply bg-gray-300 h-[8px] w-full;
   }
+}
+
+.swiper-pagination-bullet {
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 1;
+}
+
+.swiper-pagination-bullet-active {
+  background: #dbc0b0;
+  width: 8px;
+  height: 4px;
+  border-radius: 10px;
 }

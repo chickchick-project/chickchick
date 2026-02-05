@@ -46,6 +46,7 @@ export default function PerfumeCard({
           blurDataURL="/images/BlurShimmer.svg"
           className="object-contain"
           priority={priority}
+          fetchPriority={priority ? "high" : undefined}
         />
       </figure>
 

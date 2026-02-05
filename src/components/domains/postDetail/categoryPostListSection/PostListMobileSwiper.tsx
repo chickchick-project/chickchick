@@ -4,8 +4,6 @@ import { useMemo } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CategoryPostList from "./CategoryPostList";
 import { Pagination } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/pagination";
 import { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
 
 interface IPostListMobileSwiperProps {
@@ -37,13 +35,16 @@ export default function PostListMobileSwiper({
       slidesPerView={1}
       autoHeight={true}
       pagination={{ clickable: true }}
+      observer={true}
+      observeParents={true}
+      watchOverflow={false}
       className={`
-        !overflow-visible 
-        [&_.swiper-pagination]:!top-[-35px]     
-        [&_.swiper-pagination]:!right-3         
-        [&_.swiper-pagination]:!left-auto         
-        [&_.swiper-pagination]:!w-auto         
-        [&_.swiper-pagination]:!bottom-auto    
+        !overflow-visible
+        [&_.swiper-pagination]:!top-[-35px]
+        [&_.swiper-pagination]:!right-3
+        [&_.swiper-pagination]:!left-auto
+        [&_.swiper-pagination]:!w-auto
+        [&_.swiper-pagination]:!bottom-auto
         [&_.swiper-pagination-bullet]:bg-primary-300
       `}
     >

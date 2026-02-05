@@ -1,13 +1,9 @@
 "use client";
 
-import { MainContentButton } from "./MainContentButton";
-import { MAIN_BUTTONS } from "./MainContentButton.constants";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/navigation";
-import "./MainContentButtonsSwiper.styles.css";
+import { MainContentButton } from "./MainContentButton";
+import { MAIN_BUTTONS } from "@/lib/constants/main";
 
 export const MainContentButtons = () => {
   return (
@@ -27,7 +23,7 @@ export const MainContentButtons = () => {
       </div>
 
       {/* Mobile: Swiper */}
-      <div className="pc:hidden block relative w-full tablet:px-5 px-4">
+      <div className="pc:hidden block relative w-full tablet:px-5 px-4 min-h-[140px] tablet:min-h-[200px]">
         <Swiper
           spaceBetween={10}
           slidesPerView={1}
@@ -40,6 +36,11 @@ export const MainContentButtons = () => {
             prevEl: ".custom-prev",
           }}
           autoplay={{ delay: 5000, disableOnInteraction: false }}
+          observer={true}
+          observeParents={true}
+          watchOverflow={false}
+          updateOnWindowResize={true}
+          resistanceRatio={0.85}
         >
           {MAIN_BUTTONS.map((button, index) => {
             const titleLines = button.title.split("\n");
