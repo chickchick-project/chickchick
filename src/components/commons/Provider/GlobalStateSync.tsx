@@ -5,21 +5,37 @@ import { useUserProfile } from "@/lib/hooks/query/useUserQuery";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { pointApi } from "@/lib/utils/api/points.api";
 
+interface GlobalStateSyncProps {
+  isAuthenticated: boolean;
+}
+
 //전역으로 사용하는 상태 동기화
-export default function GlobalStateSync() {
-  const { data: userProfile, isFetched } = useUserProfile();
+export default function GlobalStateSync({ isAuthenticated }: GlobalStateSyncProps) {
   const { setUser, reset } = useUserStore();
+
+  // 서버에서 인증된 경우에만 프로필 조회
+  const { data: userProfile, isFetched } = useUserProfile({
+    enabled: isAuthenticated,
+  });
+
+  // 인증되지 않은 경우 즉시 reset
+  useEffect(() => {
+    if (!isAuthenticated) {
+      reset();
+    }
+  }, [isAuthenticated, reset]);
 
   // 사용자 프로필 동기화
   useEffect(() => {
-    if (isFetched) {
+    // 인증된 경우에만 프로필 동기화
+    if (isAuthenticated && isFetched) {
       if (userProfile) {
         setUser(userProfile);
       } else {
         reset();
       }
     }
-  }, [isFetched, userProfile, setUser, reset]);
+  }, [isAuthenticated, isFetched, userProfile, setUser, reset]);
 
   // 일일 로그인 체크
   useEffect(() => {

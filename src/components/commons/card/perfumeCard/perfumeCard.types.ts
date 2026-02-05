@@ -11,6 +11,7 @@ interface PerfumeCardProps {
   onClick?: () => void;
   onClose?: () => void;
   className?: string;
+  priority?: boolean;
 }
 
 export type { PerfumeCardType, PerfumeCardProps };

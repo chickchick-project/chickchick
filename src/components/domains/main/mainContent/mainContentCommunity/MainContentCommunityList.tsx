@@ -4,16 +4,21 @@ import { BOARD_TYPES } from "@/lib/constants/communityBoard";
 import ICONS from "@/lib/constants/icons";
 import Image from "next/image";
 import { useState } from "react";
-import { boardDataMap } from "@/lib/mocks/communityPosts";
 import BoardTabBar from "@/components/commons/tabBar/BoardTabBar";
 import Link from "next/link";
+import { useCommunityPosts } from "@/lib/hooks/query/useCommunityQuery";
+import { PostCategory } from "@prisma/client";
+import { Indicator } from "@/components/commons/loading/Indicator";
+import { BasePost } from "@/lib/hono/utils/prisma.utils";
 
 interface IMainContentCommunityList {
   size: "s" | "m";
+  initialData?: BasePost[];
 }
 
 export const MainContentCommunityList = ({
   size,
+  initialData = [],
 }: IMainContentCommunityList) => {
   const boards = Object.entries(BOARD_TYPES).map(([key, value]) => ({
     key,
@@ -21,9 +26,22 @@ export const MainContentCommunityList = ({
   }));
 
   const [selectedTab, setSelectedTab] = useState(boards[0].key);
+  const [hasChangedTab, setHasChangedTab] = useState(false);
+
+  const { data: apiData, isLoading } = useCommunityPosts(
+    {
+      category: selectedTab as PostCategory,
+      sortBy: "popular",
+      limit: 8,
+    },
+    hasChangedTab,
+  );
+
+  const posts = !hasChangedTab ? initialData : apiData?.data || [];
 
   const handleTabClick = (key: string) => {
     setSelectedTab(key);
+    setHasChangedTab(true);
   };
 
   return (
@@ -39,29 +57,44 @@ export const MainContentCommunityList = ({
           handleTabClick={handleTabClick}
         />
       </div>
-      <div className="w-full">
-        {boardDataMap[selectedTab].map((post) => (
-          <Link
-            key={post.id}
-            className="flex justify-between gap-3 w-full"
-            href={`/community/${post.id}`}
-          >
-            <h3 className="text-black-100 tablet:text-body-2 text-label-2 font-medium py-2 w-full overflow-hidden text-ellipsis whitespace-nowrap">
-              {post.title}
-            </h3>
-            <div className="flex items-center justify-end gap-0.5">
-              <Image
-                src={ICONS.Comment.src}
-                alt={ICONS.Comment.alt}
-                width={16}
-                height={16}
-              />
-              <div className="text-gray-100 tablet:text-body-2 text-label-2">
-                {post.commentCount > 1000 ? "999+" : post.commentCount}
-              </div>
-            </div>
-          </Link>
-        ))}
+      <div className="w-full min-h-[320px] flex flex-col">
+        {isLoading ? (
+          <div className="flex-1 flex items-center justify-center">
+            <Indicator />
+          </div>
+        ) : posts.length === 0 ? (
+          <div className="flex-1 flex items-center justify-center">
+            게시글이 없습니다.
+          </div>
+        ) : (
+          <>
+            {posts.map((post) => (
+              <Link
+                key={post.id}
+                href={`/community/post/${post.id}`}
+                className="flex items-center justify-between gap-3 py-2"
+              >
+                {/* title */}
+                <h3 className="flex-1 min-w-0 text-black-100 tablet:text-body-2 text-label-2 font-medium truncate">
+                  {post.title}
+                </h3>
+
+                {/* comment meta */}
+                <div className="flex items-center gap-0.5 shrink-0 text-gray-100 tablet:text-body-2 text-label-2">
+                  <Image
+                    src={ICONS.Comment.src}
+                    alt={ICONS.Comment.alt}
+                    width={16}
+                    height={16}
+                  />
+                  <span>
+                    {post.commentCount > 1000 ? "999+" : post.commentCount}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
