@@ -20,8 +20,8 @@ const IMAGES: { [key: string]: TImage } = {
   Google: { src: Google, alt: "google" },
   Naver: { src: Naver, alt: "naver" },
   Kakao: { src: Kakao, alt: "kakao" },
-  MainButton1: { src: MainButton1, alt: "main button 1" },
-  MainButton2: { src: MainButton2, alt: "main button 2" },
+  SearchButton: { src: MainButton1, alt: "search button" },
+  RecommendButton: { src: MainButton2, alt: "recommend button" },
 };
 
 export default IMAGES;
