@@ -30,7 +30,7 @@ export default function Comment({
       />
       <span
         className={`absolute bottom-5 right-5 text-xs ${
-          value.length >= maxLength ? "text-red-500" : "text-gray-400"
+          value.length >= maxLength ? "text-red-500" : "text-black-200"
         }`}
       >
         {value.length}/{maxLength}

@@ -144,7 +144,7 @@ export const MainSearchBar = () => {
                         debouncedSearchQuery,
                       )}
                     </span>
-                    <span className="text-label-2 text-gray-500">
+                    <span className="text-label-2 text-black-100">
                       {highlightText(
                         perfume.brand.nameKo || perfume.brand.nameEn,
                         debouncedSearchQuery,

@@ -1,8 +1,19 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import dynamic from "next/dynamic";
 import { useState } from "react";
+
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "development"
+    ? dynamic(
+        () =>
+          import("@tanstack/react-query-devtools").then(
+            (mod) => mod.ReactQueryDevtools,
+          ),
+        { ssr: false },
+      )
+    : () => null;
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -23,7 +34,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             refetchOnWindowFocus: true, // 윈도우 포커스 시 재요청
           },
         },
-      })
+      }),
   );
 
   return (

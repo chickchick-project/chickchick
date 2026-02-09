@@ -38,7 +38,7 @@ export default function ButtonBase(props: IButtonBaseProps) {
   return (
     <button
       {...restProps}
-      className={`${className} ${buttonColor} disabled:bg-gray-200 disabled:text-white disabled:border-none disabled:cursor-not-allowed`}
+      className={`${className} ${buttonColor} disabled:bg-gray-300 disabled:text-black-200 disabled:border-none disabled:cursor-not-allowed`}
     >
       <div
         className={`flex items-center justify-center leading-none ${resolvedIconGap}`}

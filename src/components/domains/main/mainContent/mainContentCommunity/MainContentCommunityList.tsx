@@ -67,33 +67,34 @@ export const MainContentCommunityList = ({
             게시글이 없습니다.
           </div>
         ) : (
-          <>
+          <ul>
             {posts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/community/post/${post.id}`}
-                className="flex items-center justify-between gap-3 py-2"
-              >
-                {/* title */}
-                <h3 className="flex-1 min-w-0 text-black-100 tablet:text-body-2 text-label-2 font-medium truncate">
-                  {post.title}
-                </h3>
-
-                {/* comment meta */}
-                <div className="flex items-center gap-0.5 shrink-0 text-gray-100 tablet:text-body-2 text-label-2">
-                  <Image
-                    src={ICONS.Comment.src}
-                    alt={ICONS.Comment.alt}
-                    width={16}
-                    height={16}
-                  />
-                  <span>
-                    {post.commentCount > 1000 ? "999+" : post.commentCount}
+              <li key={post.id}>
+                <Link
+                  href={`/community/post/${post.id}`}
+                  className="flex items-center justify-between gap-3 py-2"
+                >
+                  {/* title */}
+                  <span className="flex-1 min-w-0 text-black-100 tablet:text-body-2 text-label-2 font-medium truncate">
+                    {post.title}
                   </span>
-                </div>
-              </Link>
+
+                  {/* comment meta */}
+                  <div className="flex items-center gap-0.5 shrink-0 text-black-100 tablet:text-body-2 text-label-2">
+                    <Image
+                      src={ICONS.Comment.src}
+                      alt={ICONS.Comment.alt}
+                      width={16}
+                      height={16}
+                    />
+                    <span>
+                      {post.commentCount > 1000 ? "999+" : post.commentCount}
+                    </span>
+                  </div>
+                </Link>
+              </li>
             ))}
-          </>
+          </ul>
         )}
       </div>
     </div>

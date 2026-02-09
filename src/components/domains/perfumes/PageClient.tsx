@@ -152,6 +152,7 @@ export default function PageClient() {
   return (
     <div>
       <div className="flex flex-col items-center h-full">
+        <h1 className="sr-only">향수 탐색</h1>
         <SearchHeader
           inputValue={inputValue}
           onChange={handleChange}
@@ -162,11 +163,11 @@ export default function PageClient() {
         />
         <main className="flex flex-col w-full max-w-[1200px] px-4 h-full">
           <div className="w-full flex justify-between items-center mb-5">
-            <span className="tablet:text-headline-2 text-title-2 font-semibold">
+            <h2 className="tablet:text-headline-2 text-title-2 font-semibold">
               {searchKeyword
                 ? `'${searchKeyword}'에 대한 검색 결과`
                 : "현재 인기있는 향수들이에요!"}
-            </span>
+            </h2>
             <SortDropdown type="perfume" onSortChange={() => {}} />
           </div>
           {matchedBrand && <BrandSection brandName={matchedBrand} />}

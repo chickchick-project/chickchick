@@ -35,8 +35,9 @@ export default function Thumbnail({
         </figure>
       ) : (
         <div
-          className="bg-gray-200 rounded-md flex items-center justify-center text-gray-400 text-xs"
+          className="bg-gray-200 rounded-md flex items-center justify-center text-black-200 text-xs"
           style={{ width, height }}
+          aria-label="썸네일 없음"
         />
       )}
     </div>

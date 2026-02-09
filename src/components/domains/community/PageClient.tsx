@@ -107,6 +107,7 @@ export default function PageClient() {
   const isIdle = !isLoading && uniquePostData.length === 0;
   return (
     <div className="mobile:p-0 px-4 w-full flex flex-col gap-5">
+      <h1 className="sr-only">커뮤니티</h1>
       <Header
         boards={boards}
         selectedTab={selectedTab}

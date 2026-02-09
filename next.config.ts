@@ -56,7 +56,6 @@ const nextConfig: NextConfig = {
       "chart.js",
       "react-chartjs-2",
     ],
-    optimizeCss: true,
   },
   async headers() {
     return [

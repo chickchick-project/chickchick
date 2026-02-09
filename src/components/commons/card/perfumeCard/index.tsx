@@ -52,7 +52,7 @@ export default function PerfumeCard({
 
       <figcaption className="w-full text-left tablet:mt-2 mt-1 tablet:space-y-1 space-y-0.5">
         <p
-          className={`text-black-300 font-medium ${PERFUME_CARD_STYLES.brandName[cardType]} overflow-hidden whitespace-nowrap text-ellipsis`}
+          className={`text-black-100 font-medium ${PERFUME_CARD_STYLES.brandName[cardType]} overflow-hidden whitespace-nowrap text-ellipsis`}
         >
           {brandName}
         </p>

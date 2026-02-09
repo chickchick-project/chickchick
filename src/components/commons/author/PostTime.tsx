@@ -40,7 +40,7 @@ export default function PostTime({ time, type, size }: PostTimeProps) {
   return (
     <span
       className={`${SIZE_STYLES[size]} font-medium ${
-        type === "comment" ? "text-gray-100" : "text-black-300"
+        type === "comment" ? "text-black-200" : "text-black-100"
       }`}
     >
       {formattedTime}

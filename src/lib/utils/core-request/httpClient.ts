@@ -85,6 +85,7 @@ export function createHttpClient(config: LibraryConfig) {
       ...options,
       url: finalUrl,
       method: "GET",
+      cache: options?.cache || "force-cache",
     });
   };
 
