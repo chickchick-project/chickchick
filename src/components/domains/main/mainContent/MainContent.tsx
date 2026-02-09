@@ -1,4 +1,4 @@
-import { MainContentButtons } from "./MainContentButton/MainContentButtons";
+import { MainContentButtons } from "./MainContentButtons";
 import { MainContentReview } from "./MainContentReview";
 import { MainContentCommunity } from "./mainContentCommunity/MainContentCommunity";
 
