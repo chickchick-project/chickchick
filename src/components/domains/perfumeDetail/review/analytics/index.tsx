@@ -1,16 +1,31 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import dynamic from "next/dynamic";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
-import { ReviewBarSection } from "./ReviewBarSection";
-import { ReviewDoughnutSection } from "./ReviewDoughnutSection";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { ReviewModal } from "@/components/modal/reviewModal";
-// import ReviewMobileSection from "./ReviewMobileSection";
 import { useUserStore } from "@/lib/stores/useUserStore";
 import { calculateReviewCounts } from "./analytics.helpers";
 import { ReviewAnalyticsProps } from "../review.type";
-import ReviewMobileSection from "./ReviewMobileSection";
+
+const ReviewBarSection = dynamic(
+  () =>
+    import("./ReviewBarSection").then((mod) => ({ default: mod.ReviewBarSection })),
+  { ssr: false }
+);
+
+const ReviewDoughnutSection = dynamic(
+  () =>
+    import("./ReviewDoughnutSection").then((mod) => ({
+      default: mod.ReviewDoughnutSection,
+    })),
+  { ssr: false }
+);
+
+const ReviewMobileSection = dynamic(() => import("./ReviewMobileSection"), {
+  ssr: false,
+});
 // TODO: 리뷰 수정 기능 검토
 export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

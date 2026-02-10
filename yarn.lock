@@ -3190,12 +3190,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/bundle-analyzer@npm:^16.1.6":
-  version: 16.1.6
-  resolution: "@next/bundle-analyzer@npm:16.1.6"
+"@next/bundle-analyzer@npm:15.0.5":
+  version: 15.0.5
+  resolution: "@next/bundle-analyzer@npm:15.0.5"
   dependencies:
     webpack-bundle-analyzer: "npm:4.10.1"
-  checksum: 10/595b9534775fb78497494fa4c42d1156e482596dfd9fa4f040bdbf738c8f1db368749a307cfb0687275caad3c5d3d923d20abbede728c60863551b4b66842a7c
+  checksum: 10/6e54d43ace374f8881587cf5707edc96bf1f5b42963d58024c4c08532917ad68ffe299b8951723a10eee91103859aae5351cb010f7c40575325657e058762ca5
   languageName: node
   linkType: hard
 
@@ -11680,7 +11680,7 @@ __metadata:
     "@hono/zod-openapi": "npm:^0.19.9"
     "@hono/zod-validator": "npm:^0.4.3"
     "@hookform/resolvers": "npm:^5.1.1"
-    "@next/bundle-analyzer": "npm:^16.1.6"
+    "@next/bundle-analyzer": "npm:15.0.5"
     "@prisma/client": "npm:6.19.0"
     "@storybook/addon-essentials": "npm:^8.5.8"
     "@storybook/addon-interactions": "npm:^8.5.8"
