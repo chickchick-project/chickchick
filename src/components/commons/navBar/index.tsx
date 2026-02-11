@@ -55,9 +55,9 @@ export default function NavBar({ currentPath }: NavBarProps) {
             </li>
 
             {/* 로그인 / 프로필 버튼 */}
-            <div className="tablet:block hidden">
+            <li className="tablet:block hidden">
               <UserProfileSection />
-            </div>
+            </li>
           </ul>
         </nav>
       </header>

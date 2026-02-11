@@ -9,21 +9,34 @@ const withBundleAnalyzer = bundleAnalyzer({
 
 const nextConfig: NextConfig = {
   webpack: (config, { dev }) => {
-    // dev: 개발 서버(Turbopack/Webpack)가 실행 중일 때 true
-    // !dev: 프로덕션 빌드 (npm run build)일 때만 적용
-
     if (!dev) {
-      // 1. @hono/swagger-ui 패키지를 빈 모듈(false)로 대체
       config.resolve.alias["@hono/swagger-ui"] = false;
 
-      // 2. Swagger UI의 핵심 용량을 차지하는 패키지 자체도 빈 모듈로 대체 (이중 안전장치)
       config.resolve.alias["swagger-ui-dist"] = false;
 
-      // 3. swagger-ui-react도 프로덕션 빌드에서 제외
       config.resolve.alias["swagger-ui-react"] = false;
 
-      // 혹시 모르니 lodash도 제거가 필요하다면
-      // config.resolve.alias['lodash'] = false;
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          ...config.optimization?.splitChunks,
+          cacheGroups: {
+            ...config.optimization?.splitChunks?.cacheGroups,
+            swiper: {
+              test: /[\\/]node_modules[\\/]swiper[\\/]/,
+              name: "swiper",
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            ckeditor: {
+              test: /[\\/]node_modules[\\/](@?ckeditor|ckeditor5)[\\/]/,
+              name: "ckeditor",
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+          },
+        },
+      };
     }
     return config;
   },
@@ -73,12 +86,13 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     optimizePackageImports: [
-      "lucide-react",
       "react-hook-form",
       "zustand",
       "swiper",
       "chart.js",
       "react-chartjs-2",
+      "ckeditor5",
+      "@ckeditor/ckeditor5-react",
     ],
   },
   async headers() {
