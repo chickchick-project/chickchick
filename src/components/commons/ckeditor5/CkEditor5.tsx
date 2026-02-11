@@ -5,9 +5,7 @@ import {
   Alignment,
   AutoImage,
   Autosave,
-  BalloonToolbar,
   Bold,
-  CloudServices,
   Essentials,
   Heading,
   ImageBlock,
@@ -20,7 +18,6 @@ import {
   ImageTextAlternative,
   ImageToolbar,
   ImageUpload,
-  ImageUtils,
   Indent,
   IndentBlock,
   Italic,
@@ -57,12 +54,13 @@ export default function CkEditor5({
 
   useEffect(() => {
     setIsLayoutReady(true);
+    const blobRegistry = blobRegistryRef.current;
 
     return () => {
-      for (const url of blobRegistryRef.current.keys()) {
+      for (const url of blobRegistry.keys()) {
         URL.revokeObjectURL(url);
       }
-      blobRegistryRef.current.clear();
+      blobRegistry.clear();
       setIsLayoutReady(false);
     };
   }, [blobRegistryRef]);
@@ -100,9 +98,7 @@ export default function CkEditor5({
           Alignment,
           AutoImage,
           Autosave,
-          BalloonToolbar,
           Bold,
-          CloudServices,
           Essentials,
           Heading,
           ImageBlock,
@@ -115,7 +111,6 @@ export default function CkEditor5({
           ImageTextAlternative,
           ImageToolbar,
           ImageUpload,
-          ImageUtils,
           Indent,
           IndentBlock,
           Italic,
@@ -123,10 +118,8 @@ export default function CkEditor5({
           Paragraph,
           Strikethrough,
           Underline,
+          localPreviewPlugin,
         ],
-
-        extraPlugins: [localPreviewPlugin],
-        balloonToolbar: ["bold", "italic", "|", "link"],
         heading: {
           options: [
             {
