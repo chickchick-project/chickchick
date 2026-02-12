@@ -2,6 +2,59 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (min-width: 1024px) {
+  @font-face {
+    font-family: "Pretendard";
+    font-weight: 400;
+    font-display: swap;
+    src: url("/fonts/Pretendard-Regular.subset.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    font-weight: 500;
+    font-display: swap;
+    src: url("/fonts/Pretendard-Medium.subset.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    font-weight: 600;
+    font-display: swap;
+    src: url("/fonts/Pretendard-SemiBold.subset.woff2") format("woff2");
+  }
+
+  @font-face {
+    font-family: "Pretendard";
+    font-weight: 700;
+    font-display: swap;
+    src: url("/fonts/Pretendard-Bold.subset.woff2") format("woff2");
+  }
+}
+
+@layer base {
+  body {
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic",
+      "맑은 고딕", system-ui, helvetica, sans-serif;
+  }
+
+  @media (min-width: 1024px) {
+    body {
+      font-family:
+        "Pretendard",
+        -apple-system,
+        BlinkMacSystemFont,
+        "Apple SD Gothic Neo",
+        "Malgun Gothic",
+        "맑은 고딕",
+        system-ui,
+        helvetica,
+        sans-serif;
+    }
+  }
+}
+
 @layer utilities {
   .shadow-card {
     @apply shadow-[0_4px_20px_rgba(0,0,0,0.08)];
@@ -18,6 +71,16 @@
 
   .divider-horizontal-thick {
     @apply bg-gray-300 h-[8px] w-full;
+  }
+
+  .system-font {
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard",
+      "Malgun Gothic", "맑은 고딕", system-ui, helvetica, sans-serif;
+  }
+
+  .system-font * {
+    font-family: inherit;
   }
 }
 

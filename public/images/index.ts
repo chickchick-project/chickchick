@@ -1,4 +1,4 @@
-import Logo from "./Logo.svg";
+import Logo from "./Logo.webp";
 
 import Google from "./Google.svg";
 import Naver from "./Naver.svg";

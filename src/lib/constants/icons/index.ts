@@ -37,18 +37,14 @@ import {
   RadioPrimary,
   SwiperLeftButton,
   SwiperRightButton,
-  BottmNavBarHome,
-  BottmNavBarSearch,
-  BottmNavBarWriting,
-  BottmNavBarMypage,
-} from "../../../public/icons";
+} from "../../../../public/icons";
 
 export type TIcon = {
   src: string;
   alt: string;
 };
 
-const ICONS: { [key: string]: TIcon } = {
+const ICONS = {
   ArrowDownGray: { src: ArrowDownGray, alt: "arrow" },
   ArrowDownPrimary: { src: ArrowDownPrimary, alt: "arrow" },
   ArrowRightGray: { src: ArrowRightGray, alt: "arrow" },
@@ -87,10 +83,6 @@ const ICONS: { [key: string]: TIcon } = {
   RadioPrimary: { src: RadioPrimary, alt: "radio" },
   SwiperLeftButton: { src: SwiperLeftButton, alt: "swiper left" },
   SwiperRightButton: { src: SwiperRightButton, alt: "swiper right" },
-  BottmNavBarHome: { src: BottmNavBarHome, alt: "home" },
-  BottmNavBarSearch: { src: BottmNavBarSearch, alt: "search" },
-  BottmNavBarWriting: { src: BottmNavBarWriting, alt: "writing" },
-  BottmNavBarMypage: { src: BottmNavBarMypage, alt: "mypage" },
 };
 
 export default ICONS;

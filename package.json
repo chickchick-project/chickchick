@@ -70,6 +70,7 @@
     "@storybook/nextjs": "^8.5.8",
     "@storybook/react": "^8.5.8",
     "@storybook/test": "^8.5.8",
+    "@svgr/webpack": "^8.1.0",
     "@types/dompurify": "^3.2.0",
     "@types/navermaps": "^3.9.1",
     "@types/node": "^20",

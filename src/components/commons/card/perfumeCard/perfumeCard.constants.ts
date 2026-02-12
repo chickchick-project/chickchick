@@ -6,9 +6,9 @@ const PERFUME_CARD_TYPES = {
 
 const PERFUME_CARD_STYLES = {
   images: {
-    [PERFUME_CARD_TYPES.DEFAULT]: "w-auto min-w-[100px]",
+    [PERFUME_CARD_TYPES.DEFAULT]: "w-[180px]",
     [PERFUME_CARD_TYPES.CLOSABLE]: "w-[144px]",
-    [PERFUME_CARD_TYPES.SMALLSIZE]: "w-auto min-w-[80px]",
+    [PERFUME_CARD_TYPES.SMALLSIZE]: "w-[80px]",
   },
   brandName: {
     [PERFUME_CARD_TYPES.DEFAULT]: "text-label-1",

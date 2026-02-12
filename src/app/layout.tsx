@@ -1,40 +1,12 @@
-import localFont from "next/font/local";
 import type { Metadata, Viewport } from "next";
 import { auth } from "@/auth";
-import NavBarWrapper from "@/components/commons/navBar/Wrapper";
-import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
-import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import Providers from "@/components/commons/Provider/TanstackProvider";
+import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
+import { NavBarWrapper } from "@/components/commons/navBar/Wrapper";
+import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
 import "./globals.css";
-
-const pretendard = localFont({
-  src: [
-    {
-      path: "../../public/fonts/Pretendard-Regular.subset.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/Pretendard-Medium.subset.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/Pretendard-SemiBold.subset.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/Pretendard-Bold.subset.woff2",
-      weight: "700",
-      style: "normal",
-    },
-  ],
-  display: "swap",
-  variable: "--font-pretendard",
-});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -121,7 +93,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
-      <body className={`${pretendard.variable} font-pretendard h-full`}>
+      <body className="h-full">
         <Providers>
           <RecentSyncManager />
           <NavBarWrapper />

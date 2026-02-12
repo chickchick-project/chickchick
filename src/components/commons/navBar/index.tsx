@@ -2,7 +2,6 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NAV_LABELS, NAV_PATHS } from "./navBar.constants";
-import IMAGES from "@/lib/constants/images";
 import UserProfileSection from "./UserProfileSection";
 
 export interface NavBarProps {
@@ -25,11 +24,13 @@ export default function NavBar({ currentPath }: NavBarProps) {
             }
           >
             <Image
-              src={IMAGES.Logo.src}
+              src="/images/Logo.webp"
               width={108}
               height={40}
               alt="logo"
               className="tablet:w-[108px] tablet:h-[40px] w-[80px] h-[32px]"
+              priority
+              unoptimized
             />
           </Link>
         </div>
@@ -61,8 +62,6 @@ export default function NavBar({ currentPath }: NavBarProps) {
           </ul>
         </nav>
       </header>
-
-      {/* 드롭다운을 NavBar의 바로 아래에 배치 */}
     </>
   );
 }

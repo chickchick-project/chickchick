@@ -24,7 +24,7 @@ export const MainBannerPerfumeList = ({
                 priority={index === 0}
               />
               <PerfumeCard
-                className="tablet:hidden block w-[80px] mobile:w-auto"
+                className="tablet:hidden block w-[80px]"
                 cardType="smallSize"
                 perfumeImage={item.perfumeImage?.imageUrl || null}
                 brandName={item.brand.nameKo || item.brand.nameEn || null}
