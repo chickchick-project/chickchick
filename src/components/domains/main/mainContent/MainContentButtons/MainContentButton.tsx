@@ -20,7 +20,7 @@ export const MainContentButton = ({
   title,
   linkText,
   bgImage,
-  isPriority = false,
+  isPriority = true,
 }: IMaincontentButtonProps) => {
   return (
     <Link
@@ -34,10 +34,11 @@ export const MainContentButton = ({
           fill
           priority={isPriority}
           fetchPriority={isPriority ? "high" : undefined}
+          decoding={isPriority ? "sync" : "async"}
           loading={isPriority ? "eager" : "lazy"}
           className="object-cover rounded-xl"
-          sizes="(max-width: 1023px) 100vw, 340px"
-          quality={55}
+          sizes="(max-width: 768px) 90vw, 340px"
+          quality={60}
           placeholder="blur"
           blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNmNWY1ZjUiLz48L3N2Zz4="
         />

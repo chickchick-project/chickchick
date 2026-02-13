@@ -24,7 +24,7 @@ export const BottomNavBarIcon = ({ image, isActive }: IBottomNavBarIcon) => {
       />
       <div
         className={`text-label-5 font-bold ${
-          isActive ? "text-black-100" : "text-gray-100"
+          isActive ? "text-black-100" : "text-gray-600"
         } text-center leading-normal`}
       >
         {image.alt}

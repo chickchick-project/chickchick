@@ -11,6 +11,16 @@ const MainContentButtonSwiper = dynamic(
     ),
   {
     ssr: false,
+    loading: () => (
+      <div className="pc:hidden block">
+        <MainContentButton
+          link={MAIN_BUTTONS[0].link}
+          title={MAIN_BUTTONS[0].title}
+          linkText={MAIN_BUTTONS[0].linkText}
+          bgImage={MAIN_BUTTONS[0].bgImage}
+        />
+      </div>
+    ),
   },
 );
 
@@ -26,7 +36,6 @@ export const MainContentButtons = () => {
             title={button.title}
             linkText={button.linkText}
             bgImage={button.bgImage}
-            isPriority={index === 0}
           />
         ))}
       </div>

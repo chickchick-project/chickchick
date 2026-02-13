@@ -13,7 +13,7 @@ export const MainContentReview = async () => {
       <h2 className="tablet:text-headline-2 text-title-2 font-semibold text-black-100">
         인기 리뷰
       </h2>
-      <div className="w-full flex items-start tablet:justify-center">
+      <div className="w-full flex items-start tablet:justify-center min-h-[280px]">
         {hasRealReview ? (
           <Link href={`/perfumes/${reviewData.perfume.id}`}>
             <ReviewCard review={reviewData} isMyPage={false} isAuthor={false} />

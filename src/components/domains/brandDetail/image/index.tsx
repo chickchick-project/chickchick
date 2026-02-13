@@ -57,7 +57,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
             alt={images.alt}
             width={1200}
             height={500}
-            quality={100}
+            quality={60}
             placeholder="blur"
             blurDataURL="/images/BlurShimmer.svg"
             className="rounded-xl"

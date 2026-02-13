@@ -24,11 +24,11 @@ export default function NavBar({ currentPath }: NavBarProps) {
             }
           >
             <Image
-              src="/images/Logo.webp"
+              src="/images/Logo.svg"
               width={108}
               height={40}
               alt="logo"
-              className="tablet:w-[108px] tablet:h-[40px] w-[80px] h-[32px]"
+              className="tablet:w-[108px] tablet:h-[40px] w-[80px] h-[30px]"
               priority
               unoptimized
             />
