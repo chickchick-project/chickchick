@@ -1,14 +1,14 @@
 "use client";
 
 import { PerfumeUsageStatus } from "@prisma/client";
-import { Review } from "@zod/modelSchema";
 import { useFormContext, Controller } from "react-hook-form";
 import { SelectButton } from "../button/SelectButton";
 import { SubTitle } from "../SubTitle";
 import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import type { CreateReviewClientInput } from "../../reviewSchema.client";
 
 export const StatusSection = () => {
-  const { control } = useFormContext<Review>();
+  const { control } = useFormContext<CreateReviewClientInput>();
 
   return (
     <div className="flex flex-col gap-5">

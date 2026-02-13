@@ -1,4 +1,4 @@
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import { FILTER_LABELS } from "./filter/filter.constants";
 
 /**

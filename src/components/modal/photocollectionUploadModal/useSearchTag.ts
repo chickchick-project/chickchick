@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCollectionPerfumeSearch } from "@/lib/hooks/query/useCollectionQuery";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 const initialState = { data: [] as ApiPerfumeSimpleResponse[] };
 

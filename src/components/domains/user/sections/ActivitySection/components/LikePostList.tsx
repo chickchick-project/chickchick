@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
 import { POST_CARD_TYPES } from "@/lib/constants/post";
-import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export const LikePostList = ({
   likedPosts,

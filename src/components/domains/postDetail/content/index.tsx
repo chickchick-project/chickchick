@@ -1,5 +1,5 @@
 "use client";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";

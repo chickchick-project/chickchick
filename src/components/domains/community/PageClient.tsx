@@ -13,7 +13,7 @@ import {
 import { Option, TSortBy } from "@/lib/constants/options";
 import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
 import { COMMUNITY_BOARDS } from "@/lib/constants/communityBoard";
-import { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export default function PageClient() {
   const router = useRouter();

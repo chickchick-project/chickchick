@@ -8,11 +8,8 @@ import { PostCategory as TPostCategory } from "@prisma/client";
 
 import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
-import {
-  CreatePostInput,
-  CreatePostInputSchema,
-  PerfumeForPost,
-} from "@/lib/hono/schemas/community.schema";
+import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
+import { CreatePostClientSchema, type CreatePostClientInput } from "./postSchema";
 import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import getPlainText from "@/lib/utils/getPlainText";
@@ -23,7 +20,7 @@ import PostFormActions from "./PostFormActions";
 import PostTitle from "./PostTitle";
 import PostRelatedPerfume from "./postRelatedPerfume/PostRelatedPerfume";
 
-export type PostFormInitialData = CreatePostInput & {
+export type PostFormInitialData = CreatePostClientInput & {
   perfumes: PerfumeForPost[] | [];
 };
 
@@ -40,8 +37,8 @@ export default function PostForm({
 }: PostFormProps) {
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
-  const method = useForm<CreatePostInput>({
-    resolver: zodResolver(CreatePostInputSchema),
+  const method = useForm<CreatePostClientInput>({
+    resolver: zodResolver(CreatePostClientSchema),
     mode: "onChange",
     defaultValues: {
       category: initialData?.category ?? ("" as unknown as TPostCategory),
@@ -49,6 +46,7 @@ export default function PostForm({
       content: initialData?.content ?? "",
       contentText: initialData?.contentText ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
+      perfumeIds: initialData?.perfumeIds,
     },
   });
 
@@ -61,7 +59,7 @@ export default function PostForm({
   const { createMutation, editMutation } = usePostMutation(postId);
   const isLoading = createMutation.isPending || editMutation.isPending;
 
-  const onSubmit = async (data: CreatePostInput) => {
+  const onSubmit = async (data: CreatePostClientInput) => {
     const finalizedContent = await finalizeWithBlobRegistry(
       data.content,
       blobRegistryRef.current
@@ -69,7 +67,7 @@ export default function PostForm({
     setValue("content", finalizedContent, { shouldDirty: true });
     const thumbnailUrl = extractFirstImageSrc(finalizedContent);
     const contentText = getPlainText(finalizedContent);
-    const postData: CreatePostInput = {
+    const postData: CreatePostClientInput = {
       ...data,
       content: finalizedContent,
       thumbnailUrl,

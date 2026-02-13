@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import CategoryPostList from "./CategoryPostList";
 import { Pagination } from "swiper/modules";
-import { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
 
 interface IPostListMobileSwiperProps {
   posts: ApiPostDetailCategoryPostResponse[] | [];

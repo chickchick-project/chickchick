@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import FilterItem from "./FilterItem";
-import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
+import type { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 import {
   ApiPerfumeNoteResponse,
   ApiPerfumeAccordResponse,

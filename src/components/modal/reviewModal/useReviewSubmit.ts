@@ -3,15 +3,15 @@
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { reviewApi } from "@/lib/utils/api/reviews.api";
-import { CreateReviewInput } from "@/lib/hono/schemas/review.schema";
 import { queryKeys } from "@/lib/utils/queryKeys";
+import type { CreateReviewClientInput } from "./reviewSchema.client";
 
 export const useReviewSubmit = (closeModal?: () => void) => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const perfumeId = id?.toString();
 
-  const onSubmit = async (data: CreateReviewInput): Promise<void> => {
+  const onSubmit = async (data: CreateReviewClientInput): Promise<void> => {
     if (!perfumeId) return;
 
     try {
