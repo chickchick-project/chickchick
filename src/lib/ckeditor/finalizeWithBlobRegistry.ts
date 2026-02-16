@@ -1,4 +1,4 @@
-import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
+import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import { fileApi } from "@/lib/utils/api/files.api";
 import { POST_IMAGES_BUCKET_NAME } from "@/lib/constants/buckets";
 
