@@ -1,12 +1,23 @@
+"use client";
+
 import {
   ApiPostDetailCategoryPostResponse,
   ApiPostDetailResponse,
 } from "@/lib/hono/schemas/community.schema";
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import CategoryPostListHeader from "./Header";
 import CategoryPostList from "./CategoryPostList";
 import PostListPagination from "./PostListPagination";
-import PostListMobileSwiper from "./PostListMobileSwiper";
+
+const PostListMobileSwiper = dynamic(() => import("./PostListMobileSwiper"), {
+  ssr: false,
+  loading: () => (
+    <div className="animate-pulse">
+      <div className="h-[200px] bg-gray-200 rounded" />
+    </div>
+  ),
+});
 
 interface ICommunityListItem {
   category: ApiPostDetailResponse["category"];

@@ -13,7 +13,7 @@ import {
 import { Option, TSortBy } from "@/lib/constants/options";
 import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
 import { COMMUNITY_BOARDS } from "@/lib/constants/communityBoard";
-import { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
 
 export default function PageClient() {
   const router = useRouter();
@@ -107,6 +107,7 @@ export default function PageClient() {
   const isIdle = !isLoading && uniquePostData.length === 0;
   return (
     <div className="mobile:p-0 px-4 w-full flex flex-col gap-5">
+      <h1 className="sr-only">커뮤니티</h1>
       <Header
         boards={boards}
         selectedTab={selectedTab}

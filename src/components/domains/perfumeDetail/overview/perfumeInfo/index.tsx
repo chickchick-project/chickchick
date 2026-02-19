@@ -1,6 +1,6 @@
 "use client";
 
-import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 import { PerfumeInfoHeader } from "./header";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";

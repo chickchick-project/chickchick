@@ -70,7 +70,12 @@ export function createCoreClient(config: LibraryConfig) {
       }
     }
 
-    let response = await fetch(url, { ...reqConfig, headers });
+    let response = await fetch(url, {
+      ...reqConfig,
+      headers,
+      cache: reqConfig.cache || "force-cache",
+      next: { revalidate: 300 },
+    });
 
     if (response.status === 401 && !options.isRetry && config.refreshToken) {
       await manageTokenRefresh(config.refreshToken);

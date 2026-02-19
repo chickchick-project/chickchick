@@ -10,8 +10,8 @@ import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResul
 import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
 import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
 import { highlightText } from "@/lib/utils/highlightText";
+import Logo from "../../../..//public/images/Logo.webp";
 
 interface PerfumeSearchResult {
   id: string;
@@ -129,7 +129,7 @@ export const MainSearchBar = () => {
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Image
-                          src={ICONS.Logo.src}
+                          src={Logo}
                           alt="No image"
                           width={24}
                           height={24}
@@ -144,7 +144,7 @@ export const MainSearchBar = () => {
                         debouncedSearchQuery,
                       )}
                     </span>
-                    <span className="text-label-2 text-gray-500">
+                    <span className="text-label-2 text-black-100">
                       {highlightText(
                         perfume.brand.nameKo || perfume.brand.nameEn,
                         debouncedSearchQuery,

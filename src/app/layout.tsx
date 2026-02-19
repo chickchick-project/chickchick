@@ -1,20 +1,84 @@
-import NavBarWrapper from "@/components/commons/navBar/Wrapper";
-import "./globals.css";
-import localFont from "next/font/local";
-import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
-import LoginModalProvider from "@/components/modal/LoginModalProvider";
+import type { Metadata, Viewport } from "next";
+import { auth } from "@/auth";
 import Providers from "@/components/commons/Provider/TanstackProvider";
+import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
+import { NavBarWrapper } from "@/components/commons/navBar/Wrapper";
+import LoginModalProvider from "@/components/modal/LoginModalProvider";
 import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
-import KakaoScript from "@/lib/script/KakaoScript";
-import { auth } from "@/auth";
+import "./globals.css";
 
-const pretendard = localFont({
-  src: "../../public/fonts/PretendardVariable.woff2",
-  display: "swap",
-  weight: "45 920",
-  variable: "--font-pretendard",
-});
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
+export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://chickchick-kohl.vercel.app/",
+  ),
+  title: {
+    default: "ChickChick - 나만의 향수 컬렉션",
+    template: "%s | ChickChick",
+  },
+  description:
+    "당신의 향수 취향을 발견하고, 공유하세요. ChickChick에서 향수 리뷰, 추천, 커뮤니티를 경험하세요.",
+  keywords: [
+    "향수",
+    "퍼퓸",
+    "향수 추천",
+    "향수 리뷰",
+    "향수 커뮤니티",
+    "fragrance",
+    "perfume",
+    "scent",
+    "chickchick",
+  ],
+  authors: [{ name: "ChickChick Team" }],
+  creator: "ChickChick",
+  publisher: "ChickChick",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    url: "https://chickchick-kohl.vercel.app/",
+    title: "ChickChick - 나만의 향수 컬렉션",
+    description:
+      "당신의 향수 취향을 발견하고, 공유하세요. ChickChick에서 향수 리뷰, 추천, 커뮤니티를 경험하세요.",
+    siteName: "ChickChick",
+    images: [
+      {
+        url: "/images/LogoForShare.png",
+        width: 1200,
+        height: 630,
+        alt: "ChickChick Logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ChickChick - 나만의 향수 컬렉션",
+    description:
+      "당신의 향수 취향을 발견하고, 공유하세요. ChickChick에서 향수 리뷰, 추천, 커뮤니티를 경험하세요.",
+    images: ["/images/LogoForShare.png"],
+  },
+  verification: {
+    google: "google-site-verification-code",
+  },
+  alternates: {
+    canonical: "https://chickchick-kohl.vercel.app/",
+  },
+};
 
 export default async function RootLayout({
   children,
@@ -25,8 +89,31 @@ export default async function RootLayout({
   const isAuthenticated = !!session?.user;
 
   return (
-    <html lang="kr" className="h-dvh overflow-y-scroll">
-      <body className={`${pretendard.variable} font-pretendard h-full`}>
+    <html lang="ko" className="h-dvh overflow-y-scroll">
+      <head>
+        <link
+          rel="preconnect"
+          href="https://wvedpvxspndgyoisudyr.supabase.co"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-Regular.subset.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          media="(min-width: 768px)"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-SemiBold.subset.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          media="(min-width: 768px)"
+        />
+      </head>
+      <body className="h-full">
         <Providers>
           <RecentSyncManager />
           <NavBarWrapper />
@@ -37,7 +124,6 @@ export default async function RootLayout({
           <LoginModalProvider />
         </Providers>
         <div id="modal"></div>
-        <KakaoScript />
       </body>
     </html>
   );

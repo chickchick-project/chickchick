@@ -7,7 +7,7 @@ export function ChipOutlinedPrimary(props: IChipOutlinedProps) {
   return (
     <ChipBase
       bgColor="white"
-      className={`${className} text-primary-300 border border-primary-300`}
+      className={`${className} text-primary-250 border border-primary-250`}
       {...rest}
     >
       {children}

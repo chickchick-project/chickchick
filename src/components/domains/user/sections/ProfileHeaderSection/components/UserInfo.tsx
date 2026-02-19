@@ -1,5 +1,5 @@
 import LevelChip from "@/components/commons/chip/LevelChip";
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import type { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 
 interface UserInfoProps {
   user: ApiMyProfileResponse;

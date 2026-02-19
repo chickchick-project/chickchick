@@ -52,15 +52,24 @@ export function SearchBar({
         onChange={onChange}
         {...rest}
       />
-      <button onClick={onClick} type={buttonType} disabled={isLoading}>
+      <button
+        onClick={onClick}
+        type={buttonType}
+        disabled={isLoading}
+        aria-label="검색"
+      >
         {isLoading ? (
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+          <div
+            className="absolute right-4 top-1/2 transform -translate-y-1/2"
+            role="status"
+            aria-label="검색 중"
+          >
             <div className="w-5 h-5 border-2 border-primary-300 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <Image
             src={ICONS.Search.src}
-            alt="Search"
+            alt="검색"
             width={20}
             height={20}
             className="absolute right-4 top-1/2 transform -translate-y-1/2"

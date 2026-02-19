@@ -1,13 +1,13 @@
 import { useFormContext } from "react-hook-form";
 import { REVIEW_OPTIONS } from "@/lib/constants/review";
-import { Review } from "@zod/modelSchema";
+import type { CreateReviewClientInput } from "./reviewSchema.client";
 
 type ReviewOptionKey = keyof typeof REVIEW_OPTIONS;
 type OptionKeyUnion<T extends ReviewOptionKey> =
   (typeof REVIEW_OPTIONS)[T][number]["key"];
 
 export const useReviewModal = <T extends ReviewOptionKey>(optionKey: T) => {
-  const { control } = useFormContext<Review>();
+  const { control } = useFormContext<CreateReviewClientInput>();
   const optionKeys = REVIEW_OPTIONS[optionKey].map(
     (option) => option.key
   ) as OptionKeyUnion<T>[];

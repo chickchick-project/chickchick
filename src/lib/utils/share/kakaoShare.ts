@@ -1,8 +1,56 @@
-const kakaoShare = () => {
-  if (!window.Kakao || !window.Kakao.isInitialized()) {
-    console.error("Kakao SDK가 초기화되지 않았습니다.");
+// Kakao SDK 동적 로딩 함수
+const loadKakaoSDK = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    // 이미 로드되어 있으면 바로 resolve
+    if (window.Kakao && window.Kakao.isInitialized()) {
+      resolve();
+      return;
+    }
+
+    // 스크립트가 이미 존재하는지 확인
+    const existingScript = document.querySelector(
+      'script[src="https://developers.kakao.com/sdk/js/kakao.js"]'
+    );
+
+    if (existingScript) {
+      existingScript.addEventListener("load", () => {
+        if (window.Kakao && !window.Kakao.isInitialized()) {
+          window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+        }
+        resolve();
+      });
+      return;
+    }
+
+    // 새 스크립트 추가
+    const script = document.createElement("script");
+    script.src = "https://developers.kakao.com/sdk/js/kakao.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Kakao && !window.Kakao.isInitialized()) {
+        window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+      }
+      resolve();
+    };
+    script.onerror = () => reject(new Error("Kakao SDK 로드 실패"));
+    document.head.appendChild(script);
+  });
+};
+
+const kakaoShare = async () => {
+  try {
+    // Kakao SDK 동적 로딩
+    await loadKakaoSDK();
+
+    if (!window.Kakao || !window.Kakao.isInitialized()) {
+      console.error("Kakao SDK가 초기화되지 않았습니다.");
+      return;
+    }
+  } catch (error) {
+    console.error("Kakao SDK 로드 중 오류:", error);
     return;
   }
+
   const title =
     document
       .querySelector('meta[property="og:title"]')

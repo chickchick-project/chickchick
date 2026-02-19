@@ -9,7 +9,9 @@ export const MainLogo = () => {
         alt={IMAGES.Logo.alt}
         width={232}
         height={86}
-        sizes="100vw"
+        sizes="232px"
+        priority
+        fetchPriority="high"
       />
     </section>
   );

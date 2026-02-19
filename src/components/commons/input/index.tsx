@@ -25,7 +25,7 @@ export default function InputBase({
           ${
             isError
               ? "border-red focus:border-red-300"
-              : "border-gray-100 focus:border-primary-300 "
+              : "border-gray-200 focus:border-primary-300 "
           }
           ${className}
         `}
@@ -33,7 +33,7 @@ export default function InputBase({
       <p
         className={`
           mt-1 text-label-2 font-medium
-          ${isError ? "text-red" : "text-gray-100"}
+          ${isError ? "text-red" : "text-black-200"}
         `}
       >
         {helperText}

@@ -22,8 +22,16 @@ export function generateSeo({
       title: title,
       description: description,
       url: url,
-      images: [{ url: finalImage, width: 800, height: 600 }],
+      images: [{ url: finalImage, width: 1200, height: 630, alt: title }],
       type: "website",
+      siteName: "ChickChick",
+      locale: "ko_KR",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+      images: [finalImage],
     },
   };
 }

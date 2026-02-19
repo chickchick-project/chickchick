@@ -42,7 +42,7 @@ const CommunityListItem = ({
             {title}
           </Link>
         </h2>
-        <span className="hidden tablet:block tablet:pl-1 tablet:text-red tablet:font-medium tablet:flex-shrink-0">
+        <span className="hidden tablet:block tablet:pl-1 tablet:text-primary-100 tablet:font-medium tablet:flex-shrink-0">
           [{formattedCount}]
         </span>
       </div>
@@ -60,7 +60,7 @@ const CommunityListItem = ({
         } rounded-md tablet:hidden`}
       >
         <span className="text-label-1 text-black-100">{formattedCount}</span>
-        <span className="text-xs text-gray-100">댓글</span>
+        <span className="text-xs text-black-100">댓글</span>
       </div>
     </article>
   );

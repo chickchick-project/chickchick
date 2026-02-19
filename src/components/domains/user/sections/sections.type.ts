@@ -1,6 +1,6 @@
-import { CommentResponse } from "@/lib/hono/schemas/comment.schema";
-import { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
-import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import type { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import {
   ApiMyCollectionResponse,
   ApiMyProfileResponse,

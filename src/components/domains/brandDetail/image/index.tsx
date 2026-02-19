@@ -1,10 +1,10 @@
 "use client";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Pagination, Autoplay, Navigation } from "swiper/modules";
 import Image from "next/image";
 import { useState } from "react";
 import ICONS from "@/lib/constants/icons";
@@ -27,18 +27,6 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
         .swiper-button-prev::after {
           display: none !important;
         }
-        .swiper-pagination-bullet {
-          width: 4px;
-          height: 4px;
-          background: rgba(255, 255, 255, 0.5);
-          opacity: 1;
-        }
-        .swiper-pagination-bullet-active {
-          background: #dbc0b0;
-          width: 8px;
-          height: 4px;
-          border-radius: 10px;
-        }
       `}</style>
       <Swiper
         spaceBetween={10}
@@ -53,7 +41,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
           prevEl: ".custom-prev",
         }}
         modules={[Pagination, Autoplay, Navigation]}
-        // autoplay={{ delay: 5000, disableOnInteraction: false }}
+        watchOverflow={false}
         onSlideChange={(swiper) => {
           setIsBeginning(swiper.isBeginning);
           setIsEnd(swiper.isEnd);
@@ -69,7 +57,7 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
             alt={images.alt}
             width={1200}
             height={500}
-            quality={100}
+            quality={60}
             placeholder="blur"
             blurDataURL="/images/BlurShimmer.svg"
             className="rounded-xl"

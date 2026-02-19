@@ -14,9 +14,9 @@ export default function ShareDropdownMenu({
     { label: "링크 복사", value: "link" },
   ];
 
-  const handleSelectOption = (option: Option) => {
+  const handleSelectOption = async (option: Option) => {
     if (option.value === "kakao") {
-      kakaoShare();
+      await kakaoShare();
     } else if (option.value === "link") {
       handleShare();
     }

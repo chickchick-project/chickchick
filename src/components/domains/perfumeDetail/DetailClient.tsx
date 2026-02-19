@@ -1,6 +1,6 @@
 "use client";
 import { SearchBar } from "@/components/commons/search/SearchBar";
-import { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
 import { useState, useMemo } from "react";
 import { MobileActionBar } from "./mobileActionBar";
 import { PerfumeOverview } from "./overview";
@@ -9,7 +9,7 @@ import { PerfumeRecentViewList } from "./recentViewList";
 import { PerfumeReviews } from "./review";
 import { PerfumeDetailSidebar } from "./sidebar";
 import { MobileSeparator } from "@/components/commons/mobileSeparator";
-import { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import type { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
 import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
 import { useRecentPerfumesStore } from "@/lib/stores/useRecentPerfumesStore";
 

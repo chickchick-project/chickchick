@@ -1,39 +1,41 @@
+import { NAV_BAR_ICONS } from "@/lib/constants/icons/navBar";
+
 export const BOTTOM_NAV_BAR_ICONS = (userId: string) => {
   return [
     {
       key: "home",
       src: {
-        inactive: "/icons/bottomNavBar/home.svg",
-        active: "/icons/bottomNavBar/homeActive.svg",
+        inactive: NAV_BAR_ICONS.home.inactive,
+        active: NAV_BAR_ICONS.home.active,
       },
-      alt: "홈",
+      alt: NAV_BAR_ICONS.home.alt,
       href: "/",
     },
     {
       key: "search",
       src: {
-        inactive: "/icons/bottomNavBar/search.svg",
-        active: "/icons/bottomNavBar/searchActive.svg",
+        inactive: NAV_BAR_ICONS.search.inactive,
+        active: NAV_BAR_ICONS.search.active,
       },
-      alt: "검색",
+      alt: NAV_BAR_ICONS.search.alt,
       href: "/perfumes",
     },
     {
       key: "writing",
       src: {
-        inactive: "/icons/bottomNavBar/writing.svg",
-        active: "/icons/bottomNavBar/writingActive.svg",
+        inactive: NAV_BAR_ICONS.writing.inactive,
+        active: NAV_BAR_ICONS.writing.active,
       },
-      alt: "글쓰기",
+      alt: NAV_BAR_ICONS.writing.alt,
       href: "/community/post",
     },
     {
       key: "mypage",
       src: {
-        inactive: "/icons/bottomNavBar/mypage.svg",
-        active: "/icons/bottomNavBar/mypageActive.svg",
+        inactive: NAV_BAR_ICONS.mypage.inactive,
+        active: NAV_BAR_ICONS.mypage.active,
       },
-      alt: "마이페이지",
+      alt: NAV_BAR_ICONS.mypage.alt,
       href: `${userId ? `/user/${userId}/collection` : "/"}`,
     },
   ];

@@ -5,7 +5,7 @@ import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFille
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
 import InputBase from "@/components/commons/input";
-import { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
+import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
 import useDebounce from "@/lib/hooks/useDebounce";
 import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
 import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";

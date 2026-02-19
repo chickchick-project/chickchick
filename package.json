@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "build:analyze": "cross-env ANALYZE=true prisma generate && cross-env ANALYZE=true next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
@@ -36,9 +37,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.3.1",
     "hono": "^4.8.3",
     "hono-openapi": "^0.4.8",
+    "jsdom": "^28.1.0",
     "lucide-react": "^0.462.0",
     "next": "15.0.5",
     "next-auth": "^5.0.0-beta.25",
@@ -61,6 +63,7 @@
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",
+    "@next/bundle-analyzer": "15.0.5",
     "@storybook/addon-essentials": "^8.5.8",
     "@storybook/addon-interactions": "^8.5.8",
     "@storybook/addon-onboarding": "^8.5.8",
@@ -68,7 +71,9 @@
     "@storybook/nextjs": "^8.5.8",
     "@storybook/react": "^8.5.8",
     "@storybook/test": "^8.5.8",
+    "@svgr/webpack": "^8.1.0",
     "@types/dompurify": "^3.2.0",
+    "@types/jsdom": "^27.0.0",
     "@types/navermaps": "^3.9.1",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -76,6 +81,7 @@
     "@types/swagger-ui-react": "^5.18.0",
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/ui": "^4.0.9",
+    "cross-env": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
     "eslint-plugin-storybook": "^0.11.3",
@@ -90,7 +96,14 @@
     "zod-prisma-types": "^3.2.4"
   },
   "resolutions": {
-    "sharp": "0.33.5"
+    "sharp": "0.33.5",
+    "jsdom": "25.0.1"
   },
+  "browserslist": [
+    "chrome >= 90",
+    "firefox >= 90",
+    "safari >= 15",
+    "edge >= 90"
+  ],
   "packageManager": "yarn@4.10.3"
 }

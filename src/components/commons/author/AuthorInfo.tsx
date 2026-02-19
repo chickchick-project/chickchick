@@ -60,7 +60,7 @@ const AuthorInfo: React.FC<AuthorInfoProps> = ({
         size === SIZE_STATUSES.DEFAULT
           ? "text-label-4 tablet:text-label-2"
           : "text-body-1"
-      } font-medium text-black-300`}
+      } font-medium text-black-100`}
     >
       <AuthorInfoItems items={items} size={size} />
     </div>

@@ -1,5 +1,5 @@
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
 import Link from "next/link";
 

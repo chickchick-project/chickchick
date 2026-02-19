@@ -91,10 +91,10 @@ export default function ReviewCard({
       {/* 메인 컨텐츠 */}
       <main className="flex flex-col flex-1">
         <header>
-          <h2 className="text-label-4 font-medium text-black-300">
+          <p className="text-label-4 font-medium text-black-100">
             {brandName}
-          </h2>
-          <h1 className="text-body-1 font-semibold text-black-100">{title}</h1>
+          </p>
+          <h2 className="text-body-1 font-semibold text-black-100">{title}</h2>
         </header>
         {/* 리뷰 내용 */}
         <p

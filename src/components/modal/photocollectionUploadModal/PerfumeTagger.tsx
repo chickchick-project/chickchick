@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { useSearchTag } from "./useSearchTag";
-import { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import Image from "next/image";
 
 interface PerfumeTaggerProps {

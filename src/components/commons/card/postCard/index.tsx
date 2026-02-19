@@ -64,7 +64,7 @@ export function PostCard({
           cardType === POST_CARD_TYPES.DETAIL ? "gap-4" : "gap-2"
         }`}
       >
-        <h3 className="text-body-1 font-semibold line-clamp-1">{title}</h3>
+        <h2 className="text-body-1 font-semibold line-clamp-1">{title}</h2>
 
         {cardType === POST_CARD_TYPES.DETAIL && (
           <div className="flex justify-end">
@@ -80,7 +80,7 @@ export function PostCard({
               : "items-center justify-between gap-3"
           }`}
         >
-          <p className={`text-gray-600 flex-1 ${contentClamp}`}>
+          <p className={`text-black-100 flex-1 ${contentClamp}`}>
             {contentText}
           </p>
           <Thumbnail thumbnail={thumbnailUrl} cardType={cardType} />

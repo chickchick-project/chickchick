@@ -1,4 +1,4 @@
-import { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import type { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
 import UserProfileImage from "./UserProfileImage";
 import UserInfo from "./UserInfo";
 

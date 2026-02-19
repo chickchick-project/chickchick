@@ -47,9 +47,10 @@ export const Actions = ({ actions, size = "default" }: ActionsProps) => {
         <div key={type} className="flex gap-3 items-center">
           {index !== 0 && <div className="bg-gray-200 h-3 w-[1px]"></div>}
           <button
-            className={`text-black-300 ${ACTION_SIZE_STYLES[size]} disabled:opacity-50`}
+            className={`text-black-300 ${ACTION_SIZE_STYLES[size]} disabled:text-black-200 disabled:cursor-not-allowed`}
             onClick={onClick}
             disabled={disabled}
+            aria-disabled={disabled}
           >
             {label ?? DEFAULT_LABEL[type]}
           </button>

@@ -12,7 +12,6 @@ import brandsApi from "./routes/v1/brand.handler";
 import fileApi from "./routes/v1/file.handler";
 import filterApi from "./routes/v1/filter.handler";
 import pointApi from "./routes/v1/point.handler";
-
 import { handleApiError } from "./utils/api.utils";
 
 export type AuthenticatedUser = User;
@@ -57,6 +56,5 @@ v1.route("/file", fileApi);
 v1.route("/points", pointApi);
 
 app.route("/v1", v1);
-// app.get("/ui", swaggerUI({ url: "/api/v1/doc" }));
 
 export default app;

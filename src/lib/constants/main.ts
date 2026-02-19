@@ -22,6 +22,6 @@ export const MAIN_BUTTONS: MainButton[] = [
     link: "/community",
     title: "내가 좋아하는 향을\n추천해보세요!",
     linkText: "커뮤니티 페이지로 이동하기 ->",
-    bgImage: IMAGES.RecommendButton,
+    bgImage: IMAGES.CommunityButton,
   },
 ];

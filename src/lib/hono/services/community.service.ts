@@ -28,6 +28,7 @@ import {
   BasePost,
 } from "../utils/prisma.utils";
 import { earnPointsService } from "./point.service";
+import { sanitizeHtml } from "../utils/sanitize.utils";
 
 const postWithAuthorArgs = { include: postIncludeArgs };
 
@@ -36,7 +37,7 @@ const postWithAuthorArgs = { include: postIncludeArgs };
  * @param params - 게시글 조회 쿼리 (카테고리, 정렬, 검색어, 커서, 제한)
  */
 export async function getPaginatedPostListService(
-  params: GetPostsQuery
+  params: GetPostsQuery,
 ): Promise<ServiceResult<PaginationResult<BasePost>>> {
   try {
     const { category, sortBy, q, cursor, limit } = params;
@@ -72,7 +73,7 @@ export async function getPaginatedPostListService(
     const paginatedResult = createCursorPaginationResult(
       posts,
       totalCount,
-      limit
+      limit,
     );
     return serviceSuccess(paginatedResult);
   } catch (error) {
@@ -87,7 +88,7 @@ export async function getPaginatedPostListService(
  */
 export async function getPostByIdService(
   id: string,
-  userId?: string | null
+  userId?: string | null,
 ): Promise<ServiceResult<ApiPostDetailResponse>> {
   try {
     const uuidValidation = validateUuid(id, "게시글");
@@ -115,6 +116,7 @@ export async function getPostByIdService(
 
     const result = {
       ...restOfPost,
+      content: sanitizeHtml(post.content),
       isAuthor,
       perfumes: perfumeMappings.map((mapping) => mapping.perfume),
       createdAt: post.createdAt.toISOString(),
@@ -134,7 +136,7 @@ export async function getPostByIdService(
  */
 export async function getPostStatusByIdService(
   postId: string,
-  userId?: string | null
+  userId?: string | null,
 ): Promise<ServiceResult<ApiPostStatusResponse>> {
   try {
     const uuidValidation = validateUuid(postId, "게시글");
@@ -178,7 +180,7 @@ export async function getPostStatusByIdService(
  * @param postId - 현재 게시글 ID
  */
 export async function getPostDetailCategoryPostsService(
-  postId: string
+  postId: string,
 ): Promise<ServiceResult<ApiPostDetailCategoryPostResponse[]>> {
   try {
     const uuidValidation = validateUuid(postId, "게시글");
@@ -229,7 +231,7 @@ export async function getPostDetailCategoryPostsService(
           id: post.userId,
           nickname: post.author.nickname,
         },
-      })
+      }),
     );
     return serviceSuccess(result);
   } catch (error) {
@@ -242,7 +244,7 @@ export async function getPostDetailCategoryPostsService(
  * @param payload - 게시글 생성 데이터 (작성자 ID 포함)
  */
 export async function createPostService(
-  payload: CreatePostInput & { authorId: string }
+  payload: CreatePostInput & { authorId: string },
 ): Promise<ServiceResult<BasePost>> {
   try {
     const { authorId, perfumeIds, ...rest } = payload;
@@ -264,7 +266,7 @@ export async function createPostService(
     earnPointsService(
       authorId,
       PointActivityType.CREATE_POST,
-      newPost.id
+      newPost.id,
     ).catch((error) => {
       console.error("[Point] Failed to earn points for post creation:", error);
     });
@@ -284,7 +286,7 @@ export async function createPostService(
 export async function updatePostService(
   postId: string,
   authorId: string,
-  updateData: UpdatePostInput
+  updateData: UpdatePostInput,
 ): Promise<ServiceResult<BasePost>> {
   try {
     const { perfumeIds, ...postUpdateData } = updateData;
@@ -345,7 +347,7 @@ export async function updatePostService(
  */
 export async function deletePostService(
   postId: string,
-  authorId: string
+  authorId: string,
 ): Promise<ServiceResult<{ category: PostCategory }>> {
   try {
     const [uuidValidation, userCheck] = await Promise.all([
@@ -381,7 +383,7 @@ export async function deletePostService(
  */
 export async function togglePostLikeService(
   postId: string,
-  userId: string
+  userId: string,
 ): Promise<ServiceResult<{ liked: boolean; likeCount: number }>> {
   try {
     const [uuidValidation, userCheck] = await Promise.all([
@@ -431,7 +433,7 @@ export async function togglePostLikeService(
       earnPointsService(
         post.userId, // 좋아요를 누른 사람(userId)이 아닌, 글 작성자(post.userId)에게 포인트 지급
         PointActivityType.LIKE_POST,
-        createdLike.id
+        createdLike.id,
       ).catch((error) => {
         console.error("[Point] Failed to earn points for post like:", error);
       });
@@ -450,7 +452,7 @@ export async function togglePostLikeService(
  */
 export async function togglePostBookmarkService(
   postId: string,
-  userId: string
+  userId: string,
 ): Promise<ServiceResult<{ bookmarked: boolean }>> {
   try {
     const [uuidValidation, userCheck] = await Promise.all([

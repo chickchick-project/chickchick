@@ -2,7 +2,7 @@
 
 import { useState, useMemo, ChangeEvent, FormEvent, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
+import type { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
 
 export const usePerfumeSearchState = (
   brands: ApiBrandSimpleResponse[]

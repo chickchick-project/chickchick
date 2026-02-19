@@ -15,10 +15,7 @@ import {
 } from "./components/sections";
 import { useReviewSubmit } from "./useReviewSubmit";
 import { useUserStore } from "@/lib/stores/useUserStore";
-import {
-  CreateReviewInput,
-  CreateReviewInputSchema,
-} from "@/lib/hono/schemas/review.schema";
+import { CreateReviewClientSchema, type CreateReviewClientInput } from "./reviewSchema.client";
 import { SubmitButton } from "./components/button/SubmitButton";
 import { PerfumeUsageStatus } from "@prisma/client";
 
@@ -35,7 +32,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
   // 리뷰 제출 로직
   const { onSubmit } = useReviewSubmit(closeModal);
 
-  const defaultValues = useMemo((): CreateReviewInput => {
+  const defaultValues = useMemo((): CreateReviewClientInput => {
     return {
       content: "",
       usageStatus: "NOT_USED_YET" as PerfumeUsageStatus,
@@ -68,7 +65,7 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
         >
           <Title>이 향수에 대한 리뷰를 남겨주세요</Title>
           <Form
-            schema={CreateReviewInputSchema}
+            schema={CreateReviewClientSchema}
             defaultValues={defaultValues}
             onSubmit={onSubmit}
           >

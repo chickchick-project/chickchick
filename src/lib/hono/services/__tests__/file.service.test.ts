@@ -285,7 +285,7 @@ describe("File Service", () => {
     });
 
     describe("파일 경로 생성", () => {
-      it("should generate file path with userId", async () => {
+      it("should store files in root directory for COLLECTION bucket", async () => {
         const file = createMockFile("image/jpeg", 1024, "test.jpg");
         mockMetadata.mockResolvedValue({
           width: 800,
@@ -293,7 +293,7 @@ describe("File Service", () => {
           format: "jpeg",
         });
         mockUpload.mockResolvedValue({
-          data: { path: "/test-user-123/abc-test.jpg" },
+          data: { path: "/abc-test.jpg" },
           error: null,
         });
         mockGetPublicUrl.mockReturnValue({
@@ -304,8 +304,33 @@ describe("File Service", () => {
 
         expect(mockUpload).toHaveBeenCalled();
         const uploadPath = mockUpload.mock.calls[0][0];
+        // COLLECTION 버킷은 루트에 저장
+        expect(uploadPath).not.toContain(`/${TEST_USER_ID}/`);
+        expect(uploadPath).toMatch(/^\/[a-f0-9-]+-test\.jpg$/);
+      });
+
+      it("should store files in userId directory for profile_image bucket", async () => {
+        const file = createMockFile("image/jpeg", 1024, "profile.jpg");
+        mockMetadata.mockResolvedValue({
+          width: 800,
+          height: 600,
+          format: "jpeg",
+        });
+        mockUpload.mockResolvedValue({
+          data: { path: `/test-user-123/abc-profile.jpg` },
+          error: null,
+        });
+        mockGetPublicUrl.mockReturnValue({
+          data: { publicUrl: "https://example.com/profile.jpg" },
+        });
+
+        await uploadImage("profile_image", file, TEST_USER_ID);
+
+        expect(mockUpload).toHaveBeenCalled();
+        const uploadPath = mockUpload.mock.calls[0][0];
+        // profile_image 버킷은 userId 폴더에 저장
         expect(uploadPath).toContain(`/${TEST_USER_ID}/`);
-        expect(uploadPath).toContain("-test.jpg");
+        expect(uploadPath).toMatch(new RegExp(`^/${TEST_USER_ID}/[a-f0-9-]+-profile\\.jpg$`));
       });
 
       it("should generate unique paths for same filename", async () => {
@@ -318,7 +343,7 @@ describe("File Service", () => {
           format: "jpeg",
         });
         mockUpload.mockResolvedValue({
-          data: { path: "/test-user-123/test.jpg" },
+          data: { path: "/test.jpg" },
           error: null,
         });
         mockGetPublicUrl.mockReturnValue({
