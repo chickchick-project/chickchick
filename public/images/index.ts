@@ -8,7 +8,7 @@ import Profile from "./Profile.svg";
 
 import Community from "./Community.webp";
 import PerfumeSearch from "./PerfumeSearch.webp";
-import PlaceHolder from "./PlaceHolder.webp";
+import PlaceHolder from "./Placeholder.webp";
 
 export {
   Logo,
