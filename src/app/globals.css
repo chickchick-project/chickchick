@@ -2,35 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (min-width: 1024px) {
-  @font-face {
-    font-family: "Pretendard";
-    font-weight: 400;
-    font-display: swap;
-    src: url("/fonts/Pretendard-Regular.subset.woff2") format("woff2");
-  }
-
-  @font-face {
-    font-family: "Pretendard";
-    font-weight: 500;
-    font-display: swap;
-    src: url("/fonts/Pretendard-Medium.subset.woff2") format("woff2");
-  }
-
-  @font-face {
-    font-family: "Pretendard";
-    font-weight: 600;
-    font-display: swap;
-    src: url("/fonts/Pretendard-SemiBold.subset.woff2") format("woff2");
-  }
-
-  @font-face {
-    font-family: "Pretendard";
-    font-weight: 700;
-    font-display: swap;
-    src: url("/fonts/Pretendard-Bold.subset.woff2") format("woff2");
-  }
-}
+@import "./font.css";
 
 @layer base {
   body {
@@ -39,7 +11,7 @@
       "맑은 고딕", system-ui, helvetica, sans-serif;
   }
 
-  @media (min-width: 1024px) {
+  @media (min-width: 768px) {
     body {
       font-family:
         "Pretendard",

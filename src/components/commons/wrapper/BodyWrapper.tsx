@@ -11,7 +11,7 @@ export const BodyWrapper = ({ children }: { children: React.ReactNode }) => {
     <div
       className={`${
         isHome ? "" : "max-w-[1200px] mx-auto"
-      } h-[calc(100%-130px)]`}
+      } flex-1 flex flex-col min-h-0`}
     >
       {children}
       <BottomNavBar />

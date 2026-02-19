@@ -19,13 +19,20 @@ export default function AuthorProfile({
       : DEFAULT_PROFILE_IMAGE;
   return (
     <div className="flex items-center gap-2">
-      <Image
-        src={profileImageSrc}
-        alt={`${name}의 프로필 이미지`}
-        width={size}
-        height={size}
-        className="rounded-full"
-      />
+      <div
+        className="rounded-full flex-shrink-0"
+        style={{ width: size, height: size }}
+      >
+        <Image
+          src={profileImageSrc}
+          alt={`${name}의 프로필 이미지`}
+          width={size}
+          height={size}
+          className="rounded-full"
+          loading="lazy"
+          quality={75}
+        />
+      </div>
 
       <span className="text-label-2 font-medium">{name}</span>
     </div>

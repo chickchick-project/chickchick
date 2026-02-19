@@ -8,6 +8,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  serverExternalPackages: ["jsdom"],
   webpack: (config, { dev }) => {
     if (!dev) {
       config.resolve.alias["@hono/swagger-ui"] = false;
@@ -49,6 +50,9 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 340, 384, 680],
     formats: ["image/webp"],
+    minimumCacheTTL: 31536000,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "inline",
     remotePatterns: [
       {
         protocol: "https",
@@ -137,6 +141,15 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/_next/static/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/_next/image:path*",
         headers: [
           {
             key: "Cache-Control",

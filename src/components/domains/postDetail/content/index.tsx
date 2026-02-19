@@ -1,8 +1,9 @@
 "use client";
+
+import "@/components/commons/ckeditor5/ckeditor5.css";
 import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
-import { useSanitizedHtml } from "@/lib/hooks/useSanitizedHtml";
 
 interface IPostContent {
   content: string;
@@ -17,16 +18,14 @@ export default function PostContent({
   relatedPerfumes = [],
   postId,
 }: IPostContent) {
-  const sanitizedContent = useSanitizedHtml(content);
-
   const hasRelatedPerfumes = relatedPerfumes && relatedPerfumes.length > 0;
 
   return (
     <section>
       <div className="px-4">
         <div
-          className="ck-content text-body-1 font-medium text-black-100 leading-6 mb-40"
-          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          className="ck-content text-body-1 font-medium text-black-100 leading-6 mb-40 min-h-[400px]"
+          dangerouslySetInnerHTML={{ __html: content }}
         />
 
         <div className="flex justify-end pb-5 tablet:hidden">

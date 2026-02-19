@@ -37,9 +37,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.13",
-    "dompurify": "^3.2.6",
+    "dompurify": "^3.3.1",
     "hono": "^4.8.3",
     "hono-openapi": "^0.4.8",
+    "jsdom": "^28.1.0",
     "lucide-react": "^0.462.0",
     "next": "15.0.5",
     "next-auth": "^5.0.0-beta.25",
@@ -72,6 +73,7 @@
     "@storybook/test": "^8.5.8",
     "@svgr/webpack": "^8.1.0",
     "@types/dompurify": "^3.2.0",
+    "@types/jsdom": "^27.0.0",
     "@types/navermaps": "^3.9.1",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -94,7 +96,8 @@
     "zod-prisma-types": "^3.2.4"
   },
   "resolutions": {
-    "sharp": "0.33.5"
+    "sharp": "0.33.5",
+    "jsdom": "25.0.1"
   },
   "browserslist": [
     "chrome >= 90",

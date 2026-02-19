@@ -4,6 +4,7 @@ import { useInfiniteComments } from "@/lib/hooks/query/useCommentQuery";
 
 import CommentForm from "./comment/CommentForm";
 import CommentList from "./comment/CommentList";
+import CommentSkeleton from "../skeleton/CommentSkeleton";
 
 interface CommentSectionProps {
   postId: string;
@@ -25,7 +26,8 @@ export default function CommentSection({
     isError,
   } = useInfiniteComments(postId);
 
-  const commentList = data?.pages.flatMap((page) => page?.data?.data ?? []) ?? [];
+  const commentList =
+    data?.pages.flatMap((page) => page?.data?.data ?? []) ?? [];
 
   if (isError) {
     return (
@@ -38,19 +40,23 @@ export default function CommentSection({
   }
 
   return (
-    <section className="px-4">
+    <section className="px-4 min-h-[300px]">
       <h2 className="text-title-2 tablet:text-headline-3 font-semibold text-black-100">
         댓글 {totalCommentCount}
       </h2>
       <CommentForm type="create" postId={postId} />
-      {!isLoading && commentList.length > 0 && (
-        <CommentList
-          postAuthorId={postAuthorId}
-          isLoadingComments={isFetchingNextPage}
-          hasNextCursor={hasNextPage}
-          commentList={commentList}
-          onLoadMore={fetchNextPage}
-        />
+      {isLoading ? (
+        <CommentSkeleton />
+      ) : (
+        commentList.length > 0 && (
+          <CommentList
+            postAuthorId={postAuthorId}
+            isLoadingComments={isFetchingNextPage}
+            hasNextCursor={hasNextPage}
+            commentList={commentList}
+            onLoadMore={fetchNextPage}
+          />
+        )
       )}
     </section>
   );

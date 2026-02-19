@@ -78,9 +78,6 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://chickchick-kohl.vercel.app/",
   },
-  other: {
-    "link-preconnect": "https://wvedpvxspndgyoisudyr.supabase.co",
-  },
 };
 
 export default async function RootLayout({
@@ -93,6 +90,29 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
+      <head>
+        <link
+          rel="preconnect"
+          href="https://wvedpvxspndgyoisudyr.supabase.co"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-Regular.subset.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          media="(min-width: 768px)"
+        />
+        <link
+          rel="preload"
+          href="/fonts/Pretendard-SemiBold.subset.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+          media="(min-width: 768px)"
+        />
+      </head>
       <body className="h-full">
         <Providers>
           <RecentSyncManager />
