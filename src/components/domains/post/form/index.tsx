@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useCallback } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,10 +9,15 @@ import { PostCategory as TPostCategory } from "@prisma/client";
 import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
 import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
-import { CreatePostClientSchema, type CreatePostClientInput } from "./postSchema";
+import {
+  CreatePostClientSchema,
+  type CreatePostClientInput,
+} from "./postSchema";
 import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
 import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import getPlainText from "@/lib/utils/getPlainText";
+import { usePostAutosave } from "@/lib/hooks/usePostAutosave";
+import { useBeforeUnload } from "@/lib/hooks/useBeforeUnload";
 
 import PostCategory from "./PostCategory";
 import PostEditor from "./PostEditor";
@@ -30,11 +35,7 @@ interface PostFormProps {
   postId?: string;
 }
 
-export default function PostForm({
-  type,
-  initialData,
-  postId,
-}: PostFormProps) {
+export default function PostForm({ type, initialData, postId }: PostFormProps) {
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
   const method = useForm<CreatePostClientInput>({
@@ -50,19 +51,48 @@ export default function PostForm({
     },
   });
 
-  const {
-    handleSubmit,
-    formState: { isValid, isDirty },
-    setValue,
-  } = method;
+  const { handleSubmit, formState, setValue, getValues } = method;
+
+  const { isValid, isDirty } = formState;
 
   const { createMutation, editMutation } = usePostMutation(postId);
   const isLoading = createMutation.isPending || editMutation.isPending;
 
+  // 임시 저장 상태 관리
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">(
+    "idle",
+  );
+
+  // 수동 저장 훅
+  const { saveDraft } = usePostAutosave({
+    getValues,
+    type,
+    postId,
+    onSaveSuccess: () => {
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2000);
+    },
+    onSaveError: (error) => {
+      console.error("Save error:", error);
+      setSaveStatus("idle");
+    },
+  });
+
+  // 수동 저장 핸들러
+  const handleManualSave = useCallback(async () => {
+    setSaveStatus("saving");
+    await saveDraft();
+    setSaveStatus("idle");
+  }, [saveDraft]);
+
+  useBeforeUnload({
+    enabled: isDirty,
+  });
+
   const onSubmit = async (data: CreatePostClientInput) => {
     const finalizedContent = await finalizeWithBlobRegistry(
       data.content,
-      blobRegistryRef.current
+      blobRegistryRef.current,
     );
     setValue("content", finalizedContent, { shouldDirty: true });
     const thumbnailUrl = extractFirstImageSrc(finalizedContent);
@@ -95,7 +125,11 @@ export default function PostForm({
           <PostEditor blobRegistryRef={blobRegistryRef} />
           <PostRelatedPerfume initialPerfumes={initialData?.perfumes} />
         </div>
-        <PostFormActions disabled={disabled} />
+        <PostFormActions
+          disabled={disabled}
+          onSaveDraft={handleManualSave}
+          saveStatus={saveStatus}
+        />
       </form>
     </FormProvider>
   );
