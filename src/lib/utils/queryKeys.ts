@@ -31,6 +31,7 @@ const filterBase = createBase("filter");
 const searchBase = createBase("search");
 const reviewBase = createBase("reviews");
 const collectionBase = createBase("collection");
+const draftsBase = createBase("drafts");
 
 export const queryKeys = {
   // User
@@ -149,5 +150,12 @@ export const queryKeys = {
       [...collectionBase, "searchByPerfume", query] as const,
     byUserId: (userId: string) =>
       [...collectionBase, "byUserId", userId] as const,
+  },
+
+  // Drafts
+  drafts: {
+    all: draftsBase,
+    list: () => [...draftsBase, "list"] as const,
+    detail: (id: string) => [...draftsBase, id] as const,
   },
 } as const;

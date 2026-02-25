@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { PostCategory } from "@prisma/client";
+import { PerfumeForPostSchema } from "./community.schema";
 
 /**
  * 임시 저장 생성 요청 바디 스키마
@@ -36,6 +37,7 @@ export const ApiDraftResponseSchema = z.object({
   category: z.nativeEnum(PostCategory),
   thumbnailUrl: z.string().nullable(),
   perfumeIds: z.array(z.string().uuid()),
+  perfumes: z.array(PerfumeForPostSchema).optional(),
   postId: z.string().uuid().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),

@@ -1,6 +1,6 @@
 import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function usePerfumeSearch(
   initialPerfumes?: ApiPerfumeSimpleResponse[]
@@ -16,6 +16,13 @@ export default function usePerfumeSearch(
   const [selectedPerfumes, setSelectedPerfumes] = useState<
     ApiPerfumeSimpleResponse[]
   >(initialPerfumes || []);
+
+  // initialPerfumes가 변경되면 selectedPerfumes 업데이트
+  useEffect(() => {
+    if (initialPerfumes && initialPerfumes.length > 0) {
+      setSelectedPerfumes(initialPerfumes);
+    }
+  }, [initialPerfumes]);
 
   const handleToggleTempSelect = (perfume: ApiPerfumeSimpleResponse) => {
     setTempSelectedPerfumesIds((prev) => {

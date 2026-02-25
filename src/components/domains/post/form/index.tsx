@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +18,7 @@ import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
 import getPlainText from "@/lib/utils/getPlainText";
 import { usePostAutosave } from "@/lib/hooks/usePostAutosave";
 import { useBeforeUnload } from "@/lib/hooks/useBeforeUnload";
+import { useDeleteDraft } from "@/lib/hooks/query/useDraftQuery";
 
 import PostCategory from "./PostCategory";
 import PostEditor from "./PostEditor";
@@ -33,9 +34,15 @@ interface PostFormProps {
   type: "create" | "edit";
   initialData?: PostFormInitialData;
   postId?: string;
+  draftId?: string;
 }
 
-export default function PostForm({ type, initialData, postId }: PostFormProps) {
+export default function PostForm({
+  type,
+  initialData,
+  postId,
+  draftId,
+}: PostFormProps) {
   const blobRegistryRef = useRef<BlobRegistry>(new Map());
 
   const method = useForm<CreatePostClientInput>({
@@ -47,15 +54,17 @@ export default function PostForm({ type, initialData, postId }: PostFormProps) {
       content: initialData?.content ?? "",
       contentText: initialData?.contentText ?? "",
       thumbnailUrl: initialData?.thumbnailUrl ?? null,
-      perfumeIds: initialData?.perfumeIds,
+      perfumeIds: initialData?.perfumeIds ?? [],
+      perfumes: initialData?.perfumes ?? [],
     },
   });
 
-  const { handleSubmit, formState, setValue, getValues } = method;
+  const { handleSubmit, formState, setValue, getValues, reset } = method;
 
   const { isValid, isDirty } = formState;
 
   const { createMutation, editMutation } = usePostMutation(postId);
+  const deleteDraftMutation = useDeleteDraft();
   const isLoading = createMutation.isPending || editMutation.isPending;
 
   // 임시 저장 상태 관리
@@ -89,6 +98,21 @@ export default function PostForm({ type, initialData, postId }: PostFormProps) {
     enabled: isDirty,
   });
 
+  // Draft 데이터가 로드되면 폼 필드를 초기화
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        category: initialData.category,
+        title: initialData.title,
+        content: initialData.content,
+        contentText: initialData.contentText,
+        thumbnailUrl: initialData.thumbnailUrl,
+        perfumeIds: initialData.perfumeIds ?? [],
+        perfumes: initialData.perfumes ?? [],
+      });
+    }
+  }, [initialData, reset]);
+
   const onSubmit = async (data: CreatePostClientInput) => {
     const finalizedContent = await finalizeWithBlobRegistry(
       data.content,
@@ -103,6 +127,16 @@ export default function PostForm({ type, initialData, postId }: PostFormProps) {
       thumbnailUrl,
       contentText,
     };
+
+    // 게시글 제출 전에 임시 저장 삭제
+    if (draftId) {
+      try {
+        await deleteDraftMutation.mutateAsync(draftId);
+      } catch (error) {
+        console.error("Failed to delete draft:", error);
+        // 임시 저장 삭제 실패해도 게시글은 제출
+      }
+    }
 
     if (type === "create") {
       createMutation.mutate(postData);

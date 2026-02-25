@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PostCategory } from "@prisma/client";
+import { PerfumeForPostSchema } from "@/lib/hono/schemas/community.schema";
 
 export const CreatePostClientSchema = z.object({
   category: z.nativeEnum(PostCategory, {
@@ -13,6 +14,7 @@ export const CreatePostClientSchema = z.object({
   contentText: z.string(),
   thumbnailUrl: z.string().nullable(),
   perfumeIds: z.array(z.string().uuid()).optional(),
+  perfumes: z.array(PerfumeForPostSchema).optional(),
 });
 
 export type CreatePostClientInput = z.infer<typeof CreatePostClientSchema>;

@@ -1,18 +1,17 @@
 import { PostDraftInput, SaveDraftResponse } from "@/lib/types/postDraft";
+import { draftApi } from "@/lib/utils/api/draft.api";
+import { CreateDraftBody } from "@/lib/hono/schemas/draft.schema";
 
 /**
- * Mock 함수: Draft 저장 시뮬레이션
+ * Draft 저장 함수
  *
- * 향후 API 엔드포인트: POST /api/drafts
- * - 요청 body: CreateDraftBody (draft.schema.ts 참조)
- * - 응답: SaveDraftResponse
+ * API 엔드포인트: POST /api/v1/drafts
  */
-export async function saveDraftMock(
+export async function saveDraft(
   draft: PostDraftInput,
 ): Promise<SaveDraftResponse> {
-  // 백엔드 API로 전송될 정확한 JSON 구조
-  const apiPayload = {
-    category: draft.category,
+  const apiPayload: CreateDraftBody = {
+    category: draft.category === "" ? "FREEBOARD" : draft.category,
     title: draft.title,
     content: draft.content,
     contentText: draft.contentText,
@@ -21,26 +20,22 @@ export async function saveDraftMock(
     postId: draft.postId,
   };
 
-  console.log("💾 Draft API Payload:", JSON.stringify(apiPayload, null, 2));
+  try {
+    const response = await draftApi.create(apiPayload);
 
-  // API 응답 시뮬레이션
-  return {
-    success: true,
-    message: "Draft saved successfully",
-    draft: {
-      id: "mock-draft-id",
-      userId: "mock-user-id",
-      title: draft.title,
-      content: draft.content,
-      contentText: draft.contentText,
-      category: draft.category === "" ? "FREEBOARD" : draft.category,
-      thumbnailUrl: draft.thumbnailUrl,
-      perfumeIds: draft.perfumeIds || [],
-      postId: draft.postId || null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  };
+    if (!response) {
+      throw new Error("No response from server");
+    }
+
+    return {
+      success: response.success,
+      message: response.message,
+      draft: response.data,
+    };
+  } catch (error) {
+    console.error("❌ Draft save failed:", error);
+    throw error;
+  }
 }
 
 /**

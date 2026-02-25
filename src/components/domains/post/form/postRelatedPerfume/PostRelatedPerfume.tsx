@@ -46,7 +46,7 @@ export default function PostRelatedPerfume({
 
   const selectedPerfumesIds = useMemo(
     () => selectedPerfumes.map((p) => p.id),
-    [selectedPerfumes]
+    [selectedPerfumes],
   );
   const MAX_SELECTED_PERFUMES = 8;
   const isSelectedPerfumesLimit =
@@ -55,7 +55,8 @@ export default function PostRelatedPerfume({
 
   useEffect(() => {
     setValue("perfumeIds", selectedPerfumesIds);
-  }, [setValue, selectedPerfumesIds]);
+    setValue("perfumes", selectedPerfumes);
+  }, [setValue, selectedPerfumesIds, selectedPerfumes]);
 
   useEffect(() => {
     const fetchAndSetResults = async () => {
@@ -113,7 +114,7 @@ export default function PostRelatedPerfume({
               >
                 {(perfume) => {
                   const isTempSelected = tempSelectedPerfumeIds.includes(
-                    perfume.id
+                    perfume.id,
                   );
                   const isSelected = selectedPerfumesIds.includes(perfume.id);
                   return (
@@ -147,7 +148,7 @@ export default function PostRelatedPerfume({
           </ButtonFilledPrimaryLFit>
         </div>
         {selectedPerfumes.length > 0 && (
-          <div className=" mt-5 bg-gray-300 py-7 px-5 tablet:p-5 rounded-xl grid grid-cols-2 tablet:grid-cols-4 gap-5 w-full tablet:w-fit h-fit place-items-center">
+          <div className="mt-5 bg-gray-300 py-7 px-5 tablet:p-5 rounded-xl grid grid-cols-2 tablet:grid-cols-4 gap-5 w-full tablet:w-fit h-fit place-items-center">
             {selectedPerfumes.map((perfume) => (
               <PerfumeCard
                 key={perfume.id}

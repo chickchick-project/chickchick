@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { UseFormGetValues } from "react-hook-form";
 import { CreatePostClientInput } from "@/components/domains/post/form/postSchema";
 import { PostDraftInput } from "@/lib/types/postDraft";
-import { saveDraftMock, isDraftValid } from "@/lib/utils/postDraft";
+import { saveDraft as saveDraftApi, isDraftValid } from "@/lib/utils/postDraft";
 
 interface UsePostAutosaveOptions {
   getValues: UseFormGetValues<CreatePostClientInput>;
@@ -43,10 +43,13 @@ export function usePostAutosave({
 
     try {
       isSavingRef.current = true;
-      await saveDraftMock(draft);
+      await saveDraftApi(draft);
       onSaveSuccess?.();
     } catch (error) {
-      onSaveError?.(error as Error);
+      console.error("Draft save error:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "임시 저장에 실패했습니다.";
+      onSaveError?.(new Error(errorMessage));
     } finally {
       isSavingRef.current = false;
     }
