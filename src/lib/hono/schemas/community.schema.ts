@@ -29,7 +29,7 @@ const PerfumeImageForPerfumeSchema = z.object({
  * 게시글용 향수 스키마
  * @description 게시글에 연결된 향수의 기본 정보 (브랜드, 이미지 포함)
  */
-const PerfumeForPostSchema = z.object({
+export const PerfumeForPostSchema = z.object({
   id: z.string().uuid(),
   nameEn: z.string(),
   nameKo: z.string().nullable(),

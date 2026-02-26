@@ -4,6 +4,7 @@ import EditorLoading from "@/components/commons/ckeditor5/EditorLoading";
 import { Controller, useFormContext } from "react-hook-form";
 import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
 import { MutableRefObject } from "react";
+
 const CkEditor5 = dynamic(
   () => import("@/components/commons/ckeditor5/CkEditor5"),
   { ssr: false, loading: () => <EditorLoading /> }

@@ -4,7 +4,6 @@ import {
   ClassicEditor,
   Alignment,
   AutoImage,
-  Autosave,
   Bold,
   Essentials,
   Heading,
@@ -49,7 +48,7 @@ export default function CkEditor5({
 
   const localPreviewPlugin = useMemo(
     () => makeLocalPreviewUploadPlugin(blobRegistryRef.current),
-    [blobRegistryRef]
+    [blobRegistryRef],
   );
 
   useEffect(() => {
@@ -97,7 +96,6 @@ export default function CkEditor5({
         plugins: [
           Alignment,
           AutoImage,
-          Autosave,
           Bold,
           Essentials,
           Heading,
@@ -180,8 +178,7 @@ export default function CkEditor5({
         translations: [translations],
       },
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLayoutReady]);
+  }, [isLayoutReady, content, localPreviewPlugin]);
 
   return (
     <div className="main-container">
@@ -195,7 +192,7 @@ export default function CkEditor5({
               <CKEditor
                 editor={ClassicEditor}
                 config={editorConfig}
-                onChange={(event, editor) => {
+                onChange={(_, editor) => {
                   if (!editor) return;
                   const data = editor.getData?.() ?? "";
                   onChange(data);

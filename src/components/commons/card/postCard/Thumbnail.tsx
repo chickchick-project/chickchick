@@ -29,6 +29,7 @@ export default function Thumbnail({
             src={thumbnail}
             alt="게시글 썸네일"
             fill
+            sizes={`${width}px`}
             className="object-cover rounded-md"
             loading="lazy"
           />

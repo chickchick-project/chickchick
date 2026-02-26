@@ -111,6 +111,7 @@ model User {
   perfumeLikes         PerfumeLike[]       @relation("UserToPerfumeLikes")
   pointHistories       PointHistory[]      @relation("UserToPointHistories")
   postBookmarks        PostBookmark[]      @relation("UserToPostBookmarks")
+  postDrafts           PostDraft[]         @relation("UserToPostDrafts")
   postLikes            PostLike[]          @relation("UserToPostLikes")
   posts                Post[]              @relation("UserToPosts")
   recentPerfumeViews   RecentPerfumeView[]
@@ -256,6 +257,26 @@ model Post {
   recentViews     RecentPostView[]
 
   @@map("posts")
+}
+
+model PostDraft {
+  id           String       @id @default(uuid()) @db.Uuid
+  userId       String       @map("user_id") @db.Uuid
+  type         DraftType    @default(CREATE)
+  title        String
+  content      String
+  contentText  String       @map("content_text")
+  category     PostCategory @default(FREEBOARD)
+  thumbnailUrl String?      @map("thumbnail_url")
+  perfumeIds   String[]     @map("perfume_ids") @db.Uuid
+  postId       String?      @map("post_id") @db.Uuid
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
+  author       User         @relation("UserToPostDrafts", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type], name: "post_drafts_user_id_type_key")
+  @@index([userId, updatedAt])
+  @@map("post_drafts")
 }
 
 model Review {
@@ -434,6 +455,11 @@ enum PostCategory {
   QUESTION
   FREEBOARD
   RECOMMENDATION
+}
+
+enum DraftType {
+  CREATE
+  UPDATE
 }
 
 enum NoteStage {
