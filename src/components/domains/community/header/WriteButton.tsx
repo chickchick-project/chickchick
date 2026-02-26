@@ -5,51 +5,57 @@ import { NAV_PATHS } from "@/components/commons/navBar/navBar.constants";
 import ICONS from "@/lib/constants/icons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DraftRestoreModal } from "@/components/modal/draftRestoreModal";
-import { useDraftList, useDeleteDraft } from "@/lib/hooks/query/useDraftQuery";
-import { ApiDraftResponse } from "@/lib/hono/schemas/draft.schema";
+import {
+  useDraftByType,
+  useDeleteDraft,
+} from "@/lib/hooks/query/useDraftQuery";
+import { DraftType } from "@prisma/client";
 
 export default function WriteButton() {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const { data: draftListResponse } = useDraftList();
+  const [checkDraft, setCheckDraft] = useState(false);
+  const { data: createDraft, isFetched } = useDraftByType(
+    DraftType.CREATE,
+    checkDraft,
+  );
   const deleteDraftMutation = useDeleteDraft();
+
+  // draft 확인이 완료되면 처리
+  useEffect(() => {
+    if (checkDraft && isFetched) {
+      if (createDraft) {
+        // CREATE 타입 임시 저장이 있으면 모달 표시
+        setShowModal(true);
+      } else {
+        // 없으면 바로 글쓰기 페이지로 이동
+        router.push(NAV_PATHS.POST);
+      }
+      // draft 확인 완료 후 상태 초기화
+      setCheckDraft(false);
+    }
+  }, [checkDraft, isFetched, createDraft, router]);
 
   const handleWriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
 
-    // 임시 저장된 글이 있는지 확인 (postId가 null인 새 게시글 임시 저장)
-    const newPostDraft = draftListResponse?.find(
-      (draft: ApiDraftResponse) => draft.postId === null
-    );
-
-    if (newPostDraft) {
-      // 임시 저장이 있으면 모달 표시
-      setShowModal(true);
-    } else {
-      // 없으면 바로 글쓰기 페이지로 이동
-      router.push(NAV_PATHS.POST);
-    }
+    // 글쓰기 버튼 클릭 시에만 draft 확인 시작
+    setCheckDraft(true);
   };
 
   const handleRestore = () => {
-    const newPostDraft = draftListResponse?.find(
-      (draft: ApiDraftResponse) => draft.postId === null
-    );
-    if (newPostDraft) {
+    if (createDraft) {
       // 임시 저장 데이터를 쿼리 파라미터로 전달
-      router.push(`${NAV_PATHS.POST}?draftId=${newPostDraft.id}`);
+      router.push(`${NAV_PATHS.POST}?draftId=${createDraft.id}`);
     }
     setShowModal(false);
   };
 
   const handleDiscard = async () => {
-    const newPostDraft = draftListResponse?.find(
-      (draft: ApiDraftResponse) => draft.postId === null
-    );
-    if (newPostDraft) {
-      await deleteDraftMutation.mutateAsync(newPostDraft.id);
+    if (createDraft) {
+      await deleteDraftMutation.mutateAsync(createDraft.id);
     }
     setShowModal(false);
     router.push(NAV_PATHS.POST);
@@ -58,10 +64,6 @@ export default function WriteButton() {
   const handleCancel = () => {
     setShowModal(false);
   };
-
-  const newPostDraft = draftListResponse?.find(
-    (draft: ApiDraftResponse) => draft.postId === null
-  );
 
   return (
     <>
@@ -80,9 +82,9 @@ export default function WriteButton() {
         </ButtonOutlinedPrimaryLFit>
       </div>
 
-      {showModal && newPostDraft && (
+      {showModal && createDraft && (
         <DraftRestoreModal
-          draft={newPostDraft}
+          draft={createDraft}
           onRestore={handleRestore}
           onDiscard={handleDiscard}
           onCancel={handleCancel}

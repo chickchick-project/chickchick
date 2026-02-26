@@ -262,6 +262,7 @@ model Post {
 model PostDraft {
   id           String       @id @default(uuid()) @db.Uuid
   userId       String       @map("user_id") @db.Uuid
+  type         DraftType    @default(CREATE)
   title        String
   content      String
   contentText  String       @map("content_text")
@@ -273,7 +274,7 @@ model PostDraft {
   updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(6)
   author       User         @relation("UserToPostDrafts", fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId], name: "post_drafts_user_id_post_id_key")
+  @@unique([userId, type], name: "post_drafts_user_id_type_key")
   @@index([userId, updatedAt])
   @@map("post_drafts")
 }
@@ -454,6 +455,11 @@ enum PostCategory {
   QUESTION
   FREEBOARD
   RECOMMENDATION
+}
+
+enum DraftType {
+  CREATE
+  UPDATE
 }
 
 enum NoteStage {

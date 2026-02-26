@@ -2,27 +2,32 @@
 
 import { ModalContainer } from "../ModalContainer";
 import { ApiDraftResponse } from "@/lib/hono/schemas/draft.schema";
+import { DraftType } from "@prisma/client";
+import { BOARD_OPTIONS } from "@/lib/constants/options";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import "dayjs/locale/ko";
+
+dayjs.extend(relativeTime);
+dayjs.locale("ko");
 
 interface DraftRestoreModalProps {
   draft: ApiDraftResponse;
   onRestore: () => void;
   onDiscard: () => void;
   onCancel: () => void;
+  hasConflict?: boolean;
 }
 
 const getTimeAgo = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInMinutes = Math.floor(diffInMs / 60000);
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
+  const date = dayjs(dateString);
+  const now = dayjs();
+  const diffInDays = now.diff(date, "day");
 
-  if (diffInMinutes < 1) return "방금 전";
-  if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
-  if (diffInHours < 24) return `${diffInHours}시간 전`;
-  if (diffInDays < 7) return `${diffInDays}일 전`;
-  return date.toLocaleDateString("ko-KR");
+  if (diffInDays >= 7) {
+    return date.format("YYYY. MM. DD");
+  }
+  return date.fromNow();
 };
 
 export const DraftRestoreModal = ({
@@ -30,8 +35,18 @@ export const DraftRestoreModal = ({
   onRestore,
   onDiscard,
   onCancel,
+  hasConflict = false,
 }: DraftRestoreModalProps) => {
   const timeAgo = getTimeAgo(draft.updatedAt);
+  const draftTypeLabel =
+    draft.type === DraftType.CREATE ? "작성 중이던" : "수정 중이던";
+  const categoryLabel =
+    BOARD_OPTIONS.find((option) => option.value === draft.category)?.label ||
+    draft.category;
+  const descriptionText =
+    draft.type === DraftType.CREATE
+      ? `${timeAgo}에 저장된 글을 불러올까요?`
+      : `${timeAgo}에 저장된 임시 저장 데이터가 있습니다.`;
 
   return (
     <ModalContainer closeModal={onCancel}>
@@ -39,21 +54,19 @@ export const DraftRestoreModal = ({
         {/* 제목 */}
         <div className="flex flex-col gap-2">
           <h2 className="text-2xl font-bold text-black-300">
-            임시 저장된 글이 있습니다
+            {draftTypeLabel} 글이 있습니다
           </h2>
-          <p className="text-sm text-gray-500">
-            {timeAgo} 저장된 글을 불러올까요?
-          </p>
+          <p className="text-sm text-gray-500">{descriptionText}</p>
         </div>
 
         {/* 임시 저장 내용 미리보기 */}
         <div className="flex flex-col gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
           <div className="flex items-center gap-2">
             <span className="px-2 py-1 text-xs font-medium bg-primary-100 text-primary-600 rounded">
-              {draft.category}
+              {categoryLabel}
             </span>
             <span className="text-xs text-gray-400">
-              {new Date(draft.updatedAt).toLocaleString("ko-KR")}
+              {dayjs(draft.updatedAt).format("YYYY. MM. DD. A h:mm")}
             </span>
           </div>
 
@@ -76,18 +89,24 @@ export const DraftRestoreModal = ({
 
         {/* 버튼 그룹 */}
         <div className="flex flex-col gap-2">
-          <button
-            onClick={onRestore}
-            className="w-full py-3 px-4 bg-primary-200 text-white font-medium rounded-lg hover:bg-primary-400 transition-colors"
-          >
-            임시 저장 불러오기
-          </button>
+          {/* 충돌 상황이 아닐 때만 불러오기 버튼 표시 */}
+          {!hasConflict && (
+            <button
+              onClick={onRestore}
+              className="w-full py-3 px-4 bg-primary-200 text-white font-medium rounded-lg hover:bg-primary-400 transition-colors"
+            >
+              임시 저장 불러오기
+            </button>
+          )}
 
+          {/* 충돌 상황일 때는 "삭제하고 수정하기", 아니면 "삭제하고 새로 작성" */}
           <button
             onClick={onDiscard}
             className="w-full py-3 px-4 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors"
           >
-            삭제하고 새로 작성
+            {hasConflict
+              ? "삭제하고 수정하기"
+              : `삭제하고 ${draft.type === DraftType.CREATE ? "새로 작성" : "수정하기"}`}
           </button>
         </div>
       </div>

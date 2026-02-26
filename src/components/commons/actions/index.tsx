@@ -31,7 +31,7 @@ type ActionSize = (typeof ACTION_SIZES)[keyof typeof ACTION_SIZES];
 export interface ActionItem {
   type: ActionType;
   label?: string;
-  onClick: () => void;
+  onClick: (e?: React.MouseEvent) => void;
   disabled?: boolean;
 }
 
@@ -41,6 +41,16 @@ interface ActionsProps {
 }
 
 export const Actions = ({ actions, size = "default" }: ActionsProps) => {
+  const handleClick = (
+    e: React.MouseEvent,
+    onClick: (e?: React.MouseEvent) => void
+  ) => {
+    // 이벤트 전파 방지
+    e.preventDefault();
+    e.stopPropagation();
+    onClick(e);
+  };
+
   return (
     <div className="flex gap-3 items-center">
       {actions.map(({ type, label, onClick, disabled }, index) => (
@@ -48,7 +58,7 @@ export const Actions = ({ actions, size = "default" }: ActionsProps) => {
           {index !== 0 && <div className="bg-gray-200 h-3 w-[1px]"></div>}
           <button
             className={`text-black-300 ${ACTION_SIZE_STYLES[size]} disabled:text-black-200 disabled:cursor-not-allowed`}
-            onClick={onClick}
+            onClick={(e) => handleClick(e, onClick)}
             disabled={disabled}
             aria-disabled={disabled}
           >

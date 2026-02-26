@@ -157,5 +157,8 @@ export const queryKeys = {
     all: draftsBase,
     list: () => [...draftsBase, "list"] as const,
     detail: (id: string) => [...draftsBase, id] as const,
+    byType: (type: "CREATE" | "UPDATE") =>
+      [...draftsBase, "type", type] as const,
+    byPostId: (postId: string) => [...draftsBase, "postId", postId] as const,
   },
 } as const;

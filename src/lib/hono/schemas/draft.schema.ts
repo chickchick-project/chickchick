@@ -1,12 +1,19 @@
 import { z } from "@hono/zod-openapi";
-import { PostCategory } from "@prisma/client";
+import { PostCategory, DraftType } from "@prisma/client";
 import { PerfumeForPostSchema } from "./community.schema";
+
+/**
+ * Draft 타입 enum
+ * @description CREATE: 새 글 작성, UPDATE: 기존 글 수정
+ */
+export const DraftTypeSchema = z.nativeEnum(DraftType);
 
 /**
  * 임시 저장 생성 요청 바디 스키마
  * @description 게시글 임시 저장 시 사용되는 요청 데이터
  */
 export const CreateDraftBodySchema = z.object({
+  type: DraftTypeSchema,
   title: z.string(),
   content: z.string(),
   contentText: z.string(),
@@ -31,6 +38,7 @@ export const CreateDraftPayloadSchema = CreateDraftBodySchema.extend({
 export const ApiDraftResponseSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().uuid(),
+  type: DraftTypeSchema,
   title: z.string(),
   content: z.string(),
   contentText: z.string(),

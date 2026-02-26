@@ -1,9 +1,10 @@
-import { PostCategory } from "@prisma/client";
+import { PostCategory, DraftType } from "@prisma/client";
 
 /**
  * 클라이언트에서 임시 저장할 때 사용하는 인터페이스
  */
 export interface PostDraftInput {
+  type: DraftType;
   category: PostCategory | "";
   title: string;
   content: string;
@@ -22,6 +23,7 @@ export interface SaveDraftResponse {
   draft?: {
     id: string;
     userId: string;
+    type: DraftType;
     title: string;
     content: string;
     contentText: string;

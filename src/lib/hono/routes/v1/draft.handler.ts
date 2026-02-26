@@ -3,6 +3,7 @@ import { z } from "zod";
 import * as DraftSchemas from "@/lib/hono/schemas/draft.schema";
 import * as DraftServices from "@/lib/hono/services/draft.service";
 import {
+  apiBadRequest,
   apiCreated,
   apiForbidden,
   apiInternalError,
@@ -55,6 +56,9 @@ routers.authenticated.openapi(createOrUpdateDraftRoute, async (c) => {
   if (!result.success) {
     if (result.error === "NOT_FOUND") {
       return apiNotFound(c, result.message);
+    }
+    if (result.error === "BAD_REQUEST") {
+      return apiBadRequest(c, result.message);
     }
     return apiInternalError(c, result.message);
   }

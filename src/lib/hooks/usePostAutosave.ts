@@ -3,6 +3,7 @@ import { UseFormGetValues } from "react-hook-form";
 import { CreatePostClientInput } from "@/components/domains/post/form/postSchema";
 import { PostDraftInput } from "@/lib/types/postDraft";
 import { saveDraft as saveDraftApi, isDraftValid } from "@/lib/utils/postDraft";
+import { DraftType } from "@prisma/client";
 
 interface UsePostAutosaveOptions {
   getValues: UseFormGetValues<CreatePostClientInput>;
@@ -27,6 +28,7 @@ export function usePostAutosave({
     const currentValues = getValues();
 
     const draft: PostDraftInput = {
+      type: type === "edit" ? DraftType.UPDATE : DraftType.CREATE,
       category: currentValues.category,
       title: currentValues.title,
       content: currentValues.content,

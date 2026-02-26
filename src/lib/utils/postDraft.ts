@@ -11,6 +11,7 @@ export async function saveDraft(
   draft: PostDraftInput,
 ): Promise<SaveDraftResponse> {
   const apiPayload: CreateDraftBody = {
+    type: draft.type,
     category: draft.category === "" ? "FREEBOARD" : draft.category,
     title: draft.title,
     content: draft.content,

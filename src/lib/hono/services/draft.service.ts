@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import {
   checkResourceExists,
+  serviceBadRequest,
   serviceForbidden,
   serviceInternalError,
   serviceNotFound,
@@ -12,6 +13,7 @@ import {
   ApiDraftResponse,
   CreateDraftPayload,
 } from "../schemas/draft.schema";
+import { DraftType } from "@prisma/client";
 
 /**
  * perfumeIds를 기반으로 향수 정보 조회
@@ -58,19 +60,24 @@ async function getPerfumesByIds(perfumeIds: string[]) {
 
 /**
  * 임시 저장을 생성하거나 업데이트합니다 (Upsert).
- * - postId가 있는 경우: 해당 postId에 대한 사용자의 임시 저장을 업데이트하거나 생성
- * - postId가 없는 경우: 새 게시글 작성을 위한 임시 저장을 업데이트하거나 생성
+ * - type이 CREATE: 사용자의 새 글 작성 임시 저장 (1개만 유지)
+ * - type이 UPDATE: 사용자의 글 수정 임시 저장 (1개만 유지)
  * - perfumeIds만 저장하고, perfumes 객체는 저장하지 않음 (조회 시 perfumeIds로 조회)
  */
 export const createOrUpdateDraftService = async (
   payload: CreateDraftPayload,
 ): Promise<ServiceResult<ApiDraftResponse>> => {
   try {
-    const { userId, postId, perfumeIds, ...draftData } = payload;
+    const { userId, type, postId, perfumeIds, ...draftData } = payload;
 
     // 사용자 존재 확인
     const userCheck = await checkResourceExists("user", userId, "사용자");
     if (!userCheck.success) return userCheck;
+
+    // UPDATE 타입인데 postId가 없으면 에러
+    if (type === DraftType.UPDATE && !postId) {
+      return serviceBadRequest("수정 타입의 임시 저장은 postId가 필요합니다.");
+    }
 
     // postId가 제공된 경우, 해당 게시글 존재 확인
     if (postId) {
@@ -78,58 +85,27 @@ export const createOrUpdateDraftService = async (
       if (!postCheck.success) return postCheck;
     }
 
-    let draft;
-
-    if (postId) {
-      // postId가 있는 경우: unique constraint를 사용하여 upsert
-      draft = await prisma.postDraft.upsert({
-        where: {
-          post_drafts_user_id_post_id_key: {
-            userId,
-            postId,
-          },
-        },
-        create: {
+    // unique constraint (userId, type)를 사용하여 upsert
+    const draft = await prisma.postDraft.upsert({
+      where: {
+        post_drafts_user_id_type_key: {
           userId,
-          postId,
-          perfumeIds: perfumeIds || [],
-          ...draftData,
+          type,
         },
-        update: {
-          perfumeIds: perfumeIds || [],
-          ...draftData,
-        },
-      });
-    } else {
-      // postId가 없는 경우: 기존 새 게시글용 임시 저장 찾기
-      const existingDraft = await prisma.postDraft.findFirst({
-        where: {
-          userId,
-          postId: null,
-        },
-      });
-
-      if (existingDraft) {
-        // 기존 임시 저장 업데이트
-        draft = await prisma.postDraft.update({
-          where: { id: existingDraft.id },
-          data: {
-            perfumeIds: perfumeIds || [],
-            ...draftData,
-          },
-        });
-      } else {
-        // 새 임시 저장 생성
-        draft = await prisma.postDraft.create({
-          data: {
-            userId,
-            postId: null,
-            perfumeIds: perfumeIds || [],
-            ...draftData,
-          },
-        });
-      }
-    }
+      },
+      create: {
+        userId,
+        type,
+        postId: type === DraftType.UPDATE ? postId : null,
+        perfumeIds: perfumeIds || [],
+        ...draftData,
+      },
+      update: {
+        postId: type === DraftType.UPDATE ? postId : null,
+        perfumeIds: perfumeIds || [],
+        ...draftData,
+      },
+    });
 
     // perfumeIds를 기반으로 향수 정보 조회
     const perfumesData = await getPerfumesByIds(draft.perfumeIds);
@@ -138,6 +114,7 @@ export const createOrUpdateDraftService = async (
     const response: ApiDraftResponse = {
       id: draft.id,
       userId: draft.userId,
+      type: draft.type,
       title: draft.title,
       content: draft.content,
       contentText: draft.contentText,
@@ -185,6 +162,7 @@ export const getDraftService = async (
     const response: ApiDraftResponse = {
       id: draft.id,
       userId: draft.userId,
+      type: draft.type,
       title: draft.title,
       content: draft.content,
       contentText: draft.contentText,
@@ -271,6 +249,7 @@ export const listDraftsService = async (
       return {
         id: draft.id,
         userId: draft.userId,
+        type: draft.type,
         title: draft.title,
         content: draft.content,
         contentText: draft.contentText,

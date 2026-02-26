@@ -24,7 +24,9 @@ export const draftApi = {
    */
   list: () => {
     return apiClient.get<ApiSuccessResponse<ApiDraftListResponse>>(
-      `${DRAFT_URL}`
+      `${DRAFT_URL}`,
+      undefined,
+      { cache: "no-store" }
     );
   },
 
@@ -33,7 +35,9 @@ export const draftApi = {
    */
   get: (id: string) => {
     return apiClient.get<ApiSuccessResponse<ApiDraftResponse>>(
-      `${DRAFT_URL}/${id}`
+      `${DRAFT_URL}/${id}`,
+      undefined,
+      { cache: "no-store" }
     );
   },
 
@@ -41,8 +45,19 @@ export const draftApi = {
    * 임시 저장 삭제
    */
   delete: (id: string) => {
-    return apiClient.delete<ApiSuccessResponse<{ message: string }>>(
-      `${DRAFT_URL}/${id}`
-    );
+    const url = `${DRAFT_URL}/${id}`;
+    console.log("[draftApi.delete] DELETE 요청:", url);
+    return apiClient
+      .delete<ApiSuccessResponse<{ message: string }>>(url, {
+        cache: "no-store", // 캐시 비활성화
+      })
+      .then((response) => {
+        console.log("[draftApi.delete] DELETE 응답:", response);
+        return response;
+      })
+      .catch((error) => {
+        console.error("[draftApi.delete] DELETE 에러:", error);
+        throw error;
+      });
   },
 };
