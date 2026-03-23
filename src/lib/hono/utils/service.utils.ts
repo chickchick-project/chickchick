@@ -79,9 +79,15 @@ export const serviceForbidden = (message = "요청을 수행할 권한이 없습
 export function serviceInternalError(
   error: unknown
 ): ServiceResult<never, "INTERNAL_ERROR"> {
-  const err = error instanceof Error ? error : new Error(String(error));
-  const message = err.message;
-  console.error("[INTERNAL_ERROR]", err);
+  let message: string;
+  if (error instanceof Error) {
+    message = error.message;
+  } else if (error !== null && typeof error === "object" && "message" in error) {
+    message = String((error as { message: unknown }).message);
+  } else {
+    message = String(error);
+  }
+  console.error("[INTERNAL_ERROR]", error);
   return { success: false, error: "INTERNAL_ERROR", message };
 }
 

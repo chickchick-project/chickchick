@@ -324,7 +324,9 @@ describe("Search Service", () => {
         return Promise.resolve({ data: null, error: null }) as never;
       });
 
-      const cursor = "perfume-10";
+      // 복합 커서 형식: "{priority}:{perfume_id}"
+      // mockSupabasePerfumes에서 index 10의 priority = 100 - 10 = 90
+      const cursor = "90:perfume-10";
       const params: SearchGetQuery = {
         searchText: "test",
         limit: 15,
@@ -336,7 +338,8 @@ describe("Search Service", () => {
       expect(supabase.rpc).toHaveBeenCalledWith(
         "search_perfumes",
         expect.objectContaining({
-          last_seen_id: cursor,
+          last_seen_id: "perfume-10",
+          last_seen_priority: 90,
         })
       );
     });
@@ -375,8 +378,8 @@ describe("Search Service", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         // 16개가 반환되었으므로 hasMore = true
-        // nextCursor는 15번째(마지막 반환 데이터)의 id
-        expect(result.data.nextCursor).toBe("perfume-14");
+        // nextCursor는 15번째(index 14) 항목의 복합 커서: priority(100-14=86):perfume_id
+        expect(result.data.nextCursor).toBe("86:perfume-14");
         expect(result.data.data).toHaveLength(15);
       }
     });

@@ -15,6 +15,13 @@ import {
  */
 export const SearchGetQuerySchema = CursorPaginationSchema.extend({
   searchText: z.string().optional().default(""),
+  cursor: z
+    .string()
+    .regex(
+      /^\d+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      "유효하지 않은 커서 형식입니다."
+    )
+    .optional(),
 });
 
 /**

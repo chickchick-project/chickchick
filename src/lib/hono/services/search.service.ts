@@ -11,10 +11,9 @@ import {
   ServiceResult,
   serviceSuccess,
 } from "../utils/service.utils";
-import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 function transformSupabasePerfume(
-  p: SupabasePerfume
+  p: SupabasePerfume,
 ): ApiPerfumeSimpleResponse {
   return {
     id: p.perfume_id,
@@ -33,9 +32,9 @@ function transformSupabasePerfume(
 
 // 필터 처리 함수
 function processFilters(params: SearchGetQuery | SearchPostBody) {
-  const isPost = "searchText" in params;
+  const hasFilters = "brandFilter" in params;
 
-  if (!isPost) {
+  if (!hasFilters) {
     return {
       brandFilter: null,
       notesFilter: null,
@@ -67,28 +66,33 @@ function processFilters(params: SearchGetQuery | SearchPostBody) {
 }
 
 export async function searchPerfumesService(
-  params: SearchGetQuery | SearchPostBody
+  params: SearchGetQuery | SearchPostBody,
 ): Promise<ServiceResult<PaginatedSearchResponse>> {
   try {
     const limit = params.limit ?? 15;
-    const cursor = params.cursor;
     const fetchLimit = limit + 1;
+
+    // 복합 커서 파싱 (형식: "{priority}:{perfume_id}")
+    const [lastPriority, lastId] = params.cursor
+      ? params.cursor.split(":")
+      : [null, null];
 
     // 필터 처리
     const { brandFilter, notesFilter, accordsFilter } = processFilters(params);
 
     // Supabase RPC 함수가 예상하는 형태로 변환
     const rpcParams = {
-      search_text: params.searchText || "",
+      search_text: params.searchText || null,
       brand_filter: brandFilter,
       notes_filter: notesFilter,
       accords_filter: accordsFilter,
-      last_seen_id: cursor ?? null,
+      last_seen_id: lastId ?? null,
+      last_seen_priority: lastPriority ? Number(lastPriority) : null,
       result_limit: fetchLimit,
     };
 
     const rpcParamsTotal = {
-      search_text: params.searchText || "",
+      search_text: params.searchText || null,
       brand_filter: brandFilter,
       notes_filter: notesFilter,
       accords_filter: accordsFilter,
@@ -111,17 +115,18 @@ export async function searchPerfumesService(
     const rawData: SupabasePerfume[] = perfumesResult.data || [];
     const totalCount: number = totalResult.data || 0;
 
-    const transformedData = rawData.map(transformSupabasePerfume);
-    const paginatedResult = createCursorPaginationResult(
-      transformedData,
-      totalCount,
-      limit
-    );
+    const hasMore = rawData.length > limit;
+    const slicedRaw = hasMore ? rawData.slice(0, limit) : rawData;
+    const lastItem = slicedRaw[slicedRaw.length - 1];
+    const nextCursor =
+      hasMore && lastItem
+        ? `${lastItem.priority}:${lastItem.perfume_id.toLowerCase()}`
+        : null;
 
     return serviceSuccess({
-      data: paginatedResult.data,
-      totalCount: paginatedResult.totalCount,
-      nextCursor: paginatedResult.nextCursor,
+      data: slicedRaw.map(transformSupabasePerfume),
+      totalCount,
+      nextCursor,
     });
   } catch (error) {
     return serviceInternalError(error);
