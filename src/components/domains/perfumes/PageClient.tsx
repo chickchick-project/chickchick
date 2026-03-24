@@ -20,13 +20,8 @@ export default function PageClient() {
   // 실제 적용된 필터 상태 (committed)
   const selectedFilters = useFilterStore((state) => state.committedFilters);
 
-  // Idle 상태 확인: 필터가 선택 안 됨
-  const isIdle = Object.keys(selectedFilters).length === 0;
-
-  // 브랜드는 항상 조회, 노트/어코드는 Idle 상태에서만 조회
+  // 브랜드는 항상 조회
   const { data: allBrands } = useBrandFilter();
-  const { data: allNotes } = usePerfumeNoteFilter(isIdle);
-  const { data: allAccords } = usePerfumeAccordFilter(isIdle);
 
   const {
     inputValue,
@@ -56,16 +51,23 @@ export default function PageClient() {
     };
   }, [searchKeyword, selectedFilters]);
 
+  // Idle 상태 확인: 필터가 선택 안 됨 AND 검색어 없음
+  const isIdle = Object.keys(selectedFilters).length === 0 && !searchKeyword;
+
+  // 노트/어코드는 Idle 상태에서만 조회
+  const { data: allNotes } = usePerfumeNoteFilter(isIdle);
+  const { data: allAccords } = usePerfumeAccordFilter(isIdle);
+
   // 동적 필터: Idle이 아니고, 로딩 완료 후에만 조회
   const { data: availableFilters } = useAvailableFilters(
     filterParams,
-    !isIdle && !isLoading
+    !isIdle && !isLoading,
   );
 
   // 필터 정렬 함수: 선택된 항목은 맨 위, 나머지는 count 내림차순
   const sortFilters = <T extends { id: string; count?: number }>(
     items: T[],
-    selectedIds: string[] = []
+    selectedIds: string[] = [],
   ): T[] => {
     const selected = items.filter((item) => selectedIds.includes(item.id));
     const unselected = items.filter((item) => !selectedIds.includes(item.id));
@@ -98,7 +100,7 @@ export default function PageClient() {
           nameEn: item.nameEn,
           description: null,
           count: item.count,
-        })
+        }),
       );
       return sortFilters(mapped, selectedFilters.notes);
     }
@@ -123,7 +125,7 @@ export default function PageClient() {
           nameKo: item.nameKo,
           nameEn: item.nameEn,
           count: item.count,
-        })
+        }),
       );
       return sortFilters(mapped, selectedFilters.accords);
     }

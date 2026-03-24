@@ -32,7 +32,10 @@ function transformSupabasePerfume(
 
 // 필터 처리 함수
 function processFilters(params: SearchGetQuery | SearchPostBody) {
-  const hasFilters = "brandFilter" in params;
+  const hasFilters =
+    "brandFilter" in params ||
+    "notesFilter" in params ||
+    "accordsFilter" in params;
 
   if (!hasFilters) {
     return {
