@@ -1,7 +1,7 @@
 "use client";
 
 import { useFormContext, Controller } from "react-hook-form";
-import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import { REVIEW_OPTIONS } from "@/shared/constants/review";
 import { SubTitle } from "../SubTitle";
 import { SelectButton } from "../button/SelectButton";
 import { useFormError } from "../../hooks/useFormError";

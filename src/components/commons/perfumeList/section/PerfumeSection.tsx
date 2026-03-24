@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Spinner } from "@/components/commons/loading/Spinner";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { PERFUME_CARD_TYPES } from "@/components/commons/card/perfumeCard/perfumeCard.constants";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 
 interface PerfumeSectionProps {
   perfumes: ApiPerfumeSimpleResponse[];

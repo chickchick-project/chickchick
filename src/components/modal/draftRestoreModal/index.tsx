@@ -1,9 +1,9 @@
 "use client";
 
 import { ModalContainer } from "../ModalContainer";
-import { ApiDraftResponse } from "@/lib/hono/schemas/draft.schema";
+import { ApiDraftResponse } from "@/server/hono/schemas/draft.schema";
 import { DraftType } from "@prisma/client";
-import { BOARD_OPTIONS } from "@/lib/constants/options";
+import { BOARD_OPTIONS } from "@/shared/constants/options";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import "dayjs/locale/ko";

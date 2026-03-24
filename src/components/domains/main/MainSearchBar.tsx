@@ -2,15 +2,15 @@
 
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import { useRouter } from "next/navigation";
-import { useSearchBar } from "@/lib/hooks/useSearchBar";
+import { useSearchBar } from "@/client/hooks/useSearchBar";
 import { useEffect, useState, useRef } from "react";
-import useDebounce from "@/lib/hooks/useDebounce";
-import { searchApi } from "@/lib/utils/api/search.api";
+import useDebounce from "@/client/hooks/useDebounce";
+import { searchApi } from "@/client/utils/api/search.api";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
-import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
+import useOnClickOutside from "@/client/hooks/useOnClickOutside";
+import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
 import Image from "next/image";
-import { highlightText } from "@/lib/utils/highlightText";
+import { highlightText } from "@/shared/utils/highlightText";
 import Logo from "../../../..//public/images/Logo.webp";
 
 interface PerfumeSearchResult {

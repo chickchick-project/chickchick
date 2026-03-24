@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from "react";
-import { Option } from "@/lib/constants/options";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { Option } from "@/shared/constants/options";
+import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useFilterStore } from "@/client/stores/useFilterStore";
 import { ModalContainer } from "@/components/modal/ModalContainer";
 import { FilterModalLayout } from "./Layout";
 import { getLabel } from "../perfumes.helpers";
-import { useAvailableFilters } from "@/lib/hooks/query/useFilterQuery";
+import { useAvailableFilters } from "@/client/hooks/query/useFilterQuery";
 
 interface IFilterDropdownProps {
   id: string;

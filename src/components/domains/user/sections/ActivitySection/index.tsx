@@ -10,7 +10,7 @@ import {
   SkeletonComment,
   SkeletonPerfume,
 } from "../../components/skeletons";
-import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { useMediaQuery } from "@/client/hooks/useMediaQuery";
 
 const MyReviewListLoader = dynamic(
   () => import("./loader/MyReviewListLoader"),

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import ReviewCard from "@/components/commons/card/reviewCard";
-import { reviewApi } from "@/lib/utils/api/reviews.api";
-import { DEFAULT_POPULAR_REVIEW } from "@/lib/constants/review";
+import { reviewApi } from "@/client/utils/api/reviews.api";
+import { DEFAULT_POPULAR_REVIEW } from "@/shared/constants/review";
 
 export const MainContentReview = async () => {
   const review = await reviewApi.popular();

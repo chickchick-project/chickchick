@@ -14,7 +14,7 @@ import {
   DetailReviewSection,
 } from "./components/sections";
 import { useReviewSubmit } from "./useReviewSubmit";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 import { CreateReviewClientSchema, type CreateReviewClientInput } from "./reviewSchema.client";
 import { SubmitButton } from "./components/button/SubmitButton";
 import { PerfumeUsageStatus } from "@prisma/client";

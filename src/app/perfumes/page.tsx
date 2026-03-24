@@ -1,8 +1,8 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { Suspense } from "react";
-import getQueryClient from "@/lib/utils/getQueryClient";
-import { brandApi } from "@/lib/utils/api/brands.api";
-import { perfumeApi } from "@/lib/utils/api/perfumes.api";
+import getQueryClient from "@/client/utils/getQueryClient";
+import { brandApi } from "@/client/utils/api/brands.api";
+import { perfumeApi } from "@/client/utils/api/perfumes.api";
 import PageClient from "@/components/domains/perfumes/PageClient";
 import type { Metadata } from "next";
 

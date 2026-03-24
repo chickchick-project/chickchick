@@ -1,6 +1,6 @@
-// import { BOARD_TYPES, TBoardType } from "@/lib/constants/communityBoard";
+// import { BOARD_TYPES, TBoardType } from "@/shared/constants/communityBoard";
 import { ChipOutlinedPrimary } from "./ChipOutlined";
-import { CATEGORY_LABELS, CategoryType } from "@/lib/constants/post";
+import { CATEGORY_LABELS, CategoryType } from "@/shared/constants/post";
 
 interface IBoardChipProps {
   size?: "s" | "m";

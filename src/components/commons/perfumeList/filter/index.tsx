@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 import FilterItem from "./FilterItem";
-import type { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
+import type { ApiBrandSimpleResponse } from "@/server/hono/schemas/brand.schema";
 import {
   ApiPerfumeNoteResponse,
   ApiPerfumeAccordResponse,
-} from "@/lib/hono/schemas/perfume.schema";
+} from "@/server/hono/schemas/perfume.schema";
 import { GENDER_OPTIONS } from "./filter.constants";
 import { getLabel } from "../perfumes.helpers";
 import { toOption, typedKeys } from "./filter.helper";

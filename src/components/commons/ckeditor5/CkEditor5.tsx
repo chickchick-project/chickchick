@@ -29,7 +29,7 @@ import {
 import translations from "ckeditor5/translations/ko.js";
 import makeLocalPreviewUploadPlugin, {
   BlobRegistry,
-} from "@/lib/ckeditor/localPreviewUploadPlugin";
+} from "@/client/ckeditor/localPreviewUploadPlugin";
 
 const LICENSE_KEY = "GPL";
 

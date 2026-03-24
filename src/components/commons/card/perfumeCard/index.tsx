@@ -1,4 +1,4 @@
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import {
   PERFUME_CARD_STYLES,

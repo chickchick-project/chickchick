@@ -10,10 +10,10 @@ import {
   getApiSortBy,
   getUniquePostList,
 } from "./community.helpers";
-import { Option, TSortBy } from "@/lib/constants/options";
-import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
-import { COMMUNITY_BOARDS } from "@/lib/constants/communityBoard";
-import type { PaginatedApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import { Option, TSortBy } from "@/shared/constants/options";
+import { useInfiniteScrollTrigger } from "@/client/hooks/useInfiniteScrollTrigger";
+import { COMMUNITY_BOARDS } from "@/shared/constants/communityBoard";
+import type { PaginatedApiPostResponse } from "@/server/hono/schemas/community.schema";
 
 export default function PageClient() {
   const router = useRouter();

@@ -3,9 +3,9 @@ import PostTime from "@/components/commons/author/PostTime";
 import {
   CommentReplyResponse,
   CommentResponse,
-} from "@/lib/hono/schemas/comment.schema";
-import { useCommentMutation } from "@/lib/hooks/query/useCommentQuery";
-import { useUserStore } from "@/lib/stores/useUserStore";
+} from "@/server/hono/schemas/comment.schema";
+import { useCommentMutation } from "@/client/hooks/query/useCommentQuery";
+import { useUserStore } from "@/client/stores/useUserStore";
 
 import { CommentAuthInfo } from "./CommentAuthInfo";
 import CommentForm from "./CommentForm";

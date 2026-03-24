@@ -1,5 +1,5 @@
 import { MainBannerPerfumeList } from "./MainBannerPerfumeList";
-import { getPerfumesListByThemeService } from "@/lib/hono/services/perfume.service";
+import { getPerfumesListByThemeService } from "@/server/hono/services/perfume.service";
 import { unstable_cache } from "next/cache";
 
 const getCachedPerfumes = unstable_cache(

@@ -1,9 +1,9 @@
 import { memo, useState, useEffect } from "react";
 import Image from "next/image";
-import { Option } from "@/lib/constants/options";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import ICONS from "@/lib/constants/icons";
+import { Option } from "@/shared/constants/options";
+import { useFilterStore } from "@/client/stores/useFilterStore";
+import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import ICONS from "@/shared/constants/icons";
 import FilterItemModal from "../modal/ItemModal";
 import FilterTriggerButton from "@/components/commons/dropdown/DropdownButton";
 import { getFilterOptionMeta } from "./filter.helper";

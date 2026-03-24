@@ -2,8 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { reviewApi } from "@/lib/utils/api/reviews.api";
-import { queryKeys } from "@/lib/utils/queryKeys";
+import { reviewApi } from "@/client/utils/api/reviews.api";
+import { queryKeys } from "@/client/utils/queryKeys";
 import type { CreateReviewClientInput } from "./reviewSchema.client";
 
 export const useReviewSubmit = (closeModal?: () => void) => {

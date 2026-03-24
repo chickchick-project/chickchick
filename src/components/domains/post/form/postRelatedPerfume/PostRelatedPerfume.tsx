@@ -5,11 +5,11 @@ import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFille
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
 import InputBase from "@/components/commons/input";
-import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
-import useDebounce from "@/lib/hooks/useDebounce";
-import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import { searchApi } from "@/lib/utils/api/search.api";
+import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
+import useDebounce from "@/client/hooks/useDebounce";
+import useOnClickOutside from "@/client/hooks/useOnClickOutside";
+import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { searchApi } from "@/client/utils/api/search.api";
 
 import SubTitleLabel from "../element/SubTitleLabel";
 import PerfumeResultItem from "./PerfumeResultItem";

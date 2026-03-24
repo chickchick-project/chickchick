@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 interface ModalProps {
   children: React.ReactNode;

@@ -1,11 +1,11 @@
 "use client";
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 import { NAV_LABELS } from "./navBar.constants";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import { NavDropdown } from "./Dropdown";
-import { useModalStore, MODAL_KEYS } from "@/lib/stores/useModalStore";
+import { useModalStore, MODAL_KEYS } from "@/client/stores/useModalStore";
 
 const UserProfileSection = () => {
   const navBarRef = useRef<HTMLDivElement | null>(null);

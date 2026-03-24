@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 import { BOTTOM_NAV_BAR_ICONS } from "./BottomNavBar.constants";
 import { BottomNavBarIcon } from "./BottomNavBarIcon";
 import { usePathname } from "next/navigation";

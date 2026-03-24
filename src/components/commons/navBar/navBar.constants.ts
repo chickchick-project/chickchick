@@ -1,4 +1,4 @@
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 export const NAV_PATHS = {
   HOME: "/",

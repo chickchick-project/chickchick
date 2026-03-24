@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { MainContentButton } from "./MainContentButton";
-import { MAIN_BUTTONS } from "@/lib/constants/main";
+import { MAIN_BUTTONS } from "@/shared/constants/main";
 
 const MainContentButtonSwiper = dynamic(
   () =>

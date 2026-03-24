@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getVisibleTabs } from "./tabs.helper";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 import { MobileTabsAccordion } from "./MobileTabsAccordion";
 import { FloatingActionButton } from "../components/FAB";
 

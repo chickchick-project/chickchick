@@ -1,6 +1,6 @@
-import kakaoShare from "@/lib/utils/share/kakaoShare";
-import handleShare from "@/lib/utils/share/linkShare";
-import { Option } from "../../../lib/constants/options";
+import kakaoShare from "@/client/utils/share/kakaoShare";
+import handleShare from "@/client/utils/share/linkShare";
+import { Option } from "@/shared/constants/options";
 import DropdownMenu from "./DropdownMenu";
 export default function ShareDropdownMenu({
   closeMenu,

@@ -4,10 +4,10 @@ import {
   googleLogin,
   kakaoLogin,
   naverLogin,
-} from "@/lib/database/action/login";
+} from "@/server/database/action/login";
 import { ModalContainer } from "./ModalContainer";
 import Image from "next/image";
-import IMAGES from "@/lib/constants/images";
+import IMAGES from "@/shared/constants/images";
 import { SocialLogoContainer } from "../commons/socialLogo/SocialLogoContainer";
 import { usePathname, useSearchParams } from "next/navigation";
 

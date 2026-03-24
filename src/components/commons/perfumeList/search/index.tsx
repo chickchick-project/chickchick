@@ -2,8 +2,8 @@ import React, { ChangeEvent, FormEvent } from "react";
 import {
   ApiPerfumeAccordResponse,
   ApiPerfumeNoteResponse,
-} from "@/lib/hono/schemas/perfume.schema";
-import type { ApiBrandSimpleResponse } from "@/lib/hono/schemas/brand.schema";
+} from "@/server/hono/schemas/perfume.schema";
+import type { ApiBrandSimpleResponse } from "@/server/hono/schemas/brand.schema";
 import { SearchBar } from "@/components/commons/search/SearchBar";
 import PerFumeFilter from "../filter";
 

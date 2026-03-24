@@ -1,8 +1,8 @@
 "use client";
 
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { usePerfumeDetail } from "@/lib/hooks/query/usePerfumeQuery";
-import { usePerfumeReviews } from "@/lib/hooks/query/useReviewQuery";
+import { usePerfumeDetail } from "@/client/hooks/query/usePerfumeQuery";
+import { usePerfumeReviews } from "@/client/hooks/query/useReviewQuery";
 import { useParams } from "next/navigation";
 import { Spinner } from "@/components/commons/loading/Spinner";
 

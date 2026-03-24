@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 
 export const LikePerfumeList = ({
   likedPerfumes,

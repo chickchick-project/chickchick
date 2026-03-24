@@ -1,16 +1,16 @@
 import { cache } from "react";
 import type { Metadata } from "next";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import getQueryClient from "@/lib/utils/getQueryClient";
-import { brandApi } from "@/lib/utils/api/brands.api";
-import { perfumeApi } from "@/lib/utils/api/perfumes.api";
+import getQueryClient from "@/client/utils/getQueryClient";
+import { brandApi } from "@/client/utils/api/brands.api";
+import { perfumeApi } from "@/client/utils/api/perfumes.api";
 import { BrandDetailImage } from "@/components/domains/brandDetail/image";
 import { BrandDetailInfo } from "@/components/domains/brandDetail/info";
 import { PageClient } from "@/components/domains/brandDetail/perfumes/PageClient";
 import { BrandDetailSearchBar } from "@/components/domains/brandDetail/searchBar";
 import { notFound } from "next/navigation";
 import { BrandMap } from "@/components/domains/brandDetail/map";
-import { generateSeo } from "@/lib/utils/generateSeo";
+import { generateSeo } from "@/shared/utils/generateSeo";
 
 type Props = {
   params: Promise<{ name: string }>;

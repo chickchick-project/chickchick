@@ -1,6 +1,6 @@
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
-import type { ApiSuccessResponse } from "@/lib/hono/schemas/common.schema";
-import { apiClient } from "@/lib/utils/api/client";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
+import type { ApiSuccessResponse } from "@/server/hono/schemas/common.schema";
+import { apiClient } from "@/client/utils/api/client";
 import { PostCategory } from "@prisma/client";
 
 export const COMMUNITY_URL = `/community/posts`;

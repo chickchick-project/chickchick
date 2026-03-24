@@ -1,11 +1,11 @@
 "use client";
 
-import { useCommunityPostForEdit } from "@/lib/hooks/query/useCommunityQuery";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useCommunityPostForEdit } from "@/client/hooks/query/useCommunityQuery";
+import { useUserStore } from "@/client/stores/useUserStore";
 import {
   useDraft,
   useDraftByPostId,
-} from "@/lib/hooks/query/useDraftQuery";
+} from "@/client/hooks/query/useDraftQuery";
 import { useSearchParams } from "next/navigation";
 
 import PostForm, { PostFormInitialData } from "./form";

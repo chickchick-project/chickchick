@@ -1,4 +1,4 @@
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 
 import { useState, useEffect } from "react";
 

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
-import { POST_CARD_TYPES } from "@/lib/constants/post";
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import { POST_CARD_TYPES } from "@/shared/constants/post";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
 
 export const CommunityBookmarkList = ({
   communityPosts,

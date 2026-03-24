@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
-import { BOARD_TYPES } from "@/lib/constants/communityBoard";
-import type { ApiPostDetailResponse } from "@/lib/hono/schemas/community.schema";
+import ICONS from "@/shared/constants/icons";
+import { BOARD_TYPES } from "@/shared/constants/communityBoard";
+import type { ApiPostDetailResponse } from "@/server/hono/schemas/community.schema";
 
 interface CommunityListHeaderProps {
   category: ApiPostDetailResponse["category"];

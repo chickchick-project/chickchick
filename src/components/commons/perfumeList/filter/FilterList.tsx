@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import ICONS from "@/lib/constants/icons";
-import { Option } from "@/lib/constants/options";
+import { useFilterStore } from "@/client/stores/useFilterStore";
+import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import ICONS from "@/shared/constants/icons";
+import { Option } from "@/shared/constants/options";
 import ListModal from "../modal/ListModal";
 
 type FilterOptions = {

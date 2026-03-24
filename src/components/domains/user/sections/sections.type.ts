@@ -1,11 +1,11 @@
-import type { CommentResponse } from "@/lib/hono/schemas/comment.schema";
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
-import type { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import type { CommentResponse } from "@/server/hono/schemas/comment.schema";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
+import type { ApiReviewResponse } from "@/server/hono/schemas/review.schema";
 import {
   ApiMyCollectionResponse,
   ApiMyProfileResponse,
   ApiMyBookmarkedPerfumesResponse,
-} from "@/lib/hono/schemas/me.schema";
+} from "@/server/hono/schemas/me.schema";
 
 export type BookmarkData = {
   perfumes: ApiMyBookmarkedPerfumesResponse[];

@@ -1,4 +1,4 @@
-import { Option } from "../../../lib/constants/options";
+import { Option } from "@/shared/constants/options";
 interface IDropdownMenuProps {
   options: Option[];
   handleSelectOption: (option: Option) => void;

@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
-import { useUserStore } from "@/lib/stores/useUserStore";
-import { logout } from "@/lib/database/action/login";
+import { useUserStore } from "@/client/stores/useUserStore";
+import { logout } from "@/server/database/action/login";
 
 interface DropdownProps {
   onClose: () => void;

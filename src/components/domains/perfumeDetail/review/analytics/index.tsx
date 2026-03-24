@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { ReviewModal } from "@/components/modal/reviewModal";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 import { calculateReviewCounts } from "./analytics.helpers";
 import { ReviewAnalyticsProps } from "../review.type";
 

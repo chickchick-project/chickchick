@@ -1,7 +1,7 @@
 "use client";
 
 import { CommunityBookmarkList } from "../components";
-import { useUserPostsBookmarks } from "@/lib/hooks/query/useUserQuery";
+import { useUserPostsBookmarks } from "@/client/hooks/query/useUserQuery";
 
 export default function CommunityBookmarksLoader() {
   const { data: communityData } = useUserPostsBookmarks();

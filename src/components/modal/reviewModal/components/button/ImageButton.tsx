@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ReviewImageType } from "@/lib/types/review.types";
+import { ReviewImageType } from "@/shared/types/review.types";
 
 interface IImageButton {
   image: ReviewImageType;

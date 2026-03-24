@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Image from "next/image";
 import { useState } from "react";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 interface IBrandDetailImageProps {
   images: {

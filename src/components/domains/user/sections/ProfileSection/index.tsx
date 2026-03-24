@@ -3,9 +3,9 @@
 import { useState, useCallback, useEffect } from "react";
 import { PersonalInfo } from "./components/PersonalInfo";
 import { ProfileImage } from "./components/ProfileImage";
-import { useUploadProfileImage, useUserProfile } from "@/lib/hooks/query/useUserQuery";
+import { useUploadProfileImage, useUserProfile } from "@/client/hooks/query/useUserQuery";
 import { ProfileSectionSkeleton } from "./components/ProfileSectionSkeleton";
-import { PROFILE_BUCKET_NAME } from "@/lib/constants/buckets";
+import { PROFILE_BUCKET_NAME } from "@/shared/constants/buckets";
 
 export const ProfileSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);

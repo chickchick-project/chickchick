@@ -5,15 +5,15 @@ import {
   usePerfumeNoteFilter,
   usePerfumeAccordFilter,
   useAvailableFilters,
-} from "@/lib/hooks/query/useFilterQuery";
+} from "@/client/hooks/query/useFilterQuery";
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
 import SortDropdown from "@/components/commons/dropdown/SortDropdown";
-import { useInfinitePerfumes } from "@/lib/hooks/useInfinitePerfumes";
+import { useInfinitePerfumes } from "@/client/hooks/useInfinitePerfumes";
 import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
-import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { useInfiniteScrollTrigger } from "@/client/hooks/useInfiniteScrollTrigger";
+import { useFilterStore } from "@/client/stores/useFilterStore";
 import { useMemo } from "react";
 
 export default function PageClient() {

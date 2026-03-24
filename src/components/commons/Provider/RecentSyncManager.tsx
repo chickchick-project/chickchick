@@ -1,9 +1,9 @@
 "use client";
 
-import { useRecentItemsSync } from "@/lib/hooks/useRecentItemsSync";
-import { useRecentPerfumesStore } from "@/lib/stores/useRecentPerfumesStore";
-import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useRecentItemsSync } from "@/client/hooks/useRecentItemsSync";
+import { useRecentPerfumesStore } from "@/client/stores/useRecentPerfumesStore";
+import { useRecentPostsStore } from "@/client/stores/useRecentPostsStore";
+import { useUserStore } from "@/client/stores/useUserStore";
 
 function RecentSyncManager() {
   const { user, isLoading } = useUserStore();

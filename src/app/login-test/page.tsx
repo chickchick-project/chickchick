@@ -1,7 +1,7 @@
 "use client";
 
 import { LoginModal } from "@/components/modal/LoginModal";
-import { logout } from "@/lib/database/action/login";
+import { logout } from "@/server/database/action/login";
 import { useState } from "react";
 
 export default function LoginTestPage() {

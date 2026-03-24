@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useUserProfile } from "@/lib/hooks/query/useUserQuery";
-import { useUserStore } from "@/lib/stores/useUserStore";
-import { pointApi } from "@/lib/utils/api/points.api";
+import { useUserProfile } from "@/client/hooks/query/useUserQuery";
+import { useUserStore } from "@/client/stores/useUserStore";
+import { pointApi } from "@/client/utils/api/points.api";
 
 interface GlobalStateSyncProps {
   isAuthenticated: boolean;

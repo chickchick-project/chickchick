@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { countByCategory, type Counts } from "../analytics.helpers";
-import type { ReviewCategory } from "@/lib/types/review.types";
+import type { ReviewCategory } from "@/shared/types/review.types";
 
 export type BarDatum = { label: string; value: number };
 export type Block = {

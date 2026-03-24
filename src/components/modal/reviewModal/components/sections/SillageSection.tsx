@@ -1,6 +1,6 @@
 "use client";
 
-import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import { REVIEW_OPTIONS } from "@/shared/constants/review";
 import { SelectButton } from "../button/SelectButton";
 import { SubTitle } from "../SubTitle";
 import { Controller, useFormContext } from "react-hook-form";

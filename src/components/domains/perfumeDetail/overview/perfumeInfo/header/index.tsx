@@ -7,7 +7,7 @@ import {
 import { BookmarkIcon } from "@/components/commons/interactions/icons/BookmarkIcon";
 import { LikeIcon } from "@/components/commons/interactions/icons/LikeIcon";
 import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import Link from "next/link";
 import { InteractionStates } from "..";

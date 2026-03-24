@@ -1,8 +1,8 @@
 import React from "react";
 import { PostCard } from "@/components/commons/card/postCard";
-import { CATEGORY_TYPES, POST_CARD_TYPES } from "@/lib/constants/post";
+import { CATEGORY_TYPES, POST_CARD_TYPES } from "@/shared/constants/post";
 import { SectionTitle } from "@/components/commons/sectionTitle";
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
 
 export const PerfumeDetailSidebar = () => {
   const mockPosts: ApiPostResponse[] = [

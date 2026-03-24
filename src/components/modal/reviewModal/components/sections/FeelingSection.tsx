@@ -3,7 +3,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { ImageButton } from "../button/ImageButton";
 import { SubTitle } from "../SubTitle";
-import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import { REVIEW_OPTIONS } from "@/shared/constants/review";
 import { useFormError } from "../../hooks/useFormError";
 
 export const FeelingSection = () => {

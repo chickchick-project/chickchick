@@ -1,4 +1,4 @@
-import { ACCORDS, TAccords } from "@/lib/constants/accords";
+import { ACCORDS, TAccords } from "@/shared/constants/accords";
 import ChipBase from "./ChipBase";
 
 interface IAccordChipProps {

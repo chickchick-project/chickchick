@@ -1,12 +1,12 @@
 "use client";
 
-import type { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeDetailResponse } from "@/server/hono/schemas/perfume.schema";
 import { PerfumeInfoHeader } from "./header";
 import { PerfumeInfoMainAccord } from "./mainAccords";
 import { PerfumeInfoNote } from "./notes";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 export type InteractionStates = {
   liked: boolean;

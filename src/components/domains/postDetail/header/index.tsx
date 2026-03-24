@@ -6,7 +6,7 @@ import PostActions from "./PostActions";
 import {
   ApiPostDetailResponse,
   ApiPostStatusResponse,
-} from "@/lib/hono/schemas/community.schema";
+} from "@/server/hono/schemas/community.schema";
 import Link from "next/link";
 
 type PostDetailHeaderProps = Omit<ApiPostDetailResponse, "content"> & {

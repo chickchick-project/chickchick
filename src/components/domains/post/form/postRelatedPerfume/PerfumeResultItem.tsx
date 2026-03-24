@@ -1,6 +1,6 @@
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import ICONS from "@/shared/constants/icons";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 
 import clsx from "clsx";
 

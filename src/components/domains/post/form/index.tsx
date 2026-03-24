@@ -6,19 +6,19 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PostCategory as TPostCategory } from "@prisma/client";
 
-import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
-import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
-import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
+import type { BlobRegistry } from "@/client/ckeditor/localPreviewUploadPlugin";
+import { finalizeWithBlobRegistry } from "@/client/ckeditor/finalizeWithBlobRegistry";
+import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
 import {
   CreatePostClientSchema,
   type CreatePostClientInput,
 } from "./postSchema";
-import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
-import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
-import getPlainText from "@/lib/utils/getPlainText";
-import { usePostAutosave } from "@/lib/hooks/usePostAutosave";
-import { useBeforeUnload } from "@/lib/hooks/useBeforeUnload";
-import { useDeleteDraft } from "@/lib/hooks/query/useDraftQuery";
+import { usePostMutation } from "@/client/hooks/query/useCommunityQuery";
+import { extractFirstImageSrc } from "@/shared/utils/extractFirstImageSrc";
+import getPlainText from "@/shared/utils/getPlainText";
+import { usePostAutosave } from "@/client/hooks/usePostAutosave";
+import { useBeforeUnload } from "@/client/hooks/useBeforeUnload";
+import { useDeleteDraft } from "@/client/hooks/query/useDraftQuery";
 
 import PostCategory from "./PostCategory";
 import PostEditor from "./PostEditor";

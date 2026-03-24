@@ -1,6 +1,6 @@
 "use client";
 
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import Link from "next/link";
 

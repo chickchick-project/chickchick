@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import PageClient from "@/components/domains/postDetail/PageClient";
-import getQueryClient from "@/lib/utils/getQueryClient";
+import getQueryClient from "@/client/utils/getQueryClient";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { queryKeys } from "@/lib/utils/queryKeys";
-import { commentApi } from "@/lib/utils/api/comment.api";
-import { communityApi } from "@/lib/utils/api/community.api";
+import { queryKeys } from "@/client/utils/queryKeys";
+import { commentApi } from "@/client/utils/api/comment.api";
+import { communityApi } from "@/client/utils/api/community.api";
 import type { Metadata } from "next";
-import { generateSeo } from "@/lib/utils/generateSeo";
+import { generateSeo } from "@/shared/utils/generateSeo";
 type Props = {
   params: Promise<{ id: string }>;
 };

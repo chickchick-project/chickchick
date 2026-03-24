@@ -1,15 +1,15 @@
 "use client";
 
-import { BOARD_TYPES } from "@/lib/constants/communityBoard";
-import ICONS from "@/lib/constants/icons";
+import { BOARD_TYPES } from "@/shared/constants/communityBoard";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import { useState } from "react";
 import BoardTabBar from "@/components/commons/tabBar/BoardTabBar";
 import Link from "next/link";
-import { useCommunityPosts } from "@/lib/hooks/query/useCommunityQuery";
+import { useCommunityPosts } from "@/client/hooks/query/useCommunityQuery";
 import { PostCategory } from "@prisma/client";
 import { Indicator } from "@/components/commons/loading/Indicator";
-import { BasePost } from "@/lib/hono/utils/prisma.utils";
+import { BasePost } from "@/server/hono/utils/prisma.utils";
 
 interface IMainContentCommunityList {
   size: "s" | "m";

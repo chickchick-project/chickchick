@@ -2,9 +2,9 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { createPortal } from "react-dom";
-import { useModalStore } from "@/lib/stores/useModalStore";
+import { useModalStore } from "@/client/stores/useModalStore";
 import { LoginModal } from "@/components/modal/LoginModal";
-import { MODAL_KEYS } from "@/lib/stores/useModalStore";
+import { MODAL_KEYS } from "@/client/stores/useModalStore";
 
 export default function LoginModalProvider() {
   const { loginModal, closeModal } = useModalStore();

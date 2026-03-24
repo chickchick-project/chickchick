@@ -1,0 +1,313 @@
+import { Prisma, PointActivityType } from "@prisma/client";
+import { prisma } from "@/server/prisma";
+import {
+  checkResourceExists,
+  serviceBadRequest,
+  serviceForbidden,
+  serviceInternalError,
+  serviceNotFound,
+  ServiceResult,
+  serviceSuccess,
+  validateUuid,
+} from "../utils/service.utils";
+import {
+  CreateCommentPayload,
+  DeleteCommentPayload,
+  DELETED_COMMENT_MESSAGE_BY_USER,
+  GetCommentQuery,
+  PaginatedCommentResponse,
+  UpdateCommentPayload,
+} from "../schemas/comment.schema";
+import { createCursorPaginationResult } from "../utils/pagination.utils";
+import { commentIncludeArgs, CommentWithReplies } from "../utils/prisma.utils";
+import { earnPointsService } from "./point.service";
+
+const commentWithRepliesArgs = { include: commentIncludeArgs };
+
+/**
+ * 특정 게시글의 모든 댓글과 대댓글을 계층적으로 조회합니다.
+ * @param postId - 댓글을 조회할 게시글의 ID
+ * @returns 계층 구조의 댓글 및 대댓글 목록을 담은 ServiceResult
+ */
+export const getCommentService = async (
+  postId: string
+): Promise<ServiceResult<CommentWithReplies[]>> => {
+  try {
+    const postCheck = await checkResourceExists("post", postId, "게시글");
+    if (!postCheck.success) return postCheck;
+
+    const comments = await prisma.comment.findMany({
+      where: {
+        postId,
+        parentId: null,
+      },
+      ...commentWithRepliesArgs,
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return serviceSuccess(comments);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/**
+ * 특정 게시글의 모든 댓글과 대댓글을 커서 기반 페이지네이션으로 조회합니다.
+ * @param postId - 댓글을 조회할 게시글의 ID
+ * @param cursor - 페이지네이션 커서
+ * @param limit - 페이지당 댓글 수
+ * @returns 커서 기반 페이지네이션 결과를 담은 ServiceResult
+ */
+export const getPaginatedCommentService = async (
+  postId: string,
+  params: GetCommentQuery
+): Promise<ServiceResult<PaginatedCommentResponse>> => {
+  try {
+    const { cursor, limit } = params;
+    const postCheck = await checkResourceExists("post", postId, "게시글");
+    if (!postCheck.success) return postCheck;
+
+    const where: Prisma.CommentWhereInput = {
+      postId,
+      parentId: null,
+    };
+
+    const [commentsFromDb, totalCount] = await Promise.all([
+      prisma.comment.findMany({
+        where,
+        ...commentWithRepliesArgs,
+        orderBy: {
+          createdAt: "desc",
+        },
+        ...(cursor && {
+          cursor: { id: cursor },
+          skip: 1,
+        }),
+        take: limit + 1,
+      }),
+      prisma.comment.count({ where: { ...where, published: true } }),
+    ]);
+
+    const paginatedResult = createCursorPaginationResult(
+      commentsFromDb,
+      totalCount,
+      limit
+    );
+
+    const comments = paginatedResult.data
+      .map((comment) => {
+        const filteredReplies = comment.replies.filter(
+          (reply) => reply.published
+        );
+        comment.replies = filteredReplies;
+        if (comment.published) {
+          return comment;
+        }
+        if (!comment.published && comment.replies.length > 0) {
+          return {
+            ...comment,
+            author: {
+              id: comment.author.id,
+              nickname: "알 수 없음",
+              imageUrl: null,
+            },
+          };
+        }
+        return null;
+      })
+      .filter(Boolean) as CommentWithReplies[];
+
+    const formattedData = comments.map((comment) => ({
+      ...comment,
+      createdAt: comment.createdAt.toISOString(),
+      updatedAt: comment.updatedAt?.toISOString() || null,
+      replies: comment.replies.map((reply) => ({
+        ...reply,
+        createdAt: reply.createdAt.toISOString(),
+        updatedAt: reply.updatedAt?.toISOString() || null,
+      })),
+    }));
+
+    return serviceSuccess({
+      data: formattedData,
+      totalCount: paginatedResult.totalCount,
+      nextCursor: paginatedResult.nextCursor,
+    });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/**
+ * 새로운 댓글 또는 대댓글을 생성합니다.
+ * @param payload - 댓글 생성에 필요한 완전한 데이터
+ * @returns 생성된 댓글(대댓글 포함)을 담은 ServiceResult
+ */
+export const createCommentService = async (
+  payload: CreateCommentPayload
+): Promise<ServiceResult<CommentWithReplies>> => {
+  try {
+    const { authorId, postId, parentId } = payload;
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { published: true },
+    });
+    if (!post) {
+      return serviceNotFound("게시글을 찾을 수 없습니다.");
+    }
+    if (!post.published) {
+      return serviceForbidden("이미 삭제된 게시글입니다.");
+    }
+
+    const checks = await Promise.all([
+      checkResourceExists("user", authorId, "사용자"),
+      parentId
+        ? checkResourceExists("comment", parentId, "부모 댓글")
+        : Promise.resolve(serviceSuccess(true)),
+    ]);
+
+    for (const check of checks) {
+      if (!check.success) return check;
+    }
+
+    const newComment = await prisma.$transaction(async (tx) => {
+      const createdComment = await tx.comment.create({
+        data: payload,
+        ...commentWithRepliesArgs,
+      });
+
+      await tx.post.update({
+        where: { id: postId },
+        data: { commentCount: { increment: 1 } },
+      });
+
+      return createdComment;
+    });
+
+    // 포인트 적립 (비동기, 실패해도 댓글 작성은 성공)
+    earnPointsService(
+      authorId,
+      PointActivityType.CREATE_COMMENT,
+      newComment.id
+    ).catch((error) => {
+      console.error(
+        "[Point] Failed to earn points for comment creation:",
+        error
+      );
+    });
+
+    return serviceSuccess(newComment);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/**
+ * 댓글 또는 대댓글의 내용을 수정합니다.
+ * @param payload - 수정할 댓글 정보 (id, authorId, content, parentId?)
+ * @returns 수정된 댓글(대댓글 포함)을 담은 ServiceResult
+ */
+export const updateCommentService = async (
+  payload: UpdateCommentPayload
+): Promise<ServiceResult<CommentWithReplies>> => {
+  try {
+    const { id: commentId, authorId, content } = payload;
+    const uuidValidation = validateUuid(commentId, "댓글");
+    if (!uuidValidation.success) return uuidValidation;
+    if (!content?.trim()) {
+      return serviceBadRequest("댓글 내용이 비어있습니다.");
+    }
+    const commentCheck = await checkResourceExists(
+      "comment",
+      commentId,
+      "댓글"
+    );
+    if (!commentCheck.success) return commentCheck;
+
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { authorId: true, published: true },
+    });
+    if (!comment || comment.authorId !== authorId) {
+      return serviceForbidden("댓글을 수정할 권한이 없습니다.");
+    }
+    if (!comment.published) {
+      return serviceBadRequest("삭제된 댓글은 수정할 수 없습니다.");
+    }
+
+    const updatedComment = await prisma.comment.update({
+      where: { id: commentId },
+      data: {
+        content,
+      },
+      ...commentWithRepliesArgs,
+    });
+    return serviceSuccess(updatedComment);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};
+
+/**
+ * 댓글 또는 대댓글을 삭제합니다 (소프트 삭제).
+ * 댓글 내용을 "삭제된 댓글 입니다."로 변경하고, published 필드를 false로 설정합니다.
+ * @param params - 삭제할 댓글의 ID와 작성자 ID
+ * @returns 삭제 처리된 댓글(대댓글 포함)을 담은 ServiceResult
+ */
+export const deleteCommentService = async (
+  params: DeleteCommentPayload
+): Promise<ServiceResult<CommentWithReplies>> => {
+  try {
+    const { id: commentId, authorId } = params;
+    const uuidValidation = validateUuid(commentId, "댓글");
+    if (!uuidValidation.success) return uuidValidation;
+
+    const commentCheck = await checkResourceExists(
+      "comment",
+      commentId,
+      "댓글"
+    );
+    if (!commentCheck.success) return commentCheck;
+    const comment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      select: { authorId: true, postId: true, published: true },
+    });
+    if (!comment || comment.authorId !== authorId) {
+      return serviceForbidden("댓글을 삭제할 권한이 없습니다.");
+    }
+    if (!comment.published) {
+      return serviceBadRequest("이미 삭제된 댓글입니다.");
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.comment.update({
+        where: { id: commentId },
+        data: {
+          published: false,
+          content: DELETED_COMMENT_MESSAGE_BY_USER,
+        },
+      });
+      await tx.post.update({
+        where: {
+          id: comment.postId,
+        },
+        data: {
+          commentCount: { decrement: 1 },
+        },
+      });
+    });
+    const deletedComment = await prisma.comment.findUnique({
+      where: { id: commentId },
+      ...commentWithRepliesArgs,
+    });
+    if (!deletedComment) {
+      return serviceNotFound("댓글을 찾을 수 없습니다.");
+    }
+
+    return serviceSuccess(deletedComment);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+};

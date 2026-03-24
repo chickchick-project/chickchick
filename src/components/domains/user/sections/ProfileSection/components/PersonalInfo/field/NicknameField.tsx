@@ -1,4 +1,4 @@
-import type { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import type { ApiMyProfileResponse } from "@/server/hono/schemas/me.schema";
 import { Controller, useFormContext } from "react-hook-form";
 import { ProfileRow } from "../common/ProfileRow";
 import InputBase from "@/components/commons/input";

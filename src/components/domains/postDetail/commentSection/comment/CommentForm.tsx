@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOutlined";
 import Comment from "@/components/commons/comment";
-import { useCommentMutation } from "@/lib/hooks/query/useCommentQuery";
+import { useCommentMutation } from "@/client/hooks/query/useCommentQuery";
 
 import { CommentFormProps } from "./postComment.types";
 

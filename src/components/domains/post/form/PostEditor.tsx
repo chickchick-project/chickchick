@@ -2,7 +2,7 @@ import dynamic from "next/dynamic";
 import SubTitleLabel from "./element/SubTitleLabel";
 import EditorLoading from "@/components/commons/ckeditor5/EditorLoading";
 import { Controller, useFormContext } from "react-hook-form";
-import { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
+import { BlobRegistry } from "@/client/ckeditor/localPreviewUploadPlugin";
 import { MutableRefObject } from "react";
 
 const CkEditor5 = dynamic(

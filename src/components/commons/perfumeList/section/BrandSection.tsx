@@ -1,5 +1,5 @@
 import Image from "next/image";
-import IMAGES from "@/lib/constants/images";
+import IMAGES from "@/shared/constants/images";
 
 export function BrandSection({ brandName }: { brandName: string }) {
   return (

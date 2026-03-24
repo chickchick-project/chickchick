@@ -2,12 +2,12 @@ import {
   SORT_MAPPING_COMMUNITY_FOR_API,
   TApiSortBy,
   TSortBy,
-} from "@/lib/constants/options";
+} from "@/shared/constants/options";
 import {
   GetPostsQuery,
   ApiPostResponse,
   PaginatedApiPostResponse,
-} from "@/lib/hono/schemas/community.schema";
+} from "@/server/hono/schemas/community.schema";
 
 const API_BASE_URL = "/api/v1";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import "@/components/commons/ckeditor5/ckeditor5.css";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 

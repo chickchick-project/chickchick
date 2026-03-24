@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { SubTabSwitcher } from "@/components/domains/user/tabs/SubTabs";
 import { useUrlTabs } from "../../useUrlTabs";
 import { SkeletonCard, SkeletonPerfume } from "../../components/skeletons";
-import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { useMediaQuery } from "@/client/hooks/useMediaQuery";
 const PerfumeBookmarksLoader = dynamic(
   () => import("./loader/PerfumeBookmarksLoader"),
   {

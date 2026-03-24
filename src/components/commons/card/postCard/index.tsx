@@ -4,7 +4,7 @@ import AuthorInfo from "../../author/AuthorInfo";
 import BoardChip from "../../chip/BoardChip";
 import PostMeta from "../../author/PostMeta";
 import Thumbnail from "./Thumbnail";
-import { POST_CARD_STYLES, POST_CARD_TYPES } from "@/lib/constants/post";
+import { POST_CARD_STYLES, POST_CARD_TYPES } from "@/shared/constants/post";
 import { PostCardProps } from "./postCard.types";
 import { PostMetaItem } from "../../author/author.types";
 

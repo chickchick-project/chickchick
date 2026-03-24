@@ -6,9 +6,9 @@ import { ProfileForm } from "./common/ProfileForm";
 import {
   ApiMyProfileResponse,
   ApiMyProfileResponseSchema,
-} from "@/lib/hono/schemas/me.schema";
+} from "@/server/hono/schemas/me.schema";
 import Form from "@/components/commons/form";
-import { useUpdateProfile } from "@/lib/hooks/query/useUserQuery";
+import { useUpdateProfile } from "@/client/hooks/query/useUserQuery";
 
 export const PersonalInfo = (user: ApiMyProfileResponse) => {
   const { mutateAsync, isPending } = useUpdateProfile();

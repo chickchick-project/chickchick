@@ -1,10 +1,10 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import getQueryClient from "@/lib/utils/getQueryClient";
-import { userApi } from "@/lib/utils/api/users.api";
+import getQueryClient from "@/client/utils/getQueryClient";
+import { userApi } from "@/client/utils/api/users.api";
 import UserLayoutClient from "@/components/domains/user/UserLayoutClient";
-import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
-import { queryKeys } from "@/lib/utils/queryKeys";
-import { generateSeo } from "@/lib/utils/generateSeo";
+import { getUserSessionInfo } from "@/shared/utils/getUserSessionInfo";
+import { queryKeys } from "@/client/utils/queryKeys";
+import { generateSeo } from "@/shared/utils/generateSeo";
 import type { Metadata } from "next";
 
 interface LayoutProps {

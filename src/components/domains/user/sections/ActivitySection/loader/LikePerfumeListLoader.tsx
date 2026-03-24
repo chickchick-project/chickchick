@@ -1,7 +1,7 @@
 "use client";
 
 import { LikePerfumeList } from "../components";
-import { useUserLikedPerfume } from "@/lib/hooks/query/useUserQuery";
+import { useUserLikedPerfume } from "@/client/hooks/query/useUserQuery";
 
 export default function LikePerfumeListLoader() {
   const { data: likedPerfumes, error } = useUserLikedPerfume();

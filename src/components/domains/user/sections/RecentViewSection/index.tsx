@@ -1,6 +1,6 @@
 "use client";
 
-import { useMediaQuery } from "@/lib/hooks/useMediaQuery";
+import { useMediaQuery } from "@/client/hooks/useMediaQuery";
 import { RecentPostsSection } from "./components/RecentPostsSection";
 import { RecentPerfumesSection } from "./components/RecentPerfumesSection";
 

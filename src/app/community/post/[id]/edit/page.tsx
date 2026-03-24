@@ -1,7 +1,7 @@
 import PageClient from "@/components/domains/post/PageClient";
-import { communityApi } from "@/lib/utils/api/community.api";
-import getQueryClient from "@/lib/utils/getQueryClient";
-import { queryKeys } from "@/lib/utils/queryKeys";
+import { communityApi } from "@/client/utils/api/community.api";
+import getQueryClient from "@/client/utils/getQueryClient";
+import { queryKeys } from "@/client/utils/queryKeys";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { cookies } from "next/headers";
 import { notFound } from "next/navigation";
