@@ -9,7 +9,7 @@ import {
 import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
 import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
+// import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useInfinitePerfumes } from "@/lib/hooks/useInfinitePerfumes";
 import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
 import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
@@ -170,7 +170,7 @@ export default function PageClient() {
                 ? `'${searchKeyword}'에 대한 검색 결과`
                 : "현재 인기있는 향수들이에요!"}
             </h2>
-            <SortDropdown type="perfume" onSortChange={() => {}} />
+            {/* <SortDropdown type="perfume" onSortChange={() => {}} /> */}
           </div>
           {matchedBrand && <BrandSection brandName={matchedBrand} />}
           <PerfumeSection
