@@ -11,8 +11,8 @@ import {
   perfumeDetailInclude,
   BasePerfume,
   FullPerfume,
-  BasePost,
-} from "../utils/prisma.utils";
+} from "../repositories/perfume.repository";
+import { BasePost } from "../repositories/community.repository";
 import {
   ApiPerfumeNoteResponse,
   ApiPerfumeAccordResponse,

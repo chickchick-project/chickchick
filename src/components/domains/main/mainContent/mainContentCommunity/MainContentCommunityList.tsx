@@ -9,7 +9,7 @@ import Link from "next/link";
 import { useCommunityPosts } from "@/client/hooks/query/useCommunityQuery";
 import { PostCategory } from "@prisma/client";
 import { Indicator } from "@/components/commons/loading/Indicator";
-import { BasePost } from "@/server/hono/utils/prisma.utils";
+import { BasePost } from "@/server/hono/repositories/community.repository";
 
 interface IMainContentCommunityList {
   size: "s" | "m";

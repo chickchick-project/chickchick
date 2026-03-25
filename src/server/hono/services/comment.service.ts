@@ -19,7 +19,7 @@ import {
   UpdateCommentPayload,
 } from "../schemas/comment.schema";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
-import { commentIncludeArgs, CommentWithReplies } from "../utils/prisma.utils";
+import { commentIncludeArgs, CommentWithReplies } from "../repositories/comment.repository";
 import { earnPointsService } from "./point.service";
 
 const commentWithRepliesArgs = { include: commentIncludeArgs };

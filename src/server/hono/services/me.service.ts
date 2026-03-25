@@ -19,17 +19,23 @@ import {
 import { PaginatedResponse } from "../schemas/common.schema";
 import { deleteImageByUrl } from "./file.service";
 import {
-  BasePost,
   BasePerfume,
-  FullReview,
-  MyCollection,
-  MyComment,
   perfumeBaseInclude,
+} from "../repositories/perfume.repository";
+import {
+  BasePost,
   postIncludeArgs,
-  myCollectionInclude,
-  myCommentInclude,
+} from "../repositories/community.repository";
+import {
+  FullReview,
   reviewIncludeArgs,
-} from "../utils/prisma.utils";
+} from "../repositories/review.repository";
+import {
+  MyCollection,
+  myCollectionInclude,
+  MyComment,
+  myCommentInclude,
+} from "../repositories/user.repository";
 import { calculateLevel, getPointsForNextLevel } from "@/shared/utils/level.utils";
 
 const UUID_REGEX =

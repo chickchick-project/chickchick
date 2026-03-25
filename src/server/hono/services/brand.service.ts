@@ -9,7 +9,7 @@ import {
   ApiBrandDetailResponse,
   ApiBrandSimpleResponse,
 } from "../schemas/brand.schema";
-import { brandDetailSelect, parseMapLocation } from "../utils/prisma.utils";
+import { brandDetailSelect, parseMapLocation } from "../repositories/brand.repository";
 
 /**
  * 모든 브랜드 목록 조회

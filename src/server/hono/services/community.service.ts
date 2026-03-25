@@ -26,7 +26,7 @@ import {
   postIncludeArgs,
   postDetailIncludeArgs,
   BasePost,
-} from "../utils/prisma.utils";
+} from "../repositories/community.repository";
 import { earnPointsService } from "./point.service";
 import { sanitizeHtml } from "../utils/sanitize.utils";
 

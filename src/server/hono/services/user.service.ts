@@ -7,11 +7,11 @@ import {
 } from "../utils/service.utils";
 import { checkResourceExists } from "../utils/service.utils";
 import {
-  BasePost,
   BasePerfume,
   perfumeBaseInclude,
-  UserCollectionWithRelations,
-} from "../utils/prisma.utils";
+} from "../repositories/perfume.repository";
+import { BasePost } from "../repositories/community.repository";
+import { UserCollectionWithRelations } from "../repositories/user.repository";
 import { calculateLevel } from "@/shared/utils/level.utils";
 import { ApiUserProfileResponse } from "../schemas/user.schema";
 
