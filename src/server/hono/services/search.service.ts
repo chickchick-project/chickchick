@@ -10,7 +10,7 @@ import {
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
-} from "../utils/service.utils";
+} from "@/server/result";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
 
 function transformSupabasePerfume(

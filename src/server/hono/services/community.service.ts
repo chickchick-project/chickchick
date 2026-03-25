@@ -13,15 +13,15 @@ import {
   PaginationResult,
 } from "../utils/pagination.utils";
 import {
-  checkResourceExists,
   serviceBadRequest,
   serviceForbidden,
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-  validateUuid,
-} from "../utils/service.utils";
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
+import { validateUuid } from "@/shared/utils/validate.utils";
 import {
   postIncludeArgs,
   postDetailIncludeArgs,

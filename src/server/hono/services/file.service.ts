@@ -4,8 +4,8 @@ import {
   serviceInternalError,
   ServiceResult,
   serviceSuccess,
-} from "../utils/service.utils";
-import { getImageFormat } from "../utils/service.utils";
+} from "@/server/result";
+import { getImageFormat } from "@/server/utils/image.utils";
 import { supabaseAdmin } from "@/server/supabase/server";
 
 export interface UploadedImageInfo {

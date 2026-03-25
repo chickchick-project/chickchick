@@ -13,7 +13,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -212,7 +212,8 @@ const toggleBookmarkRoute = createRoute({
 
 routers.authenticated.openapi(toggleBookmarkRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await PerfumeServices.togglePerfumeBookmarkService(
     id,
     user.id
@@ -250,7 +251,8 @@ const toggleLikeRoute = createRoute({
 
 routers.authenticated.openapi(toggleLikeRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await PerfumeServices.togglePerfumeLikeService(id, user.id);
 
   if (!result.success) {

@@ -9,7 +9,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -30,7 +30,8 @@ const getUserPointsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getUserPointsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await PointServices.getUserPointsService(user.id);
 
   if (!result.success) {
@@ -64,7 +65,8 @@ const getPointHistoryRoute = createRoute({
 });
 
 routers.authenticated.openapi(getPointHistoryRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const query = c.req.valid("query");
 
   const result = await PointServices.getPointHistoryService(user.id, {
@@ -100,7 +102,8 @@ const getPointStatisticsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getPointStatisticsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await PointServices.getPointStatisticsService(user.id);
 
   if (!result.success) {
@@ -139,7 +142,8 @@ const processLoginRoute = createRoute({
 });
 
 routers.authenticated.openapi(processLoginRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const body = c.req.valid("json");
 
   // 클라이언트 타임스탬프 검증 (5분 이내의 요청만 허용)

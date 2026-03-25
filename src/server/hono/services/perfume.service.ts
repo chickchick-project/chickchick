@@ -4,8 +4,8 @@ import {
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/service.utils";
-import { checkResourceExists } from "../utils/service.utils";
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
 import {
   perfumeBaseInclude,
   perfumeDetailInclude,

@@ -12,7 +12,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -198,7 +198,8 @@ const createPostRoute = createRoute({
 });
 
 routers.authenticated.openapi(createPostRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const body = c.req.valid("json");
 
   const result = await CommunityServices.createPostService({
@@ -242,7 +243,8 @@ const editPostRoute = createRoute({
 
 routers.authenticated.openapi(editPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await CommunityServices.updatePostService(
     id,
@@ -287,7 +289,8 @@ const deletePostRoute = createRoute({
 
 routers.authenticated.openapi(deletePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await CommunityServices.deletePostService(id, user.id);
 
   if (!result.success) {
@@ -322,7 +325,8 @@ const likePostRoute = createRoute({
 
 routers.authenticated.openapi(likePostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await CommunityServices.togglePostLikeService(id, user.id);
 
   if (!result.success) {
@@ -357,7 +361,8 @@ const bookmarkPostRoute = createRoute({
 
 routers.authenticated.openapi(bookmarkPostRoute, async (c) => {
   const { id } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await CommunityServices.togglePostBookmarkService(id, user.id);
 
   if (!result.success) {

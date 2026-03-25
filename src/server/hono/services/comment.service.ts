@@ -1,15 +1,15 @@
 import { Prisma, PointActivityType } from "@prisma/client";
 import { prisma } from "@/server/prisma";
 import {
-  checkResourceExists,
   serviceBadRequest,
   serviceForbidden,
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-  validateUuid,
-} from "../utils/service.utils";
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
+import { validateUuid } from "@/shared/utils/validate.utils";
 import {
   CreateCommentPayload,
   DeleteCommentPayload,

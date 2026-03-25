@@ -4,7 +4,7 @@ import {
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/service.utils";
+} from "@/server/result";
 import {
   ApiBrandDetailResponse,
   ApiBrandSimpleResponse,

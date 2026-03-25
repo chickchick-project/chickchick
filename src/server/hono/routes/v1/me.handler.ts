@@ -10,7 +10,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -32,7 +32,8 @@ const getMyBookmarkedPostsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyBookmarkedPostsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await MeServices.getMyBookmarkedPostsService(user.id);
 
   if (!result.success) {
@@ -61,7 +62,8 @@ const getMyBookmarkedPerfumesRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyBookmarkedPerfumesRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await MeServices.getMyBookmarkedPerfumesService(user.id);
 
@@ -100,7 +102,8 @@ const postPhotoCollectionRoute = createRoute({
 });
 
 routers.authenticated.openapi(postPhotoCollectionRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const body = c.req.valid("json");
 
   const data = {
@@ -140,7 +143,8 @@ const deletePhotoCollectionRoute = createRoute({
 });
 
 routers.authenticated.openapi(deletePhotoCollectionRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const { collectionId } = c.req.valid("param");
 
   const result = await MeServices.deletePhotoCollectionService({
@@ -183,7 +187,8 @@ const getMyReviewsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyReviewsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const options = c.req.valid("query");
 
   const result = await MeServices.getMyReviewsService(user.id, options);
@@ -220,7 +225,8 @@ const getMyPostsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyPostsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const options = c.req.valid("query");
 
   const result = await MeServices.getMyPostsService(user.id, options);
@@ -257,7 +263,8 @@ const getMyCommentsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyCommentsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const options = c.req.valid("query");
 
   const result = await MeServices.getMyCommentsService(user.id, options);
@@ -288,7 +295,8 @@ const getMyLikedPerfumesRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyLikedPerfumesRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await MeServices.getMyLikedPerfumesService(user.id);
 
@@ -318,7 +326,8 @@ const getMyLikedPostsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyLikedPostsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await MeServices.getMyLikedPostsService(user.id);
 
@@ -348,7 +357,8 @@ const getMyProfileRoute = createRoute({
 });
 
 routers.authenticated.openapi(getMyProfileRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await MeServices.getMyProfileService(user.id);
 
@@ -386,7 +396,8 @@ const patchMyProfileRoute = createRoute({
 });
 
 routers.authenticated.openapi(patchMyProfileRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const formData = c.req.valid("json");
   const result = await MeServices.updateMyProfileService({
     id: user.id,
@@ -427,7 +438,8 @@ const postRecentPerfumesRoute = createRoute({
 });
 
 routers.authenticated.openapi(postRecentPerfumesRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const formData = c.req.valid("json");
   // DB에 최근 본 향수 기록 동기화
   const result = await MeServices.syncRecentPerfumesService({
@@ -460,7 +472,8 @@ const getRecentPerfumesRoute = createRoute({
 });
 
 routers.authenticated.openapi(getRecentPerfumesRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await MeServices.getRecentPerfumesService(user.id);
   if (!result.success) {
     return apiInternalError(c, result.message);
@@ -500,7 +513,8 @@ const postRecentPostsRoute = createRoute({
 });
 
 routers.authenticated.openapi(postRecentPostsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const formData = c.req.valid("json");
   const result = await MeServices.syncRecentPostsService({
     userId: user.id,
@@ -532,7 +546,8 @@ const getRecentPostsRoute = createRoute({
 });
 
 routers.authenticated.openapi(getRecentPostsRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const result = await MeServices.getRecentPostsService(user.id);
   if (!result.success) {
     return apiInternalError(c, result.message);

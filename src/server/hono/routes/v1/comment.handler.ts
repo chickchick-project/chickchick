@@ -12,7 +12,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -127,7 +127,8 @@ const createCommentRoute = createRoute({
 routers.authenticated.openapi(createCommentRoute, async (c) => {
   const { postId } = c.req.valid("param");
   const body = c.req.valid("json");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const payload: CommentSchemas.CreateCommentPayload = {
     ...body,
@@ -188,7 +189,8 @@ const editCommentRoute = createRoute({
 routers.authenticated.openapi(editCommentRoute, async (c) => {
   const { commentId } = c.req.valid("param");
   const body = c.req.valid("json");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const payload = {
     id: commentId,
     authorId: user.id,
@@ -231,7 +233,8 @@ const deleteCommentRoute = createRoute({
 
 routers.authenticated.openapi(deleteCommentRoute, async (c) => {
   const { commentId } = c.req.valid("param");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const payload: CommentSchemas.DeleteCommentPayload = {
     id: commentId,
     authorId: user.id,

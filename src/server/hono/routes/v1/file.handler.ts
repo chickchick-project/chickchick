@@ -8,7 +8,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -43,7 +43,8 @@ const uploadRoute = createRoute({
 });
 
 routers.authenticated.openapi(uploadRoute, async (c) => {
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
   const formData = await c.req.formData();
   const file = formData.get("file");
   const bucketName = formData.get("bucketName");

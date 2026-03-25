@@ -6,7 +6,7 @@ import {
   serviceInternalError,
   serviceNotFound,
   serviceForbidden,
-} from "../utils/service.utils";
+} from "@/server/result";
 import {
   ApiMyProfileResponse,
   ApiUpdateMyProfileRequest,

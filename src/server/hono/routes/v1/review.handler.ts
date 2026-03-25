@@ -15,7 +15,7 @@ import {
 } from "@/server/hono/utils/api.utils";
 import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
-import { getAuthenticatedUser } from "@/server/hono/utils/service.utils";
+
 
 const routers = createDomainRouters();
 
@@ -144,7 +144,8 @@ const createReviewRoute = createRoute({
 routers.authenticated.openapi(createReviewRoute, async (c) => {
   const { perfumeId } = c.req.param();
   const validatedData = c.req.valid("json");
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const payload = { ...validatedData, perfumeId, authorId: user.id };
 
@@ -188,7 +189,8 @@ const toggleLikeRoute = createRoute({
 
 routers.authenticated.openapi(toggleLikeRoute, async (c) => {
   const { reviewId } = c.req.param();
-  const user = getAuthenticatedUser(c);
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
   const result = await ReviewServices.toggleLikeService(reviewId, user.id);
 

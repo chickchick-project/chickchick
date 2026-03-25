@@ -1,13 +1,13 @@
 import { prisma } from "@/server/prisma";
 import {
-  checkResourceExists,
   serviceBadRequest,
   serviceForbidden,
   serviceInternalError,
   serviceNotFound,
   ServiceResult,
   serviceSuccess,
-} from "../utils/service.utils";
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
 import {
   ApiDraftListResponse,
   ApiDraftResponse,

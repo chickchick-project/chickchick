@@ -6,7 +6,7 @@ import {
   ServiceResult,
   serviceSuccess,
   serviceError,
-} from "../utils/service.utils";
+} from "@/server/result";
 import { POINT_POLICY, POINT_DESCRIPTIONS } from "@/shared/constants/point";
 import type {
   PointEarnData,

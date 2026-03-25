@@ -15,11 +15,9 @@ import pointApi from "./routes/v1/point.handler";
 import draftsApi from "./routes/v1/draft.handler";
 import { handleApiError } from "./utils/api.utils";
 
-export type AuthenticatedUser = User;
-
 export type AppContext = {
   Variables: {
-    user?: AuthenticatedUser;
+    user?: User;
     session?: Session;
   };
 };

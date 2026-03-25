@@ -10,8 +10,9 @@ import {
   serviceNotFound,
   serviceAlreadyExists,
   serviceInternalError,
-} from "../utils/service.utils";
-import { checkResourceExists, validateUuid } from "../utils/service.utils";
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
+import { validateUuid } from "@/shared/utils/validate.utils";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
 import { reviewIncludeArgs, FullReview } from "../repositories/review.repository";
 
