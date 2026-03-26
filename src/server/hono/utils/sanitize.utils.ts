@@ -1,5 +1,4 @@
-import DOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
+import _sanitize from "sanitize-html";
 
 /**
  * 서버 사이드에서 HTML을 sanitize하고 이미지를 최적화합니다.
@@ -12,13 +11,8 @@ import { JSDOM } from "jsdom";
 export function sanitizeHtml(html: string): string {
   if (!html) return "";
 
-  // JSDOM을 사용하여 서버 환경에서 DOM API 제공
-  const window = new JSDOM("").window;
-  const purify = DOMPurify(window);
-
-  // Sanitize 옵션 설정
-  const cleanHtml = purify.sanitize(html, {
-    ALLOWED_TAGS: [
+  const cleanHtml = _sanitize(html, {
+    allowedTags: [
       // 텍스트 포맷팅
       "p", "br", "strong", "em", "u", "s", "sub", "sup",
       // 제목
@@ -32,16 +26,12 @@ export function sanitizeHtml(html: string): string {
       // 기타
       "blockquote", "code", "pre", "span", "div",
     ],
-    ALLOWED_ATTR: [
-      // 링크 속성
-      "href", "target", "rel",
-      // 이미지 속성
-      "src", "alt", "width", "height", "loading", "decoding", "fetchpriority",
-      // 스타일 및 기타
-      "class", "style", "data-optimized",
-    ],
-    // 외부 링크에 자동으로 rel="noopener noreferrer" 추가
-    ALLOW_UNKNOWN_PROTOCOLS: false,
+    allowedAttributes: {
+      "a": ["href", "target", "rel"],
+      "img": ["src", "alt", "width", "height", "loading", "decoding", "fetchpriority", "data-optimized"],
+      "*": ["class", "style"],
+    },
+    allowedSchemes: ["http", "https", "mailto"],
   });
 
   // 이미지 최적화 적용
