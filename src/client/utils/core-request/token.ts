@@ -13,8 +13,9 @@ export function manageTokenRefresh(refreshToken: RefreshFn): Promise<void> {
     isRefreshing = true;
     refreshPromise = refreshToken().finally(() => {
       isRefreshing = false;
+      refreshPromise = null;
     });
   }
 
-  return refreshPromise!;
+  return refreshPromise ?? Promise.resolve();
 }

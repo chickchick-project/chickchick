@@ -19,18 +19,14 @@
     "enabled": false
   },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@auth/supabase-adapter": "^1.8.0",
     "@ckeditor/ckeditor5-react": "^9.5.0",
-    "@hono/node-server": "^1.14.4",
-    "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-openapi": "^0.19.9",
     "@hono/zod-validator": "^0.4.3",
     "@hookform/resolvers": "^5.1.1",
     "@prisma/client": "6.19.0",
     "@supabase/supabase-js": "^2.46.2",
     "@tanstack/react-query": "^5.87.4",
-    "@tanstack/react-query-devtools": "^5.87.4",
     "chart.js": "^4.4.9",
     "chartjs-plugin-datalabels": "^2.2.0",
     "ckeditor5": "^45.2.0",
@@ -39,7 +35,6 @@
     "dayjs": "^1.11.13",
     "dompurify": "^3.3.1",
     "hono": "^4.8.3",
-    "hono-openapi": "^0.4.8",
     "jsdom": "^28.1.0",
     "lucide-react": "^0.462.0",
     "next": "15.0.5",
@@ -58,7 +53,6 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "zod": "^3.25.67",
-    "zod-openapi": "^4.2.4",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
@@ -72,6 +66,7 @@
     "@storybook/react": "^8.5.8",
     "@storybook/test": "^8.5.8",
     "@svgr/webpack": "^8.1.0",
+    "@tanstack/react-query-devtools": "^5.87.4",
     "@types/dompurify": "^3.2.0",
     "@types/jsdom": "^27.0.0",
     "@types/navermaps": "^3.9.1",

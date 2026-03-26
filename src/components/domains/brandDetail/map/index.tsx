@@ -63,7 +63,7 @@ export const BrandMap = () => {
         y: userLocation.lat.toString(),
       });
 
-      const response = await fetch(`/api/brands/${brandName}?${params}`);
+      const response = await fetch(`/api/v1/brands/stores/${brandName}?${params}`);
 
       if (!response.ok) {
         throw new Error("Search failed");

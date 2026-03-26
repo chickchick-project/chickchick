@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["jsdom"],
   webpack: (config, { dev }) => {
     if (!dev) {
-      config.resolve.alias["@hono/swagger-ui"] = false;
-
       config.resolve.alias["swagger-ui-dist"] = false;
 
       config.resolve.alias["swagger-ui-react"] = false;

@@ -7,12 +7,14 @@ export interface CustomRequestInit extends RequestInit {
 }
 
 type RequestInterceptor = (
-  config: CustomRequestInit
+  config: CustomRequestInit,
 ) => Promise<CustomRequestInit> | CustomRequestInit;
 type ResponseInterceptor = (response: Response) => Promise<Response> | Response;
 
-export interface RequestOptions<ResponseData, TransformedData>
-  extends CustomRequestInit {
+export interface RequestOptions<
+  ResponseData,
+  TransformedData,
+> extends CustomRequestInit {
   url: string;
   isRetry?: boolean;
   transformResponse?: (response: ResponseData) => TransformedData;
@@ -23,7 +25,7 @@ export class APIError extends Error {
   constructor(
     public status: number,
     public message: string,
-    public errorData?: unknown
+    public errorData?: unknown,
   ) {
     super(message);
     this.name = "APIError";
@@ -47,7 +49,7 @@ export function createCoreClient(config: LibraryConfig) {
 
   // HTTP 요청을 수행하는 함수
   const request = async <RawData, TransformedData = RawData>(
-    originalOptions: RequestOptions<RawData, TransformedData>
+    originalOptions: RequestOptions<RawData, TransformedData>,
   ): Promise<TransformedData | null> => {
     const { url, transformResponse, ...options } = originalOptions;
 
@@ -63,7 +65,7 @@ export function createCoreClient(config: LibraryConfig) {
       try {
         console.log(
           `[Request] Fetch options:`,
-          JSON.stringify(reqConfig, null, 2)
+          JSON.stringify(reqConfig, null, 2),
         );
       } catch {
         console.log(`[Request] Fetch options:`, reqConfig);
@@ -73,8 +75,7 @@ export function createCoreClient(config: LibraryConfig) {
     let response = await fetch(url, {
       ...reqConfig,
       headers,
-      cache: reqConfig.cache || "force-cache",
-      next: { revalidate: 300 },
+      cache: reqConfig.cache,
     });
 
     if (response.status === 401 && !options.isRetry && config.refreshToken) {

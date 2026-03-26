@@ -62,6 +62,41 @@ export const ApiBrandForEmbeddingResponseSchema = BrandSchema.pick({
   brandUrl: true,
 });
 
+export const StoreSchema = z
+  .object({
+    name: z.string(),
+    address: z.string(),
+    roadAddress: z.string().optional(),
+    telephone: z.string().optional(),
+    x: z.string(),
+    y: z.string(),
+    category: z.string().optional(),
+    link: z.string().optional(),
+    distance: z.number().optional(),
+  })
+  .openapi("Store");
+
+export const BrandStoreNameParamSchema = z.object({
+  name: z.string().openapi({
+    param: { name: "name", in: "path" },
+    example: "딥티크",
+    description: "검색할 브랜드 이름",
+  }),
+});
+
+export const BrandStoreQuerySchema = z.object({
+  x: z.string().optional().openapi({ description: "사용자 경도" }),
+  y: z.string().optional().openapi({ description: "사용자 위도" }),
+});
+
+export const BrandStoresResponseSchema = z
+  .object({
+    success: z.literal(true),
+    stores: z.array(StoreSchema),
+    total: z.number(),
+  })
+  .openapi("BrandStoresResponse");
+
 export type ApiBrandSimpleResponse = z.infer<
   typeof ApiBrandSimpleResponseSchema
 >;
@@ -69,3 +104,5 @@ export type ApiBrandSimpleResponse = z.infer<
 export type ApiBrandDetailResponse = z.infer<
   typeof ApiBrandDetailResponseSchema
 >;
+
+export type Store = z.infer<typeof StoreSchema>;

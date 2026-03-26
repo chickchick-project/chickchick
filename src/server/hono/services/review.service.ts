@@ -18,32 +18,20 @@ import { reviewIncludeArgs, FullReview } from "../repositories/review.repository
 
 const POPULAR_REVIEW_LIMIT = 5;
 const POPULAR_REVIEW_POOL_SIZE = 20;
-
-let optionMap = new Map<string, number>();
-
-async function initializeOptionMap() {
-  try {
-    const allOptions = await prisma.attributeOption.findMany({
-      include: { attribute: true },
-    });
-    const newMap = new Map<string, number>();
-    allOptions.forEach((opt) => {
-      const key = `${opt.attribute.key}-${opt.value}`;
-      newMap.set(key, opt.id);
-    });
-    optionMap = newMap;
-  } catch (error) {
-    console.error("Failed to initialize AttributeOption map:", error);
-  }
-}
-// 서버 시작 시 한번만 실행되도록 호출
-initializeOptionMap();
-
 const DEFAULT_REVIEW_LIMIT = 12;
 
-function getOptionIdsFromAttributes(
+async function getOptionIdsFromAttributes(
   attributes: CreateReviewInput["attributes"]
-): number[] {
+): Promise<number[]> {
+  const allOptions = await prisma.attributeOption.findMany({
+    include: { attribute: true },
+  });
+  const optionMap = new Map<string, number>();
+  allOptions.forEach((opt) => {
+    const key = `${opt.attribute.key}-${opt.value}`;
+    optionMap.set(key, opt.id);
+  });
+
   const selectionIds: number[] = [];
   for (const [key, value] of Object.entries(attributes)) {
     if (!value) continue;
@@ -162,7 +150,7 @@ export async function createReviewService(
       return serviceAlreadyExists("이미 이 향수에 대한 리뷰를 작성하셨습니다.");
     }
 
-    const selectionIds = getOptionIdsFromAttributes(attributes);
+    const selectionIds = await getOptionIdsFromAttributes(attributes);
 
     // 트랜잭션 시작
     const newReview = await prisma.$transaction(async (tx) => {
@@ -210,6 +198,10 @@ export async function updateReviewService(
 
     const { content, usageStatus, attributes } = updateData;
 
+    const selectionIds = attributes
+      ? await getOptionIdsFromAttributes(attributes as CreateReviewInput["attributes"])
+      : [];
+
     const updatedReview = await prisma.$transaction(async (tx) => {
       if (content || usageStatus) {
         await tx.review.update({
@@ -223,9 +215,6 @@ export async function updateReviewService(
 
       if (attributes) {
         await tx.reviewAttributeSelection.deleteMany({ where: { reviewId } });
-        const selectionIds = getOptionIdsFromAttributes(
-          attributes as CreateReviewInput["attributes"]
-        );
 
         if (selectionIds.length > 0) {
           await tx.reviewAttributeSelection.createMany({

@@ -11,6 +11,7 @@ import { createStandardApiResponses } from "@/server/hono/utils/openapi.schema";
 import { createDomainRouters } from "@/server/hono/utils/router";
 
 const routers = createDomainRouters();
+const publicRouter = routers.public;
 
 /**
  * @method GET
@@ -102,6 +103,30 @@ routers.optionalAuth.openapi(getBrandByNameRoute, async (c) => {
   }
 
   return apiSuccess(c, result.data, "브랜드 정보를 성공적으로 불러왔습니다.");
+});
+
+/**
+ * @method GET
+ * @path /stores/:name
+ * @description 네이버 지역 검색 API를 통해 브랜드 매장 목록을 조회합니다.
+ * @summary 브랜드 매장 검색
+ */
+publicRouter.get("/stores/:name", async (c) => {
+  const name = c.req.param("name");
+  const x = c.req.query("x");
+  const y = c.req.query("y");
+
+  const coords = x && y ? { x, y } : undefined;
+  const result = await BrandServices.getStoresByNameService(name, coords);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+
+  return c.json(
+    { success: true, stores: result.data.stores, total: result.data.total },
+    200
+  );
 });
 
 export default routers.merge();
