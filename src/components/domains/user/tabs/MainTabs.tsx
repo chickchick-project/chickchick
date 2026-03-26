@@ -18,7 +18,7 @@ const MainTabs = ({
   onAddPhotoClick: () => void;
   children?: React.ReactNode;
 }) => {
-  const user = useUserStore((state) => state.user);
+  const { user } = useUserStore();
   const tabItems = getVisibleTabs(isMe, user?.nickname);
   const isCollectionTab = isMe && tab === "collection";
 

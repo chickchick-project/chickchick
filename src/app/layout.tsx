@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
-import { auth } from "@/auth";
 import Providers from "@/components/commons/Provider/TanstackProvider";
 import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
 import { NavBarWrapper } from "@/components/commons/navBar/Wrapper";
 import LoginModalProvider from "@/components/modal/LoginModalProvider";
-import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
 import "./globals.css";
 
@@ -80,14 +78,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth();
-  const isAuthenticated = !!session?.user;
-
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
       <head>
@@ -118,7 +113,6 @@ export default async function RootLayout({
           <RecentSyncManager />
           <NavBarWrapper />
           <BodyWrapper>
-            <GlobalStateSync isAuthenticated={isAuthenticated} />
             {children}
           </BodyWrapper>
           <LoginModalProvider />

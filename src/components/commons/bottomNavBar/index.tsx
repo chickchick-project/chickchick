@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 
 export const BottomNavBar = () => {
   const pathname = usePathname();
-  const user = useUserStore((state) => state.user);
+  const { user } = useUserStore();
 
   return (
     <div className="tablet:hidden block sticky bottom-0 left-0 w-full h-[50px] px-10 py-1 bg-white border-t border-gray300 z-50">

@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRecentItemsSync } from "@/client/hooks/useRecentItemsSync";
 import { useRecentPerfumesStore } from "@/client/stores/useRecentPerfumesStore";
 import { useRecentPostsStore } from "@/client/stores/useRecentPostsStore";
 import { useUserStore } from "@/client/stores/useUserStore";
+import { pointApi } from "@/client/utils/api/points.api";
 
 function RecentSyncManager() {
   const { user, isLoading } = useUserStore();
@@ -23,6 +25,31 @@ function RecentSyncManager() {
     apiEndpoint: "recents/posts",
     enabled: shouldSync,
   });
+
+  // 일일 로그인 체크
+  useEffect(() => {
+    if (!shouldSync) return;
+
+    const checkDailyLogin = async () => {
+      try {
+        const lastCheck = localStorage.getItem("lastLoginCheck");
+        const today = new Date().toDateString();
+
+        if (lastCheck === today) return;
+
+        const response = await pointApi.processLogin();
+        if (response?.success) {
+          localStorage.setItem("lastLoginCheck", today);
+        }
+      } catch (error) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("❌ [Daily Login] Failed:", error);
+        }
+      }
+    };
+
+    checkDailyLogin();
+  }, [shouldSync]);
 
   return null;
 }

@@ -18,7 +18,7 @@ export const MobileTabsAccordion = ({
   currentTab,
   children,
 }: MobileTabsAccordionProps) => {
-  const user = useUserStore((state) => state.user);
+  const { user } = useUserStore();
 
   const [isOpen, setIsOpen] = useState(true);
 
