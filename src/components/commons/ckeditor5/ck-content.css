@@ -1,0 +1,21 @@
+.ck-content {
+  line-height: 1.6;
+  word-break: break-word;
+}
+
+.ck-content h1 {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 1.5em 0 1em;
+}
+
+.ck-content h2 {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 1.2em 0 0.8em;
+}
+
+.ck-content h3 {
+  font-size: 16px;
+  font-weight: bold;
+}

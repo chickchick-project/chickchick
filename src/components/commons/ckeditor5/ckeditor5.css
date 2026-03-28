@@ -1,3 +1,5 @@
+@import "./ck-content.css";
+
 :root {
   --ck-color-focus-border: #a47764;
   --ck-font-size-base: 14px;
@@ -9,28 +11,6 @@
   width: 100%;
   margin-left: auto;
   margin-right: auto;
-}
-
-.ck-content {
-  line-height: 1.6;
-  word-break: break-word;
-}
-
-.ck-content h1 {
-  font-size: 20px;
-  font-weight: bold;
-  margin: 1.5em 0 1em;
-}
-
-.ck-content h2 {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 1.2em 0 0.8em;
-}
-
-.ck-content h3 {
-  font-size: 16px;
-  font-weight: bold;
 }
 .editor-container_classic-editor .editor-container__editor {
   width: 100%;
