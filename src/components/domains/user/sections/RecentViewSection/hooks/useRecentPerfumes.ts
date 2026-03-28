@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useRecentPerfumesStore } from "@/client/stores/useRecentPerfumesStore";
+import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
 import { useFooterPagination } from "./useFooterPagination";
 
 const PERFUMES_PER_VIEW = 5;

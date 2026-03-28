@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { Option } from "@/shared/constants/options";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
-import { useFilterStore } from "@/client/stores/useFilterStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
 import { ModalContainer } from "@/components/modal/ModalContainer";
 import { FilterModalLayout } from "./Layout";
 import { getLabel } from "../perfumes.helpers";

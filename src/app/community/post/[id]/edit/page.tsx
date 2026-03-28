@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import PageClient from "@/components/domains/post/PageClient";
 import { communityApi } from "@/client/utils/api/community.api";
 import getQueryClient from "@/client/utils/getQueryClient";
@@ -32,7 +33,9 @@ export default async function Page({
 
   return (
     <HydrationBoundary state={dehydratedState}>
-      <PageClient type="edit" postId={id} />
+      <Suspense>
+        <PageClient type="edit" postId={id} />
+      </Suspense>
     </HydrationBoundary>
   );
 }

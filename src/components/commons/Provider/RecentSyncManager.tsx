@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRecentItemsSync } from "@/client/hooks/useRecentItemsSync";
-import { useRecentPerfumesStore } from "@/client/stores/useRecentPerfumesStore";
-import { useRecentPostsStore } from "@/client/stores/useRecentPostsStore";
+import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
+import { useRecentPostsStore } from "@/client/stores/perfumeStore";
 import { useUserStore } from "@/client/stores/useUserStore";
 import { pointApi } from "@/client/utils/api/points.api";
 

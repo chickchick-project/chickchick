@@ -13,7 +13,7 @@ import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import { useInfinitePerfumes } from "@/client/hooks/useInfinitePerfumes";
 import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
 import { useInfiniteScrollTrigger } from "@/client/hooks/useInfiniteScrollTrigger";
-import { useFilterStore } from "@/client/stores/useFilterStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
 import { useMemo } from "react";
 
 export default function PageClient() {

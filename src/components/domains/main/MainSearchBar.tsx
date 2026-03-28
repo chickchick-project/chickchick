@@ -8,7 +8,7 @@ import useDebounce from "@/client/hooks/useDebounce";
 import { searchApi } from "@/client/utils/api/search.api";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
 import useOnClickOutside from "@/client/hooks/useOnClickOutside";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 import Image from "next/image";
 import { highlightText } from "@/shared/utils/highlightText";
 import Logo from "../../../..//public/images/Logo.webp";

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { useFilterStore } from "@/client/stores/useFilterStore";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 import ICONS from "@/shared/constants/icons";
 import { Option } from "@/shared/constants/options";
 import ListModal from "../modal/ListModal";

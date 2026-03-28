@@ -1,8 +1,8 @@
 import { memo, useState, useEffect } from "react";
 import Image from "next/image";
 import { Option } from "@/shared/constants/options";
-import { useFilterStore } from "@/client/stores/useFilterStore";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 import ICONS from "@/shared/constants/icons";
 import FilterItemModal from "../modal/ItemModal";
 import FilterTriggerButton from "@/components/commons/dropdown/DropdownButton";

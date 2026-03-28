@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
-import { useLogRecentItem } from "@/client/stores/useLogRecentItem";
-import { useRecentPostsStore } from "@/client/stores/useRecentPostsStore";
+import { useLogRecentItem } from "@/client/stores/perfumeStore";
+import { useRecentPostsStore } from "@/client/stores/perfumeStore";
 import {
   PageSkeleton,
   CategoryPostListSectionSkeleton,

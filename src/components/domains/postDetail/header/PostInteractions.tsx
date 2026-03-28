@@ -6,7 +6,7 @@ import { ShareIcon } from "@/components/commons/interactions/icons/ShareIcon";
 import { Interactions } from "@/components/commons/interactions";
 import usePostInteractionMutation from "./usePostInteractionMutation";
 import { useRef } from "react";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 import ShareDropdownMenu from "@/components/commons/dropdown/ShareDropdownMenu";
 import useOnClickOutside from "@/client/hooks/useOnClickOutside";
 

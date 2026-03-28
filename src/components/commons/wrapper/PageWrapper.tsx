@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useModalStore, MODAL_KEYS } from "@/client/stores/useModalStore";
+import { useModalStore, MODAL_KEYS } from "@/client/stores/uiStore";
 
 interface PageWrapperProps {
   className?: string;

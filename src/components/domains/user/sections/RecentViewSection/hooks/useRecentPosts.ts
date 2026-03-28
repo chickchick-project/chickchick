@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useRecentPostsStore } from "@/client/stores/useRecentPostsStore";
+import { useRecentPostsStore } from "@/client/stores/perfumeStore";
 import { useFooterPagination } from "./useFooterPagination";
 import type { ApiPostDetailResponse } from "@/server/hono/schemas/community.schema";
 

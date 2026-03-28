@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useMemo } from "react";
-import { useFilterStore } from "@/client/stores/useFilterStore";
-import { useTotalStore } from "@/client/stores/useCountStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
+import { useTotalStore } from "@/client/stores/uiStore";
 import { useInfiniteSearchPerfumesQuery } from "@/client/hooks/query/useSearchQuery";
 
 /**

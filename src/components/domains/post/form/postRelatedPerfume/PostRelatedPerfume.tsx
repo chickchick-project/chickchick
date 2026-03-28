@@ -8,7 +8,7 @@ import InputBase from "@/components/commons/input";
 import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
 import useDebounce from "@/client/hooks/useDebounce";
 import useOnClickOutside from "@/client/hooks/useOnClickOutside";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 import { searchApi } from "@/client/utils/api/search.api";
 
 import SubTitleLabel from "../element/SubTitleLabel";

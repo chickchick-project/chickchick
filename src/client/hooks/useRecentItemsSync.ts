@@ -3,7 +3,7 @@ import type { UseBoundStore, StoreApi } from "zustand";
 import type {
   GenericRecentItem,
   RecentItemsState,
-} from "../stores/createRecentItemsStore";
+} from "../stores/perfumeStore";
 import {
   ApiRecentPerfumeItem,
   ApiRecentPostItem,

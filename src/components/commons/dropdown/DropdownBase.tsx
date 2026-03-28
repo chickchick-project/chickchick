@@ -3,7 +3,7 @@ import DropdownMenu from "./DropdownMenu";
 import Image from "next/image";
 import ICONS from "@/shared/constants/icons";
 import { Option } from "@/shared/constants/options";
-import { useVisibilityStore } from "@/client/stores/useVisibilityStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
 
 interface IFilterDropdownProps {
   id: string;

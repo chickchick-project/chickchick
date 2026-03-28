@@ -10,8 +10,8 @@ import { PerfumeReviews } from "./review";
 import { PerfumeDetailSidebar } from "./sidebar";
 import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import type { ApiReviewResponse } from "@/server/hono/schemas/review.schema";
-import { useLogRecentItem } from "@/client/stores/useLogRecentItem";
-import { useRecentPerfumesStore } from "@/client/stores/useRecentPerfumesStore";
+import { useLogRecentItem } from "@/client/stores/perfumeStore";
+import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)

@@ -5,7 +5,7 @@ import { useUserStore } from "@/client/stores/useUserStore";
 import { NAV_LABELS } from "./navBar.constants";
 import ICONS from "@/shared/constants/icons";
 import { NavDropdown } from "./Dropdown";
-import { useModalStore, MODAL_KEYS } from "@/client/stores/useModalStore";
+import { useModalStore, MODAL_KEYS } from "@/client/stores/uiStore";
 
 const UserProfileSection = () => {
   const navBarRef = useRef<HTMLDivElement | null>(null);
