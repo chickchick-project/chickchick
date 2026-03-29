@@ -6,6 +6,7 @@ import {
   updateCommentService,
   deleteCommentService,
   getPaginatedCommentService,
+  getCommentService,
 } from "../comment.service";
 import { DELETED_COMMENT_MESSAGE_BY_USER } from "../../schemas/comment.schema";
 import { getTestData } from "./helpers/comment.test.helpers";
@@ -499,6 +500,62 @@ describe("Comment Service", () => {
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(result.error).toBe("BAD_REQUEST");
+      }
+    });
+  });
+
+  describe("getCommentService", () => {
+    it("게시글의 전체 댓글 목록을 반환해야 한다", async () => {
+      const { ids, mockPost, mockComments } = getTestData();
+
+      vi.mocked(prisma.post.findUnique).mockResolvedValue(mockPost as never);
+      vi.mocked(prisma.comment.findMany).mockResolvedValue(mockComments(3) as never);
+
+      const result = await getCommentService(ids.postId);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toHaveLength(3);
+      }
+    });
+
+    it("parentId=null 조건으로 최상위 댓글만 조회해야 한다", async () => {
+      const { ids, mockPost, mockComments } = getTestData();
+
+      vi.mocked(prisma.post.findUnique).mockResolvedValue(mockPost as never);
+      vi.mocked(prisma.comment.findMany).mockResolvedValue(mockComments(2) as never);
+
+      await getCommentService(ids.postId);
+
+      expect(prisma.comment.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { postId: ids.postId, parentId: null },
+        })
+      );
+    });
+
+    it("존재하지 않는 postId이면 NOT_FOUND를 반환해야 한다", async () => {
+      vi.mocked(prisma.post.findUnique).mockResolvedValue(null);
+
+      const result = await getCommentService("non-existent-post");
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe("NOT_FOUND");
+      }
+    });
+
+    it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+      const { ids, mockPost } = getTestData();
+
+      vi.mocked(prisma.post.findUnique).mockResolvedValue(mockPost as never);
+      vi.mocked(prisma.comment.findMany).mockRejectedValue(new Error("Database error"));
+
+      const result = await getCommentService(ids.postId);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe("INTERNAL_ERROR");
       }
     });
   });

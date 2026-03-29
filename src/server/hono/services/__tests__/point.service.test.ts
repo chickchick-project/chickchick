@@ -1,5 +1,26 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { validateTimestamp } from "../point.service";
+import { PointActivityType } from "@prisma/client";
+import { prisma } from "@/server/prisma";
+import {
+  validateTimestamp,
+  getPointHistoryService,
+  getUserPointsService,
+  getPointStatisticsService,
+} from "../point.service";
+
+// Mock prisma (validateTimestamp는 순수 함수라 영향 없음)
+vi.mock("@/server/prisma", () => ({
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+    },
+    pointHistory: {
+      findMany: vi.fn(),
+      count: vi.fn(),
+      groupBy: vi.fn(),
+    },
+  },
+}));
 
 /**
  * validateTimestamp 함수 테스트
@@ -108,5 +129,263 @@ describe("Point Service - validateTimestamp", () => {
       expect(validateTimestamp(new Date(now - (boundary + 1)))).toBe(false); // 5분 + 1ms (유효하지 않음)
       expect(validateTimestamp(new Date(now - (boundary - 1)))).toBe(true); // 5분 - 1ms (유효함, 4분 59초 999ms)
     });
+  });
+});
+
+describe("getPointHistoryService", () => {
+  const TEST_USER_ID = "test-user-123";
+
+  const makeHistoryItem = (id: string) => ({
+    id,
+    userId: TEST_USER_ID,
+    pointAmount: 5,
+    activityType: PointActivityType.CREATE_POST,
+    referenceId: null,
+    description: "게시물 작성",
+    createdAt: new Date(),
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("포인트 이력을 페이지네이션하여 반환해야 한다", async () => {
+    const items = Array.from({ length: 5 }, (_, i) => makeHistoryItem(`history-${i}`));
+
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.findMany).mockResolvedValue(items as never);
+    vi.mocked(prisma.pointHistory.count).mockResolvedValue(5);
+
+    const result = await getPointHistoryService(TEST_USER_ID, { limit: 10 });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.histories).toHaveLength(5);
+      expect(result.data.totalCount).toBe(5);
+    }
+  });
+
+  it("limit+1 조회로 다음 페이지 여부를 확인해야 한다 (nextCursor 있음)", async () => {
+    // limit=5 요청 → 6개 반환 → hasNextPage=true
+    const items = Array.from({ length: 6 }, (_, i) => makeHistoryItem(`history-${i}`));
+
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.findMany).mockResolvedValue(items as never);
+    vi.mocked(prisma.pointHistory.count).mockResolvedValue(10);
+
+    const result = await getPointHistoryService(TEST_USER_ID, { limit: 5 });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.histories).toHaveLength(5); // 마지막 1개 제거
+      expect(result.data.nextCursor).toBe("history-4"); // 5번째 항목 id
+    }
+    expect(prisma.pointHistory.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ take: 6 }) // limit + 1
+    );
+  });
+
+  it("마지막 페이지에서는 nextCursor가 null이어야 한다", async () => {
+    const items = Array.from({ length: 3 }, (_, i) => makeHistoryItem(`history-${i}`));
+
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.findMany).mockResolvedValue(items as never);
+    vi.mocked(prisma.pointHistory.count).mockResolvedValue(3);
+
+    const result = await getPointHistoryService(TEST_USER_ID, { limit: 5 });
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.nextCursor).toBeNull();
+    }
+  });
+
+  it("cursor가 있으면 해당 id 미만의 이력을 조회해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.findMany).mockResolvedValue([] as never);
+    vi.mocked(prisma.pointHistory.count).mockResolvedValue(0);
+
+    await getPointHistoryService(TEST_USER_ID, { cursor: "cursor-id" });
+
+    expect(prisma.pointHistory.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          id: { lt: "cursor-id" },
+        }),
+      })
+    );
+  });
+
+  it("activityType 필터가 적용되어야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.findMany).mockResolvedValue([] as never);
+    vi.mocked(prisma.pointHistory.count).mockResolvedValue(0);
+
+    await getPointHistoryService(TEST_USER_ID, {
+      activityType: PointActivityType.CREATE_POST,
+    });
+
+    expect(prisma.pointHistory.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          activityType: PointActivityType.CREATE_POST,
+        }),
+      })
+    );
+  });
+
+  it("존재하지 않는 사용자는 NOT_FOUND를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+    const result = await getPointHistoryService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("NOT_FOUND");
+    }
+  });
+
+  it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error("Database error"));
+
+    const result = await getPointHistoryService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("INTERNAL_ERROR");
+    }
+  });
+});
+
+describe("getUserPointsService", () => {
+  const TEST_USER_ID = "test-user-123";
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("totalPoints와 consecutiveLoginDays를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({
+      totalPoints: 350,
+      consecutiveLoginDays: 5,
+    } as never);
+
+    const result = await getUserPointsService(TEST_USER_ID);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.totalPoints).toBe(350);
+      expect(result.data.consecutiveLoginDays).toBe(5);
+    }
+  });
+
+  it("존재하지 않는 사용자는 NOT_FOUND를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+    const result = await getUserPointsService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("NOT_FOUND");
+    }
+  });
+
+  it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error("Database error"));
+
+    const result = await getUserPointsService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("INTERNAL_ERROR");
+    }
+  });
+});
+
+describe("getPointStatisticsService", () => {
+  const TEST_USER_ID = "test-user-123";
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("활동 타입별 포인트 통계를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.groupBy).mockResolvedValue([
+      {
+        activityType: PointActivityType.CREATE_POST,
+        _sum: { pointAmount: 15 },
+        _count: { id: 3 },
+      },
+      {
+        activityType: PointActivityType.CREATE_COMMENT,
+        _sum: { pointAmount: 5 },
+        _count: { id: 5 },
+      },
+    ] as never);
+
+    const result = await getPointStatisticsService(TEST_USER_ID);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.statistics).toHaveLength(2);
+      expect(result.data.statistics[0]).toEqual({
+        activityType: PointActivityType.CREATE_POST,
+        totalPoints: 15,
+        count: 3,
+      });
+    }
+  });
+
+  it("_sum.pointAmount가 null이면 0으로 처리해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.groupBy).mockResolvedValue([
+      {
+        activityType: PointActivityType.CREATE_COMMENT,
+        _sum: { pointAmount: null },
+        _count: { id: 1 },
+      },
+    ] as never);
+
+    const result = await getPointStatisticsService(TEST_USER_ID);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.statistics[0].totalPoints).toBe(0);
+    }
+  });
+
+  it("포인트 이력이 없으면 빈 statistics 배열을 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: TEST_USER_ID } as never);
+    vi.mocked(prisma.pointHistory.groupBy).mockResolvedValue([] as never);
+
+    const result = await getPointStatisticsService(TEST_USER_ID);
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.statistics).toHaveLength(0);
+    }
+  });
+
+  it("존재하지 않는 사용자는 NOT_FOUND를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null);
+
+    const result = await getPointStatisticsService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("NOT_FOUND");
+    }
+  });
+
+  it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+    vi.mocked(prisma.user.findUnique).mockRejectedValue(new Error("Database error"));
+
+    const result = await getPointStatisticsService(TEST_USER_ID);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("INTERNAL_ERROR");
+    }
   });
 });

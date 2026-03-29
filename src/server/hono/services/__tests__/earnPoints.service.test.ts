@@ -49,96 +49,59 @@ describe("earnPointsService", () => {
     vi.clearAllMocks();
   });
 
-  describe("정상 포인트 적립", () => {
-    it("게시물 작성 시 5포인트가 적립되어야 한다", async () => {
-      (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-        id: TEST_USER_ID,
-      });
+  describe("활동 타입별 포인트 금액 검증", () => {
+    const testCases = [
+      {
+        activityType: PointActivityType.CREATE_POST,
+        expectedPoints: 5,
+        referenceId: "post-123",
+        label: "게시물 작성",
+      },
+      {
+        activityType: PointActivityType.CREATE_COMMENT,
+        expectedPoints: 1,
+        referenceId: "comment-456",
+        label: "댓글 작성",
+      },
+      {
+        activityType: PointActivityType.LIKE_POST,
+        expectedPoints: 1,
+        referenceId: "post-789",
+        label: "좋아요",
+      },
+    ];
 
-      (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
-        async (callback) => {
-          await callback({
-            pointHistory: { create: vi.fn() },
-            user: {
-              update: vi.fn().mockResolvedValue({ totalPoints: 105 }),
-            },
-          });
-          return { totalPoints: 105 };
+    it.each(testCases)(
+      "$label 시 $expectedPoints포인트가 적립되어야 한다",
+      async ({ activityType, expectedPoints, referenceId }) => {
+        const initialPoints = 100;
+        const expectedTotal = initialPoints + expectedPoints;
+
+        (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
+          id: TEST_USER_ID,
+        });
+
+        (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
+          async (callback) => {
+            await callback({
+              pointHistory: { create: vi.fn() },
+              user: {
+                update: vi.fn().mockResolvedValue({ totalPoints: expectedTotal }),
+              },
+            });
+            return { totalPoints: expectedTotal };
+          }
+        );
+
+        const result = await earnPointsService(TEST_USER_ID, activityType, referenceId);
+
+        expect(result.success).toBe(true);
+        if (result.success) {
+          expect(result.data.pointAmount).toBe(expectedPoints);
+          expect(result.data.totalPoints).toBe(expectedTotal);
         }
-      );
-
-      const result = await earnPointsService(
-        TEST_USER_ID,
-        PointActivityType.CREATE_POST,
-        "post-123"
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.pointAmount).toBe(5);
-        expect(result.data.totalPoints).toBe(105);
       }
-    });
-
-    it("댓글 작성 시 1포인트가 적립되어야 한다", async () => {
-      (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-        id: TEST_USER_ID,
-      });
-
-      (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
-        async (callback) => {
-          await callback({
-            pointHistory: { create: vi.fn() },
-            user: {
-              update: vi.fn().mockResolvedValue({ totalPoints: 101 }),
-            },
-          });
-          return { totalPoints: 101 };
-        }
-      );
-
-      const result = await earnPointsService(
-        TEST_USER_ID,
-        PointActivityType.CREATE_COMMENT,
-        "comment-456"
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.pointAmount).toBe(1);
-        expect(result.data.totalPoints).toBe(101);
-      }
-    });
-
-    it("좋아요 시 1포인트가 적립되어야 한다", async () => {
-      (prisma.user.findUnique as ReturnType<typeof vi.fn>).mockResolvedValue({
-        id: TEST_USER_ID,
-      });
-
-      (prisma.$transaction as ReturnType<typeof vi.fn>).mockImplementation(
-        async (callback) => {
-          await callback({
-            pointHistory: { create: vi.fn() },
-            user: {
-              update: vi.fn().mockResolvedValue({ totalPoints: 101 }),
-            },
-          });
-          return { totalPoints: 101 };
-        }
-      );
-
-      const result = await earnPointsService(
-        TEST_USER_ID,
-        PointActivityType.LIKE_POST,
-        "post-789"
-      );
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.pointAmount).toBe(1);
-        expect(result.data.totalPoints).toBe(101);
-      }
-    });
+    );
   });
 
   describe("커스텀 description", () => {
