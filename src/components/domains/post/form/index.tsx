@@ -6,8 +6,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PostCategory as TPostCategory } from "@prisma/client";
 
-import type { BlobRegistry } from "@/client/ckeditor/localPreviewUploadPlugin";
-import { finalizeWithBlobRegistry } from "@/client/ckeditor/finalizeWithBlobRegistry";
+import type { BlobRegistry } from "@/client/tiptap/blobRegistry";
+import { finalizeContentWithBlobUpload } from "@/client/tiptap/blobRegistry";
 import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
 import {
   CreatePostClientSchema,
@@ -43,7 +43,7 @@ export default function PostForm({
   postId,
   draftId,
 }: PostFormProps) {
-  const blobRegistryRef = useRef<BlobRegistry>(new Map());
+  const blobRegistryRef = useRef<BlobRegistry>(new Map<string, File>());
 
   const method = useForm<CreatePostClientInput>({
     resolver: zodResolver(CreatePostClientSchema),
@@ -114,7 +114,7 @@ export default function PostForm({
   }, [initialData, reset]);
 
   const onSubmit = async (data: CreatePostClientInput) => {
-    const finalizedContent = await finalizeWithBlobRegistry(
+    const finalizedContent = await finalizeContentWithBlobUpload(
       data.content,
       blobRegistryRef.current,
     );
