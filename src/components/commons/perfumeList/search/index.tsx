@@ -40,7 +40,11 @@ export function SearchHeader({
           />
         )}
         <nav className="w-full mt-7">
-          <PerFumeFilter brands={brands} notes={notes} accords={accords} />
+          <PerFumeFilter
+            brands={brands}
+            notes={notes}
+            accords={accords}
+          />
         </nav>
       </div>
     </header>

@@ -36,6 +36,18 @@ export function SearchBar({
     focus:outline-none focus:border-primary-300 text-label-1 tablet:text-body-1
     `;
 
+  const { onKeyDown: restKeyDown, ...inputRest } = rest as {
+    onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
+    [key: string]: unknown;
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      (onClick as unknown as (() => void) | undefined)?.();
+    }
+    restKeyDown?.(e);
+  };
+
   return (
     <div
       className={`relative w-full flex items-center ${className}`}
@@ -50,7 +62,8 @@ export function SearchBar({
         }
         value={value}
         onChange={onChange}
-        {...rest}
+        onKeyDown={handleKeyDown}
+        {...inputRest}
       />
       <button
         onClick={onClick}

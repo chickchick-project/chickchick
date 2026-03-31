@@ -12,7 +12,11 @@ type FilterOptions = {
   accords: Option[];
 };
 
-const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
+const FilterList = ({
+  filterOptions,
+}: {
+  filterOptions: FilterOptions;
+}) => {
   const committedFilters = useFilterStore((state) => state.committedFilters);
   const closeFilter = useFilterStore((state) => state.closeFilter);
   const resetFilters = useFilterStore((state) => state.resetFilters);
@@ -52,6 +56,7 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
         filterOptions={filterOptions}
         closeFilter={closeFilter}
         resetFilters={resetFilters}
+
       />
     </>
   );

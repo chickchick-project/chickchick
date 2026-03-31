@@ -85,6 +85,7 @@ interface FilterStore {
   pendingFilters: Record<string, string[]>;
 
   handlePendingChange: (category: string, value: string) => void;
+  handlePendingSingleChange: (category: string, value: string) => void;
   resetPending: () => void;
   commitFilters: (category: string) => void;
   cancelPending: (category: string) => void;
@@ -114,6 +115,22 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
         delete newPending[category];
       } else {
         newPending[category] = nextArray;
+      }
+
+      return { pendingFilters: newPending };
+    }),
+
+  // 단일 선택 카테고리 (gender 등): 기존 값을 교체
+  handlePendingSingleChange: (category, value) =>
+    set((state) => {
+      const newPending = { ...state.pendingFilters };
+      const current = newPending[category];
+
+      // 이미 같은 값이면 선택 해제
+      if (current?.length === 1 && current[0] === value) {
+        delete newPending[category];
+      } else {
+        newPending[category] = [value];
       }
 
       return { pendingFilters: newPending };

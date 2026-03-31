@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import getQueryClient from "@/client/utils/getQueryClient";
 import { brandApi } from "@/client/utils/api/brands.api";
 import { perfumeApi } from "@/client/utils/api/perfumes.api";
+import { queryKeys } from "@/client/utils/queryKeys";
 import PageClient from "@/components/domains/perfumes/PageClient";
 import type { Metadata } from "next";
 
@@ -27,15 +28,15 @@ export default async function Page() {
   try {
     await Promise.all([
       queryClient.prefetchQuery({
-        queryKey: ["brand", "list"],
+        queryKey: queryKeys.filter.brands(),
         queryFn: () => brandApi.list(),
       }),
       queryClient.prefetchQuery({
-        queryKey: ["perfume", "notes"],
+        queryKey: queryKeys.filter.notes(),
         queryFn: () => perfumeApi.notes(),
       }),
       queryClient.prefetchQuery({
-        queryKey: ["perfume", "accords"],
+        queryKey: queryKeys.filter.accords(),
         queryFn: () => perfumeApi.accords(),
       }),
     ]);

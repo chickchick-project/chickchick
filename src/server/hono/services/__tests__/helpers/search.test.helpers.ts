@@ -15,6 +15,7 @@ export const getTestData = () => {
     brand_url: "test-brand",
     image_url: "https://example.com/perfume.jpg",
     priority: 100,
+    gender_vote_count: 0,
   };
 
   const mockSupabasePerfumes = (count: number): SupabasePerfume[] =>
@@ -28,6 +29,7 @@ export const getTestData = () => {
       brand_url: "test-brand",
       image_url: `https://example.com/perfume-${i}.jpg`,
       priority: 100 - i,
+      gender_vote_count: 0,
     }));
 
   return {

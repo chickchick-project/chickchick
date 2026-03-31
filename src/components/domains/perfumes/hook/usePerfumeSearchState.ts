@@ -42,11 +42,17 @@ export const usePerfumeSearchState = (
     return match ? match.nameEn : null;
   }, [searchKeyword, brands]);
 
+  const clearSearchKeyword = () => {
+    setInputValue("");
+    setSearchKeyword("");
+  };
+
   return {
     inputValue,
     searchKeyword,
     matchedBrand,
     handleChange,
     handleSubmit,
+    clearSearchKeyword,
   };
 };

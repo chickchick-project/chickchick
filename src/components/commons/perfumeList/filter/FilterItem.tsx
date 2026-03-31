@@ -19,15 +19,14 @@ const FilterItem = ({
 }) => {
   const EMPTY_SET = new Set<string>();
   const committedFilters = useFilterStore((state) => state.committedFilters);
-  const handlePendingChange = useFilterStore(
-    (state) => state.handlePendingChange
-  );
+  const handlePendingChange = useFilterStore((state) => state.handlePendingChange);
+  const handlePendingSingleChange = useFilterStore((state) => state.handlePendingSingleChange);
 
   const filterSet = committedFilters[category] ?? EMPTY_SET;
 
   const { selectedOption, currentOption } = getFilterOptionMeta(
     filterSet,
-    label
+    label,
   );
 
   const [isSelected, setIsSelected] = useState(!!currentOption);
@@ -62,7 +61,11 @@ const FilterItem = ({
           options={options}
           currentOption={currentOption}
           handleChangeOption={(option: Option) => {
-            handlePendingChange(category, option.value);
+            if (category === "gender") {
+              handlePendingSingleChange(category, option.value);
+            } else {
+              handlePendingChange(category, option.value);
+            }
           }}
         />
       )}

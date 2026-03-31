@@ -216,6 +216,93 @@ describe("Search Service", () => {
         })
       );
     });
+    it("notesFilter만 있는 POST 요청에서 필터가 올바르게 전달되어야 한다", async () => {
+      const { mockSupabasePerfumes } = getTestData();
+
+      const mockRpcResponse = {
+        data: mockSupabasePerfumes(5),
+        error: null,
+      };
+
+      const mockTotalResponse = {
+        data: 5,
+        error: null,
+      };
+
+      vi.mocked(supabase.rpc).mockImplementation((funcName: string) => {
+        if (funcName === "search_perfumes") {
+          return Promise.resolve(mockRpcResponse) as never;
+        }
+        if (funcName === "search_perfumes_total") {
+          return Promise.resolve(mockTotalResponse) as never;
+        }
+        return Promise.resolve({ data: null, error: null }) as never;
+      });
+
+      const noteId = "323e4567-e89b-12d3-a456-426614174002";
+
+      const postParams: SearchPostBody = {
+        searchText: "test",
+        notesFilter: [noteId],
+        limit: 15,
+        cursor: undefined,
+      };
+
+      await searchPerfumesService(postParams);
+
+      expect(supabase.rpc).toHaveBeenCalledWith(
+        "search_perfumes",
+        expect.objectContaining({
+          notes_filter: [noteId],
+          brand_filter: null,
+          accords_filter: null,
+        })
+      );
+    });
+
+    it("accordsFilter만 있는 POST 요청에서 필터가 올바르게 전달되어야 한다", async () => {
+      const { mockSupabasePerfumes } = getTestData();
+
+      const mockRpcResponse = {
+        data: mockSupabasePerfumes(5),
+        error: null,
+      };
+
+      const mockTotalResponse = {
+        data: 5,
+        error: null,
+      };
+
+      vi.mocked(supabase.rpc).mockImplementation((funcName: string) => {
+        if (funcName === "search_perfumes") {
+          return Promise.resolve(mockRpcResponse) as never;
+        }
+        if (funcName === "search_perfumes_total") {
+          return Promise.resolve(mockTotalResponse) as never;
+        }
+        return Promise.resolve({ data: null, error: null }) as never;
+      });
+
+      const accordId = "423e4567-e89b-12d3-a456-426614174003";
+
+      const postParams: SearchPostBody = {
+        searchText: "test",
+        accordsFilter: [accordId],
+        limit: 15,
+        cursor: undefined,
+      };
+
+      await searchPerfumesService(postParams);
+
+      expect(supabase.rpc).toHaveBeenCalledWith(
+        "search_perfumes",
+        expect.objectContaining({
+          accords_filter: [accordId],
+          brand_filter: null,
+          notes_filter: null,
+        })
+      );
+    });
   });
 
   describe("searchPerfumesService - 페이지네이션", () => {
@@ -324,7 +411,8 @@ describe("Search Service", () => {
         return Promise.resolve({ data: null, error: null }) as never;
       });
 
-      const cursor = "perfume-10";
+      // 복합 커서 형식: "{gender_count}:{priority}:{perfume_id}"
+      const cursor = "5:90:perfume-10";
       const params: SearchGetQuery = {
         searchText: "test",
         limit: 15,
@@ -336,7 +424,9 @@ describe("Search Service", () => {
       expect(supabase.rpc).toHaveBeenCalledWith(
         "search_perfumes",
         expect.objectContaining({
-          last_seen_id: cursor,
+          last_seen_id: "perfume-10",
+          last_seen_priority: 90,
+          last_seen_gender_count: 5,
         })
       );
     });
@@ -375,8 +465,13 @@ describe("Search Service", () => {
       expect(result.success).toBe(true);
       if (result.success) {
         // 16개가 반환되었으므로 hasMore = true
-        // nextCursor는 15번째(마지막 반환 데이터)의 id
-        expect(result.data.nextCursor).toBe("perfume-14");
+        // nextCursor는 15번째(마지막 반환 데이터)의 "{gender_count}:{priority}:{perfume_id}"
+        // mockSupabasePerfumes(16)에서 index 14 → gender_vote_count: 0, priority: 86, perfume_id: "perfume-14"
+        const [cursorGenderCount, cursorPriority, cursorId] = result.data.nextCursor!.split(":");
+        expect(result.data.nextCursor).toMatch(/^\d+:\d+:[a-z0-9-]+$/);
+        expect(cursorGenderCount).toBe("0");
+        expect(cursorPriority).toBe("86");
+        expect(cursorId).toBe("perfume-14");
         expect(result.data.data).toHaveLength(15);
       }
     });

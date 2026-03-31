@@ -44,6 +44,7 @@ interface PerfumeFilters {
   brands?: string[];
   notes?: string[];
   accords?: string[];
+  gender?: string[];
 }
 
 /**

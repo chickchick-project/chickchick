@@ -13,8 +13,23 @@ import {
  * 검색 GET 요청 쿼리 파라미터 스키마
  * @description 기본 검색 요청 시 사용되는 쿼리 파라미터 (검색어, 페이지네이션)
  */
+export const GenderSortSchema = z
+  .enum(["MASCULINE", "UNISEX", "FEMININE"])
+  .default("UNISEX");
+
+export type GenderSort = z.infer<typeof GenderSortSchema>;
+
 export const SearchGetQuerySchema = CursorPaginationSchema.extend({
   searchText: z.string().optional().default(""),
+  // 커서 형식: "{gender_count}:{priority}:{perfume_id}"
+  cursor: z
+    .string()
+    .regex(
+      /^\d+:\d+:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+      "유효하지 않은 커서 형식입니다."
+    )
+    .optional(),
+  genderSort: GenderSortSchema.optional(),
 });
 
 /**
@@ -49,6 +64,7 @@ export const SupabasePerfumeSchema = z.object({
   brand_url: z.string().nullable(),
   image_url: z.string(),
   priority: z.number().int(),
+  gender_vote_count: z.number().int(),
 });
 
 export type SearchGetQuery = z.infer<typeof SearchGetQuerySchema>;
