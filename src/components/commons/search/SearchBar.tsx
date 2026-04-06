@@ -1,3 +1,5 @@
+"use client";
+
 import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import React from "react";

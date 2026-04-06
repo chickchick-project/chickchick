@@ -31,7 +31,6 @@ export default function PageClient() {
     handleChange,
     handleSubmit,
   } = usePerfumeSearchState(allBrands ?? []);
-
   // Idle 상태 확인: 검색어도 없고 필터도 선택 안 됨
   const isIdle = Object.keys(selectedFilters).length === 0 && !searchKeyword;
 
@@ -167,9 +166,8 @@ export default function PageClient() {
                 ? `'${searchKeyword}'에 대한 검색 결과`
                 : "현재 인기있는 향수들이에요!"}
             </h2>
-            {/* <SortDropdown type="perfume" onSortChange={() => {}} /> */}
           </div>
-          {matchedBrand && <BrandSection brandName={matchedBrand} />}
+          {matchedBrand && <BrandSection brand={matchedBrand} />}
           <PerfumeSection
             perfumes={perfumes}
             isLoading={isLoading}

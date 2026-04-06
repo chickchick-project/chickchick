@@ -10,17 +10,21 @@ import {
   ApiBrandSimpleResponse,
   Store,
 } from "../schemas/brand.schema";
-import { brandDetailSelect, parseMapLocation } from "../repositories/brand.repository";
+import {
+  brandDetailSelect,
+  parseMapLocation,
+} from "../repositories/brand.repository";
 
-interface NaverLocalItem {
-  title: string;
-  address: string;
-  roadAddress: string;
-  telephone: string;
-  mapx: string;
-  mapy: string;
-  category: string;
-  link: string;
+interface KakaoLocalDocument {
+  place_name: string;
+  address_name: string;
+  road_address_name: string;
+  phone: string;
+  x: string;
+  y: string;
+  category_name: string;
+  category_group_code: string;
+  distance: string;
 }
 
 /**
@@ -61,7 +65,7 @@ export async function getAllBrandsService(): Promise<
  * @returns 브랜드 상세 정보를 담은 ServiceResult
  */
 export async function getBrandByIdService(
-  brandId: string
+  brandId: string,
 ): Promise<ServiceResult<ApiBrandDetailResponse>> {
   try {
     const brand = await prisma.brand.findUnique({
@@ -97,7 +101,7 @@ export async function getBrandByIdService(
  * @returns 브랜드 상세 정보를 담은 ServiceResult
  */
 export async function getBrandByNameService(
-  nameKo: string
+  nameKo: string,
 ): Promise<ServiceResult<ApiBrandDetailResponse>> {
   try {
     const brand = await prisma.brand.findUnique({
@@ -126,80 +130,105 @@ export async function getBrandByNameService(
   }
 }
 
-/**
- * 네이버 지역 검색 API를 통해 브랜드 매장 목록 조회
- * @param name 검색할 브랜드 이름
- * @param coords 사용자 위치 좌표 (거리순 정렬에 사용)
- */
 export async function getStoresByNameService(
   name: string,
-  coords?: { x: string; y: string }
+  x?: string,
+  y?: string,
 ): Promise<ServiceResult<{ stores: Store[]; total: number }>> {
   try {
-    if (!process.env.NAVER_CLIENT_ID || !process.env.NAVER_CLIENT_SECRET) {
-      return serviceInternalError(
-        new Error("Naver API credentials are missing")
-      );
+    const params = new URLSearchParams({ query: name, size: "15" });
+    if (x && y) {
+      params.set("x", x);
+      params.set("y", y);
+      params.set("radius", "20000");
     }
 
-    const apiUrl = `https://openapi.naver.com/v1/search/local.json?query=${encodeURIComponent(name)}&display=20&sort=random`;
-
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
-        "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
+    const response = await fetch(
+      `https://dapi.kakao.com/v2/local/search/keyword.json?${params}`,
+      {
+        headers: {
+          Authorization: `KakaoAK ${process.env.KAKAO_MAP_REST_KEY}`,
+          KA: "sdk/1.0 os/nodejs",
+        },
       },
-    });
-
-    if (!response.ok) {
-      return serviceInternalError(
-        new Error(`Naver API error: ${response.status}`)
-      );
-    }
+    );
 
     const data = await response.json();
 
-    if (!data.items || data.items.length === 0) {
-      return serviceSuccess({ stores: [], total: 0 });
+    if (!response.ok || !data.documents) {
+      console.error("[Kakao Local API Error]", response.status, data);
+      return serviceInternalError(
+        new Error(data?.message ?? data?.msg ?? JSON.stringify(data)),
+      );
     }
 
-    const stores: Store[] = data.items.map((item: NaverLocalItem) => ({
-      name: item.title?.replace(/<[^>]*>/g, "") || "Unknown",
-      address: item.address || "",
-      roadAddress: item.roadAddress || "",
-      telephone: item.telephone || "",
-      x: item.mapx || "0",
-      y: item.mapy || "0",
-      category: item.category || "",
-      link: item.link || "",
-    }));
+    const stores: Store[] = (data.documents as KakaoLocalDocument[])
+      .filter(
+        (doc) =>
+          (doc.category_name.includes("가정,생활") &&
+            doc.category_name.includes("향수")) ||
+          doc.category_name.includes("화장품"),
+      )
+      .map((doc) => ({
+        name: doc.place_name,
+        address: doc.address_name,
+        roadAddress: doc.road_address_name,
+        telephone: doc.phone,
+        x: doc.x,
+        y: doc.y,
+        category: doc.category_name,
+        categoryGroupCode: doc.category_group_code || "없음",
+        distance: doc.distance ? Number(doc.distance) : undefined,
+      }));
 
-    if (coords) {
-      const userLat = parseFloat(coords.y);
-      const userLng = parseFloat(coords.x);
+    return serviceSuccess({ stores, total: stores.length });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
 
-      stores.forEach((store) => {
-        const storeLat = parseInt(store.y) / 10000000;
-        const storeLng = parseInt(store.x) / 10000000;
+interface KakaoRegionDocument {
+  region_type: string; // "B" (법정동) | "H" (행정동)
+  address_name: string;
+  region_1depth_name: string; // 시/도
+  region_2depth_name: string; // 구/군
+  region_3depth_name: string; // 동/읍/면
+  region_4depth_name: string; // 리
+  code: string;
+  x: number;
+  y: number;
+}
 
-        const R = 6371;
-        const dLat = ((storeLat - userLat) * Math.PI) / 180;
-        const dLng = ((storeLng - userLng) * Math.PI) / 180;
-        const a =
-          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-          Math.cos((userLat * Math.PI) / 180) *
-            Math.cos((storeLat * Math.PI) / 180) *
-            Math.sin(dLng / 2) *
-            Math.sin(dLng / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        store.distance = Math.round(R * c * 1000);
-      });
+export async function getRegionByCoordService(
+  x?: string,
+  y?: string,
+): Promise<ServiceResult<KakaoRegionDocument[]>> {
+  if (!x || !y) {
+    return serviceInternalError(new Error("x, y 좌표가 필요합니다."));
+  }
 
-      stores.sort((a, b) => (a.distance ?? 0) - (b.distance ?? 0));
+  try {
+    const params = new URLSearchParams({ x, y });
+    const response = await fetch(
+      `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?${params}`,
+      {
+        headers: {
+          Authorization: `KakaoAK ${process.env.KAKAO_MAP_REST_KEY}`,
+          KA: "sdk/1.0 os/nodejs",
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.documents) {
+      console.error("[Kakao coord2regioncode Error]", response.status, data);
+      return serviceInternalError(
+        new Error(data?.message ?? data?.msg ?? JSON.stringify(data)),
+      );
     }
 
-    return serviceSuccess({ stores, total: data.total });
+    return serviceSuccess(data.documents as KakaoRegionDocument[]);
   } catch (error) {
     return serviceInternalError(error);
   }

@@ -8,16 +8,15 @@ import {
 } from "../brand.service";
 
 /**
- * Brand 서비스 테스트 (MVP)
+ * Brand 서비스 테스트
  *
  * 테스트 전략:
  * - 브랜드 CRUD 핵심 로직 검증
  * - nameKo null 시 nameEn 대체 로직 확인
- * - 네이버 API 호출 및 거리 계산 검증
+ * - 카카오 로컬 검색 API 호출 및 카테고리 필터링 검증
  * - 에러 처리 검증
  */
 
-// Mock Prisma
 vi.mock("@/server/prisma", () => ({
   prisma: {
     brand: {
@@ -39,9 +38,16 @@ vi.mock("../../repositories/brand.repository", () => ({
   },
   parseMapLocation: vi.fn((location) => {
     if (location === null) return null;
-    if (typeof location === "object" && location !== null && !Array.isArray(location)) {
+    if (
+      typeof location === "object" &&
+      location !== null &&
+      !Array.isArray(location)
+    ) {
       const obj = location as Record<string, unknown>;
-      if (typeof obj.latitude === "number" && typeof obj.longitude === "number") {
+      if (
+        typeof obj.latitude === "number" &&
+        typeof obj.longitude === "number"
+      ) {
         return { latitude: obj.latitude, longitude: obj.longitude };
       }
     }
@@ -74,7 +80,9 @@ describe("Brand Service", () => {
     });
 
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.mocked(prisma.brand.findMany).mockRejectedValue(new Error("Database error"));
+      vi.mocked(prisma.brand.findMany).mockRejectedValue(
+        new Error("Database error"),
+      );
 
       const result = await getAllBrandsService();
 
@@ -130,7 +138,9 @@ describe("Brand Service", () => {
     });
 
     it("mapLocation이 있으면 파싱하여 반환해야 한다", async () => {
-      const { parseMapLocation } = await import("../../repositories/brand.repository");
+      const { parseMapLocation } = await import(
+        "../../repositories/brand.repository"
+      );
       const mockBrand = {
         id: "brand-1",
         nameEn: "Test Brand",
@@ -160,7 +170,9 @@ describe("Brand Service", () => {
     });
 
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.mocked(prisma.brand.findUnique).mockRejectedValue(new Error("Database error"));
+      vi.mocked(prisma.brand.findUnique).mockRejectedValue(
+        new Error("Database error"),
+      );
 
       const result = await getBrandByIdService("brand-1");
 
@@ -205,7 +217,9 @@ describe("Brand Service", () => {
     });
 
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.mocked(prisma.brand.findUnique).mockRejectedValue(new Error("Database error"));
+      vi.mocked(prisma.brand.findUnique).mockRejectedValue(
+        new Error("Database error"),
+      );
 
       const result = await getBrandByNameService("테스트 브랜드");
 
@@ -217,88 +231,166 @@ describe("Brand Service", () => {
   });
 
   describe("getStoresByNameService", () => {
-    const mockNaverResponse = {
-      total: 3,
-      items: [
-        {
-          title: "<b>샤넬</b> 명동",
-          address: "서울 중구 명동길 1",
-          roadAddress: "서울 중구 명동길 1",
-          telephone: "02-1234-5678",
-          mapx: "1269780000",
-          mapy: "375665000",
-          category: "쇼핑,화장품",
-          link: "https://chanel.com",
-        },
-        {
-          title: "샤넬 강남",
-          address: "서울 강남구 압구정로 1",
-          roadAddress: "서울 강남구 압구정로 1",
-          telephone: "02-9876-5432",
-          mapx: "1270540000",
-          mapy: "373936000",
-          category: "쇼핑,화장품",
-          link: "",
-        },
-      ],
-    };
+    const perfumeStoreDocs = [
+      {
+        place_name: "딥티크 명동",
+        address_name: "서울 중구 명동길 1",
+        road_address_name: "서울 중구 명동길 1",
+        phone: "02-1234-5678",
+        x: "126.978",
+        y: "37.5665",
+        category_name: "가정,생활 > 향수",
+        category_group_code: "HP8",
+        distance: "500",
+      },
+      {
+        place_name: "딥티크 강남",
+        address_name: "서울 강남구 압구정로 1",
+        road_address_name: "서울 강남구 압구정로 1",
+        phone: "02-9876-5432",
+        x: "127.054",
+        y: "37.394",
+        category_name: "화장품",
+        category_group_code: "HP8",
+        distance: "",
+      },
+    ];
+
+    const makeKakaoResponse = (documents: typeof perfumeStoreDocs) => ({
+      meta: { total_count: documents.length },
+      documents,
+    });
 
     beforeEach(() => {
-      // 환경변수 설정
-      process.env.NAVER_CLIENT_ID = "test-client-id";
-      process.env.NAVER_CLIENT_SECRET = "test-client-secret";
+      process.env.KAKAO_MAP_REST_KEY = "test-kakao-key";
 
-      // global fetch mock
       vi.stubGlobal(
         "fetch",
         vi.fn().mockResolvedValue({
           ok: true,
-          json: vi.fn().mockResolvedValue(mockNaverResponse),
-        })
+          json: vi.fn().mockResolvedValue(makeKakaoResponse(perfumeStoreDocs)),
+        }),
       );
     });
 
     afterEach(() => {
       vi.unstubAllGlobals();
-      delete process.env.NAVER_CLIENT_ID;
-      delete process.env.NAVER_CLIENT_SECRET;
+      delete process.env.KAKAO_MAP_REST_KEY;
     });
 
-    it("네이버 API를 호출하고 매장 목록을 반환해야 한다", async () => {
-      const result = await getStoresByNameService("샤넬");
+    it("카카오 로컬 검색 API를 호출하고 매장 목록을 반환해야 한다", async () => {
+      const result = await getStoresByNameService("딥티크");
 
       expect(result.success).toBe(true);
       if (result.success) {
         expect(result.data.stores).toHaveLength(2);
-        expect(result.data.total).toBe(3);
-        // HTML 태그 제거 확인
-        expect(result.data.stores[0].name).toBe("샤넬 명동");
+        expect(result.data.total).toBe(2);
+        expect(result.data.stores[0].name).toBe("딥티크 명동");
       }
     });
 
-    it("coords가 제공되면 거리순 정렬이 적용되어야 한다", async () => {
-      // 강남점 근처 좌표 (decimal 형식, service에서 parseFloat으로 파싱)
-      const coords = { x: "127.054", y: "37.3936" };
+    it("x, y 좌표가 제공되면 radius 파라미터를 포함하여 API를 호출해야 한다", async () => {
+      await getStoresByNameService("딥티크", "127.054", "37.394");
 
-      const result = await getStoresByNameService("샤넬", coords);
+      const fetchCall = vi.mocked(fetch).mock.calls[0];
+      const url = fetchCall[0] as string;
+
+      expect(url).toContain("x=127.054");
+      expect(url).toContain("y=37.394");
+      expect(url).toContain("radius=20000");
+    });
+
+    it("x, y 좌표가 없으면 radius 파라미터를 포함하지 않아야 한다", async () => {
+      await getStoresByNameService("딥티크");
+
+      const fetchCall = vi.mocked(fetch).mock.calls[0];
+      const url = fetchCall[0] as string;
+
+      expect(url).not.toContain("radius");
+    });
+
+    it("카테고리 필터링 — '가정,생활' + '향수' 조합이 포함된 매장을 반환해야 한다", async () => {
+      const docs = [
+        {
+          ...perfumeStoreDocs[0],
+          category_name: "가정,생활 > 향수 > 니치향수",
+        },
+        {
+          ...perfumeStoreDocs[0],
+          place_name: "필터 제외 매장",
+          category_name: "음식점 > 카페",
+        },
+      ];
+
+      vi.mocked(fetch).mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(makeKakaoResponse(docs)),
+      } as never);
+
+      const result = await getStoresByNameService("딥티크");
 
       expect(result.success).toBe(true);
       if (result.success) {
-        // distance 필드가 추가되어야 함
-        expect(result.data.stores[0]).toHaveProperty("distance");
-        // 강남에서 가까운 강남점이 먼저 와야 함
-        expect(result.data.stores[0].name).toBe("샤넬 강남");
+        expect(result.data.stores).toHaveLength(1);
+        expect(result.data.stores[0].name).toBe("딥티크 명동");
+      }
+    });
+
+    it("카테고리 필터링 — '화장품'이 포함된 매장을 반환해야 한다", async () => {
+      const docs = [
+        {
+          ...perfumeStoreDocs[0],
+          place_name: "화장품 매장",
+          category_name: "쇼핑 > 화장품",
+        },
+        {
+          ...perfumeStoreDocs[0],
+          place_name: "필터 제외 매장",
+          category_name: "음식점 > 레스토랑",
+        },
+      ];
+
+      vi.mocked(fetch).mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(makeKakaoResponse(docs)),
+      } as never);
+
+      const result = await getStoresByNameService("딥티크");
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.stores).toHaveLength(1);
+        expect(result.data.stores[0].name).toBe("화장품 매장");
+      }
+    });
+
+    it("distance가 빈 문자열이면 undefined로 변환해야 한다", async () => {
+      const result = await getStoresByNameService("딥티크");
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const gangnам = result.data.stores.find((s) => s.name === "딥티크 강남");
+        expect(gangnам?.distance).toBeUndefined();
+      }
+    });
+
+    it("distance가 있으면 숫자로 변환해야 한다", async () => {
+      const result = await getStoresByNameService("딥티크");
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const myeongdong = result.data.stores.find(
+          (s) => s.name === "딥티크 명동",
+        );
+        expect(myeongdong?.distance).toBe(500);
       }
     });
 
     it("검색 결과가 없으면 빈 배열을 반환해야 한다", async () => {
-      vi.stubGlobal(
-        "fetch",
-        vi.fn().mockResolvedValue({
-          ok: true,
-          json: vi.fn().mockResolvedValue({ total: 0, items: [] }),
-        })
-      );
+      vi.mocked(fetch).mockResolvedValue({
+        ok: true,
+        json: vi.fn().mockResolvedValue(makeKakaoResponse([])),
+      } as never);
 
       const result = await getStoresByNameService("존재하지않는브랜드");
 
@@ -309,28 +401,14 @@ describe("Brand Service", () => {
       }
     });
 
-    it("NAVER API 자격증명이 없으면 INTERNAL_ERROR를 반환해야 한다", async () => {
-      delete process.env.NAVER_CLIENT_ID;
-      delete process.env.NAVER_CLIENT_SECRET;
+    it("카카오 API 응답 오류 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+      vi.mocked(fetch).mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: vi.fn().mockResolvedValue({ msg: "unauthorized" }),
+      } as never);
 
-      const result = await getStoresByNameService("샤넬");
-
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBe("INTERNAL_ERROR");
-      }
-    });
-
-    it("네이버 API 응답 오류 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.stubGlobal(
-        "fetch",
-        vi.fn().mockResolvedValue({
-          ok: false,
-          status: 500,
-        })
-      );
-
-      const result = await getStoresByNameService("샤넬");
+      const result = await getStoresByNameService("딥티크");
 
       expect(result.success).toBe(false);
       if (!result.success) {
@@ -339,9 +417,9 @@ describe("Brand Service", () => {
     });
 
     it("네트워크 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("Network error")));
+      vi.mocked(fetch).mockRejectedValue(new Error("Network error"));
 
-      const result = await getStoresByNameService("샤넬");
+      const result = await getStoresByNameService("딥티크");
 
       expect(result.success).toBe(false);
       if (!result.success) {

@@ -1,15 +1,14 @@
 import { cache } from "react";
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import getQueryClient from "@/client/utils/getQueryClient";
 import { brandApi } from "@/client/utils/api/brands.api";
 import { perfumeApi } from "@/client/utils/api/perfumes.api";
-import { BrandDetailImage } from "@/components/domains/brandDetail/image";
-import { BrandDetailInfo } from "@/components/domains/brandDetail/info";
+import { BrandDetailTitle } from "@/components/domains/brandDetail/title";
 import { PageClient } from "@/components/domains/brandDetail/perfumes/PageClient";
 import { BrandDetailSearchBar } from "@/components/domains/brandDetail/searchBar";
-import { notFound } from "next/navigation";
-import { BrandMap } from "@/components/domains/brandDetail/map";
+import BrandDetailTabs from "@/components/domains/brandDetail/Tabs";
 import { generateSeo } from "@/shared/utils/generateSeo";
 
 type Props = {
@@ -85,24 +84,26 @@ export default async function BrandDetailPage({
     ]);
 
     const brandUrl = brandData.brandUrl;
-    const brandStores = `https://map.naver.com/p/search/${brandData.nameKo}`;
     const brandImages = {
-      src: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&h=400&q=80",
-      alt: "1",
+      src:
+        brandData.imageUrl ??
+        "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&h=400&q=80",
+      alt: brandData.nameKo ?? brandData.nameEn,
     };
 
     return (
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div className="flex flex-col items-center justify-centers w-full">
           <BrandDetailSearchBar />
-          <BrandDetailInfo
+          <BrandDetailTitle
             brandName={`${brandData.nameKo} ${brandData.nameEn}`}
-            brandDescription={brandData.description ?? ""}
-            brandUrl={brandUrl ?? ""}
-            brandStores={brandStores}
           />
-          <BrandDetailImage images={brandImages} />
-          <BrandMap />
+          <BrandDetailTabs
+            images={brandImages}
+            brandName={brandData.nameKo ?? brandData.nameEn}
+            brandDescription={brandData.description ?? "소개글이 없습니다."}
+            brandUrl={brandUrl ?? ""}
+          />
           <PageClient brandName={brandData.nameEn ?? ""} />
         </div>
       </HydrationBoundary>

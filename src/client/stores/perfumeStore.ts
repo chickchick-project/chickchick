@@ -46,7 +46,7 @@ export function createRecentItemsStore<T>({
           const currentItems = get().items;
 
           const filteredItems = currentItems.filter(
-            (item) => item.id !== newItem.id
+            (item) => item.id !== newItem.id,
           );
 
           const newItemWithTimestamp: GenericRecentItem<T> = {
@@ -73,8 +73,8 @@ export function createRecentItemsStore<T>({
             state._hasHydrated = true;
           }
         },
-      }
-    )
+      },
+    ),
   );
 }
 
@@ -93,12 +93,9 @@ interface FilterStore {
 
   closeFilter: (id: string) => void;
   resetFilters: () => void;
-
-  // 레거시 호환성
-  filters: Record<string, string[]>;
 }
 
-export const useFilterStore = create<FilterStore>((set, get) => ({
+export const useFilterStore = create<FilterStore>((set) => ({
   committedFilters: {},
   pendingFilters: {},
 
@@ -210,11 +207,6 @@ export const useFilterStore = create<FilterStore>((set, get) => ({
       committedFilters: {},
       pendingFilters: {},
     }),
-
-  // 레거시 호환성
-  get filters() {
-    return get().committedFilters;
-  },
 }));
 
 // ─── Recent Perfumes ──────────────────────────────────────────────────────────
@@ -233,7 +225,7 @@ export const useRecentPerfumesStore = createRecentItemsStore<RecentPerfumeData>(
     name: "recent-perfumes",
     maxItems: 10,
     type: "perfume",
-  }
+  },
 );
 
 // ─── Recent Posts ─────────────────────────────────────────────────────────────
@@ -257,7 +249,7 @@ type StoreWithAddItem<T> = UseBoundStore<
 
 export function useLogRecentItem<T extends { id: string }>(
   item: T | null | undefined,
-  useStore: StoreWithAddItem<T>
+  useStore: StoreWithAddItem<T>,
 ) {
   const addItem = useStore((state) => state.addItem);
 

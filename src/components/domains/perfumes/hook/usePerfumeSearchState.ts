@@ -35,11 +35,17 @@ export const usePerfumeSearchState = (
   // 검색어에 포함된 브랜드명을 찾는 로직
   const matchedBrand = useMemo(() => {
     if (!searchKeyword) return null;
-    const keywordWords = searchKeyword.toLowerCase().split(" ");
-    const match = brands.find((brand) =>
-      keywordWords.includes(brand.nameEn.toLowerCase())
-    );
-    return match ? match.nameEn : null;
+    const keyword = searchKeyword.toLowerCase();
+    const match = brands.find((brand) => {
+      const nameEn = brand.nameEn.toLowerCase();
+      const nameKo = brand.nameKo?.toLowerCase() ?? "";
+      return (
+        keyword.includes(nameEn) ||
+        nameEn.includes(keyword) ||
+        (nameKo && (keyword.includes(nameKo) || nameKo.includes(keyword)))
+      );
+    });
+    return match ?? null;
   }, [searchKeyword, brands]);
 
   const clearSearchKeyword = () => {
@@ -54,5 +60,5 @@ export const usePerfumeSearchState = (
     handleChange,
     handleSubmit,
     clearSearchKeyword,
-  };
+  } as const;
 };

@@ -71,6 +71,7 @@ export const StoreSchema = z
     x: z.string(),
     y: z.string(),
     category: z.string().optional(),
+    categoryGroupCode: z.string().optional(),
     link: z.string().optional(),
     distance: z.number().optional(),
   })

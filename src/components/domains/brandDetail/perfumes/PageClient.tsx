@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import {
   usePerfumeNoteFilter,
   usePerfumeAccordFilter,
@@ -47,7 +46,7 @@ export const PageClient = ({ brandName }: { brandName: string }) => {
       />
       <main className="flex flex-col w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-end items-center mb-5">
-          <SortDropdown type="perfume" onSortChange={() => {}} />
+          {/* <SortDropdown type="perfume" onSortChange={() => {}} /> */}
         </div>
         <PerfumeSection
           perfumes={uniquePerfumes}

@@ -108,16 +108,14 @@ routers.optionalAuth.openapi(getBrandByNameRoute, async (c) => {
 /**
  * @method GET
  * @path /stores/:name
- * @description 네이버 지역 검색 API를 통해 브랜드 매장 목록을 조회합니다.
+ * @description 카카오 로컬 검색 API를 통해 브랜드 매장 목록을 조회합니다.
  * @summary 브랜드 매장 검색
  */
 publicRouter.get("/stores/:name", async (c) => {
   const name = c.req.param("name");
-  const x = c.req.query("x");
-  const y = c.req.query("y");
+  const { x, y } = c.req.query();
 
-  const coords = x && y ? { x, y } : undefined;
-  const result = await BrandServices.getStoresByNameService(name, coords);
+  const result = await BrandServices.getStoresByNameService(name, x, y);
 
   if (!result.success) {
     return apiInternalError(c, result.message);
@@ -127,6 +125,24 @@ publicRouter.get("/stores/:name", async (c) => {
     { success: true, stores: result.data.stores, total: result.data.total },
     200
   );
+});
+
+/**
+ * @method GET
+ * @path /location
+ * @description 좌표를 지역 정보로 변환합니다.
+ * @summary 좌표 → 지역 정보 변환
+ */
+publicRouter.get("/location", async (c) => {
+  const { x, y } = c.req.query();
+
+  const result = await BrandServices.getRegionByCoordService(x, y);
+
+  if (!result.success) {
+    return apiInternalError(c, result.message);
+  }
+
+  return c.json({ success: true, region: result.data }, 200);
 });
 
 export default routers.merge();
