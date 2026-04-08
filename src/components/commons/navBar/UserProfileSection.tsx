@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { NAV_LABELS } from "./navBar.constants";
 import ICONS from "@/shared/constants/icons";
 import { NavDropdown } from "./Dropdown";
@@ -9,7 +9,7 @@ import { useModalStore, MODAL_KEYS } from "@/client/stores/uiStore";
 
 const UserProfileSection = () => {
   const navBarRef = useRef<HTMLDivElement | null>(null);
-  const { user, isLoading } = useUserStore();
+  const { user, isLoading } = useCurrentUser();
   const { openModal } = useModalStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 

@@ -14,7 +14,7 @@ import {
   DetailReviewSection,
 } from "./components/sections";
 import { useReviewSubmit } from "./useReviewSubmit";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { CreateReviewClientSchema, type CreateReviewClientInput } from "./reviewSchema.client";
 import { SubmitButton } from "./components/button/SubmitButton";
 import { PerfumeUsageStatus } from "@prisma/client";
@@ -27,7 +27,7 @@ interface IReviewModalProps {
 //  1. 무작위로 선택되는대로 보여주기
 //  2. 각 섹션 순서대로 보여주기 => tags 내부에 새로운 배열 필요할 듯
 export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
-  const { user } = useUserStore();
+  const { user } = useCurrentUser();
 
   // 리뷰 제출 로직
   const { onSubmit } = useReviewSubmit(closeModal);

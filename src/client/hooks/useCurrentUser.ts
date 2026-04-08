@@ -10,7 +10,7 @@ interface UserState {
   reset: () => void;
 }
 
-export const useUserStore = (): UserState => {
+export const useCurrentUser = (): UserState => {
   const { status } = useSession();
   const isAuthenticated = status === "authenticated";
 

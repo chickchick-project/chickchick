@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { ReviewModal } from "@/components/modal/reviewModal";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { calculateReviewCounts } from "./analytics.helpers";
 import { ReviewAnalyticsProps } from "../review.type";
 
@@ -30,7 +30,7 @@ const ReviewMobileSection = dynamic(() => import("./ReviewMobileSection"), {
 export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const { user } = useUserStore();
+  const { user } = useCurrentUser();
   const isReviewed = data.some((review) => review.author.id === user?.id);
   const counts = useMemo(() => calculateReviewCounts(data), [data]);
 

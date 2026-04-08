@@ -1,7 +1,7 @@
 "use client";
 
 import { useCommunityPostForEdit } from "@/client/hooks/query/useCommunityQuery";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import {
   useDraft,
   useDraftByPostId,
@@ -17,7 +17,7 @@ interface PostFormPageProps {
 }
 
 export default function PageClient({ type, postId }: PostFormPageProps) {
-  const { user, isLoading: isAuthLoading } = useUserStore();
+  const { user, isLoading: isAuthLoading } = useCurrentUser();
   const searchParams = useSearchParams();
   const draftId = searchParams.get("draftId");
   const skipDraftCheck = searchParams.get("skipDraftCheck") === "true";

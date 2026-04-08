@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { logout } from "@/server/database/action/login";
 
 interface DropdownProps {
@@ -20,7 +20,7 @@ interface DropdownFooterItem {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
-  const { user, reset } = useUserStore();
+  const { user, reset } = useCurrentUser();
   const queryClient = useQueryClient();
 
   if (!parentRef.current) return null;

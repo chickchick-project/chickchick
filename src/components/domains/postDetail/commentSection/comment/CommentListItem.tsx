@@ -5,7 +5,7 @@ import {
   CommentResponse,
 } from "@/server/hono/schemas/comment.schema";
 import { useCommentMutation } from "@/client/hooks/query/useCommentQuery";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 
 import { CommentAuthInfo } from "./CommentAuthInfo";
 import CommentForm from "./CommentForm";
@@ -31,7 +31,7 @@ export default function CommentListItem({
     replyingCommentId,
     setReplyingCommentId,
   } = commentActionState;
-  const { user } = useUserStore();
+  const { user } = useCurrentUser();
   const {
     id,
     author,

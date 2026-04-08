@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { getVisibleTabs } from "./tabs.helper";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { MobileTabsAccordion } from "./MobileTabsAccordion";
 import { FloatingActionButton } from "../components/FAB";
 
@@ -18,7 +18,7 @@ const MainTabs = ({
   onAddPhotoClick: () => void;
   children?: React.ReactNode;
 }) => {
-  const { user } = useUserStore();
+  const { user } = useCurrentUser();
   const tabItems = getVisibleTabs(isMe, user?.nickname);
   const isCollectionTab = isMe && tab === "collection";
 

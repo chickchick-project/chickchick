@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { useRecentItemsSync } from "@/client/hooks/useRecentItemsSync";
 import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
 import { useRecentPostsStore } from "@/client/stores/perfumeStore";
-import { useUserStore } from "@/client/stores/useUserStore";
+import { useCurrentUser } from "@/client/hooks/useCurrentUser";
 import { pointApi } from "@/client/utils/api/points.api";
 
 function RecentSyncManager() {
-  const { user, isLoading } = useUserStore();
+  const { user, isLoading } = useCurrentUser();
 
   // 로그인 상태가 확정된 후에만 동기화 활성화
   const shouldSync = !isLoading && user !== null;
