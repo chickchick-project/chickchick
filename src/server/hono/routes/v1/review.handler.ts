@@ -3,7 +3,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import * as CommonSchemas from "@/server/hono/schemas/common.schema";
 import * as ReviewSchemas from "@/server/hono/schemas/review.schema";
 
-import * as ReviewServices from "@/server/hono/services/review.service";
+import * as ReviewServices from "@/server/hono/services/review";
 
 import {
   apiBadRequest,

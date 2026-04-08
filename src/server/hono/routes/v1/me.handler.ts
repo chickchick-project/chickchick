@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import * as MeSchemas from "@/server/hono/schemas/me.schema";
-import * as MeServices from "@/server/hono/services/me.service";
+import * as MeServices from "@/server/hono/services/me";
 import {
   apiBadRequest,
   apiForbidden,

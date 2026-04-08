@@ -20,7 +20,7 @@ import {
 } from "../schemas/comment.schema";
 import { createCursorPaginationResult } from "../utils/pagination.utils";
 import { commentIncludeArgs, CommentWithReplies } from "../repositories/comment.repository";
-import { earnPointsService } from "./point.service";
+import { earnPointsService } from "./point";
 
 const commentWithRepliesArgs = { include: commentIncludeArgs };
 

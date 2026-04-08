@@ -1,6 +1,6 @@
 import { createRoute } from "@hono/zod-openapi";
 import * as PointSchemas from "@/server/hono/schemas/point.schema";
-import * as PointServices from "@/server/hono/services/point.service";
+import * as PointServices from "@/server/hono/services/point";
 import {
   apiBadRequest,
   apiInternalError,

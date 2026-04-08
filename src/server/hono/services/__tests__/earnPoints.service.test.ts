@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { earnPointsService } from "../point.service";
+import { earnPointsService } from "../point";
 import { prisma } from "@/server/prisma";
 import { PointActivityType } from "@prisma/client";
 

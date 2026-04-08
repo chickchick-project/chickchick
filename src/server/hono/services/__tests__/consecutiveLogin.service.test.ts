@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { processConsecutiveLoginService } from "../point.service";
+import { processConsecutiveLoginService } from "../point";
 import { prisma } from "@/server/prisma";
 import dayjs from "dayjs";
 

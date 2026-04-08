@@ -9,7 +9,7 @@ import {
   togglePostLikeService,
   togglePostBookmarkService,
   getPaginatedPostListService,
-} from "../community.service";
+} from "../community";
 import { getTestData } from "./helpers/community.test.helpers";
 
 // Prisma Interactive Transaction 타입 정의

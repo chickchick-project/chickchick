@@ -10,7 +10,7 @@ import {
   getReviewsByPerfumeIdService,
   getPaginatedReviewsByPerfumeIdService,
   getOneRandomPopularReviewService,
-} from "../review.service";
+} from "../review";
 
 // Prisma Interactive Transaction 타입 정의
 type PrismaTransactionClient = Omit<

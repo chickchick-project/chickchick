@@ -16,7 +16,7 @@ import {
   getMyReviewsService,
   getMyPostsService,
   getMyCommentsService,
-} from "../me.service";
+} from "../me";
 import { getTestData } from "./helpers/me.test.helpers";
 
 /**

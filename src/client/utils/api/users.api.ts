@@ -1,6 +1,6 @@
 import { apiClient } from "./client";
 import { fileApi } from "./files.api";
-import { MyComment } from "@/server/hono/services/me.service";
+import { MyComment } from "@/server/hono/services/me";
 import {
   ApiResponse,
   ApiSuccessResponse,

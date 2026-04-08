@@ -6,7 +6,7 @@ import {
   getPointHistoryService,
   getUserPointsService,
   getPointStatisticsService,
-} from "../point.service";
+} from "../point";
 
 // Mock prisma (validateTimestamp는 순수 함수라 영향 없음)
 vi.mock("@/server/prisma", () => ({

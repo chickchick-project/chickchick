@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { PostCategory } from "@prisma/client";
 import * as CommunitySchemas from "@/server/hono/schemas/community.schema";
-import * as CommunityServices from "@/server/hono/services/community.service";
+import * as CommunityServices from "@/server/hono/services/community";
 import {
   apiBadRequest,
   apiNotFound,
