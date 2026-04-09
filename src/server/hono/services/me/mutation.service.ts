@@ -4,6 +4,7 @@ import {
   serviceSuccess,
   serviceInternalError,
   serviceNotFound,
+  serviceError,
 } from "@/server/result";
 import {
   ApiMyProfileResponse,
@@ -89,6 +90,47 @@ export async function syncRecentPostsService(payload: {
     }
 
     return serviceSuccess({ syncedCount: postIds.length });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+/**
+ * 내 계정을 탈퇴 처리합니다 (소프트 삭제).
+ */
+export async function deleteMyAccountService(
+  userId: string
+): Promise<ServiceResult<{ message: string }>> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, isActive: true, imageUrl: true, nickname: true },
+    });
+
+    if (!user) {
+      return serviceNotFound("사용자를 찾을 수 없습니다.");
+    }
+
+    if (!user.isActive) {
+      return serviceError("BAD_REQUEST", "이미 탈퇴한 계정입니다.");
+    }
+
+    if (user.imageUrl && user.imageUrl.includes(PROFILE_BUCKET_NAME)) {
+      await deleteImageByUrl(PROFILE_BUCKET_NAME, user.imageUrl);
+    }
+
+    const now = new Date();
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        isActive: false,
+        deletedAt: now,
+        imageUrl: null,
+        nickname: `${user.nickname}_deleted_${now.getTime()}`,
+      },
+    });
+
+    return serviceSuccess({ message: "회원 탈퇴가 완료되었습니다." });
   } catch (error) {
     return serviceInternalError(error);
   }

@@ -559,4 +559,38 @@ routers.authenticated.openapi(getRecentPostsRoute, async (c) => {
   );
 });
 
+/**
+ * @method delete
+ * @path /me
+ * @summary 회원 탈퇴
+ */
+const deleteMyAccountRoute = createRoute({
+  method: "delete",
+  path: "/",
+  summary: "회원 탈퇴",
+  responses: createStandardApiResponses({
+    schema: z.object({ message: z.string() }),
+  }),
+  tags: ["Me"],
+});
+
+routers.authenticated.openapi(deleteMyAccountRoute, async (c) => {
+  const user = c.get("user");
+  if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
+
+  const result = await MeServices.deleteMyAccountService(user.id);
+
+  if (!result.success) {
+    switch (result.error) {
+      case "NOT_FOUND":
+        return apiNotFound(c, result.message);
+      case "BAD_REQUEST":
+        return apiBadRequest(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
+    }
+  }
+  return apiSuccess(c, result.data, result.data.message);
+});
+
 export default routers.merge();

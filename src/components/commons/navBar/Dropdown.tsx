@@ -1,12 +1,13 @@
+"use client";
+
 import React from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { useQueryClient } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
 import { useCurrentUser } from "@/client/hooks/useCurrentUser";
-import { logout } from "@/server/database/action/login";
 
 interface DropdownProps {
   onClose: () => void;
@@ -20,8 +21,7 @@ interface DropdownFooterItem {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
-  const { user, reset } = useCurrentUser();
-  const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
 
   if (!parentRef.current) return null;
 
@@ -29,17 +29,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   const navItems = getMyPageNavItems(user!.id);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-
-      reset();
-
-      queryClient.clear();
-
-      window.location.reload();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    await signOut({ redirectTo: "/" });
   };
 
   const NAV_ITEMS_FOOTER: DropdownFooterItem[] = [
@@ -103,13 +93,13 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
 const renderNavItem = (
   item: ReturnType<typeof getMyPageNavItems>[number],
-  onClose: () => void
+  onClose: () => void,
 ) => (
   <Link
     href={item.href}

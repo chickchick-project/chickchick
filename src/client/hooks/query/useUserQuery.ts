@@ -4,28 +4,43 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { meApi, userApi, USER_ID_REGEX } from "../../utils/api/users.api";
 import { queryKeys } from "../../utils/queryKeys";
 import type { ApiUpdateMyProfileRequest } from "@/server/hono/schemas/me.schema";
 
 // 내 프로필 조회
 export const useUserProfile = (options?: { enabled?: boolean }) => {
+  const { data: session, status } = useSession();
+  const userId = session?.user?.id ?? "me";
+
+  // status === "authenticated" 까지 명시적으로 확인해야
+  // "loading" 중 이전 세션 userId로 쿼리가 실행되는 레이스 컨디션을 방지한다.
+  const isReady =
+    status === "authenticated" && userId !== "me";
+
   return useQuery({
-    queryKey: queryKeys.user.profile("me"),
+    queryKey: queryKeys.user.profile(userId),
     queryFn: async () => {
+      console.log(`[PROFILE][fetch] 쿼리 실행 — queryKey=["user","profile","${userId}"]`);
       try {
         const response = await meApi.profile.get();
-        if (!response || !response.success) return null;
+        if (!response || !response.success) {
+          console.warn(`[PROFILE][fetch] 실패 응답 — userId=${userId}`);
+          return null;
+        }
+        console.log(`[PROFILE][fetch] 성공 — userId=${userId} nickname=${response.data.nickname}`);
         return response.data;
       } catch (error) {
         const errorStatus = (error as { status?: number })?.status;
         if (errorStatus === 401 || errorStatus === 403) {
+          console.warn(`[PROFILE][fetch] 인증 실패(${errorStatus}) — userId=${userId}`);
           return null;
         }
         throw error;
       }
     },
-    enabled: options?.enabled ?? true,
+    enabled: (options?.enabled ?? true) && isReady,
     retry: (failureCount, error) => {
       // 401, 403 에러는 재시도하지 않음 (인증 실패)
       const errorStatus = (error as { status?: number })?.status;
@@ -36,7 +51,7 @@ export const useUserProfile = (options?: { enabled?: boolean }) => {
     },
     refetchOnWindowFocus: true, // OAuth 콜백 후 윈도우 포커스 시 재검증
     refetchOnMount: true, // 페이지 이동 후 마운트 시 재검증
-    staleTime: 1000, // 1초 후 stale 처리 (OAuth 콜백 빠른 감지)
+    staleTime: 30 * 1000, // 30초: 너무 짧으면 계정 전환 직후 stale 판정으로 이전 데이터가 순간 노출됨
   });
 };
 
@@ -177,9 +192,20 @@ export const useUpdateProfile = () => {
 
   return useMutation({
     mutationFn: (data: ApiUpdateMyProfileRequest) => meApi.profile.update(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.user.profile("me") });
+    onSuccess: (response) => {
+      if (response?.success && response.data?.id) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.user.profile(response.data.id) });
+      }
     },
+  });
+};
+
+/**
+ * 회원 탈퇴 mutation
+ */
+export const useDeleteAccount = () => {
+  return useMutation({
+    mutationFn: () => meApi.account.delete(),
   });
 };
 

@@ -22,7 +22,7 @@ function objectToQueryString(params: Record<string, unknown>): string {
 }
 
 async function fetchApi<T>(url: string, init?: RequestInit): Promise<T | null> {
-  const response = await fetch(url, init);
+  const response = await fetch(url, { ...init, cache: "no-store" });
 
   if (!response.ok) {
     let errorData: { message?: string } = {};

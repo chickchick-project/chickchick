@@ -188,6 +188,15 @@ export const meApi = {
     },
   },
 
+  account: {
+    /**
+     * 회원 탈퇴
+     */
+    delete: () => {
+      return apiClient.delete<ApiResponse<{ message: string }>>(`/me`);
+    },
+  },
+
   recents: {
     perfumes: {
       /**
