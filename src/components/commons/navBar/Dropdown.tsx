@@ -7,7 +7,7 @@ import Link from "next/link";
 import { signOut } from "next-auth/react";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 
 interface DropdownProps {
   onClose: () => void;
@@ -49,7 +49,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
     <div
       className="absolute bg-white shadow-card rounded-xl z-50 w-[400px] flex flex-col items-center pt-5"
       style={{
-        top: `${headerRect.bottom}px`,
+        top: `${headerRect.bottom + 8}px`,
         right: `${window.innerWidth - headerRect.right}px`,
       }}
     >

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRecentItemsSync } from "@/client/hooks/useRecentItemsSync";
 import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
 import { useRecentPostsStore } from "@/client/stores/perfumeStore";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { pointApi } from "@/client/utils/api/points.api";
 
 function RecentSyncManager() {

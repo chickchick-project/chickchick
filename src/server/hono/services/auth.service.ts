@@ -30,8 +30,8 @@ export async function syncOAuthUserService(
     const { provider, providerAccountId, name, email, imageUrl } = input;
 
     // 1. providerAccountId로 먼저 조회 (같은 소셜 계정으로 재로그인)
-    const oauthAccount = await prisma.userOAuthAccount.findUnique({
-      where: { provider_providerAccountId: { provider, providerAccountId } },
+    const oauthAccount = await prisma.userOAuthAccount.findFirst({
+      where: { provider, providerAccountId },
       include: { user: true },
     });
 
@@ -52,8 +52,8 @@ export async function syncOAuthUserService(
           return serviceSuccess({ id: reactivated.id, isNewUser: false, isLinked: false });
         } else {
           // 탈퇴 후 7일 이상 → OAuth 계정 연결 해제 + email 해제 후 신규 생성
-          await prisma.userOAuthAccount.delete({
-            where: { provider_providerAccountId: { provider, providerAccountId } },
+          await prisma.userOAuthAccount.deleteMany({
+            where: { provider, providerAccountId },
           });
           await prisma.user.update({
             where: { id: user.id },
@@ -96,10 +96,14 @@ export async function syncOAuthUserService(
 
     if (dbUser) {
       // 기존 활성 유저 → 이 소셜 계정을 연결
+      // 이미 연결된 소셜 계정이 있을 때만 알림 표시 (신규 연결임을 명확히 알릴 때)
+      const existingAccountCount = await prisma.userOAuthAccount.count({
+        where: { userId: dbUser.id },
+      });
       await prisma.userOAuthAccount.create({
         data: { userId: dbUser.id, provider, providerAccountId },
       });
-      return serviceSuccess({ id: dbUser.id, isNewUser: false, isLinked: true });
+      return serviceSuccess({ id: dbUser.id, isNewUser: false, isLinked: existingAccountCount > 0 });
     }
 
     // 3. 신규 유저 생성

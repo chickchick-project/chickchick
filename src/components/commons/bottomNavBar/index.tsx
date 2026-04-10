@@ -1,6 +1,6 @@
 "use client";
 
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { BOTTOM_NAV_BAR_ICONS } from "./BottomNavBar.constants";
 import { BottomNavBarIcon } from "./BottomNavBarIcon";
 import { usePathname } from "next/navigation";

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { NAV_LABELS } from "./navBar.constants";
 import ICONS from "@/shared/constants/icons";
 import { NavDropdown } from "./Dropdown";

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ICONS from "@/shared/constants/icons";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { TabItem } from "./tabs.type";
 
 interface MobileTabsAccordionProps {

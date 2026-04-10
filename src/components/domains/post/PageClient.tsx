@@ -1,12 +1,11 @@
 "use client";
 
 import { useCommunityPostForEdit } from "@/client/hooks/query/useCommunityQuery";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
-import {
-  useDraft,
-  useDraftByPostId,
-} from "@/client/hooks/query/useDraftQuery";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
+import { useDraft, useDraftByPostId } from "@/client/hooks/query/useDraftQuery";
+import { usePerfumeDetail } from "@/client/hooks/query/usePerfumeQuery";
 import { useSearchParams } from "next/navigation";
+import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
 
 import PostForm, { PostFormInitialData } from "./form";
 import Header from "./header";
@@ -21,8 +20,10 @@ export default function PageClient({ type, postId }: PostFormPageProps) {
   const searchParams = useSearchParams();
   const draftId = searchParams.get("draftId");
   const skipDraftCheck = searchParams.get("skipDraftCheck") === "true";
+  const perfumeId = searchParams.get("perfumeId");
 
   const { data: post, isError } = useCommunityPostForEdit(postId, type);
+  const { data: prefilledPerfume } = usePerfumeDetail(perfumeId ?? "");
 
   // 수정 모드일 때 해당 postId의 UPDATE draft 조회
   // skipDraftCheck가 true면 draft 조회 비활성화 (삭제 후 바로 수정하는 경우)
@@ -31,7 +32,7 @@ export default function PageClient({ type, postId }: PostFormPageProps) {
 
   // draftId가 명시적으로 전달된 경우 (복원 시)
   const { data: explicitDraft, isLoading: isExplicitDraftLoading } = useDraft(
-    draftId || ""
+    draftId || "",
   );
 
   // 디버깅 로그
@@ -81,15 +82,28 @@ export default function PageClient({ type, postId }: PostFormPageProps) {
         perfumes: draft.perfumes || [], // Draft에서 저장된 향수 정보 사용
       }
     : type === "edit" && post
-    ? {
-        category: post.category,
-        title: post.title,
-        content: post.content,
-        thumbnailUrl: post.thumbnailUrl,
-        contentText: post.contentText,
-        perfumes: post.perfumes || [],
-      }
-    : undefined;
+      ? {
+          category: post.category,
+          title: post.title,
+          content: post.content,
+          thumbnailUrl: post.thumbnailUrl,
+          contentText: post.contentText,
+          perfumes: post.perfumes || [],
+        }
+      : undefined;
+
+  const initialPerfumes: PerfumeForPost[] | undefined =
+    type === "create" && !draft && prefilledPerfume
+      ? [
+          {
+            id: prefilledPerfume.id,
+            nameEn: prefilledPerfume.nameEn,
+            nameKo: prefilledPerfume.nameKo,
+            brand: prefilledPerfume.brand,
+            perfumeImage: prefilledPerfume.perfumeImage ?? null,
+          },
+        ]
+      : undefined;
 
   return (
     <div className="px-4 w-full flex flex-col items-center gap-5 pb-[150px]">
@@ -97,6 +111,7 @@ export default function PageClient({ type, postId }: PostFormPageProps) {
       <PostForm
         type={type}
         initialData={initialData}
+        initialPerfumes={initialPerfumes}
         postId={postId}
         draftId={draft?.id}
       />

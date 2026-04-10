@@ -5,7 +5,7 @@ import {
   CommentResponse,
 } from "@/server/hono/schemas/comment.schema";
 import { useCommentMutation } from "@/client/hooks/query/useCommentQuery";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 
 import { CommentAuthInfo } from "./CommentAuthInfo";
 import CommentForm from "./CommentForm";

@@ -19,7 +19,7 @@ declare module "next-auth" {
 }
 
 const internalFetch = async (path: string, init?: RequestInit) => {
-  const baseUrl = process.env.NEXTAUTH_URL ?? process.env.AUTH_URL;
+  const baseUrl = process.env.AUTH_URL;
   if (!baseUrl)
     throw new Error("NEXTAUTH_URL 또는 AUTH_URL 환경변수가 필요합니다.");
 

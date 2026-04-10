@@ -11,8 +11,11 @@ vi.mock("@/server/prisma", () => ({
     },
     userOAuthAccount: {
       findUnique: vi.fn(),
+      findFirst: vi.fn(),
       create: vi.fn(),
+      count: vi.fn(),
       delete: vi.fn(),
+      deleteMany: vi.fn(),
     },
   },
 }));
@@ -60,7 +63,7 @@ describe("syncOAuthUserService", () => {
 
   describe("OAuth 계정으로 기존 유저 조회 (재로그인)", () => {
     it("providerAccountId로 찾은 활성 유저를 반환해야 한다", async () => {
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue({
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue({
         id: "oauth-001",
         userId: ACTIVE_USER.id,
         provider: "google",
@@ -88,7 +91,7 @@ describe("syncOAuthUserService", () => {
         deletedAt: null,
         nickname: "user_5678",
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue({
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue({
         id: "oauth-002",
         userId: DELETED_USER_RECENT.id,
         provider: "google",
@@ -122,7 +125,7 @@ describe("syncOAuthUserService", () => {
         isActive: true,
         deletedAt: null,
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique)
+      vi.mocked(prisma.userOAuthAccount.findFirst)
         .mockResolvedValueOnce({
           id: "oauth-003",
           userId: DELETED_USER_OLD.id,
@@ -149,8 +152,8 @@ describe("syncOAuthUserService", () => {
         expect(result.data.isNewUser).toBe(true);
         expect(result.data.isLinked).toBe(false);
       }
-      expect(prisma.userOAuthAccount.delete).toHaveBeenCalledWith({
-        where: { provider_providerAccountId: { provider: "google", providerAccountId: "google-uid-001" } },
+      expect(prisma.userOAuthAccount.deleteMany).toHaveBeenCalledWith({
+        where: { provider: "google", providerAccountId: "google-uid-001" },
       });
       expect(prisma.user.update).toHaveBeenCalledWith(
         expect.objectContaining({ data: { email: null } })
@@ -162,8 +165,9 @@ describe("syncOAuthUserService", () => {
 
   describe("email로 기존 유저 조회 (다른 소셜 계정으로 첫 로그인 → 계정 연결)", () => {
     it("OAuth 계정 없고 email로 활성 유저를 찾으면 해당 유저에 OAuth 계정을 연결해야 한다", async () => {
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
+      vi.mocked(prisma.userOAuthAccount.count).mockResolvedValue(1 as never); // 기존 연결 계정 있음
       vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
 
       const result = await syncOAuthUserService(BASE_INPUT);
@@ -172,7 +176,7 @@ describe("syncOAuthUserService", () => {
       if (result.success) {
         expect(result.data.id).toBe("user-001");
         expect(result.data.isNewUser).toBe(false);
-        expect(result.data.isLinked).toBe(true);
+        expect(result.data.isLinked).toBe(true); // 기존 계정 있으므로 알림 표시
       }
       expect(prisma.userOAuthAccount.create).toHaveBeenCalledWith({
         data: {
@@ -184,6 +188,20 @@ describe("syncOAuthUserService", () => {
       expect(prisma.user.create).not.toHaveBeenCalled();
     });
 
+    it("기존 연결된 소셜 계정이 없으면 isLinked: false를 반환해야 한다", async () => {
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
+      vi.mocked(prisma.userOAuthAccount.count).mockResolvedValue(0 as never); // 기존 연결 계정 없음
+      vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
+
+      const result = await syncOAuthUserService(BASE_INPUT);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.isLinked).toBe(false); // 연결 계정 없으므로 알림 불필요
+      }
+    });
+
     it("OAuth 계정 없고 email로 찾은 유저가 탈퇴 후 7일 미만이면 재활성화 + OAuth 계정 연결해야 한다", async () => {
       const reactivated = {
         ...DELETED_USER_RECENT,
@@ -191,7 +209,7 @@ describe("syncOAuthUserService", () => {
         deletedAt: null,
         nickname: "user_5678",
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(DELETED_USER_RECENT as never);
       vi.mocked(prisma.user.update).mockResolvedValue(reactivated as never);
       vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
@@ -226,7 +244,7 @@ describe("syncOAuthUserService", () => {
         isActive: true,
         deletedAt: null,
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique)
         .mockResolvedValueOnce(DELETED_USER_OLD as never) // email 조회
         .mockResolvedValueOnce(null); // nickname 중복 검사
@@ -261,7 +279,7 @@ describe("syncOAuthUserService", () => {
         isActive: true,
         deletedAt: null,
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique)
         .mockResolvedValueOnce(null) // email 검색
         .mockResolvedValueOnce(null); // nickname 중복 검사
@@ -302,7 +320,7 @@ describe("syncOAuthUserService", () => {
         isActive: true,
         deletedAt: null,
       };
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique)
         .mockResolvedValueOnce(null) // email 검색
         .mockResolvedValueOnce({ id: "existing" } as never) // nickname 첫 번째 중복
@@ -319,7 +337,7 @@ describe("syncOAuthUserService", () => {
 
   describe("에러 처리", () => {
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
-      vi.mocked(prisma.userOAuthAccount.findUnique).mockRejectedValue(
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockRejectedValue(
         new Error("DB connection failed")
       );
 

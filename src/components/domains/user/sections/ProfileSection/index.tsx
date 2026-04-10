@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { PersonalInfo } from "./components/PersonalInfo";
 import { ProfileImage } from "./components/ProfileImage";
 import { useUploadProfileImage } from "@/client/hooks/query/useUserQuery";
-import { useCurrentUser } from "@/client/hooks/useCurrentUser";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { ProfileSectionSkeleton } from "./components/ProfileSectionSkeleton";
 import { PROFILE_BUCKET_NAME } from "@/shared/constants/buckets";
 
@@ -28,7 +28,7 @@ export const ProfileSection = () => {
       }
       setPreviewUrl(URL.createObjectURL(file));
     },
-    [previewUrl]
+    [previewUrl],
   );
 
   const onCancel = () => {
@@ -43,7 +43,7 @@ export const ProfileSection = () => {
           onSuccess: () => {
             resetState();
           },
-        }
+        },
       );
     }
   };
