@@ -66,7 +66,7 @@ export const LoginModal = ({ closeModal }: ILoginModalProps) => {
             </button>
           </form>
 
-          {/* kakao: email 받아오는 권한 없음. 보류 */}
+          {/* kakao */}
           <form action={handleKakaoLogin}>
             <button>
               <SocialLogoContainer>

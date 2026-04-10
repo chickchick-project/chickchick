@@ -17,10 +17,14 @@ export default function UserLayoutClient({
   pageOwnerId,
   isMe,
 }: UserLayoutClientProps) {
-  const { data: user, isError } = useUserProfileById(pageOwnerId);
+  const { data: user, isError, isSuccess } = useUserProfileById(pageOwnerId);
 
-  if (isError || !user) {
+  if (isError) {
     return notFound();
+  }
+
+  if (!isSuccess || !user) {
+    return null;
   }
 
   return (

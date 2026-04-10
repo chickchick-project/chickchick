@@ -138,9 +138,8 @@ describe("Brand Service", () => {
     });
 
     it("mapLocation이 있으면 파싱하여 반환해야 한다", async () => {
-      const { parseMapLocation } = await import(
-        "../../repositories/brand.repository"
-      );
+      const { parseMapLocation } =
+        await import("../../repositories/brand.repository");
       const mockBrand = {
         id: "brand-1",
         nameEn: "Test Brand",
@@ -262,7 +261,7 @@ describe("Brand Service", () => {
     });
 
     beforeEach(() => {
-      process.env.KAKAO_MAP_REST_KEY = "test-kakao-key";
+      process.env.KAKAO_REST_KEY = "test-kakao-key";
 
       vi.stubGlobal(
         "fetch",
@@ -275,7 +274,7 @@ describe("Brand Service", () => {
 
     afterEach(() => {
       vi.unstubAllGlobals();
-      delete process.env.KAKAO_MAP_REST_KEY;
+      delete process.env.KAKAO_REST_KEY;
     });
 
     it("카카오 로컬 검색 API를 호출하고 매장 목록을 반환해야 한다", async () => {
@@ -369,7 +368,9 @@ describe("Brand Service", () => {
 
       expect(result.success).toBe(true);
       if (result.success) {
-        const gangnам = result.data.stores.find((s) => s.name === "딥티크 강남");
+        const gangnам = result.data.stores.find(
+          (s) => s.name === "딥티크 강남",
+        );
         expect(gangnам?.distance).toBeUndefined();
       }
     });

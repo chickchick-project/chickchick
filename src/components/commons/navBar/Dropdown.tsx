@@ -29,7 +29,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   const navItems = getMyPageNavItems(user!.id);
 
   const handleLogout = async () => {
-    await signOut({ redirectTo: "/" });
+    await signOut({ callbackUrl: "/" });
   };
 
   const NAV_ITEMS_FOOTER: DropdownFooterItem[] = [

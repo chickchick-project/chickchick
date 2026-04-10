@@ -1,104 +1,79 @@
 import { Account, DefaultSession, NextAuthConfig, User } from "next-auth";
-import { v4 as uuidv4 } from "uuid";
-import { prisma } from "./server/prisma";
 
 declare module "next-auth" {
   interface User {
     isNewUser?: boolean;
+    isLinked?: boolean;
+    linkedProvider?: string;
   }
   interface Session {
     user: {
       id: string;
       isNewUser?: boolean;
+      isLinked?: boolean;
+      linkedProvider?: string;
+      nickname: string;
+      imageUrl: string | null;
     } & DefaultSession["user"];
   }
 }
 
-interface UserData {
-  name: string;
-  nickname: string;
-  email?: string;
-  imageUrl?: string;
-  provider: string;
-}
+const internalFetch = async (path: string, init?: RequestInit) => {
+  const baseUrl = process.env.NEXTAUTH_URL ?? process.env.AUTH_URL;
+  if (!baseUrl)
+    throw new Error("NEXTAUTH_URL 또는 AUTH_URL 환경변수가 필요합니다.");
 
-const REJOIN_WINDOW_DAYS = 7;
-
-const findOrCreateUser = async (
-  providerData: UserData,
-): Promise<{
-  user: Awaited<ReturnType<typeof prisma.user.findUnique>> & object;
-  isNewUser: boolean;
-}> => {
-  const { name, email, imageUrl, provider } = providerData;
-  let dbUser;
-
-  if (email) {
-    dbUser = await prisma.user.findUnique({ where: { email } });
-
-    if (dbUser && !dbUser.isActive && dbUser.deletedAt) {
-      const daysSinceDeleted =
-        (Date.now() - dbUser.deletedAt.getTime()) / (1000 * 60 * 60 * 24);
-
-      if (daysSinceDeleted < REJOIN_WINDOW_DAYS) {
-        // 탈퇴 후 7일 미만 → 기존 계정 재활성화 (_deleted_ suffix 제거)
-        const restoredNickname = dbUser.nickname.replace(/_deleted_\d+$/, "");
-        const reactivated = await prisma.user.update({
-          where: { id: dbUser.id },
-          data: { isActive: true, deletedAt: null, nickname: restoredNickname },
-        });
-        return { user: reactivated, isNewUser: false };
-      } else {
-        // 탈퇴 후 7일 이상 → 새 계정 생성 (기존 email 해제)
-        await prisma.user.update({
-          where: { id: dbUser.id },
-          data: { email: null },
-        });
-        dbUser = null;
-      }
-    }
-
-    if (dbUser) return { user: dbUser, isNewUser: false };
-  }
-
-  if (!dbUser && provider === "kakao" && name) {
-    dbUser = await prisma.user.findFirst({
-      where: { nickname: name, isActive: true },
-    });
-    if (dbUser) return { user: dbUser, isNewUser: false };
-  }
-
-  // 신규 유저 — 기본 닉네임(user_XXXX) 생성, 중복 시 재시도
-  const authId = uuidv4();
-  let defaultNickname = "";
-  for (let i = 0; i < 10; i++) {
-    const suffix = Math.floor(1000 + Math.random() * 9000).toString();
-    const candidate = `user_${suffix}`;
-    const exists = await prisma.user.findUnique({
-      where: { nickname: candidate },
-    });
-    if (!exists) {
-      defaultNickname = candidate;
-      break;
-    }
-  }
-  if (!defaultNickname) defaultNickname = `user_${authId.slice(0, 8)}`;
-
-  const newUser = await prisma.user.create({
-    data: {
-      authId,
-      name: name || "",
-      nickname: defaultNickname,
-      email,
-      imageUrl,
-      totalPoints: 100,
+  return fetch(`${baseUrl}/api/v1/auth${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+      ...init?.headers,
     },
   });
-  return { user: newUser, isNewUser: true };
+};
+
+const syncOAuthUser = async (payload: {
+  provider: string;
+  providerAccountId: string;
+  name: string;
+  email: string;
+  imageUrl?: string;
+}): Promise<{ id: string; isNewUser: boolean; isLinked: boolean }> => {
+  const res = await internalFetch("/sync", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`OAuth 유저 동기화 실패: ${res.status} ${text}`);
+  }
+
+  const json = await res.json();
+  return json.data;
+};
+
+const fetchSessionUser = async (
+  userId: string,
+): Promise<{
+  id: string;
+  isActive: boolean;
+  nickname: string;
+  imageUrl: string | null;
+} | null> => {
+  const res = await internalFetch(`/session-user/${userId}`);
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`세션 유저 조회 실패: ${res.status}`);
+  const json = await res.json();
+  return json.data;
 };
 
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
+  pages: {
+    error: "/",
+  },
   callbacks: {
     signIn: async ({
       user,
@@ -108,47 +83,58 @@ export const authConfig = {
       account?: Account | null;
     }) => {
       if (!account) return false;
-
-      const providerData = {
-        name: user.name || "",
-        nickname: user.name || "",
-        email: user.email ?? undefined,
-        imageUrl: user.image ?? undefined,
-        provider: account.provider,
-      };
+      if (!user.email) return false;
 
       try {
-        const { user: dbUser, isNewUser } =
-          await findOrCreateUser(providerData);
-        if (!dbUser) return false;
-        user.id = dbUser.id;
+        const { id, isNewUser, isLinked } = await syncOAuthUser({
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+          name: user.name ?? "",
+          email: user.email,
+          imageUrl: user.image ?? undefined,
+        });
+
+        user.id = id;
         user.isNewUser = isNewUser;
-        console.log(
-          `[AUTH][signIn] provider=${account.provider} email=${providerData.email} dbUserId=${dbUser.id} isNewUser=${isNewUser}`,
-        );
+        user.isLinked = isLinked;
+        user.linkedProvider = isLinked ? account.provider : undefined;
         return true;
       } catch (err) {
-        console.error(`${account.provider} OAuth error:`, err);
+        console.error(`[AUTH][signIn] ${account.provider} 동기화 오류:`, err);
         return false;
       }
     },
 
     async jwt({ token, user, trigger, session }) {
-      if (user) {
-        token.id = user.id;
-        token.isNewUser = user.isNewUser ?? false;
-        console.log(
-          `[AUTH][jwt] 최초 발급 — userId=${token.id} isNewUser=${token.isNewUser}`,
-        );
-      } else {
-        console.log(
-          `[AUTH][jwt] 갱신 — userId=${token.id} trigger=${trigger ?? "none"}`,
-        );
-      }
-      // 온보딩 완료 시 세션 업데이트
       if (trigger === "update" && session?.isNewUser === false) {
         token.isNewUser = false;
       }
+      if (trigger === "update" && session?.isLinked === false) {
+        token.isLinked = false;
+        token.linkedProvider = undefined;
+      }
+
+      if (user) {
+        token.id = user.id;
+        token.isNewUser = user.isNewUser ?? false;
+        token.isLinked = user.isLinked ?? false;
+        token.linkedProvider = user.linkedProvider;
+      }
+
+      if (token.id) {
+        try {
+          const freshUser = await fetchSessionUser(token.id as string);
+          if (!freshUser || !freshUser.isActive) {
+            return null;
+          }
+          token.nickname = freshUser.nickname;
+          token.imageUrl = freshUser.imageUrl;
+        } catch (err) {
+          console.error("[AUTH][jwt] 세션 유저 조회 오류 — 세션 무효화:", err);
+          return null;
+        }
+      }
+
       return token;
     },
 
@@ -156,16 +142,15 @@ export const authConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.isNewUser = token.isNewUser as boolean;
-        console.log(
-          `[AUTH][session] 세션 구성 — userId=${session.user.id} email=${session.user.email}`,
-        );
+        session.user.isLinked = token.isLinked as boolean;
+        session.user.linkedProvider = token.linkedProvider as
+          | string
+          | undefined;
+        session.user.nickname = token.nickname as string;
+        session.user.imageUrl = token.imageUrl as string | null;
       }
       return session;
     },
   },
-  providers: [
-    /**
-     * 초기 값 빈 배열
-     */
-  ],
+  providers: [],
 } satisfies NextAuthConfig;

@@ -4,32 +4,22 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { meApi, userApi, USER_ID_REGEX } from "../../utils/api/users.api";
 import { queryKeys } from "../../utils/queryKeys";
 import type { ApiUpdateMyProfileRequest } from "@/server/hono/schemas/me.schema";
 
 // 내 프로필 조회
-export const useUserProfile = (options?: { enabled?: boolean }) => {
-  const { data: session, status } = useSession();
-  const userId = session?.user?.id ?? "me";
-
-  // status === "authenticated" 까지 명시적으로 확인해야
-  // "loading" 중 이전 세션 userId로 쿼리가 실행되는 레이스 컨디션을 방지한다.
-  const isReady =
-    status === "authenticated" && userId !== "me";
+export const useUserProfile = (options?: { enabled?: boolean; userId?: string }) => {
+  const userId = options?.userId ?? "me";
 
   return useQuery({
     queryKey: queryKeys.user.profile(userId),
     queryFn: async () => {
-      console.log(`[PROFILE][fetch] 쿼리 실행 — queryKey=["user","profile","${userId}"]`);
       try {
         const response = await meApi.profile.get();
         if (!response || !response.success) {
-          console.warn(`[PROFILE][fetch] 실패 응답 — userId=${userId}`);
           return null;
         }
-        console.log(`[PROFILE][fetch] 성공 — userId=${userId} nickname=${response.data.nickname}`);
         return response.data;
       } catch (error) {
         const errorStatus = (error as { status?: number })?.status;
@@ -40,7 +30,7 @@ export const useUserProfile = (options?: { enabled?: boolean }) => {
         throw error;
       }
     },
-    enabled: (options?.enabled ?? true) && isReady,
+    enabled: options?.enabled ?? false,
     retry: (failureCount, error) => {
       // 401, 403 에러는 재시도하지 않음 (인증 실패)
       const errorStatus = (error as { status?: number })?.status;

@@ -21,7 +21,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   try {
     const userResponse = await userApi.getById(pageOwnerId);
-
     if (!userResponse || !userResponse.data) {
       return generateSeo({
         title: "사용자 없음",

@@ -13,6 +13,7 @@ import fileApi from "./routes/v1/file.handler";
 import filterApi from "./routes/v1/filter.handler";
 import pointApi from "./routes/v1/point.handler";
 import draftsApi from "./routes/v1/draft.handler";
+import authApi from "./routes/v1/auth.handler";
 import { handleApiError } from "./utils/api.utils";
 
 export type AppContext = {
@@ -54,6 +55,7 @@ v1.route("/users", usersApi);
 v1.route("/file", fileApi);
 v1.route("/points", pointApi);
 v1.route("/drafts", draftsApi);
+v1.route("/auth", authApi);
 
 app.route("/v1", v1);
 

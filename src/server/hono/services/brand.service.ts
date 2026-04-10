@@ -147,7 +147,7 @@ export async function getStoresByNameService(
       `https://dapi.kakao.com/v2/local/search/keyword.json?${params}`,
       {
         headers: {
-          Authorization: `KakaoAK ${process.env.KAKAO_MAP_REST_KEY}`,
+          Authorization: `KakaoAK ${process.env.KAKAO_REST_KEY}`,
           KA: "sdk/1.0 os/nodejs",
         },
       },
@@ -213,7 +213,7 @@ export async function getRegionByCoordService(
       `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?${params}`,
       {
         headers: {
-          Authorization: `KakaoAK ${process.env.KAKAO_MAP_REST_KEY}`,
+          Authorization: `KakaoAK ${process.env.KAKAO_REST_KEY}`,
           KA: "sdk/1.0 os/nodejs",
         },
       },

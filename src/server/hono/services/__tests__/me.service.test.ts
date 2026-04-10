@@ -527,7 +527,7 @@ describe("Me Service", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error).toBe("INTERNAL_ERROR");
+        expect(result.error).toBe("BAD_REQUEST");
         expect(result.message).toContain("향수 ID");
       }
     });

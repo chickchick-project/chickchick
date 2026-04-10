@@ -6,8 +6,8 @@ import { useSession } from "next-auth/react";
 import { useModalStore } from "@/client/stores/uiStore";
 import { LoginModal } from "@/components/modal/LoginModal";
 import { NicknameSetupModal } from "@/components/modal/NicknameSetupModal";
+import { AccountLinkedModal } from "@/components/modal/AccountLinkedModal";
 import { MODAL_KEYS } from "@/client/stores/uiStore";
-import { useUserProfile } from "@/client/hooks/query/useUserQuery";
 
 export default function LoginModalProvider() {
   const { loginModal, closeModal } = useModalStore();
@@ -16,7 +16,9 @@ export default function LoginModalProvider() {
   const [nicknameModalClosed, setNicknameModalClosed] = useState(false);
 
   const isNewUser = status === "authenticated" && session?.user?.isNewUser === true;
-  const { data: profile } = useUserProfile({ enabled: isNewUser });
+  const isLinked = status === "authenticated" && session?.user?.isLinked === true;
+  const linkedProvider = session?.user?.linkedProvider ?? "";
+  const defaultNickname = session?.user?.nickname ?? "";
 
   useEffect(() => {
     setMounted(true);
@@ -32,10 +34,20 @@ export default function LoginModalProvider() {
   const modalRoot = document.getElementById("modal");
   if (!modalRoot) return null;
 
-  if (isNewUser && !nicknameModalClosed && profile?.nickname) {
+  if (isLinked && linkedProvider) {
+    return createPortal(
+      <AccountLinkedModal
+        provider={linkedProvider}
+        closeModal={() => {}}
+      />,
+      modalRoot,
+    );
+  }
+
+  if (isNewUser && !nicknameModalClosed && defaultNickname) {
     return createPortal(
       <NicknameSetupModal
-        defaultNickname={profile.nickname}
+        defaultNickname={defaultNickname}
         closeModal={() => setNicknameModalClosed(true)}
       />,
       modalRoot,

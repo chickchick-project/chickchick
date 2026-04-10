@@ -16,7 +16,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.NAVER_CLIENT_SECRET,
     }),
 
-    // TODO: kakao email 받아오는 권한 없음. 보류
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
