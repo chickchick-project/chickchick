@@ -74,6 +74,8 @@ export const DraftIdParamSchema = z.object({
   id: z.string().uuid(),
 });
 
+export { DraftType } from "@prisma/client";
+
 export type CreateDraftBody = z.infer<typeof CreateDraftBodySchema>;
 export type CreateDraftPayload = z.infer<typeof CreateDraftPayloadSchema>;
 export type ApiDraftResponse = z.infer<typeof ApiDraftResponseSchema>;

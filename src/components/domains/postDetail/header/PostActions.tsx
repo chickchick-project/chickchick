@@ -9,7 +9,7 @@ import {
   useDraftByType,
   useDeleteDraft,
 } from "@/client/hooks/query/useDraftQuery";
-import { DraftType } from "@prisma/client";
+import { DraftType } from "@/server/hono/schemas/draft.schema";
 import { DraftRestoreModal } from "@/components/modal/draftRestoreModal";
 
 interface PostActionsProps {

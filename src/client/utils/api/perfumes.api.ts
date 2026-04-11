@@ -1,7 +1,8 @@
 import { apiClient } from "./client";
 import { ApiSuccessResponse } from "@/server/hono/schemas/common.schema";
 import { ApiPerfumeDetailResponse, ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
-import { PerfumeNote, PerfumeAccord } from "@prisma/client";
+import { ApiPostResponse } from "@/server/hono/schemas/community.schema";
+import { PerfumeNote, PerfumeAccord } from "@/server/hono/schemas/perfume.schema";
 
 export const perfumeApi = {
   /**

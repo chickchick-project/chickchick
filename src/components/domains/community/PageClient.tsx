@@ -2,7 +2,7 @@
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
-import { PostCategory } from "@prisma/client";
+import { PostCategory } from "@/server/hono/schemas/community.schema";
 import { Header } from "./header";
 import CommunityCards from "./communityCards";
 import {

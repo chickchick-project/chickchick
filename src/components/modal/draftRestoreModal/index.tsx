@@ -2,7 +2,7 @@
 
 import { ModalContainer } from "../ModalContainer";
 import { ApiDraftResponse } from "@/server/hono/schemas/draft.schema";
-import { DraftType } from "@prisma/client";
+import { DraftType } from "@/server/hono/schemas/draft.schema";
 import { BOARD_OPTIONS } from "@/shared/constants/options";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";

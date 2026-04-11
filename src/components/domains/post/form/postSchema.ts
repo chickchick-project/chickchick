@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PostCategory } from "@prisma/client";
+import { PostCategory } from "@/server/hono/schemas/community.schema";
 import { PerfumeForPostSchema } from "@/server/hono/schemas/community.schema";
 
 export const CreatePostClientSchema = z.object({

@@ -167,3 +167,5 @@ export type GetPostsQuery = z.infer<typeof GetPostsQuerySchema>;
 export type CreatePostInput = z.infer<typeof CreatePostInputSchema>;
 export type UpdatePostInput = z.infer<typeof UpdatePostInputSchema>;
 export type PerfumeForPost = z.infer<typeof PerfumeForPostSchema>;
+
+export { PostCategory } from "@prisma/client";

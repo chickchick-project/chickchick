@@ -95,3 +95,5 @@ export type ApiPerfumeNoteResponse = z.infer<
 export type ApiPerfumeAccordResponse = z.infer<
   typeof ApiPerfumeAccordResponseSchema
 >;
+
+export type { PerfumeNote, PerfumeAccord } from "@prisma/client";

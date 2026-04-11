@@ -7,7 +7,7 @@ import { useState } from "react";
 import BoardTabBar from "@/components/commons/tabBar/BoardTabBar";
 import Link from "next/link";
 import { useCommunityPosts } from "@/client/hooks/query/useCommunityQuery";
-import { PostCategory } from "@prisma/client";
+import { PostCategory } from "@/server/hono/schemas/community.schema";
 import { Indicator } from "@/components/commons/loading/Indicator";
 import { BasePost } from "@/server/hono/repositories/community.repository";
 

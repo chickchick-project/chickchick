@@ -1,6 +1,6 @@
 "use client";
 
-import { PerfumeUsageStatus } from "@prisma/client";
+import { PerfumeUsageStatus } from "@/server/hono/schemas/review.schema";
 import { useFormContext, Controller } from "react-hook-form";
 import { SelectButton } from "../button/SelectButton";
 import { SubTitle } from "../SubTitle";

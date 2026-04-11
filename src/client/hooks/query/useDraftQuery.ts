@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { draftApi } from "@/client/utils/api/draft.api";
 import { queryKeys } from "@/client/utils/queryKeys";
-import { CreateDraftBody } from "@/server/hono/schemas/draft.schema";
-import { DraftType } from "@prisma/client";
+import { CreateDraftBody, DraftType } from "@/server/hono/schemas/draft.schema";
 
 /**
  * 임시 저장 생성/업데이트 Mutation Hook

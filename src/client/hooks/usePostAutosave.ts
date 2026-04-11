@@ -3,7 +3,7 @@ import { UseFormGetValues } from "react-hook-form";
 import { CreatePostClientInput } from "@/components/domains/post/form/postSchema";
 import { PostDraftInput } from "@/shared/types/postDraft";
 import { saveDraft as saveDraftApi, isDraftValid } from "@/shared/utils/postDraft";
-import { DraftType } from "@prisma/client";
+import { DraftType } from "@/server/hono/schemas/draft.schema";
 
 interface UsePostAutosaveOptions {
   getValues: UseFormGetValues<CreatePostClientInput>;

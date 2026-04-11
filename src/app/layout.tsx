@@ -86,11 +86,11 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
       <head>
-        <link
+        {/* <link
           rel="preconnect"
           href="https://wvedpvxspndgyoisudyr.supabase.co"
           crossOrigin="anonymous"
-        />
+        /> */}
         <link
           rel="preload"
           href="/fonts/Pretendard-Regular.subset.woff2"
@@ -112,9 +112,7 @@ export default function RootLayout({
         <Providers>
           <RecentSyncManager />
           <NavBarWrapper />
-          <BodyWrapper>
-            {children}
-          </BodyWrapper>
+          <BodyWrapper>{children}</BodyWrapper>
           <LoginModalProvider />
         </Providers>
         <div id="modal"></div>

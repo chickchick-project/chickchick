@@ -4,11 +4,12 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PostCategory as TPostCategory } from "@prisma/client";
+import { PostCategory as TPostCategory } from "@/server/hono/schemas/community.schema";
 
 import type { BlobRegistry } from "@/client/tiptap/blobRegistry";
 import { finalizeContentWithBlobUpload } from "@/client/tiptap/blobRegistry";
 import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
+
 import {
   CreatePostClientSchema,
   type CreatePostClientInput,

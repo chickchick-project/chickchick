@@ -86,3 +86,5 @@ export type ApiReviewResponse = z.infer<typeof ApiReviewResponseSchema>;
 
 export type CreateReviewInput = z.infer<typeof CreateReviewInputSchema>;
 export type UpdateReviewInput = z.infer<typeof UpdateReviewInputSchema>;
+
+export { PerfumeUsageStatus } from "@prisma/client";
