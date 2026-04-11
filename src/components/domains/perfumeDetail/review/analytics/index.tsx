@@ -111,17 +111,21 @@ export const ReviewAnalytics = ({ data }: ReviewAnalyticsProps) => {
         <ReviewMobileSection counts={counts} />
       </section>
       <section className="hidden tablet:block w-60 self-center">
-        <div className="text-gray-100 text-label-2 font-medium text-center pb-2">
-          {user?.nickname}님의 소중한 의견을 나눠주세요!
+        <div className="text-black-300 text-label-2 font-medium text-center pb-2">
+          {user ? `${user?.nickname}님의 소중한 의견을 나눠주세요!` : ""}
         </div>
-        {
-          <ButtonFilledPrimaryLFull
-            disabled={isReviewed}
-            onClick={() => setIsModalOpen(true)}
-          >
-            {isReviewed ? "이미 리뷰를 작성했습니다." : "리뷰 작성하기"}
-          </ButtonFilledPrimaryLFull>
-        }
+        <ButtonFilledPrimaryLFull
+          disabled={isReviewed}
+          onClick={() => {
+            if (!user) {
+              alert("로그인 후 리뷰 작성이 가능합니다.");
+              return;
+            }
+            setIsModalOpen(true);
+          }}
+        >
+          {isReviewed ? "이미 리뷰를 작성했습니다." : "리뷰 작성하기"}
+        </ButtonFilledPrimaryLFull>
       </section>
       {isModalOpen && <ReviewModal closeModal={() => setIsModalOpen(false)} />}
     </section>

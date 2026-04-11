@@ -34,6 +34,7 @@ export type PostFormInitialData = CreatePostClientInput & {
 interface PostFormProps {
   type: "create" | "edit";
   initialData?: PostFormInitialData;
+  initialPerfumes?: PerfumeForPost[];
   postId?: string;
   draftId?: string;
 }
@@ -41,6 +42,7 @@ interface PostFormProps {
 export default function PostForm({
   type,
   initialData,
+  initialPerfumes,
   postId,
   draftId,
 }: PostFormProps) {
@@ -158,7 +160,7 @@ export default function PostForm({
           <PostCategory />
           <PostTitle />
           <PostEditor blobRegistryRef={blobRegistryRef} />
-          <PostRelatedPerfume initialPerfumes={initialData?.perfumes} />
+          <PostRelatedPerfume initialPerfumes={initialData?.perfumes ?? initialPerfumes} />
         </div>
         <PostFormActions
           disabled={disabled}

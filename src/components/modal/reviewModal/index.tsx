@@ -29,8 +29,6 @@ interface IReviewModalProps {
 //  1. 무작위로 선택되는대로 보여주기
 //  2. 각 섹션 순서대로 보여주기 => tags 내부에 새로운 배열 필요할 듯
 export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
-  const { user } = useCurrentUser();
-
   // 리뷰 제출 로직
   const { onSubmit } = useReviewSubmit(closeModal);
 
@@ -50,11 +48,6 @@ export const ReviewModal = ({ closeModal }: IReviewModalProps) => {
     };
   }, []);
 
-  if (!user) {
-    alert("로그인 후 리뷰 작성이 가능합니다.");
-    closeModal();
-    return;
-  }
   return (
     <ModalContainer
       className="tablet:w-[688px] tablet:h-[620px] w-full h-full absolute bottom-0 left-0"
