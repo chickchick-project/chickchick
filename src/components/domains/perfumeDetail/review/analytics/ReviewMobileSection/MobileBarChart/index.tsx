@@ -20,8 +20,8 @@ export function MobileBarChart({ data, maxCap = 999 }: BarListProps) {
         const isTop = item.value === maxValue;
         const percent = Math.max(3, Math.round((item.value / maxValue) * 100));
         const barColor = isTop ? item.color : "#D4D4D8";
-        const labelClass = isTop ? "text-black-100" : "text-gray-400";
-        const valueClass = isTop ? "text-black-100" : "text-gray-400";
+        const labelClass = isTop ? "text-black-100" : "text-black-300";
+        const valueClass = isTop ? "text-black-100" : "text-black-300";
 
         return (
           <li

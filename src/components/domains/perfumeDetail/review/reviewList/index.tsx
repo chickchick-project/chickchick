@@ -26,6 +26,7 @@ export const ReviewList = ({ data }: ReviewListProps) => {
       };
     });
   }, [data]);
+
   return (
     <section className="flex flex-col gap-5">
       <SectionTitle itemCount={data.length}>리뷰</SectionTitle>

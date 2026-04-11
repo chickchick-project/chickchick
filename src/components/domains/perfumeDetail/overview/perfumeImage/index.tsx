@@ -21,6 +21,7 @@ export const PerfumeImage = ({ src, alt }: PerfumeImageProps) => {
         placeholder="blur"
         blurDataURL="/images/BlurShimmer.svg"
         priority
+        fetchPriority="high"
         className="object-contain"
       />
     </div>
