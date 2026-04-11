@@ -1,52 +1,52 @@
 "use client";
 
+import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { SectionTitle } from "@/components/commons/sectionTitle";
 
+// PerfumeCard default(w-[180px], aspect-square 이미지 180px + 텍스트 ~50px)와
+// 동일한 치수로 맞춰 하이드레이션 전후 레이아웃 시프트를 방지한다.
+const RecentViewSkeleton = () => (
+  <ul className="pl-5 pc:pl-0 flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0 pt-4 pc:pt-5">
+    {Array.from({ length: 4 }).map((_, i) => (
+      <li key={i} className="w-[180px] shrink-0 animate-pulse">
+        <div className="aspect-square rounded-xl bg-gray-200" />
+        <div className="mt-1 space-y-0.5">
+          <div className="h-[14px] w-2/3 rounded bg-gray-200" />
+          <div className="h-[16px] w-full rounded bg-gray-200" />
+        </div>
+      </li>
+    ))}
+  </ul>
+);
+
 export const PerfumeRecentViewList = () => {
-  const mockPerfumes = [
-    {
-      id: "1",
-      perfumeImage: "https://i.ibb.co/TR0HqY4/image.jpg",
-      brandName: "브랜드 A",
-      perfumeName: "향수 A",
-    },
-    {
-      id: "2",
-      perfumeImage: "https://i.ibb.co/TR0HqY4/image.jpg",
-      brandName: "브랜드 B",
-      perfumeName: "향수 B",
-    },
-    {
-      id: "3",
-      perfumeImage: "https://i.ibb.co/TR0HqY4/image.jpg",
-      brandName: "브랜드 C",
-      perfumeName: "향수 C",
-    },
-    {
-      id: "4",
-      perfumeImage: "https://i.ibb.co/TR0HqY4/image.jpg",
-      brandName: "브랜드 D",
-      perfumeName: "향수 D",
-    },
-  ];
+  const recentPerfumeItems = useRecentPerfumesStore((s) => s.items);
+  const hasHydrated = useRecentPerfumesStore((s) => s._hasHydrated);
+
+  // 최근 본 향수가 없으면 섹션 자체를 렌더하지 않는다
+  if (recentPerfumeItems.length === 0) return null;
 
   return (
-    <section>
+    <section className="p-2">
       <SectionTitle>최근 본 향수</SectionTitle>
-      <ul className="pl-5 pc:pl-0 flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0 pt-4 pc:pt-5">
-        {mockPerfumes.map((perfume) => (
-          <li key={perfume.id}>
-            <PerfumeCard
-              cardType="default"
-              perfumeImage={perfume.perfumeImage}
-              brandName={perfume.brandName}
-              perfumeName={perfume.perfumeName}
-              onClick={() => alert("향수 상세페이로 이동")}
-            />
-          </li>
-        ))}
-      </ul>
+      {!hasHydrated ? (
+        <RecentViewSkeleton />
+      ) : (
+        <ul className="pl-5 pc:pl-0 flex pc:justify-between gap-4 overflow-x-auto scrollbar-hide pr-5 pc:pr-0 pt-4 pc:pt-5">
+          {recentPerfumeItems.slice(0, 4).map((perfume) => (
+            <li key={perfume.id}>
+              <PerfumeCard
+                cardType="default"
+                perfumeImage={perfume.item.imageUrl}
+                brandName={perfume.item.brandName}
+                perfumeName={perfume.item.perfumeName}
+                onClick={() => alert("향수 상세페이로 이동")}
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 };

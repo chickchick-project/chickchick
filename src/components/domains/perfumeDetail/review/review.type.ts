@@ -5,6 +5,7 @@ export type ReviewStatus = keyof typeof REVIEW_STATUSES;
 
 export interface PerfumeReviewsProps {
   data: ApiReviewResponse[];
+  isLoading: boolean;
 }
 
 export interface ReviewListProps {

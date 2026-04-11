@@ -52,6 +52,19 @@ export const usePerfumeByTheme = (themeName: string) => {
  * @param brandName 브랜드명
  * @param filters 필터 옵션 (노트, 어코드 등)
  */
+// 향수에 태그된 게시글 목록 조회
+export const usePerfumeTaggedPosts = (perfumeId: string) => {
+  return useQuery({
+    queryKey: queryKeys.perfume.taggedPosts(perfumeId),
+    queryFn: () => perfumeApi.taggedPosts(perfumeId),
+    enabled: !!perfumeId,
+    select: (response) => {
+      if (!response || !response.success) return [];
+      return response.data;
+    },
+  });
+};
+
 export const useInfiniteBrandPerfumesQuery = (
   brandName: string,
   filters: Record<string, string[]>,

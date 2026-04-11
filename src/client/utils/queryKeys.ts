@@ -91,6 +91,8 @@ export const queryKeys = {
     detail: (id: string) => [...perfumeBase, "detail", id] as const,
     reviews: (perfumeId: string) =>
       [...perfumeBase, "reviews", perfumeId] as const,
+    taggedPosts: (perfumeId: string) =>
+      [...perfumeBase, "taggedPosts", perfumeId] as const,
     brandDetail: (brandName: string) =>
       [...perfumeBase, "brandDetail", brandName] as const,
   },

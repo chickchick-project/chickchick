@@ -43,4 +43,12 @@ export const perfumeApi = {
       `/perfumes/accords`
     );
   },
+  /**
+   * 특정 향수가 태그된 게시글 목록 조회
+   */
+  taggedPosts: (perfumeId: string, take = 10) => {
+    return apiClient.get<ApiSuccessResponse<ApiPostResponse[]>>(
+      `/perfumes/${perfumeId}/posts?take=${take}`
+    );
+  },
 };
