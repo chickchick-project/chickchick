@@ -7,7 +7,8 @@ import { ProfileForm } from "./common/ProfileForm";
 
 import {
   ApiMyProfileResponse,
-  ApiMyProfileResponseSchema,
+  ApiUpdateMyProfileRequest,
+  ApiUpdateMyProfileRequestSchema,
 } from "@/server/hono/schemas/me.schema";
 import Form from "@/components/commons/form";
 import {
@@ -21,12 +22,11 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
     useDeleteAccount();
   const queryClient = useQueryClient();
 
-  const defaultValues = {
-    id: user.id,
+  const defaultValues: ApiUpdateMyProfileRequest = {
     nickname: user.nickname || "",
-    age: user.age || 0,
-    gender: user.gender || "UNKNOWN",
-    imageUrl: user.imageUrl || "",
+    age: user.age ?? undefined,
+    gender: user.gender ?? undefined,
+    imageUrl: user.imageUrl ?? undefined,
   };
 
   const handleWithdraw = async () => {
@@ -41,14 +41,9 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
     }
   };
 
-  const onSubmit = async (formData: ApiMyProfileResponse) => {
-    const { imageUrl, ...rest } = formData;
-    const params = {
-      ...rest,
-      imageUrl: imageUrl ?? undefined,
-    };
+  const onSubmit = async (formData: ApiUpdateMyProfileRequest) => {
     try {
-      await mutateAsync(params);
+      await mutateAsync(formData);
       alert("수정이 완료되었습니다.");
     } catch (error) {
       console.error("제출 실패:", error);
@@ -56,8 +51,8 @@ export const PersonalInfo = (user: ApiMyProfileResponse) => {
   };
 
   return (
-    <Form<ApiMyProfileResponse>
-      schema={ApiMyProfileResponseSchema}
+    <Form<ApiUpdateMyProfileRequest>
+      schema={ApiUpdateMyProfileRequestSchema}
       defaultValues={defaultValues}
       onSubmit={onSubmit}
     >

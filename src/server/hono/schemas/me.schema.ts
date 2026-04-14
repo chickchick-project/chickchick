@@ -104,7 +104,7 @@ export const ApiMyProfileResponseSchema = UserSchema.pick({
 
 export const ApiUpdateMyProfileRequestSchema = z
   .object({
-    nickname: UserSchema.shape.nickname.optional(),
+    nickname: z.string().min(2).max(20).optional(),
     age: UserSchema.shape.age.optional(),
     gender: UserSchema.shape.gender.optional(),
     imageUrl: z.string().url().optional(),

@@ -121,7 +121,12 @@ export const authConfig = {
         token.linkedProvider = user.linkedProvider;
       }
 
-      if (token.id) {
+      const SESSION_REFRESH_INTERVAL_SEC = 60;
+      const now = Math.floor(Date.now() / 1000);
+      const lastFetched = (token.lastFetched as number | undefined) ?? 0;
+      const needsRefresh = now - lastFetched > SESSION_REFRESH_INTERVAL_SEC;
+
+      if (token.id && needsRefresh) {
         try {
           const freshUser = await fetchSessionUser(token.id as string);
           if (!freshUser || !freshUser.isActive) {
@@ -129,6 +134,7 @@ export const authConfig = {
           }
           token.nickname = freshUser.nickname;
           token.imageUrl = freshUser.imageUrl;
+          token.lastFetched = now;
         } catch (err) {
           console.error("[AUTH][jwt] 세션 유저 조회 오류 — 세션 무효화:", err);
           return null;

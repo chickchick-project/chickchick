@@ -405,6 +405,7 @@ routers.authenticated.openapi(patchMyProfileRoute, async (c) => {
   });
 
   if (!result.success) {
+    if (result.error === "BAD_REQUEST") return apiBadRequest(c, result.message);
     return apiInternalError(c, result.message);
   }
   return apiSuccess(c, result.data, "내 정보를 성공적으로 수정했습니다.");

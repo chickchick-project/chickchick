@@ -24,6 +24,10 @@ vi.mock("uuid", () => ({
   v4: vi.fn(() => "test-auth-id-1234-5678"),
 }));
 
+vi.mock("@/server/hono/utils/nickname.utils", () => ({
+  generateNicknameCandidate: vi.fn(() => "플로럴토끼4821"),
+}));
+
 const BASE_INPUT = {
   provider: "google",
   providerAccountId: "google-uid-001",
@@ -125,17 +129,14 @@ describe("syncOAuthUserService", () => {
         isActive: true,
         deletedAt: null,
       };
-      vi.mocked(prisma.userOAuthAccount.findFirst)
-        .mockResolvedValueOnce({
-          id: "oauth-003",
-          userId: DELETED_USER_OLD.id,
-          provider: "google",
-          providerAccountId: "google-uid-001",
-          createdAt: new Date(),
-          user: DELETED_USER_OLD,
-        } as never)
-        .mockResolvedValueOnce(null); // 삭제 후 재조회 없음 (email 조회 후)
-      vi.mocked(prisma.userOAuthAccount.delete).mockResolvedValue({} as never);
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValueOnce({
+        id: "oauth-003",
+        userId: DELETED_USER_OLD.id,
+        provider: "google",
+        providerAccountId: "google-uid-001",
+        createdAt: new Date(),
+        user: DELETED_USER_OLD,
+      } as never);
       vi.mocked(prisma.user.update).mockResolvedValue({
         ...DELETED_USER_OLD,
         email: null,
@@ -296,6 +297,7 @@ describe("syncOAuthUserService", () => {
       expect(prisma.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
+            nickname: "플로럴토끼4821",
             email: "test@example.com",
             name: "테스트유저",
             imageUrl: "https://example.com/avatar.jpg",
@@ -312,26 +314,30 @@ describe("syncOAuthUserService", () => {
       });
     });
 
-    it("nickname 중복 시 재시도해서 고유한 nickname을 사용해야 한다", async () => {
+    it("nickname 후보가 중복이면 authId 기반 폴백 nickname으로 생성해야 한다", async () => {
       const newUser = {
         id: "user-new",
         email: "test@example.com",
-        nickname: "user_5678",
+        nickname: "user_test-aut",
         isActive: true,
         deletedAt: null,
       };
       vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique)
         .mockResolvedValueOnce(null) // email 검색
-        .mockResolvedValueOnce({ id: "existing" } as never) // nickname 첫 번째 중복
-        .mockResolvedValueOnce(null); // nickname 두 번째 성공
+        .mockResolvedValueOnce({ id: "existing" } as never); // nickname 중복
       vi.mocked(prisma.user.create).mockResolvedValue(newUser as never);
       vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
 
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      expect(prisma.user.create).toHaveBeenCalledTimes(1);
+      // uuid mock: "test-auth-id-1234-5678" → authId.slice(0, 8) = "test-aut"
+      expect(prisma.user.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ nickname: "user_test-aut" }),
+        })
+      );
     });
   });
 
@@ -340,6 +346,25 @@ describe("syncOAuthUserService", () => {
       vi.mocked(prisma.userOAuthAccount.findFirst).mockRejectedValue(
         new Error("DB connection failed")
       );
+
+      const result = await syncOAuthUserService(BASE_INPUT);
+
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error).toBe("INTERNAL_ERROR");
+      }
+    });
+
+    it("재활성화 중 user.update 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
+      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue({
+        id: "oauth-002",
+        userId: DELETED_USER_RECENT.id,
+        provider: "google",
+        providerAccountId: "google-uid-001",
+        createdAt: new Date(),
+        user: DELETED_USER_RECENT,
+      } as never);
+      vi.mocked(prisma.user.update).mockRejectedValue(new Error("DB error"));
 
       const result = await syncOAuthUserService(BASE_INPUT);
 

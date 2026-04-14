@@ -6,6 +6,7 @@ import {
   serviceSuccess,
 } from "@/server/result";
 import { v4 as uuidv4 } from "uuid";
+import { generateNicknameCandidate } from "@/server/hono/utils/nickname.utils";
 
 export interface OAuthUserInput {
   provider: string;
@@ -108,19 +109,9 @@ export async function syncOAuthUserService(
 
     // 3. 신규 유저 생성
     const authId = uuidv4();
-    let defaultNickname = "";
-    for (let i = 0; i < 10; i++) {
-      const suffix = Math.floor(1000 + Math.random() * 9000).toString();
-      const candidate = `user_${suffix}`;
-      const exists = await prisma.user.findUnique({
-        where: { nickname: candidate },
-      });
-      if (!exists) {
-        defaultNickname = candidate;
-        break;
-      }
-    }
-    if (!defaultNickname) defaultNickname = `user_${authId.slice(0, 8)}`;
+    const candidate = generateNicknameCandidate();
+    const nicknameTaken = await prisma.user.findUnique({ where: { nickname: candidate } });
+    const defaultNickname = nicknameTaken ? `user_${authId.slice(0, 8)}` : candidate;
 
     const newUser = await prisma.user.create({
       data: {

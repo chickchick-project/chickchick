@@ -1,8 +1,10 @@
+import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/prisma";
 import {
   ServiceResult,
   serviceSuccess,
   serviceInternalError,
+  serviceBadRequest,
   serviceNotFound,
   serviceError,
 } from "@/server/result";
@@ -154,13 +156,18 @@ export async function updateMyProfileService(
       return serviceNotFound("사용자를 찾을 수 없습니다.");
     }
 
-    if (user.imageUrl && user.imageUrl.includes(PROFILE_BUCKET_NAME)) {
-      await deleteImageByUrl(PROFILE_BUCKET_NAME, user.imageUrl);
-    }
-
     const cleanedData = ApiUpdateMyProfileRequestSchema.partial()
       .strip()
       .parse(updateData);
+
+    // 새 이미지로 교체하는 경우에만 기존 파일 삭제
+    if (
+      cleanedData.imageUrl !== undefined &&
+      user.imageUrl &&
+      user.imageUrl.includes(PROFILE_BUCKET_NAME)
+    ) {
+      await deleteImageByUrl(PROFILE_BUCKET_NAME, user.imageUrl);
+    }
 
     const updatedUser = await prisma.user.update({
       where: { id },
@@ -186,6 +193,9 @@ export async function updateMyProfileService(
       nextLevelPoints,
     });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return serviceBadRequest("이미 사용 중인 닉네임입니다.");
+    }
     return serviceInternalError(error);
   }
 }

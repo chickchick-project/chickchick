@@ -26,8 +26,8 @@ router.use("*", async (c, next) => {
 });
 
 const SyncOAuthUserBodySchema = z.object({
-  provider: z.string(),
-  providerAccountId: z.string(),
+  provider: z.string().min(1),
+  providerAccountId: z.string().min(1),
   name: z.string(),
   email: z.string().email(),
   imageUrl: z.string().url().optional(),
