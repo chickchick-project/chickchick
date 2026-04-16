@@ -15,7 +15,6 @@ import { MobileSeparator } from "@/components/commons/mobileSeparator";
 import type { ApiReviewResponse } from "@/server/hono/schemas/review.schema";
 import { useLogRecentItem } from "@/client/stores/perfumeStore";
 import { useRecentPerfumesStore } from "@/client/stores/perfumeStore";
-import { cn } from "@/shared/utils/cn";
 
 // temp
 // sematic tag 적용하기 (하위 컴포넌트 전부)
@@ -61,18 +60,10 @@ export const DetailClient = ({
     <div className="w-full flex flex-col items-center my-10">
       <section className="w-full px-5 flex flex-col gap-[60px] items-center">
         <SearchBar />
-        <div className="relative w-full">
-          <div
-            className={cn(
-              "transition-opacity duration-300",
-              !isPerfumeLoading && perfumeDetail
-                ? "absolute inset-0 opacity-0 pointer-events-none"
-                : "",
-            )}
-          >
+        <div className="w-full">
+          {isPerfumeLoading || !perfumeDetail ? (
             <PerfumeOverviewSkeleton />
-          </div>
-          {perfumeDetail && (
+          ) : (
             <PerfumeOverview
               perfumeDetail={perfumeDetail}
               interactionStates={interactionStates}
@@ -89,18 +80,10 @@ export const DetailClient = ({
           <PerfumeRecentViewList />
         </div>
         <MobileSeparator />
-        <div className="relative">
-          <div
-            className={cn(
-              "transition-opacity duration-300",
-              !isPerfumeLoading && perfumeDetail
-                ? "absolute inset-0 opacity-0 pointer-events-none"
-                : "",
-            )}
-          >
+        <div>
+          {isPerfumeLoading || !perfumeDetail ? (
             <PerfumeDetailSidebarSkeleton />
-          </div>
-          {perfumeDetail && (
+          ) : (
             <PerfumeDetailSidebar perfumeId={perfumeDetail.id} />
           )}
         </div>

@@ -57,21 +57,25 @@ export function PerfumeSection({
 }
 
 const renderPerfumeCard = (item: ApiPerfumeSimpleResponse, index: number) => {
+  const perfumeImage = item.perfumeImage?.imageUrl;
+  const brandName = item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정";
+  const perfumeName = item.nameKo ?? item.nameEn ?? "이름 미정";
+
   return (
     <Link key={item.id || index} href={`/perfumes/${item.id}`} passHref>
       <PerfumeCard
         className="tablet:block hidden"
         cardType={PERFUME_CARD_TYPES.DEFAULT}
-        perfumeImage={item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
-        brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
-        perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
+        perfumeImage={perfumeImage}
+        brandName={brandName}
+        perfumeName={perfumeName}
       />
       <PerfumeCard
         className="tablet:hidden block"
         cardType={PERFUME_CARD_TYPES.SMALLSIZE}
-        perfumeImage={item.perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
-        brandName={item.brand?.nameKo ?? item.brand?.nameEn ?? "브랜드 미정"}
-        perfumeName={item.nameKo ?? item.nameEn ?? "이름 미정"}
+        perfumeImage={perfumeImage}
+        brandName={brandName}
+        perfumeName={perfumeName}
       />
     </Link>
   );

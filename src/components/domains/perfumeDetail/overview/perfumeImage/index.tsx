@@ -14,12 +14,10 @@ export const PerfumeImage = ({ src, alt }: PerfumeImageProps) => {
         alt={alt}
         fill
         sizes={`
-            (max-width: 768px) 100vw, 
-            (max-width: 1200px) 50vw, 
+            (max-width: 768px) 100vw,
+            (max-width: 1200px) 50vw,
             33vw
           `}
-        placeholder="blur"
-        blurDataURL="/images/BlurShimmer.svg"
         priority
         fetchPriority="high"
         className="object-contain"

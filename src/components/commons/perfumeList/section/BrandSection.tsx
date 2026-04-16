@@ -19,8 +19,6 @@ export function BrandSection({ brand }: { brand: ApiBrandSimpleResponse }) {
             alt={IMAGES.Logo.alt}
             width={160}
             height={68}
-            placeholder="blur"
-            blurDataURL="/images/BlurShimmer.svg"
           />
           <div className="flex w-full items-center justify-between">
             <div className="flex flex-col">

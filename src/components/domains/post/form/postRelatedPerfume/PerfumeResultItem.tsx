@@ -38,12 +38,10 @@ export default function PerfumeResultItem({
       <figure className="flex items-center">
         <div className="relative w-10 h-10 rounded-md mr-4 bg-white p-1 flex items-center justify-center border">
           <Image
-            src={perfumeImage?.imageUrl ?? "/images/BlurShimmer.svg"}
+            src={perfumeImage?.imageUrl ?? "/images/Logo_rectangle.svg"}
             alt={perfumeName || "Perfume Image"}
             sizes="40px"
             fill
-            placeholder="blur"
-            blurDataURL="/images/BlurShimmer.svg"
             className="w-10 h-10 rounded-md mr-4 object-contain"
           />
         </div>
