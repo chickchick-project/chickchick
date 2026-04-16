@@ -37,6 +37,7 @@ export function SearchHeader({
             onChange={onChange}
             onClick={onSubmit}
             maxWidth={searchBarMaxWidth}
+            maxLength={100}
           />
         )}
         <nav className="w-full mt-7">

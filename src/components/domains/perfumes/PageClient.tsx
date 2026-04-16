@@ -6,8 +6,11 @@ import {
   usePerfumeAccordFilter,
   useAvailableFilters,
 } from "@/client/hooks/query/useFilterQuery";
-import { BrandSection } from "@/components/commons/perfumeList/section/BrandSection";
-import { PerfumeSection } from "@/components/commons/perfumeList/section/PerfumeSection";
+import {
+  BrandSection,
+  PerfumeSection,
+  PerfumeErrorSection,
+} from "@/components/commons/perfumeList/section";
 import { SearchHeader } from "@/components/commons/perfumeList/search";
 import { useInfinitePerfumes } from "@/client/hooks/useInfinitePerfumes";
 import { usePerfumeSearchState } from "./hook/usePerfumeSearchState";
@@ -38,10 +41,10 @@ export default function PageClient() {
     perfumes,
     isLoading,
     isError,
-    error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfinitePerfumes(searchKeyword);
 
   // 동적 필터 파라미터
@@ -138,15 +141,6 @@ export default function PageClient() {
     isFetchingNextPage,
   });
 
-  if (isError) {
-    return (
-      <div>
-        에러가 발생했습니다:
-        {error instanceof Error ? error.message : "Unknown error"}
-      </div>
-    );
-  }
-
   return (
     <div>
       <div className="flex flex-col items-center h-full">
@@ -168,12 +162,16 @@ export default function PageClient() {
             </h2>
           </div>
           {matchedBrand && <BrandSection brand={matchedBrand} />}
-          <PerfumeSection
-            perfumes={perfumes}
-            isLoading={isLoading}
-            isIdle={!isLoading && perfumes.length === 0}
-            moreRef={moreRef}
-          />
+          {isError ? (
+            <PerfumeErrorSection onRetry={refetch} />
+          ) : (
+            <PerfumeSection
+              perfumes={perfumes}
+              isLoading={isLoading}
+              isIdle={!isLoading && perfumes.length === 0}
+              moreRef={moreRef}
+            />
+          )}
         </main>
       </div>
     </div>

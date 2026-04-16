@@ -9,7 +9,7 @@ interface PerfumeSectionProps {
   perfumes: ApiPerfumeSimpleResponse[];
   isLoading: boolean;
   isIdle: boolean;
-  moreRef: React.RefObject<HTMLDivElement>;
+  moreRef: React.RefCallback<HTMLDivElement>;
   isFetchingNextPage?: boolean;
   pageType?: "brandDetail" | "perfumes";
 }

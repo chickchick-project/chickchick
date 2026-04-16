@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useIntersectionObserver } from "./useIntersectionObserver";
 
 interface UseInfiniteScrollTriggerOptions {
@@ -14,8 +14,7 @@ export function useInfiniteScrollTrigger({
   fetchNextPage,
   threshold = 0.1,
 }: UseInfiniteScrollTriggerOptions) {
-  const moreRef = useRef<HTMLDivElement>(null);
-  const isIntersecting = useIntersectionObserver(moreRef, threshold);
+  const { ref: moreRef, isIntersecting } = useIntersectionObserver(threshold);
 
   useEffect(() => {
     if (isIntersecting && hasNextPage && !isFetchingNextPage) {

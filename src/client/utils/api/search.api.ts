@@ -100,7 +100,6 @@ export const searchApi = {
           "향수 정보를 불러오는 데 실패했습니다."
       );
     } catch (error) {
-      console.error("fetchPerfumes에서 오류 발생:", error);
       throw error;
     }
   },
