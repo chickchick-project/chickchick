@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { auth } from "@/auth";
 import Providers from "@/components/commons/Provider/TanstackProvider";
 import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
 import { NavBarWrapper } from "@/components/commons/navBar/Wrapper";
@@ -78,11 +79,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
       <head>
@@ -109,7 +111,7 @@ export default function RootLayout({
         />
       </head>
       <body className="h-full">
-        <Providers>
+        <Providers session={session}>
           <RecentSyncManager />
           <NavBarWrapper />
           <BodyWrapper>{children}</BodyWrapper>

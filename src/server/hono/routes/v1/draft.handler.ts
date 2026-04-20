@@ -80,7 +80,7 @@ const listDraftsRoute = createRoute({
       schema: z.union([DraftSchemas.ApiDraftResponseSchema, DraftSchemas.ApiDraftListResponseSchema]),
       description: "임시 저장 조회 결과",
     },
-    ["401", "404"]
+    ["401"]
   ),
   tags: ["Draft"],
 });
@@ -95,8 +95,7 @@ routers.authenticated.openapi(listDraftsRoute, async (c) => {
   if (!result.success) return apiInternalError(c, result.message);
 
   if (type) {
-    if (!result.data) return apiNotFound(c, "임시 저장을 찾을 수 없습니다.");
-    return apiSuccess(c, result.data, "임시 저장을 성공적으로 조회했습니다.");
+    return apiSuccess(c, result.data ?? null, "임시 저장을 성공적으로 조회했습니다.");
   }
 
   return apiSuccess(c, result.data, "임시 저장 목록을 성공적으로 조회했습니다.");
