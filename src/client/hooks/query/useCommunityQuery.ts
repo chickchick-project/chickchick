@@ -99,6 +99,9 @@ export const useCreateCommunityPost = () => {
         router.push(`/community/post/${response.data.id}`);
       }
     },
+    onError: () => {
+      alert("게시글 작성에 실패했습니다. 다시 시도해 주세요.");
+    },
   });
 };
 
@@ -120,6 +123,9 @@ export const useUpdateCommunityPost = (postId: string) => {
         queryKey: queryKeys.community.lists(),
       });
       router.push(`/community/post/${postId}`);
+    },
+    onError: () => {
+      alert("게시글 수정에 실패했습니다. 다시 시도해 주세요.");
     },
   });
 };

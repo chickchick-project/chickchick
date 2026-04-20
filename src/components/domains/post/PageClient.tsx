@@ -35,22 +35,6 @@ export default function PageClient({ type, postId }: PostFormPageProps) {
     draftId || "",
   );
 
-  // 디버깅 로그
-  console.log("[PageClient] 렌더링", {
-    type,
-    postId,
-    draftId,
-    skipDraftCheck,
-    updateDraft: updateDraft
-      ? `존재 (id: ${updateDraft.id}, postId: ${updateDraft.postId})`
-      : "없음",
-    explicitDraft: explicitDraft
-      ? `존재 (id: ${explicitDraft.id}, postId: ${explicitDraft.postId})`
-      : "없음",
-    isUpdateDraftLoading,
-    isExplicitDraftLoading,
-  });
-
   if (isAuthLoading || !user) {
     return <div>로그인이 필요한 서비스 입니다.</div>;
   }

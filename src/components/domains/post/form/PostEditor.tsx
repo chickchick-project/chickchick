@@ -7,7 +7,7 @@ import { MutableRefObject } from "react";
 
 const TiptapEditor = dynamic(
   () => import("@/components/commons/tiptap/TiptapEditor"),
-  { ssr: false, loading: () => <EditorLoading /> }
+  { ssr: false, loading: () => <EditorLoading /> },
 );
 
 export default function PostEditor({
@@ -23,12 +23,17 @@ export default function PostEditor({
       <Controller
         name="content"
         control={control}
-        render={({ field }) => (
-          <TiptapEditor
-            content={field.value}
-            onChange={field.onChange}
-            blobRegistryRef={blobRegistryRef}
-          />
+        render={({ field, fieldState }) => (
+          <div className="flex flex-col gap-1">
+            <TiptapEditor
+              content={field.value}
+              onChange={field.onChange}
+              blobRegistryRef={blobRegistryRef}
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red">{fieldState.error.message}</p>
+            )}
+          </div>
         )}
       />
     </>

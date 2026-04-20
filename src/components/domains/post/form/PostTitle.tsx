@@ -12,7 +12,6 @@ export default function PostTitle() {
         {...register("title")}
         id="title"
         name="title"
-        required
         isError={error ? true : false}
         helperText={error || "최대 한글 20자, 영어 30자, 숫자 혼용 가능"}
         placeholder="제목을 입력하세요."

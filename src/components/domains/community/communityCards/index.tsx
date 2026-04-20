@@ -10,7 +10,7 @@ interface ICommunityCardsProps {
   selectedTab: string;
   isLoading?: boolean;
   isIdle?: boolean;
-  moreRef?: React.RefObject<HTMLDivElement>;
+  moreRef?: React.Ref<HTMLDivElement>;
 }
 export default function CommunityCards({
   postData,

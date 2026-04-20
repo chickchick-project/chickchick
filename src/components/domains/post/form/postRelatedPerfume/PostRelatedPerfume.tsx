@@ -53,9 +53,17 @@ export default function PostRelatedPerfume({
     selectedPerfumesIds.length + tempSelectedPerfumeIds.length >=
     MAX_SELECTED_PERFUMES;
 
+  const isInitialSyncRef = useRef(true);
+
   useEffect(() => {
-    setValue("perfumeIds", selectedPerfumesIds);
-    setValue("perfumes", selectedPerfumes);
+    if (isInitialSyncRef.current) {
+      isInitialSyncRef.current = false;
+      setValue("perfumeIds", selectedPerfumesIds);
+      setValue("perfumes", selectedPerfumes);
+      return;
+    }
+    setValue("perfumeIds", selectedPerfumesIds, { shouldDirty: true });
+    setValue("perfumes", selectedPerfumes, { shouldDirty: true });
   }, [setValue, selectedPerfumesIds, selectedPerfumes]);
 
   useEffect(() => {

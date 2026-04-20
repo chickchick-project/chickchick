@@ -64,7 +64,7 @@ export default function PostForm({
 
   const { handleSubmit, formState, setValue, getValues, reset } = method;
 
-  const { isValid, isDirty } = formState;
+  const { isDirty } = formState;
 
   const { createMutation, editMutation } = usePostMutation(postId);
   const deleteDraftMutation = useDeleteDraft();
@@ -94,7 +94,6 @@ export default function PostForm({
   const handleManualSave = useCallback(async () => {
     setSaveStatus("saving");
     await saveDraft();
-    setSaveStatus("idle");
   }, [saveDraft]);
 
   useBeforeUnload({
@@ -148,8 +147,6 @@ export default function PostForm({
     }
   };
 
-  const disabled = !isDirty || !isValid || isLoading;
-
   return (
     <FormProvider {...method}>
       <form
@@ -163,7 +160,7 @@ export default function PostForm({
           <PostRelatedPerfume initialPerfumes={initialData?.perfumes ?? initialPerfumes} />
         </div>
         <PostFormActions
-          disabled={disabled}
+          disabled={isLoading}
           onSaveDraft={handleManualSave}
           saveStatus={saveStatus}
         />
