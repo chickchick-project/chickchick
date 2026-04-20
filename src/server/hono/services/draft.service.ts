@@ -13,13 +13,34 @@ import {
   ApiDraftResponse,
   CreateDraftPayload,
 } from "../schemas/draft.schema";
-import { DraftType } from "@prisma/client";
+import { DraftType, PostDraft } from "@prisma/client";
 
 /**
  * perfumeIds를 기반으로 향수 정보 조회
  * @param perfumeIds 조회할 향수 ID 배열
  * @returns 향수 정보 배열 (perfumeIds 순서 유지)
  */
+function mapDraftToApiResponse(
+  draft: PostDraft,
+  perfumes: Awaited<ReturnType<typeof getPerfumesByIds>>,
+): ApiDraftResponse {
+  return {
+    id: draft.id,
+    userId: draft.userId,
+    type: draft.type,
+    title: draft.title,
+    content: draft.content,
+    contentText: draft.contentText,
+    category: draft.category,
+    thumbnailUrl: draft.thumbnailUrl,
+    perfumeIds: draft.perfumeIds,
+    perfumes,
+    postId: draft.postId,
+    createdAt: draft.createdAt.toISOString(),
+    updatedAt: draft.updatedAt.toISOString(),
+  };
+}
+
 async function getPerfumesByIds(perfumeIds: string[]) {
   if (!perfumeIds || perfumeIds.length === 0) {
     return [];
@@ -107,27 +128,8 @@ export const createOrUpdateDraftService = async (
       },
     });
 
-    // perfumeIds를 기반으로 향수 정보 조회
     const perfumesData = await getPerfumesByIds(draft.perfumeIds);
-
-    // API 응답 형식으로 변환
-    const response: ApiDraftResponse = {
-      id: draft.id,
-      userId: draft.userId,
-      type: draft.type,
-      title: draft.title,
-      content: draft.content,
-      contentText: draft.contentText,
-      category: draft.category,
-      thumbnailUrl: draft.thumbnailUrl,
-      perfumeIds: draft.perfumeIds,
-      perfumes: perfumesData,
-      postId: draft.postId,
-      createdAt: draft.createdAt.toISOString(),
-      updatedAt: draft.updatedAt.toISOString(),
-    };
-
-    return serviceSuccess(response);
+    return serviceSuccess(mapDraftToApiResponse(draft, perfumesData));
   } catch (error) {
     return serviceInternalError(error);
   }
@@ -156,40 +158,49 @@ export const getDraftService = async (
       return serviceForbidden("임시 저장을 조회할 권한이 없습니다.");
     }
 
-    // perfumeIds를 기반으로 향수 정보 조회
     const perfumes = await getPerfumesByIds(draft.perfumeIds);
-
-    const response: ApiDraftResponse = {
-      id: draft.id,
-      userId: draft.userId,
-      type: draft.type,
-      title: draft.title,
-      content: draft.content,
-      contentText: draft.contentText,
-      category: draft.category,
-      thumbnailUrl: draft.thumbnailUrl,
-      perfumeIds: draft.perfumeIds,
-      perfumes: perfumes,
-      postId: draft.postId,
-      createdAt: draft.createdAt.toISOString(),
-      updatedAt: draft.updatedAt.toISOString(),
-    };
-
-    return serviceSuccess(response);
+    return serviceSuccess(mapDraftToApiResponse(draft, perfumes));
   } catch (error) {
     return serviceInternalError(error);
   }
 };
 
 /**
- * 현재 사용자의 모든 임시 저장 목록을 조회합니다.
- * 최근 업데이트 순으로 정렬합니다.
- * perfumeIds를 기반으로 향수 정보를 조회하여 반환합니다.
+ * 임시 저장을 조회합니다.
+ * - type 지정 시: (userId, type) unique constraint로 단일 조회 → ApiDraftResponse | null
+ * - type 미지정 시: 해당 유저의 전체 목록 조회 → ApiDraftListResponse
  */
 export const listDraftsService = async (
   userId: string,
-): Promise<ServiceResult<ApiDraftListResponse>> => {
+  type?: DraftType,
+): Promise<ServiceResult<ApiDraftResponse | ApiDraftListResponse | null>> => {
   try {
+    if (type) {
+      const draft = await prisma.postDraft.findUnique({
+        where: { post_drafts_user_id_type_key: { userId, type } },
+      });
+
+      if (!draft) return serviceSuccess(null);
+
+      const perfumes = await getPerfumesByIds(draft.perfumeIds);
+
+      return serviceSuccess({
+        id: draft.id,
+        userId: draft.userId,
+        type: draft.type,
+        title: draft.title,
+        content: draft.content,
+        contentText: draft.contentText,
+        category: draft.category,
+        thumbnailUrl: draft.thumbnailUrl,
+        perfumeIds: draft.perfumeIds,
+        perfumes,
+        postId: draft.postId,
+        createdAt: draft.createdAt.toISOString(),
+        updatedAt: draft.updatedAt.toISOString(),
+      } satisfies ApiDraftResponse);
+    }
+
     const drafts = await prisma.postDraft.findMany({
       where: { userId },
       orderBy: { updatedAt: "desc" },

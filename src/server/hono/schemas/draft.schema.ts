@@ -67,6 +67,14 @@ export const DraftSuccessResponseSchema = z.object({
 });
 
 /**
+ * 임시 저장 목록/단일 조회 쿼리 스키마
+ * @description type을 지정하면 해당 타입의 단일 임시 저장을, 생략하면 전체 목록을 반환
+ */
+export const ListDraftQuerySchema = z.object({
+  type: DraftTypeSchema.optional().openapi({ description: "조회할 임시 저장 타입 (지정 시 단일 반환, 생략 시 전체 목록 반환)" }),
+});
+
+/**
  * 임시 저장 ID 파라미터 스키마
  * @description URL 경로에서 사용되는 임시 저장 ID 검증
  */
@@ -81,3 +89,4 @@ export type CreateDraftPayload = z.infer<typeof CreateDraftPayloadSchema>;
 export type ApiDraftResponse = z.infer<typeof ApiDraftResponseSchema>;
 export type ApiDraftListResponse = z.infer<typeof ApiDraftListResponseSchema>;
 export type DraftSuccessResponse = z.infer<typeof DraftSuccessResponseSchema>;
+export type ListDraftQuery = z.infer<typeof ListDraftQuerySchema>;

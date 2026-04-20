@@ -1,5 +1,4 @@
-import { createRoute } from "@hono/zod-openapi";
-import { z } from "zod";
+import { createRoute, z } from "@hono/zod-openapi";
 import * as DraftSchemas from "@/server/hono/schemas/draft.schema";
 import * as DraftServices from "@/server/hono/services/draft.service";
 import {
@@ -67,18 +66,21 @@ routers.authenticated.openapi(createOrUpdateDraftRoute, async (c) => {
   return apiCreated(c, result.data, "임시 저장을 성공적으로 저장했습니다.");
 });
 
-// ========== GET /drafts - 임시 저장 목록 조회 ==========
+// ========== GET /drafts - 임시 저장 조회 ==========
 const listDraftsRoute = createRoute({
   method: "get",
   path: "/",
-  summary: "내 임시 저장 목록 조회",
-  description: "현재 사용자의 모든 임시 저장 목록을 조회합니다.",
+  summary: "내 임시 저장 조회",
+  description: "type을 지정하면 해당 타입의 단일 임시 저장을, 생략하면 전체 목록을 반환합니다.",
+  request: {
+    query: DraftSchemas.ListDraftQuerySchema,
+  },
   responses: createStandardApiResponses(
     {
-      schema: DraftSchemas.ApiDraftListResponseSchema,
-      description: "임시 저장 목록",
+      schema: z.union([DraftSchemas.ApiDraftResponseSchema, DraftSchemas.ApiDraftListResponseSchema]),
+      description: "임시 저장 조회 결과",
     },
-    ["401"]
+    ["401", "404"]
   ),
   tags: ["Draft"],
 });
@@ -87,10 +89,14 @@ routers.authenticated.openapi(listDraftsRoute, async (c) => {
   const user = c.get("user");
   if (!user?.id) throw new Error("인증되지 않은 사용자입니다.");
 
-  const result = await DraftServices.listDraftsService(user.id);
+  const { type } = c.req.valid("query");
 
-  if (!result.success) {
-    return apiInternalError(c, result.message);
+  const result = await DraftServices.listDraftsService(user.id, type);
+  if (!result.success) return apiInternalError(c, result.message);
+
+  if (type) {
+    if (!result.data) return apiNotFound(c, "임시 저장을 찾을 수 없습니다.");
+    return apiSuccess(c, result.data, "임시 저장을 성공적으로 조회했습니다.");
   }
 
   return apiSuccess(c, result.data, "임시 저장 목록을 성공적으로 조회했습니다.");
