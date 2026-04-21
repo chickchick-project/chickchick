@@ -62,6 +62,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
             width={80}
             height={80}
             alt="프로필"
+            unoptimized={!user?.imageUrl}
           />
           <LevelChip level={user?.level ?? 0} />
           <span className="text-title-2 font-semibold text-black-100">

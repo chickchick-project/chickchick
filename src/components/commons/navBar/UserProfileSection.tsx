@@ -42,6 +42,7 @@ const UserProfileSection = () => {
               alt="User"
               loading="eager"
               quality={85}
+              unoptimized={!user.imageUrl}
             />
           </div>
           <button

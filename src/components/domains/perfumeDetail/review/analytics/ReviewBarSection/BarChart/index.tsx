@@ -7,6 +7,7 @@ import {
   BarElement,
   ChartOptions,
   BarController,
+  Plugin,
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 import { Chart } from "react-chartjs-2";
@@ -91,7 +92,7 @@ export const BarChart = ({ title, data }: BarChartProps) => {
           data={chartData}
           options={options}
           height={120}
-          plugins={[ChartDataLabels]}
+          plugins={[ChartDataLabels as Plugin<"bar">]}
         />
       </div>
     </div>
