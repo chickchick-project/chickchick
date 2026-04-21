@@ -62,15 +62,15 @@ export default function BrandDetailTabs({
           <Image
             src={images.src}
             alt={images.alt}
-            width={1200}
+            width={600}
             height={500}
             quality={60}
             placeholder="blur"
             blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAYAAAC09K7GAAAAFklEQVQI12NgYGD4z8BQDwAEgAF/QualIQAAAABJRU5ErkJggg=="
-            className="w-full h-full object-cover"
+            className="w-full h-full p-2 object-contain"
           />
         </div>
-        <div className="tablet:w-1/2 w-full h-full flex flex-col justify-between px-8 py-8 gap-6 overflow-y-auto">
+        <div className="tablet:w-1/2 w-full h-full flex flex-col justify-between px-4 py-4 gap-6 overflow-y-auto">
           <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-line">
             {brandDescription}
           </p>
