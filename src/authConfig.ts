@@ -3,15 +3,11 @@ import { Account, DefaultSession, NextAuthConfig, User } from "next-auth";
 declare module "next-auth" {
   interface User {
     isNewUser?: boolean;
-    isLinked?: boolean;
-    linkedProvider?: string;
   }
   interface Session {
     user: {
       id: string;
       isNewUser?: boolean;
-      isLinked?: boolean;
-      linkedProvider?: string;
       nickname: string;
       imageUrl: string | null;
     } & DefaultSession["user"];
@@ -33,13 +29,15 @@ const internalFetch = async (path: string, init?: RequestInit) => {
   });
 };
 
+type SyncOAuthUserResponse =
+  | { type: "success"; id: string; isNewUser: boolean }
+  | { type: "email_conflict"; token: string };
+
 const syncOAuthUser = async (payload: {
   provider: string;
   providerAccountId: string;
-  name: string;
   email: string;
-  imageUrl?: string;
-}): Promise<{ id: string; isNewUser: boolean; isLinked: boolean }> => {
+}): Promise<SyncOAuthUserResponse> => {
   const res = await internalFetch("/sync", {
     method: "POST",
     body: JSON.stringify(payload),
@@ -86,18 +84,18 @@ export const authConfig = {
       if (!user.email) return false;
 
       try {
-        const { id, isNewUser, isLinked } = await syncOAuthUser({
+        const result = await syncOAuthUser({
           provider: account.provider,
           providerAccountId: account.providerAccountId,
-          name: user.name ?? "",
           email: user.email,
-          imageUrl: user.image ?? undefined,
         });
 
-        user.id = id;
-        user.isNewUser = isNewUser;
-        user.isLinked = isLinked;
-        user.linkedProvider = isLinked ? account.provider : undefined;
+        if (result.type === "email_conflict") {
+          return `/?action=link_confirm&token=${result.token}&provider=${account.provider}`;
+        }
+
+        user.id = result.id;
+        user.isNewUser = result.isNewUser;
         return true;
       } catch (err) {
         console.error(`[AUTH][signIn] ${account.provider} 동기화 오류:`, err);
@@ -109,16 +107,10 @@ export const authConfig = {
       if (trigger === "update" && session?.isNewUser === false) {
         token.isNewUser = false;
       }
-      if (trigger === "update" && session?.isLinked === false) {
-        token.isLinked = false;
-        token.linkedProvider = undefined;
-      }
 
       if (user) {
         token.id = user.id;
         token.isNewUser = user.isNewUser ?? false;
-        token.isLinked = user.isLinked ?? false;
-        token.linkedProvider = user.linkedProvider;
       }
 
       const SESSION_REFRESH_INTERVAL_SEC = 60;
@@ -148,10 +140,6 @@ export const authConfig = {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.isNewUser = token.isNewUser as boolean;
-        session.user.isLinked = token.isLinked as boolean;
-        session.user.linkedProvider = token.linkedProvider as
-          | string
-          | undefined;
         session.user.nickname = token.nickname as string;
         session.user.imageUrl = token.imageUrl as string | null;
       }

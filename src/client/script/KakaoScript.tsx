@@ -10,7 +10,7 @@ declare global {
 
 function KakaoScript() {
   const onLoad = () => {
-    window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+    window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_APP_KEY);
   };
 
   return (

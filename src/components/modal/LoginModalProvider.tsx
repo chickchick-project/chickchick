@@ -9,22 +9,37 @@ import { NicknameSetupModal } from "@/components/modal/NicknameSetupModal";
 import { AccountLinkedModal } from "@/components/modal/AccountLinkedModal";
 import { MODAL_KEYS } from "@/client/stores/uiStore";
 
+interface PendingLink {
+  token: string;
+  provider: string;
+}
+
 export default function LoginModalProvider() {
-  const { loginModal, closeModal } = useModalStore();
+  const { loginModal, closeModal, openModal } = useModalStore();
   const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
   const [nicknameModalClosed, setNicknameModalClosed] = useState(false);
+  const [pendingLink, setPendingLink] = useState<PendingLink | null>(null);
 
-  const isNewUser = status === "authenticated" && session?.user?.isNewUser === true;
-  const isLinked = status === "authenticated" && session?.user?.isLinked === true;
-  const linkedProvider = session?.user?.linkedProvider ?? "";
+  const isNewUser =
+    status === "authenticated" && session?.user?.isNewUser === true;
   const defaultNickname = session?.user?.nickname ?? "";
 
   useEffect(() => {
     setMounted(true);
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("action") === "link_confirm") {
+      const token = params.get("token");
+      const provider = params.get("provider");
+      if (token && provider) {
+        setPendingLink({ token, provider });
+        // URL에서 파람 제거 (히스토리 오염 방지)
+        window.history.replaceState({}, "", window.location.pathname);
+      }
+    }
   }, []);
 
-  // isNewUser가 false로 바뀌면(세션 업데이트) 닫힌 상태 초기화
   useEffect(() => {
     if (!isNewUser) setNicknameModalClosed(false);
   }, [isNewUser]);
@@ -34,17 +49,22 @@ export default function LoginModalProvider() {
   const modalRoot = document.getElementById("modal");
   if (!modalRoot) return null;
 
-  if (isLinked && linkedProvider) {
+  if (pendingLink) {
     return createPortal(
       <AccountLinkedModal
-        provider={linkedProvider}
-        closeModal={() => {}}
+        mode="confirm"
+        provider={pendingLink.provider}
+        token={pendingLink.token}
+        closeModal={() => {
+          setPendingLink(null);
+          openModal(MODAL_KEYS.LOGIN);
+        }}
       />,
       modalRoot,
     );
   }
 
-  if (isNewUser && !nicknameModalClosed && defaultNickname) {
+  if (isNewUser && !nicknameModalClosed) {
     return createPortal(
       <NicknameSetupModal
         defaultNickname={defaultNickname}

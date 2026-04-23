@@ -13,7 +13,7 @@
     "test:run": "vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "zod": "zod-prisma-types"
+    "zod": "zod-prisma-types && node -e \"const fs=require('fs');['prisma/zod/inputTypeSchemas/JsonNullValueFilterSchema.ts','prisma/zod/inputTypeSchemas/NullableJsonNullValueInputSchema.ts'].forEach(f=>{let c=fs.readFileSync(f,'utf8');if(!c.includes('@prisma/client'))c=c.replace(\\\"import { z } from 'zod';\\\",\\\"import { z } from 'zod';\\\\nimport { Prisma } from '@prisma/client';\\\");c=c.replace(/: z\\\\.ZodType<Prisma\\\\.[A-Za-z]+>/g,'');fs.writeFileSync(f,c);});\""
   },
   "scarfSettings": {
     "enabled": false

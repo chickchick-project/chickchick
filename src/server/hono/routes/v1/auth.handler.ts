@@ -1,7 +1,9 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import type { Context, Next } from "hono";
 import {
   syncOAuthUserService,
+  confirmOAuthLinkService,
   getSessionUserService,
 } from "@/server/hono/services/auth.service";
 import {
@@ -16,27 +18,26 @@ import type { AppContext } from "@/server/hono/app";
 
 const router = new OpenAPIHono<AppContext>();
 
-// 내부 시크릿 검증 미들웨어
-router.use("*", async (c, next) => {
+const internalAuth = async (c: Context, next: Next) => {
   const secret = c.req.header("x-internal-secret");
   if (!secret || secret !== process.env.INTERNAL_API_SECRET) {
     return apiForbidden(c, "접근이 거부되었습니다.");
   }
   await next();
-});
+};
+
+// ── 내부 전용 라우트 ────────────────────────────────────────────────────────
 
 const SyncOAuthUserBodySchema = z.object({
   provider: z.string().min(1),
   providerAccountId: z.string().min(1),
-  name: z.string(),
   email: z.string().email(),
-  imageUrl: z.string().url().optional(),
 });
 
-const SyncOAuthUserResponseSchema = z.object({
-  id: z.string(),
-  isNewUser: z.boolean(),
-});
+const SyncOAuthUserResponseSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("success"), id: z.string(), isNewUser: z.boolean() }),
+  z.object({ type: z.literal("email_conflict"), token: z.string() }),
+]);
 
 const syncOAuthUserRoute = createRoute({
   method: "post",
@@ -47,6 +48,7 @@ const syncOAuthUserRoute = createRoute({
   tags: ["Auth (Internal)"],
 });
 
+router.use("/sync", internalAuth);
 router.openapi(syncOAuthUserRoute, async (c) => {
   const body = c.req.valid("json");
   const result = await syncOAuthUserService(body);
@@ -83,6 +85,7 @@ const getSessionUserRoute = createRoute({
   tags: ["Auth (Internal)"],
 });
 
+router.use("/session-user/*", internalAuth);
 router.openapi(getSessionUserRoute, async (c) => {
   const { userId } = c.req.valid("param");
   const result = await getSessionUserService(userId);
@@ -97,6 +100,43 @@ router.openapi(getSessionUserRoute, async (c) => {
   }
 
   return apiSuccess(c, result.data, "세션 유저 정보를 성공적으로 불러왔습니다.");
+});
+
+// ── 공개 라우트 ─────────────────────────────────────────────────────────────
+
+const ConfirmLinkBodySchema = z.object({
+  token: z.string().uuid(),
+});
+
+const ConfirmLinkResponseSchema = z.object({
+  userId: z.string(),
+});
+
+const confirmLinkRoute = createRoute({
+  method: "post",
+  path: "/confirm-link",
+  summary: "OAuth 계정 연결 확인",
+  request: { body: { content: { "application/json": { schema: ConfirmLinkBodySchema } } } },
+  responses: createStandardApiResponses({ schema: ConfirmLinkResponseSchema }),
+  tags: ["Auth"],
+});
+
+router.openapi(confirmLinkRoute, async (c) => {
+  const { token } = c.req.valid("json");
+  const result = await confirmOAuthLinkService(token);
+
+  if (!result.success) {
+    switch (result.error) {
+      case "NOT_FOUND":
+        return apiNotFound(c, result.message);
+      case "BAD_REQUEST":
+        return apiBadRequest(c, result.message);
+      default:
+        return apiInternalError(c, result.message);
+    }
+  }
+
+  return apiSuccess(c, result.data, "계정 연결이 완료되었습니다.");
 });
 
 export default router;

@@ -1,6 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { prisma } from "@/server/prisma";
-import { syncOAuthUserService, getSessionUserService } from "../auth.service";
+import {
+  syncOAuthUserService,
+  confirmOAuthLinkService,
+  getSessionUserService,
+} from "../auth.service";
 
 vi.mock("@/server/prisma", () => ({
   prisma: {
@@ -17,6 +21,11 @@ vi.mock("@/server/prisma", () => ({
       delete: vi.fn(),
       deleteMany: vi.fn(),
     },
+    pendingOAuthLink: {
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+    },
   },
 }));
 
@@ -31,9 +40,7 @@ vi.mock("@/server/hono/utils/nickname.utils", () => ({
 const BASE_INPUT = {
   provider: "google",
   providerAccountId: "google-uid-001",
-  name: "테스트유저",
   email: "test@example.com",
-  imageUrl: "https://example.com/avatar.jpg",
 };
 
 const ACTIVE_USER = {
@@ -79,10 +86,9 @@ describe("syncOAuthUserService", () => {
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.id).toBe("user-001");
         expect(result.data.isNewUser).toBe(false);
-        expect(result.data.isLinked).toBe(false);
       }
       expect(prisma.user.findUnique).not.toHaveBeenCalled();
       expect(prisma.user.create).not.toHaveBeenCalled();
@@ -108,16 +114,19 @@ describe("syncOAuthUserService", () => {
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.id).toBe("user-002");
         expect(result.data.isNewUser).toBe(false);
-        expect(result.data.isLinked).toBe(false);
       }
       expect(prisma.user.update).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { id: "user-002" },
-          data: expect.objectContaining({ isActive: true, deletedAt: null, nickname: "user_5678" }),
-        })
+          data: expect.objectContaining({
+            isActive: true,
+            deletedAt: null,
+            nickname: "user_5678",
+          }),
+        }),
       );
     });
 
@@ -149,58 +158,48 @@ describe("syncOAuthUserService", () => {
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.isNewUser).toBe(true);
-        expect(result.data.isLinked).toBe(false);
       }
       expect(prisma.userOAuthAccount.deleteMany).toHaveBeenCalledWith({
         where: { provider: "google", providerAccountId: "google-uid-001" },
       });
       expect(prisma.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: { email: null } })
+        expect.objectContaining({ data: { email: null } }),
       );
       expect(prisma.user.create).toHaveBeenCalled();
       expect(prisma.userOAuthAccount.create).toHaveBeenCalled();
     });
   });
 
-  describe("email로 기존 유저 조회 (다른 소셜 계정으로 첫 로그인 → 계정 연결)", () => {
-    it("OAuth 계정 없고 email로 활성 유저를 찾으면 해당 유저에 OAuth 계정을 연결해야 한다", async () => {
+  describe("email로 기존 유저 조회 (이메일 중복)", () => {
+    it("OAuth 계정 없고 email로 활성 유저를 찾으면 pendingOAuthLink를 생성하고 email_conflict를 반환해야 한다", async () => {
       vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
       vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
-      vi.mocked(prisma.userOAuthAccount.count).mockResolvedValue(1 as never); // 기존 연결 계정 있음
-      vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
+      vi.mocked(prisma.pendingOAuthLink.create).mockResolvedValue({
+        id: "pending-001",
+        token: "token-abc-123",
+      } as never);
 
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe("user-001");
-        expect(result.data.isNewUser).toBe(false);
-        expect(result.data.isLinked).toBe(true); // 기존 계정 있으므로 알림 표시
+        expect(result.data.type).toBe("email_conflict");
+        if (result.data.type === "email_conflict") {
+          expect(result.data.token).toBe("token-abc-123");
+        }
       }
-      expect(prisma.userOAuthAccount.create).toHaveBeenCalledWith({
-        data: {
-          userId: "user-001",
-          provider: "google",
-          providerAccountId: "google-uid-001",
-        },
-      });
-      expect(prisma.user.create).not.toHaveBeenCalled();
-    });
-
-    it("기존 연결된 소셜 계정이 없으면 isLinked: false를 반환해야 한다", async () => {
-      vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
-      vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
-      vi.mocked(prisma.userOAuthAccount.count).mockResolvedValue(0 as never); // 기존 연결 계정 없음
-      vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
-
-      const result = await syncOAuthUserService(BASE_INPUT);
-
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.isLinked).toBe(false); // 연결 계정 없으므로 알림 불필요
-      }
+      expect(prisma.pendingOAuthLink.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            provider: "google",
+            providerAccountId: "google-uid-001",
+            targetEmail: "test@example.com",
+          }),
+        }),
+      );
+      expect(prisma.userOAuthAccount.create).not.toHaveBeenCalled();
     });
 
     it("OAuth 계정 없고 email로 찾은 유저가 탈퇴 후 7일 미만이면 재활성화 + OAuth 계정 연결해야 한다", async () => {
@@ -211,22 +210,23 @@ describe("syncOAuthUserService", () => {
         nickname: "user_5678",
       };
       vi.mocked(prisma.userOAuthAccount.findFirst).mockResolvedValue(null);
-      vi.mocked(prisma.user.findUnique).mockResolvedValue(DELETED_USER_RECENT as never);
+      vi.mocked(prisma.user.findUnique).mockResolvedValue(
+        DELETED_USER_RECENT as never,
+      );
       vi.mocked(prisma.user.update).mockResolvedValue(reactivated as never);
       vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
 
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.id).toBe("user-002");
         expect(result.data.isNewUser).toBe(false);
-        expect(result.data.isLinked).toBe(true);
       }
       expect(prisma.user.update).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ isActive: true, deletedAt: null }),
-        })
+        }),
       );
       expect(prisma.userOAuthAccount.create).toHaveBeenCalledWith({
         data: {
@@ -235,6 +235,7 @@ describe("syncOAuthUserService", () => {
           providerAccountId: "google-uid-001",
         },
       });
+      expect(prisma.pendingOAuthLink.create).not.toHaveBeenCalled();
     });
 
     it("OAuth 계정 없고 email로 찾은 유저가 탈퇴 후 7일 이상이면 email 해제 후 신규 생성해야 한다", async () => {
@@ -259,12 +260,11 @@ describe("syncOAuthUserService", () => {
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.isNewUser).toBe(true);
-        expect(result.data.isLinked).toBe(false);
       }
       expect(prisma.user.update).toHaveBeenCalledWith(
-        expect.objectContaining({ data: { email: null } })
+        expect.objectContaining({ data: { email: null } }),
       );
       expect(prisma.user.create).toHaveBeenCalled();
       expect(prisma.userOAuthAccount.create).toHaveBeenCalled();
@@ -290,20 +290,18 @@ describe("syncOAuthUserService", () => {
       const result = await syncOAuthUserService(BASE_INPUT);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && result.data.type === "success") {
         expect(result.data.isNewUser).toBe(true);
-        expect(result.data.isLinked).toBe(false);
       }
       expect(prisma.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({
             nickname: "플로럴토끼4821",
             email: "test@example.com",
-            name: "테스트유저",
-            imageUrl: "https://example.com/avatar.jpg",
+            name: "",
             totalPoints: 100,
           }),
-        })
+        }),
       );
       expect(prisma.userOAuthAccount.create).toHaveBeenCalledWith({
         data: {
@@ -336,7 +334,7 @@ describe("syncOAuthUserService", () => {
       expect(prisma.user.create).toHaveBeenCalledWith(
         expect.objectContaining({
           data: expect.objectContaining({ nickname: "user_test-aut" }),
-        })
+        }),
       );
     });
   });
@@ -344,7 +342,7 @@ describe("syncOAuthUserService", () => {
   describe("에러 처리", () => {
     it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
       vi.mocked(prisma.userOAuthAccount.findFirst).mockRejectedValue(
-        new Error("DB connection failed")
+        new Error("DB connection failed"),
       );
 
       const result = await syncOAuthUserService(BASE_INPUT);
@@ -376,6 +374,96 @@ describe("syncOAuthUserService", () => {
   });
 });
 
+describe("confirmOAuthLinkService", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const VALID_PENDING = {
+    id: "pending-001",
+    token: "valid-token-uuid",
+    provider: "naver",
+    providerAccountId: "naver-uid-001",
+    targetEmail: "test@example.com",
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5분 후
+    createdAt: new Date(),
+  };
+
+  it("유효한 토큰으로 OAuthAccount를 생성하고 pending 레코드를 삭제해야 한다", async () => {
+    vi.mocked(prisma.pendingOAuthLink.findUnique).mockResolvedValue(
+      VALID_PENDING as never,
+    );
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
+    vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.userOAuthAccount.create).mockResolvedValue({} as never);
+    vi.mocked(prisma.pendingOAuthLink.delete).mockResolvedValue({} as never);
+
+    const result = await confirmOAuthLinkService("valid-token-uuid");
+
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.userId).toBe("user-001");
+    }
+    expect(prisma.userOAuthAccount.create).toHaveBeenCalledWith({
+      data: {
+        userId: "user-001",
+        provider: "naver",
+        providerAccountId: "naver-uid-001",
+      },
+    });
+    expect(prisma.pendingOAuthLink.delete).toHaveBeenCalledWith({
+      where: { token: "valid-token-uuid" },
+    });
+  });
+
+  it("존재하지 않는 토큰이면 NOT_FOUND를 반환해야 한다", async () => {
+    vi.mocked(prisma.pendingOAuthLink.findUnique).mockResolvedValue(null);
+
+    const result = await confirmOAuthLinkService("invalid-token");
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("NOT_FOUND");
+    }
+  });
+
+  it("만료된 토큰이면 BAD_REQUEST를 반환하고 pending 레코드를 삭제해야 한다", async () => {
+    const expiredPending = {
+      ...VALID_PENDING,
+      expiresAt: new Date(Date.now() - 1000), // 이미 만료
+    };
+    vi.mocked(prisma.pendingOAuthLink.findUnique).mockResolvedValue(
+      expiredPending as never,
+    );
+    vi.mocked(prisma.pendingOAuthLink.delete).mockResolvedValue({} as never);
+
+    const result = await confirmOAuthLinkService("expired-token");
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error).toBe("BAD_REQUEST");
+    }
+    expect(prisma.pendingOAuthLink.delete).toHaveBeenCalled();
+  });
+
+  it("OAuthAccount가 이미 존재하면 create를 건너뛰고 성공을 반환해야 한다", async () => {
+    vi.mocked(prisma.pendingOAuthLink.findUnique).mockResolvedValue(
+      VALID_PENDING as never,
+    );
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(ACTIVE_USER as never);
+    vi.mocked(prisma.userOAuthAccount.findUnique).mockResolvedValue({
+      id: "existing-oauth",
+    } as never);
+    vi.mocked(prisma.pendingOAuthLink.delete).mockResolvedValue({} as never);
+
+    const result = await confirmOAuthLinkService("valid-token-uuid");
+
+    expect(result.success).toBe(true);
+    expect(prisma.userOAuthAccount.create).not.toHaveBeenCalled();
+    expect(prisma.pendingOAuthLink.delete).toHaveBeenCalled();
+  });
+});
+
 describe("getSessionUserService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -385,12 +473,12 @@ describe("getSessionUserService", () => {
     id: "user-001",
     isActive: true,
     nickname: "user_1234",
-    imageUrl: "https://example.com/avatar.jpg",
+    imageUrl: null,
   };
 
   it("활성 유저의 최신 정보를 반환해야 한다", async () => {
     vi.mocked(prisma.user.findUnique).mockResolvedValue(
-      ACTIVE_SESSION_USER as never
+      ACTIVE_SESSION_USER as never,
     );
 
     const result = await getSessionUserService("user-001");
@@ -400,7 +488,6 @@ describe("getSessionUserService", () => {
       expect(result.data.id).toBe("user-001");
       expect(result.data.isActive).toBe(true);
       expect(result.data.nickname).toBe("user_1234");
-      expect(result.data.imageUrl).toBe("https://example.com/avatar.jpg");
     }
     expect(prisma.user.findUnique).toHaveBeenCalledWith({
       where: { id: "user-001" },
@@ -435,7 +522,7 @@ describe("getSessionUserService", () => {
 
   it("DB 에러 시 INTERNAL_ERROR를 반환해야 한다", async () => {
     vi.mocked(prisma.user.findUnique).mockRejectedValue(
-      new Error("DB connection failed")
+      new Error("DB connection failed"),
     );
 
     const result = await getSessionUserService("user-001");
