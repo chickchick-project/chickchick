@@ -15,7 +15,7 @@ const loadKakaoSDK = (): Promise<void> => {
     if (existingScript) {
       existingScript.addEventListener("load", () => {
         if (window.Kakao && !window.Kakao.isInitialized()) {
-          window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+          window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_APP_KEY);
         }
         resolve();
       });
@@ -28,7 +28,7 @@ const loadKakaoSDK = (): Promise<void> => {
     script.async = true;
     script.onload = () => {
       if (window.Kakao && !window.Kakao.isInitialized()) {
-        window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY);
+        window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_APP_KEY);
       }
       resolve();
     };

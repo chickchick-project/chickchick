@@ -17,7 +17,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
 
     KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_KAKAO_APP_KEY,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
     }),
   ],
