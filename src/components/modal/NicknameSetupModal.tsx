@@ -22,12 +22,15 @@ export const NicknameSetupModal = ({
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
 
-  const DEFAULT_NICKNAME_NOTICE = "변경하지 않으면 기본 닉네임이 사용됩니다.";
-
+  const DEFAULT_NICKNAME_NOTICE =
+    "닉네임을 수정하지 않으면 기본값이 사용됩니다.";
   const handleClose = async () => {
-    // 닫아도 기본 닉네임으로 저장 — 실패해도 조용히 닫힘
     try {
-      await applyNickname(defaultNickname);
+      if (defaultNickname) {
+        await applyNickname(defaultNickname);
+      } else {
+        await update({ isNewUser: false });
+      }
     } catch {
       // 저장 실패해도 모달은 닫힘 — 다음 로그인 시 재시도
     }
@@ -124,6 +127,5 @@ export const NicknameSetupModal = ({
         </form>
       </div>
     </ModalContainer>
-
   );
 };

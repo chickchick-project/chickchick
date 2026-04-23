@@ -2,6 +2,7 @@ import { prisma } from "@/server/prisma";
 import {
   serviceInternalError,
   serviceNotFound,
+  serviceBadRequest,
   ServiceResult,
   serviceSuccess,
 } from "@/server/result";
@@ -11,24 +12,21 @@ import { generateNicknameCandidate } from "@/server/hono/utils/nickname.utils";
 export interface OAuthUserInput {
   provider: string;
   providerAccountId: string;
-  name: string;
   email: string;
-  imageUrl?: string;
 }
 
-export interface SyncOAuthUserResult {
-  id: string;
-  isNewUser: boolean;
-  isLinked: boolean; // true = 다른 소셜 계정으로 첫 로그인, 이메일로 기존 계정에 연결됨
-}
+export type SyncOAuthUserResult =
+  | { type: "success"; id: string; isNewUser: boolean }
+  | { type: "email_conflict"; token: string };
 
 const REJOIN_WINDOW_DAYS = 7;
+const PENDING_LINK_EXPIRES_MINUTES = 10;
 
 export async function syncOAuthUserService(
   input: OAuthUserInput,
 ): Promise<ServiceResult<SyncOAuthUserResult>> {
   try {
-    const { provider, providerAccountId, name, email, imageUrl } = input;
+    const { provider, providerAccountId, email } = input;
 
     // 1. providerAccountId로 먼저 조회 (같은 소셜 계정으로 재로그인)
     const oauthAccount = await prisma.userOAuthAccount.findFirst({
@@ -44,13 +42,12 @@ export async function syncOAuthUserService(
           (Date.now() - user.deletedAt.getTime()) / (1000 * 60 * 60 * 24);
 
         if (daysSinceDeleted < REJOIN_WINDOW_DAYS) {
-          // 탈퇴 후 7일 미만 → 기존 계정 재활성화
           const restoredNickname = user.nickname.replace(/_deleted_\d+$/, "");
           const reactivated = await prisma.user.update({
             where: { id: user.id },
             data: { isActive: true, deletedAt: null, nickname: restoredNickname },
           });
-          return serviceSuccess({ id: reactivated.id, isNewUser: false, isLinked: false });
+          return serviceSuccess({ type: "success", id: reactivated.id, isNewUser: false });
         } else {
           // 탈퇴 후 7일 이상 → OAuth 계정 연결 해제 + email 해제 후 신규 생성
           await prisma.userOAuthAccount.deleteMany({
@@ -63,11 +60,11 @@ export async function syncOAuthUserService(
           // fall through → 아래 신규 생성 로직으로
         }
       } else {
-        return serviceSuccess({ id: user.id, isNewUser: false, isLinked: false });
+        return serviceSuccess({ type: "success", id: user.id, isNewUser: false });
       }
     }
 
-    // 2. email로 기존 유저 조회 (다른 소셜 계정으로 첫 로그인 → 계정 연결)
+    // 2. email로 기존 유저 조회
     let dbUser = await prisma.user.findUnique({ where: { email } });
 
     if (dbUser && !dbUser.isActive && dbUser.deletedAt) {
@@ -75,7 +72,7 @@ export async function syncOAuthUserService(
         (Date.now() - dbUser.deletedAt.getTime()) / (1000 * 60 * 60 * 24);
 
       if (daysSinceDeleted < REJOIN_WINDOW_DAYS) {
-        // 탈퇴 후 7일 미만 → 재활성화 + OAuth 계정 연결
+        // 탈퇴 후 7일 미만 → 재활성화 + OAuth 계정 연결 (삭제된 계정이므로 확인 불필요)
         const restoredNickname = dbUser.nickname.replace(/_deleted_\d+$/, "");
         const reactivated = await prisma.user.update({
           where: { id: dbUser.id },
@@ -84,7 +81,7 @@ export async function syncOAuthUserService(
         await prisma.userOAuthAccount.create({
           data: { userId: reactivated.id, provider, providerAccountId },
         });
-        return serviceSuccess({ id: reactivated.id, isNewUser: false, isLinked: true });
+        return serviceSuccess({ type: "success", id: reactivated.id, isNewUser: false });
       } else {
         // 탈퇴 후 7일 이상 → email 해제 후 신규 생성
         await prisma.user.update({
@@ -96,15 +93,14 @@ export async function syncOAuthUserService(
     }
 
     if (dbUser) {
-      // 기존 활성 유저 → 이 소셜 계정을 연결
-      // 이미 연결된 소셜 계정이 있을 때만 알림 표시 (신규 연결임을 명확히 알릴 때)
-      const existingAccountCount = await prisma.userOAuthAccount.count({
-        where: { userId: dbUser.id },
+      // 활성 유저 이메일 중복 → 명시적 연결 확인 필요
+      const expiresAt = new Date(
+        Date.now() + PENDING_LINK_EXPIRES_MINUTES * 60 * 1000,
+      );
+      const pending = await prisma.pendingOAuthLink.create({
+        data: { provider, providerAccountId, targetEmail: email, expiresAt },
       });
-      await prisma.userOAuthAccount.create({
-        data: { userId: dbUser.id, provider, providerAccountId },
-      });
-      return serviceSuccess({ id: dbUser.id, isNewUser: false, isLinked: existingAccountCount > 0 });
+      return serviceSuccess({ type: "email_conflict", token: pending.token });
     }
 
     // 3. 신규 유저 생성
@@ -116,10 +112,9 @@ export async function syncOAuthUserService(
     const newUser = await prisma.user.create({
       data: {
         authId,
-        name: name || "",
+        name: "",
         nickname: defaultNickname,
         email,
-        imageUrl,
         totalPoints: 100,
       },
     });
@@ -128,7 +123,53 @@ export async function syncOAuthUserService(
       data: { userId: newUser.id, provider, providerAccountId },
     });
 
-    return serviceSuccess({ id: newUser.id, isNewUser: true, isLinked: false });
+    return serviceSuccess({ type: "success", id: newUser.id, isNewUser: true });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function confirmOAuthLinkService(
+  token: string,
+): Promise<ServiceResult<{ userId: string }>> {
+  try {
+    const pending = await prisma.pendingOAuthLink.findUnique({ where: { token } });
+
+    if (!pending) return serviceNotFound("유효하지 않은 연결 토큰입니다.");
+
+    if (pending.expiresAt < new Date()) {
+      await prisma.pendingOAuthLink.delete({ where: { token } });
+      return serviceBadRequest("만료된 연결 토큰입니다. 다시 로그인해 주세요.");
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: pending.targetEmail },
+    });
+    if (!user || !user.isActive) {
+      return serviceNotFound("연결할 계정을 찾을 수 없습니다.");
+    }
+
+    const existingOAuth = await prisma.userOAuthAccount.findUnique({
+      where: {
+        provider_providerAccountId: {
+          provider: pending.provider,
+          providerAccountId: pending.providerAccountId,
+        },
+      },
+    });
+
+    if (!existingOAuth) {
+      await prisma.userOAuthAccount.create({
+        data: {
+          userId: user.id,
+          provider: pending.provider,
+          providerAccountId: pending.providerAccountId,
+        },
+      });
+    }
+
+    await prisma.pendingOAuthLink.delete({ where: { token } });
+    return serviceSuccess({ userId: user.id });
   } catch (error) {
     return serviceInternalError(error);
   }

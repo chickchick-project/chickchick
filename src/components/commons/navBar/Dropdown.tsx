@@ -8,6 +8,7 @@ import { signOut } from "next-auth/react";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
 import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
+import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
 
 interface DropdownProps {
   onClose: () => void;
@@ -57,12 +58,11 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         {/* 프로필 */}
         <div className="flex flex-col items-center gap-2">
           <Image
-            src={user?.imageUrl ? user.imageUrl : "/images/profile.svg"}
+            src={user?.imageUrl ?? DEFAULT_PROFILE_IMAGE}
             className="rounded-full"
             width={80}
             height={80}
             alt="프로필"
-            unoptimized={!user?.imageUrl}
           />
           <LevelChip level={user?.level ?? 0} />
           <span className="text-title-2 font-semibold text-black-100">

@@ -1,5 +1,7 @@
 import Image from "next/image";
 import ICONS from "@/shared/constants/icons";
+import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
+
 interface ImageDisplayProps {
   imageUrl?: string | null;
   previewUrl?: string | null;
@@ -11,22 +13,19 @@ export const ImageDisplay = ({
   previewUrl,
   onEditClick,
 }: ImageDisplayProps) => {
-  const displaySrc = previewUrl || imageUrl;
+  const displaySrc = previewUrl || imageUrl || DEFAULT_PROFILE_IMAGE;
 
   return (
     <div className="relative w-40 h-40">
-      {/* 프로필 이미지 */}
       <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-        {displaySrc && (
-          <Image
-            src={displaySrc}
-            alt="프로필 이미지"
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            priority={!previewUrl}
-            className="object-cover rounded-full"
-          />
-        )}
+        <Image
+          src={displaySrc}
+          alt="프로필 이미지"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={!previewUrl}
+          className="object-cover rounded-full"
+        />
       </div>
 
       {/* 수정 버튼 */}
