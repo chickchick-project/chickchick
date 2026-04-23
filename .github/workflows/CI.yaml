@@ -16,10 +16,10 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
 
-      - name: Use Node.js 20.9.0
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: "20.9.0"
+          node-version: "22"
           cache: "yarn"
           cache-dependency-path: "yarn.lock"
 
@@ -50,14 +50,16 @@ jobs:
         run: yarn build
         env:
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          INTERNAL_API_SECRET: ${{ secrets.INTERNAL_API_SECRET }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+          NEXT_PUBLIC_KAKAO_APP_KEY: ${{ secrets.NEXT_PUBLIC_KAKAO_APP_KEY }}
           KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REST_KEY: ${{ secrets.KAKAO_REST_KEY }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
-          DATABASE_URL: ${{secrets.DATABASE_URL}}
-          DIRECT_URL: ${{secrets.DIRECT_URL}}
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}

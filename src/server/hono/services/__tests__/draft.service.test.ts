@@ -340,7 +340,7 @@ describe("Draft Service", () => {
       const result = await listDraftsService(ids.userId);
 
       expect(result.success).toBe(true);
-      if (result.success) {
+      if (result.success && Array.isArray(result.data)) {
         expect(result.data[0].perfumes).toHaveLength(0);
         // perfumeIds가 없으므로 perfume 조회가 호출되지 않아야 함
         expect(prisma.perfume.findMany).not.toHaveBeenCalled();
