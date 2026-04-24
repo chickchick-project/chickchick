@@ -1,10 +1,10 @@
 import Link from "next/link";
 import ReviewCard from "@/components/commons/card/reviewCard";
-import { reviewApi } from "@/client/utils/api/reviews.api";
+import { getOneRandomPopularReviewService } from "@/server/hono/services/review";
 import { DEFAULT_POPULAR_REVIEW } from "@/shared/constants/review";
 
 export const MainContentReview = async () => {
-  const review = await reviewApi.popular();
+  const review = await getOneRandomPopularReviewService();
   const hasRealReview = review?.success && review.data;
   const reviewData = hasRealReview ? review.data : DEFAULT_POPULAR_REVIEW;
 
