@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { UserSchema } from "@zod/modelSchema";
+import { UserModelSchema as UserSchema } from "@zod/schemas/variants/pure";
 
 /**
  * 사용자 ID 경로 파라미터 스키마

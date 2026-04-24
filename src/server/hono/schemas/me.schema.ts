@@ -1,10 +1,10 @@
 import { z } from "@hono/zod-openapi";
 import {
-  UserCollectionSchema,
-  CollectionImageSchema,
-  UserSchema,
-} from "@zod/modelSchema";
-import { ImageFormatSchema } from "@zod/inputTypeSchemas";
+  UserCollectionModelSchema as UserCollectionSchema,
+  CollectionImageModelSchema as CollectionImageSchema,
+  UserModelSchema as UserSchema,
+} from "@zod/schemas/variants/pure";
+import { ImageFormatSchema } from "@zod/schemas";
 import { ApiPostResponseSchema } from "./community.schema";
 import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
 import { ApiReviewResponseSchema } from "./review.schema";

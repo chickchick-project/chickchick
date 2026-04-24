@@ -1,5 +1,7 @@
 import { z } from "@hono/zod-openapi";
-import { CommentSchema, UserSchema } from "@zod/modelSchema";
+import { CommentModelSchema, UserModelSchema as UserSchema } from "@zod/schemas/variants/pure";
+
+const CommentSchema = CommentModelSchema.omit({ replies: true, parent: true, post: true, author: true });
 import {
   CursorPaginationSchema,
   PaginatedResponse,

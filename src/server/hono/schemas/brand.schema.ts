@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi";
-import { BrandSchema } from "@zod/modelSchema";
+import { BrandModelSchema as BrandSchema } from "@zod/schemas/variants/pure";
 import { MapLocationSchema } from "./common.schema";
 
 /**

@@ -1,10 +1,15 @@
 import { z } from "@hono/zod-openapi";
 import {
-  ReviewSchema,
-  ReviewAttributeSelectionSchema,
-  AttributeOptionSchema,
-  ReviewAttributeSchema,
-} from "@zod/modelSchema";
+  ReviewModelSchema,
+  ReviewAttributeSelectionModelSchema,
+  AttributeOptionModelSchema,
+  ReviewAttributeModelSchema,
+} from "@zod/schemas/variants/pure";
+
+const ReviewSchema = ReviewModelSchema.omit({ likes: true, attributeSelections: true, author: true, perfume: true });
+const ReviewAttributeSelectionSchema = ReviewAttributeSelectionModelSchema.omit({ option: true, review: true });
+const AttributeOptionSchema = AttributeOptionModelSchema.omit({ attribute: true, selections: true });
+const ReviewAttributeSchema = ReviewAttributeModelSchema.omit({ options: true });
 import { PaginatedResponseSchema } from "./common.schema";
 import { ApiPerfumeSimpleResponseSchema } from "./perfume.schema";
 import { ApiReviewAuthorResponseSchema } from "./user.schema";

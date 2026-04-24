@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { PointActivityType } from "@prisma/client";
-import { PointHistorySchema } from "@zod/modelSchema";
+import { PointHistoryModelSchema as PointHistorySchema } from "@zod/schemas/variants/pure";
 
 /**
  * 포인트 활동 타입 스키마

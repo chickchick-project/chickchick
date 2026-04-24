@@ -1,12 +1,12 @@
 import { z } from "@hono/zod-openapi";
 import {
-  PerfumeSchema,
-  PerfumeImageSchema,
-  PerfumeAccordSchema,
-  PerfumeNoteSchema,
-  ReviewSchema,
-  UserSchema,
-} from "@zod/modelSchema";
+  PerfumeModelSchema as PerfumeSchema,
+  PerfumeImageModelSchema as PerfumeImageSchema,
+  PerfumeAccordModelSchema as PerfumeAccordSchema,
+  PerfumeNoteModelSchema as PerfumeNoteSchema,
+  ReviewModelSchema as ReviewSchema,
+  UserModelSchema as UserSchema,
+} from "@zod/schemas/variants/pure";
 import { ApiBrandForEmbeddingResponseSchema } from "./brand.schema";
 
 /**
