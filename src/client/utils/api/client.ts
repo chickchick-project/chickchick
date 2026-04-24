@@ -1,6 +1,10 @@
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000/api/v1";
+function getBaseUrl() {
+  if (typeof window !== "undefined") return "/api/v1";
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}/api/v1`;
+  return "http://localhost:3000/api/v1";
+}
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || getBaseUrl();
 export class APIError extends Error {
   constructor(
     public status: number,
@@ -23,7 +27,10 @@ function objectToQueryString(params: Record<string, unknown>): string {
 
 async function fetchApi<T>(url: string, init?: RequestInit): Promise<T | null> {
   const { cache, ...restInit } = init ?? {};
-  const response = await fetch(url, { cache: cache ?? "no-store", ...restInit });
+  const response = await fetch(url, {
+    cache: cache ?? "no-store",
+    ...restInit,
+  });
 
   if (!response.ok) {
     let errorData: { message?: string } = {};
