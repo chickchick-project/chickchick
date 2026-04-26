@@ -48,7 +48,7 @@ export const SearchPostBodySchema = SearchGetQuerySchema.extend({
  */
 export const PaginatedSearchResponseSchema = PaginatedResponseSchema(
   ApiPerfumeSimpleResponseSchema
-);
+).openapi("PaginatedSearchResponse");
 
 /**
  * Supabase 향수 스키마

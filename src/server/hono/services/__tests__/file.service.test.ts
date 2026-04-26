@@ -35,12 +35,10 @@ vi.mock("@/server/supabase/server", () => ({
   },
 }));
 
-// Mock sharp
-const mockMetadata = vi.fn();
-vi.mock("sharp", () => ({
-  default: vi.fn(() => ({
-    metadata: mockMetadata,
-  })),
+// Mock image-size
+const mockSizeOf = vi.hoisted(() => vi.fn());
+vi.mock("image-size", () => ({
+  default: mockSizeOf,
 }));
 
 describe("File Service", () => {
@@ -67,10 +65,10 @@ describe("File Service", () => {
     describe("파일 타입 검증", () => {
       it("should upload JPEG images", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
@@ -90,10 +88,10 @@ describe("File Service", () => {
 
       it("should upload PNG images", async () => {
         const file = createMockFile("image/png", 1024, "test.png");
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "png",
+          type: "png",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.png" },
@@ -113,10 +111,10 @@ describe("File Service", () => {
 
       it("should upload WebP images", async () => {
         const file = createMockFile("image/webp", 1024, "test.webp");
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "webp",
+          type: "webp",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.webp" },
@@ -186,10 +184,10 @@ describe("File Service", () => {
 
       it("should accept files exactly 5MB", async () => {
         const file = createMockFile("image/jpeg", MAX_FILE_SIZE);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
@@ -206,10 +204,10 @@ describe("File Service", () => {
 
       it("should accept files under 5MB", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
@@ -228,10 +226,10 @@ describe("File Service", () => {
     describe("메타데이터 추출", () => {
       it("should extract image metadata (width, height, format)", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 1920,
           height: 1080,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
@@ -253,7 +251,7 @@ describe("File Service", () => {
 
       it("should handle metadata extraction failures", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockRejectedValue(new Error("Invalid image"));
+        mockSizeOf.mockImplementation(() => { throw new Error("Invalid image"); });
 
         const result = await uploadImage(TEST_BUCKET, file, TEST_USER_ID);
 
@@ -265,7 +263,7 @@ describe("File Service", () => {
 
       it("should handle missing metadata fields gracefully", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({ format: "jpeg" }); // width, height 없음
+        mockSizeOf.mockReturnValue({ type: "jpg" }); // width, height 없음
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
           error: null,
@@ -287,10 +285,10 @@ describe("File Service", () => {
     describe("파일 경로 생성", () => {
       it("should store files in root directory for COLLECTION bucket", async () => {
         const file = createMockFile("image/jpeg", 1024, "test.jpg");
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/abc-test.jpg" },
@@ -311,10 +309,10 @@ describe("File Service", () => {
 
       it("should store files in userId directory for profile_image bucket", async () => {
         const file = createMockFile("image/jpeg", 1024, "profile.jpg");
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: `/test-user-123/abc-profile.jpg` },
@@ -337,10 +335,10 @@ describe("File Service", () => {
         const file1 = createMockFile("image/jpeg", 1024, "image.jpg");
         const file2 = createMockFile("image/jpeg", 1024, "image.jpg");
 
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test.jpg" },
@@ -367,10 +365,10 @@ describe("File Service", () => {
         const expectedUrl =
           "https://supabase.co/storage/v1/object/public/COLLECTION/test.jpg";
 
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test-user-123/test.jpg" },
@@ -390,10 +388,10 @@ describe("File Service", () => {
 
       it("should handle Supabase upload failures", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: null,
@@ -411,10 +409,10 @@ describe("File Service", () => {
 
       it("should upload to correct bucket", async () => {
         const file = createMockFile("image/jpeg", 1024);
-        mockMetadata.mockResolvedValue({
+        mockSizeOf.mockReturnValue({
           width: 800,
           height: 600,
-          format: "jpeg",
+          type: "jpg",
         });
         mockUpload.mockResolvedValue({
           data: { path: "/test.jpg" },

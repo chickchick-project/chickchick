@@ -1,4 +1,4 @@
-import sharp from "sharp";
+import sizeOf from "image-size";
 import {
   serviceBadRequest,
   serviceInternalError,
@@ -68,8 +68,8 @@ export async function uploadImage(
 
   try {
     const fileBuffer = Buffer.from(await file.arrayBuffer());
-    const metadata = await sharp(fileBuffer).metadata();
-    const imageFormat = getImageFormat(metadata.format);
+    const dimensions = sizeOf(fileBuffer);
+    const imageFormat = getImageFormat(dimensions.type);
     const newFilePath = filePath(ownerId, file, storageBucketName);
 
     // 1. 파일 업로드
@@ -91,8 +91,8 @@ export async function uploadImage(
 
     const uploadedInfo: UploadedImageInfo = {
       imageUrl: publicUrl,
-      width: metadata.width || 0,
-      height: metadata.height || 0,
+      width: dimensions.width || 0,
+      height: dimensions.height || 0,
       format: imageFormat,
     };
 

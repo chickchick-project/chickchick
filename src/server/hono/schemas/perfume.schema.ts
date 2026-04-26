@@ -47,7 +47,7 @@ export const ApiPerfumeSimpleResponseSchema = PerfumeBaseResponseSchema.pick({
   nameKo: true,
   brand: true,
   perfumeImage: true,
-});
+}).openapi("ApiPerfumeSimpleResponse");
 
 /**
  * 향수 상세 응답 스키마
