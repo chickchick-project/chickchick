@@ -11,15 +11,6 @@ const getErrorResponseConfig = {
 
 type ErrorResponses = keyof typeof getErrorResponseConfig;
 
-type ResponseConfig = {
-  description: string;
-  content: {
-    "application/json": {
-      schema: z.ZodTypeAny;
-    };
-  };
-};
-
 /**
  * 표준화된 API 응답 스키마 맵을 생성합니다.
  * @param success - 성공 응답 설정 (스키마, 설명, 상태코드)
@@ -34,11 +25,8 @@ export function createStandardApiResponses<T extends z.ZodTypeAny>(
   },
   errors: ErrorResponses[] = []
 ) {
-  const responses: Record<string, ResponseConfig> = {};
-
-  // 성공 응답
-  responses[success.statusCode?.toString() || "200"] = {
-    description: success.description || "요청 성공",
+  const successContent = {
+    description: success.description ?? "요청 성공",
     content: {
       "application/json": {
         schema: CommonSchemas.SuccessResponseSchema(success.schema),
@@ -46,9 +34,16 @@ export function createStandardApiResponses<T extends z.ZodTypeAny>(
     },
   };
 
-  // 에러 응답
-  errors.forEach((code) => {
-    responses[code] = getErrorResponseConfig[code];
-  });
-  return responses;
+  const errorResponses = {
+    ...(errors.includes("400") ? { 400: getErrorResponseConfig["400"] } : {}),
+    ...(errors.includes("401") ? { 401: getErrorResponseConfig["401"] } : {}),
+    ...(errors.includes("403") ? { 403: getErrorResponseConfig["403"] } : {}),
+    ...(errors.includes("404") ? { 404: getErrorResponseConfig["404"] } : {}),
+    ...(errors.includes("409") ? { 409: getErrorResponseConfig["409"] } : {}),
+  };
+
+  if (success.statusCode === 201) {
+    return { 201: successContent, ...errorResponses };
+  }
+  return { 200: successContent, ...errorResponses };
 }
