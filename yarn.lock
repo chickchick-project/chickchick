@@ -6594,6 +6594,7 @@ __metadata:
     eslint-config-next: "npm:15.0.3"
     eslint-plugin-storybook: "npm:^0.11.3"
     hono: "npm:^4.8.3"
+    image-size: "npm:^1.1.1"
     lucide-react: "npm:^0.462.0"
     next: "npm:15.0.5"
     next-auth: "npm:^5.0.0-beta.25"
@@ -6607,7 +6608,6 @@ __metadata:
     react-dropzone: "npm:^14.3.8"
     react-hook-form: "npm:^7.53.2"
     sanitize-html: "npm:^2.17.2"
-    sharp: "npm:^0.33.5"
     storybook: "npm:^8.5.8"
     swagger-ui-react: "npm:^5.25.3"
     swiper: "npm:^11.2.7"
@@ -9407,7 +9407,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"image-size@npm:^1.0.0":
+"image-size@npm:^1.0.0, image-size@npm:^1.1.1":
   version: 1.2.1
   resolution: "image-size@npm:1.2.1"
   dependencies:
@@ -13302,7 +13302,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sharp@npm:0.33.5":
+"sharp@npm:^0.33.3, sharp@npm:^0.33.5":
   version: 0.33.5
   resolution: "sharp@npm:0.33.5"
   dependencies:
