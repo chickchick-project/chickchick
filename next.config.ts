@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["jsdom"],
   webpack: (config, { dev }) => {
     if (!dev) {
-      config.resolve.alias["@hono/swagger-ui"] = false;
-
       config.resolve.alias["swagger-ui-dist"] = false;
 
       config.resolve.alias["swagger-ui-react"] = false;
@@ -83,6 +81,16 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "ssl.pstatic.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "http",
+        hostname: "img1.kakaocdn.net",
+        pathname: "/**",
+      },
     ],
   },
   compiler: {
@@ -126,7 +134,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value: "camera=(), microphone=(), geolocation=(self)",
           },
         ],
       },

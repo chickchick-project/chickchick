@@ -1,4 +1,4 @@
-import type { ApiPerfumeDetailResponse } from "@/lib/hono/schemas/perfume.schema";
+import type { ApiPerfumeDetailResponse } from "@/server/hono/schemas/perfume.schema";
 import { PerfumeImage } from "./perfumeImage";
 import { InteractionStates, PerfumeInfo } from "./perfumeInfo";
 

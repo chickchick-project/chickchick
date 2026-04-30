@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import Dropdown from "./DropdownBase";
-import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/lib/constants/options";
-import { PostCategory } from "@prisma/client";
+import { DEFAULT_BOARD, Option, BOARD_OPTIONS } from "@/shared/constants/options";
+import { PostCategory } from "@/server/hono/schemas/community.schema";
 
 interface IBoardDropdownProps {
   currentOption?: string | null;

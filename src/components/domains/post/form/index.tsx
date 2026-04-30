@@ -4,21 +4,22 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PostCategory as TPostCategory } from "@prisma/client";
+import { PostCategory as TPostCategory } from "@/server/hono/schemas/community.schema";
 
-import type { BlobRegistry } from "@/lib/ckeditor/localPreviewUploadPlugin";
-import { finalizeWithBlobRegistry } from "@/lib/ckeditor/finalizeWithBlobRegistry";
-import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
+import type { BlobRegistry } from "@/client/tiptap/blobRegistry";
+import { finalizeContentWithBlobUpload } from "@/client/tiptap/blobRegistry";
+import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
+
 import {
   CreatePostClientSchema,
   type CreatePostClientInput,
 } from "./postSchema";
-import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
-import { extractFirstImageSrc } from "@/lib/utils/extractFirstImageSrc";
-import getPlainText from "@/lib/utils/getPlainText";
-import { usePostAutosave } from "@/lib/hooks/usePostAutosave";
-import { useBeforeUnload } from "@/lib/hooks/useBeforeUnload";
-import { useDeleteDraft } from "@/lib/hooks/query/useDraftQuery";
+import { usePostMutation } from "@/client/hooks/query/useCommunityQuery";
+import { extractFirstImageSrc } from "@/shared/utils/extractFirstImageSrc";
+import getPlainText from "@/shared/utils/getPlainText";
+import { usePostAutosave } from "@/client/hooks/usePostAutosave";
+import { useBeforeUnload } from "@/client/hooks/useBeforeUnload";
+import { useDeleteDraft } from "@/client/hooks/query/useDraftQuery";
 
 import PostCategory from "./PostCategory";
 import PostEditor from "./PostEditor";
@@ -33,6 +34,7 @@ export type PostFormInitialData = CreatePostClientInput & {
 interface PostFormProps {
   type: "create" | "edit";
   initialData?: PostFormInitialData;
+  initialPerfumes?: PerfumeForPost[];
   postId?: string;
   draftId?: string;
 }
@@ -40,10 +42,11 @@ interface PostFormProps {
 export default function PostForm({
   type,
   initialData,
+  initialPerfumes,
   postId,
   draftId,
 }: PostFormProps) {
-  const blobRegistryRef = useRef<BlobRegistry>(new Map());
+  const blobRegistryRef = useRef<BlobRegistry>(new Map<string, File>());
 
   const method = useForm<CreatePostClientInput>({
     resolver: zodResolver(CreatePostClientSchema),
@@ -61,7 +64,7 @@ export default function PostForm({
 
   const { handleSubmit, formState, setValue, getValues, reset } = method;
 
-  const { isValid, isDirty } = formState;
+  const { isDirty } = formState;
 
   const { createMutation, editMutation } = usePostMutation(postId);
   const deleteDraftMutation = useDeleteDraft();
@@ -91,7 +94,6 @@ export default function PostForm({
   const handleManualSave = useCallback(async () => {
     setSaveStatus("saving");
     await saveDraft();
-    setSaveStatus("idle");
   }, [saveDraft]);
 
   useBeforeUnload({
@@ -114,7 +116,7 @@ export default function PostForm({
   }, [initialData, reset]);
 
   const onSubmit = async (data: CreatePostClientInput) => {
-    const finalizedContent = await finalizeWithBlobRegistry(
+    const finalizedContent = await finalizeContentWithBlobUpload(
       data.content,
       blobRegistryRef.current,
     );
@@ -145,8 +147,6 @@ export default function PostForm({
     }
   };
 
-  const disabled = !isDirty || !isValid || isLoading;
-
   return (
     <FormProvider {...method}>
       <form
@@ -157,10 +157,10 @@ export default function PostForm({
           <PostCategory />
           <PostTitle />
           <PostEditor blobRegistryRef={blobRegistryRef} />
-          <PostRelatedPerfume initialPerfumes={initialData?.perfumes} />
+          <PostRelatedPerfume initialPerfumes={initialData?.perfumes ?? initialPerfumes} />
         </div>
         <PostFormActions
-          disabled={disabled}
+          disabled={isLoading}
           onSaveDraft={handleManualSave}
           saveStatus={saveStatus}
         />

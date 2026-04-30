@@ -3,8 +3,8 @@ import BoardChip from "./BoardChip";
 import AccordChip from "./AccordChip";
 import ReviewChip from "./ReviewChip";
 import LevelChip from "./LevelChip";
-import { CATEGORY_LABELS, CategoryType } from "@/lib/constants/post";
-import { ACCORDS, TAccords } from "@/lib/constants/accords";
+import { CATEGORY_LABELS, CategoryType } from "@/shared/constants/post";
+import { ACCORDS, TAccords } from "@/shared/constants/accords";
 
 const meta: Meta = {
   title: "Components/Chips",

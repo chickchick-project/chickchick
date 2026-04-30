@@ -3,7 +3,7 @@
 import {
   ApiPostDetailCategoryPostResponse,
   ApiPostDetailResponse,
-} from "@/lib/hono/schemas/community.schema";
+} from "@/server/hono/schemas/community.schema";
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import CategoryPostListHeader from "./Header";

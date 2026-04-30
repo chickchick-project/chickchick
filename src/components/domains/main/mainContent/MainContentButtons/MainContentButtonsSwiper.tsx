@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { MainContentButton } from "./MainContentButton";
-import { MAIN_BUTTONS } from "@/lib/constants/main";
+import { MAIN_BUTTONS } from "@/shared/constants/main";
 
 export const MainContentButtonSwiper = () => {
   return (

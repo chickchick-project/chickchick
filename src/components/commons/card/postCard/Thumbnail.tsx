@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { THUMBNAIL_SIZES } from "@/lib/constants/post";
+import { THUMBNAIL_SIZES } from "@/shared/constants/post";
 import { ThumbnailProps } from "./postCard.types";
 
 export default function Thumbnail({

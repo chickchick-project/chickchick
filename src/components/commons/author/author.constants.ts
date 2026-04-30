@@ -1,4 +1,4 @@
-import IMAGES from "@/lib/constants/images";
+import IMAGES from "@/shared/constants/images";
 
 export const REVIEW_STATUSES = {
   CURRENTLY_USING: "지금 쓰고 있어요",

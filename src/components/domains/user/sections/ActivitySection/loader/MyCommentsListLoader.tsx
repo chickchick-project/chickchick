@@ -1,7 +1,7 @@
 "use client";
 
 import { MyCommentsList } from "../components";
-import { useUserComment } from "@/lib/hooks/query/useUserQuery";
+import { useUserComment } from "@/client/hooks/query/useUserQuery";
 
 export default function MyCommentsListLoader() {
   const { data: paginatedComments, error } = useUserComment();

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PerfumeUsageStatus } from "@prisma/client";
+import { PerfumeUsageStatus } from "@/server/hono/schemas/review.schema";
 
 /**
  * 클라이언트 전용 리뷰 속성 검증 스키마

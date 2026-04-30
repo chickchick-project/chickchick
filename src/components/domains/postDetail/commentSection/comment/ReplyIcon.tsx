@@ -1,5 +1,5 @@
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 export default function ReplyIcon() {
   return (

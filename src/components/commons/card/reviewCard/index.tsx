@@ -6,7 +6,7 @@ import { getLayoutSize } from "./reviewCard.helpers";
 import { ReviewCardProps } from "./reviewCard.types";
 import AuthorInfo from "../../author/AuthorInfo";
 import ReviewChip from "../../chip/ReviewChip";
-import { getCategoryById, getTagByKey } from "@/lib/utils/review.helpers";
+import { getCategoryById, getTagByKey } from "@/shared/utils/review.helpers";
 
 export default function ReviewCard({
   review,

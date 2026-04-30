@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProfileSection } from "@/components/domains/user/sections";
-import { getUserSessionInfo } from "@/lib/utils/getUserSessionInfo";
+import { getUserSessionInfo } from "@/shared/utils/getUserSessionInfo";
 
 export default async function ProfilePage({
   params,

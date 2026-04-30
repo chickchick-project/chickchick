@@ -7,7 +7,7 @@ export const FILTER_LABELS = {
 };
 
 export const GENDER_OPTIONS = [
-  { id: "masculine", name: { en: "masculine", ko: "남성적인" } },
-  { id: "unisex", name: { en: "unisex", ko: "중성적인" } },
-  { id: "feminine", name: { en: "feminine", ko: "여성적인" } },
+  { id: "MASCULINE", name: { en: "masculine", ko: "남성적인" } },
+  { id: "UNISEX", name: { en: "unisex", ko: "중성적인" } },
+  { id: "FEMININE", name: { en: "feminine", ko: "여성적인" } },
 ];

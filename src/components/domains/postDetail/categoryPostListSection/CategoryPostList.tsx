@@ -1,5 +1,5 @@
 import CommunityListItem from "@/components/commons/list/CommunityListItem";
-import type { ApiPostDetailCategoryPostResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiPostDetailCategoryPostResponse } from "@/server/hono/schemas/community.schema";
 
 interface ICategoryPostListProps {
   posts: ApiPostDetailCategoryPostResponse[] | [];

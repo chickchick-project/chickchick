@@ -1,4 +1,4 @@
-import type { CommentResponse } from "@/lib/hono/schemas/comment.schema";
+import type { CommentResponse } from "@/server/hono/schemas/comment.schema";
 
 export interface CommentAuthInfoProps {
   author: string;

@@ -1,12 +1,14 @@
+"use client";
+
 import React from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
-import { useQueryClient } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
 import LevelChip from "../chip/LevelChip";
 import { getMyPageNavItems } from "./navBar.constants";
-import { useUserStore } from "@/lib/stores/useUserStore";
-import { logout } from "@/lib/database/action/login";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
+import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
 
 interface DropdownProps {
   onClose: () => void;
@@ -20,8 +22,7 @@ interface DropdownFooterItem {
 }
 
 export function NavDropdown({ onClose, parentRef }: DropdownProps) {
-  const { user, reset } = useUserStore();
-  const queryClient = useQueryClient();
+  const { user } = useCurrentUser();
 
   if (!parentRef.current) return null;
 
@@ -29,17 +30,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
   const navItems = getMyPageNavItems(user!.id);
 
   const handleLogout = async () => {
-    try {
-      await logout();
-
-      reset();
-
-      queryClient.clear();
-
-      window.location.reload();
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    await signOut({ callbackUrl: "/" });
   };
 
   const NAV_ITEMS_FOOTER: DropdownFooterItem[] = [
@@ -59,7 +50,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
     <div
       className="absolute bg-white shadow-card rounded-xl z-50 w-[400px] flex flex-col items-center pt-5"
       style={{
-        top: `${headerRect.bottom}px`,
+        top: `${headerRect.bottom + 8}px`,
         right: `${window.innerWidth - headerRect.right}px`,
       }}
     >
@@ -67,7 +58,7 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         {/* 프로필 */}
         <div className="flex flex-col items-center gap-2">
           <Image
-            src={user?.imageUrl ? user.imageUrl : "/images/profile.svg"}
+            src={user?.imageUrl ?? DEFAULT_PROFILE_IMAGE}
             className="rounded-full"
             width={80}
             height={80}
@@ -103,13 +94,13 @@ export function NavDropdown({ onClose, parentRef }: DropdownProps) {
         </div>
       </div>
     </div>,
-    document.body
+    document.body,
   );
 }
 
 const renderNavItem = (
   item: ReturnType<typeof getMyPageNavItems>[number],
-  onClose: () => void
+  onClose: () => void,
 ) => (
   <Link
     href={item.href}

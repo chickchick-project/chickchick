@@ -1,6 +1,6 @@
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import { REVIEW_STATUSES, SIZE_STATUSES } from "./author.constants";
-import { PerfumeUsageStatus } from "@prisma/client";
+import { PerfumeUsageStatus } from "@/server/hono/schemas/review.schema";
 interface Author {
   id: string;
   nickname: string;

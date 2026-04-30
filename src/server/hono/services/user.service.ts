@@ -1,0 +1,116 @@
+import { prisma } from "@/server/prisma";
+import {
+  serviceInternalError,
+  serviceNotFound,
+  ServiceResult,
+  serviceSuccess,
+} from "@/server/result";
+import { checkResourceExists } from "../repositories/base.repository";
+import {
+  BasePerfume,
+  perfumeBaseInclude,
+} from "../repositories/perfume.repository";
+import { BasePost } from "../repositories/community.repository";
+import { UserCollectionWithRelations } from "../repositories/user.repository";
+import { calculateLevel } from "@/shared/utils/level.utils";
+import { ApiUserProfileResponse } from "../schemas/user.schema";
+
+export async function getUserProfileService(
+  userId: string
+): Promise<ServiceResult<ApiUserProfileResponse>> {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        nickname: true,
+        imageUrl: true,
+        totalPoints: true,
+      },
+    });
+
+    if (!user) {
+      return serviceNotFound("사용자를 찾을 수 없습니다.");
+    }
+
+    // 포인트 기반으로 레벨 계산
+    const level = calculateLevel(user.totalPoints);
+
+    return serviceSuccess({
+      ...user,
+      level,
+    });
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getUserPostsService(
+  userId: string
+): Promise<ServiceResult<BasePost[]>> {
+  try {
+    const userCheck = await checkResourceExists("user", userId, "사용자");
+    if (!userCheck.success) return userCheck;
+
+    const posts = await prisma.post.findMany({
+      where: {
+        userId,
+        published: true,
+      },
+      include: {
+        author: {
+          select: { id: true, nickname: true, imageUrl: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    return serviceSuccess(posts);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getUserPublicBookmarkedPerfumesService(
+  targetUserId: string
+): Promise<ServiceResult<BasePerfume[]>> {
+  try {
+    const userCheck = await checkResourceExists("user", targetUserId, "사용자");
+    if (!userCheck.success) return userCheck;
+
+    const bookmarks = await prisma.perfumeBookmark.findMany({
+      where: {
+        userId: targetUserId,
+        isPublic: true,
+      },
+      include: { perfume: { include: perfumeBaseInclude } },
+      orderBy: { createdAt: "desc" },
+    });
+
+    const perfumes = bookmarks.map((b) => b.perfume);
+    return serviceSuccess(perfumes);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}
+
+export async function getUserCollectionsService(
+  targetUserId: string
+): Promise<ServiceResult<UserCollectionWithRelations[]>> {
+  try {
+    const userCheck = await checkResourceExists("user", targetUserId, "사용자");
+    if (!userCheck.success) return userCheck;
+
+    const collections = await prisma.userCollection.findMany({
+      where: {
+        userId: targetUserId,
+      },
+      include: {
+        image: true,
+        perfume: true,
+      },
+    });
+    return serviceSuccess(collections);
+  } catch (error) {
+    return serviceInternalError(error);
+  }
+}

@@ -1,5 +1,5 @@
+import { getPaginatedPostListService } from "@/server/hono/services/community";
 import { MainContentCommunityList } from "./MainContentCommunityList";
-import { getPaginatedPostListService } from "@/lib/hono/services/community.service";
 
 export const MainContentCommunity = async () => {
   const result = await getPaginatedPostListService({

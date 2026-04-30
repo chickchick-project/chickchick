@@ -1,35 +1,37 @@
 "use client";
 
 import { DetailClient } from "@/components/domains/perfumeDetail/DetailClient";
-import { usePerfumeDetail } from "@/lib/hooks/query/usePerfumeQuery";
-import { usePerfumeReviews } from "@/lib/hooks/query/useReviewQuery";
+import { usePerfumeDetail } from "@/client/hooks/query/usePerfumeQuery";
+import { usePerfumeReviews } from "@/client/hooks/query/useReviewQuery";
 import { useParams } from "next/navigation";
-import { Spinner } from "@/components/commons/loading/Spinner";
 
 export default function PerfumeDetailPage() {
   const params = useParams();
   const id = params.id as string;
 
-  // 향수 상세 정보 조회
   const {
-    data: perfumeDetail,
+    data: perfumeDetail = null,
     isLoading: isPerfumeLoading,
     error: perfumeError,
   } = usePerfumeDetail(id);
 
-  // 리뷰 데이터 조회
   const { data: reviewData = [], isLoading: isReviewLoading } =
     usePerfumeReviews(id);
 
-  if (isPerfumeLoading || isReviewLoading) {
-    return <Spinner />;
-  }
+  const isLoading = isPerfumeLoading || isReviewLoading;
 
-  if (perfumeError || !perfumeDetail) {
+  if (perfumeError) {
     return <div>향수를 찾을 수 없습니다.</div>;
   }
 
-  return <DetailClient perfumeDetail={perfumeDetail} reviewData={reviewData} />;
+  return (
+    <DetailClient
+      perfumeDetail={perfumeDetail}
+      isPerfumeLoading={isLoading}
+      reviewData={reviewData}
+      isReviewLoading={isLoading}
+    />
+  );
 }
 
 // temp: SEO 개선 하기

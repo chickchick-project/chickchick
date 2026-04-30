@@ -4,7 +4,6 @@ import Providers from "@/components/commons/Provider/TanstackProvider";
 import { BodyWrapper } from "@/components/commons/wrapper/BodyWrapper";
 import { NavBarWrapper } from "@/components/commons/navBar/Wrapper";
 import LoginModalProvider from "@/components/modal/LoginModalProvider";
-import GlobalStateSync from "@/components/commons/Provider/GlobalStateSync";
 import RecentSyncManager from "@/components/commons/Provider/RecentSyncManager";
 import "./globals.css";
 
@@ -86,16 +85,14 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  const isAuthenticated = !!session?.user;
-
   return (
     <html lang="ko" className="h-dvh overflow-y-scroll">
       <head>
-        <link
+        {/* <link
           rel="preconnect"
           href="https://wvedpvxspndgyoisudyr.supabase.co"
           crossOrigin="anonymous"
-        />
+        /> */}
         <link
           rel="preload"
           href="/fonts/Pretendard-Regular.subset.woff2"
@@ -114,13 +111,10 @@ export default async function RootLayout({
         />
       </head>
       <body className="h-full">
-        <Providers>
+        <Providers session={session}>
           <RecentSyncManager />
           <NavBarWrapper />
-          <BodyWrapper>
-            <GlobalStateSync isAuthenticated={isAuthenticated} />
-            {children}
-          </BodyWrapper>
+          <BodyWrapper>{children}</BodyWrapper>
           <LoginModalProvider />
         </Providers>
         <div id="modal"></div>

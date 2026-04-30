@@ -3,7 +3,7 @@ import { ButtonFilledGrayLFull } from "@/components/commons/button/ButtonFilled"
 import { SectionTitle } from "@/components/commons/sectionTitle";
 import { ReviewItem } from "./reviewItem";
 import { ReviewListProps } from "../review.type";
-import { getCategoryById, getTagByKey } from "@/lib/utils/review.helpers";
+import { getCategoryById, getTagByKey } from "@/shared/utils/review.helpers";
 
 export const ReviewList = ({ data }: ReviewListProps) => {
   const reviewItems = useMemo(() => {
@@ -26,6 +26,7 @@ export const ReviewList = ({ data }: ReviewListProps) => {
       };
     });
   }, [data]);
+
   return (
     <section className="flex flex-col gap-5">
       <SectionTitle itemCount={data.length}>리뷰</SectionTitle>

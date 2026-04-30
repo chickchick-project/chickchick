@@ -1,7 +1,7 @@
 "use client";
 
-import "@/components/commons/ckeditor5/ckeditor5.css";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
+import "@/components/commons/tiptap/tiptap-content.css";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
 import PostActions from "../header/PostActions";
 import RelatedPerfume from "./RelatedPerfume";
 
@@ -24,7 +24,7 @@ export default function PostContent({
     <section>
       <div className="px-4">
         <div
-          className="ck-content text-body-1 font-medium text-black-100 leading-6 mb-40 min-h-[400px]"
+          className="tiptap-content text-body-1 font-medium text-black-100 leading-6 mb-40 min-h-[400px]"
           dangerouslySetInnerHTML={{ __html: content }}
         />
 

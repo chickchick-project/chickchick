@@ -2,7 +2,7 @@
 
 import { ButtonOutlinedPrimaryLFit } from "@/components/commons/button/ButtonOutlined";
 import { NAV_PATHS } from "@/components/commons/navBar/navBar.constants";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -10,8 +10,8 @@ import { DraftRestoreModal } from "@/components/modal/draftRestoreModal";
 import {
   useDraftByType,
   useDeleteDraft,
-} from "@/lib/hooks/query/useDraftQuery";
-import { DraftType } from "@prisma/client";
+} from "@/client/hooks/query/useDraftQuery";
+import { DraftType } from "@/server/hono/schemas/draft.schema";
 
 export default function WriteButton() {
   const router = useRouter();

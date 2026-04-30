@@ -3,9 +3,9 @@ import PostTime from "@/components/commons/author/PostTime";
 import {
   CommentReplyResponse,
   CommentResponse,
-} from "@/lib/hono/schemas/comment.schema";
-import { useCommentMutation } from "@/lib/hooks/query/useCommentQuery";
-import { useUserStore } from "@/lib/stores/useUserStore";
+} from "@/server/hono/schemas/comment.schema";
+import { useCommentMutation } from "@/client/hooks/query/useCommentQuery";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 
 import { CommentAuthInfo } from "./CommentAuthInfo";
 import CommentForm from "./CommentForm";
@@ -31,7 +31,7 @@ export default function CommentListItem({
     replyingCommentId,
     setReplyingCommentId,
   } = commentActionState;
-  const { user } = useUserStore();
+  const { user } = useCurrentUser();
   const {
     id,
     author,

@@ -1,4 +1,4 @@
-import IMAGES from "@/lib/constants/images";
+import IMAGES from "@/shared/constants/images";
 import Image from "next/image";
 
 export const MainLogo = () => {

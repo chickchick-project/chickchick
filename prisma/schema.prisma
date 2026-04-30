@@ -3,11 +3,14 @@ generator client {
 }
 
 generator zod {
-  provider          = "zod-prisma-types"
-  output            = "./zod"
-  createInputTypes  = "false"
-  createModelSchema = "true"
-  useMultipleFiles  = "true"
+  provider              = "prisma-zod-generator"
+  output                = "./zod"
+  pureModels            = true
+  pureModelsLean        = true
+  zodImportTarget       = "v3"
+  dateTimeStrategy      = "coerce"
+  useMultipleFiles      = true
+  optionalFieldBehavior = "nullable"
 }
 
 datasource db {
@@ -90,38 +93,63 @@ model Perfume {
 }
 
 model User {
-  id                   String              @id @default(uuid()) @db.Uuid
+  id                   String               @id @default(uuid()) @db.Uuid
   name                 String
-  authId               String              @unique @map("auth_id") @db.Uuid
-  email                String?             @unique
-  nickname             String              @unique
+  authId               String               @unique @map("auth_id") @db.Uuid
+  email                String?              @unique
+  nickname             String               @unique
   age                  Int?
-  gender               Gender              @default(UNKNOWN)
-  createdAt            DateTime            @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt            DateTime            @updatedAt @map("updated_at") @db.Timestamptz(6)
-  isActive             Boolean             @default(true) @map("is_active")
-  role                 String?             @default("user")
-  imageUrl             String?             @map("image_url")
-  deletedAt            DateTime?           @map("deleted_at") @db.Timestamptz(6)
-  consecutiveLoginDays Int                 @default(0) @map("consecutive_login_days")
-  lastLoginDate        DateTime?           @map("last_login_date") @db.Timestamptz(6)
-  totalPoints          Int                 @default(0) @map("total_points")
-  comments             Comment[]           @relation("UserToComments")
-  perfumeBookmarks     PerfumeBookmark[]   @relation("UserToPerfumeBookmarks")
-  perfumeLikes         PerfumeLike[]       @relation("UserToPerfumeLikes")
-  pointHistories       PointHistory[]      @relation("UserToPointHistories")
-  postBookmarks        PostBookmark[]      @relation("UserToPostBookmarks")
-  postDrafts           PostDraft[]         @relation("UserToPostDrafts")
-  postLikes            PostLike[]          @relation("UserToPostLikes")
-  posts                Post[]              @relation("UserToPosts")
+  gender               Gender               @default(UNKNOWN)
+  createdAt            DateTime             @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime             @updatedAt @map("updated_at") @db.Timestamptz(6)
+  isActive             Boolean              @default(true) @map("is_active")
+  role                 String?              @default("user")
+  imageUrl             String?              @map("image_url")
+  deletedAt            DateTime?            @map("deleted_at") @db.Timestamptz(6)
+  consecutiveLoginDays Int                  @default(0) @map("consecutive_login_days")
+  lastLoginDate        DateTime?            @map("last_login_date") @db.Timestamptz(6)
+  totalPoints          Int                  @default(0) @map("total_points")
+  comments             Comment[]            @relation("UserToComments")
+  oauthAccounts        UserOAuthAccount[]   @relation("UserToOAuthAccounts")
+  perfumeBookmarks     PerfumeBookmark[]    @relation("UserToPerfumeBookmarks")
+  perfumeLikes         PerfumeLike[]        @relation("UserToPerfumeLikes")
+  pointHistories       PointHistory[]       @relation("UserToPointHistories")
+  postBookmarks        PostBookmark[]       @relation("UserToPostBookmarks")
+  postDrafts           PostDraft[]          @relation("UserToPostDrafts")
+  postLikes            PostLike[]           @relation("UserToPostLikes")
+  posts                Post[]               @relation("UserToPosts")
   recentPerfumeViews   RecentPerfumeView[]
   recentPostViews      RecentPostView[]
-  reviewLikes          ReviewLike[]        @relation("UserToReviewLikes")
-  reviews              Review[]            @relation("UserToReviews")
-  activities           UserActivity[]      @relation("UserToActivities")
-  collections          UserCollection[]    @relation("UserToCollections")
+  reviewLikes          ReviewLike[]         @relation("UserToReviewLikes")
+  reviews              Review[]             @relation("UserToReviews")
+  activities           UserActivity[]       @relation("UserToActivities")
+  collections          UserCollection[]     @relation("UserToCollections")
 
   @@map("users")
+}
+
+model UserOAuthAccount {
+  id                String   @id @default(uuid()) @db.Uuid
+  userId            String   @map("user_id") @db.Uuid
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  user              User     @relation("UserToOAuthAccounts", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("user_oauth_accounts")
+}
+
+model PendingOAuthLink {
+  id                String   @id @default(uuid()) @db.Uuid
+  token             String   @unique @default(uuid()) @db.Uuid
+  provider          String
+  providerAccountId String   @map("provider_account_id")
+  targetEmail       String   @map("target_email")
+  expiresAt         DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("pending_oauth_links")
 }
 
 model PerfumeLike {

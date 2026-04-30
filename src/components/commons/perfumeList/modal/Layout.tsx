@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-// import { useTotalStore } from "@/lib/stores/useCountStore";
+// import { useTotalStore } from "@/client/stores/useCountStore";
 import { ButtonFilledPrimaryLFull } from "@/components/commons/button/ButtonFilled";
 import { ButtonOutlinedPrimaryLFull } from "@/components/commons/button/ButtonOutlined";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
 import { Indicator } from "../../loading/Indicator";
 
 interface FilterModalLayoutProps {

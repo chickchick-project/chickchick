@@ -1,6 +1,6 @@
 import React from "react";
 import Reply from "@/components/domains/user/Reply";
-import { MyComment } from "@/lib/hono/services/me.service";
+import { MyComment } from "@/server/hono/services/me";
 
 export const MyCommentsList = ({ comments }: { comments: MyComment[] }) => {
   return comments.map((item, idx) => (

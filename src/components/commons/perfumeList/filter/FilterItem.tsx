@@ -1,9 +1,9 @@
 import { memo, useState, useEffect } from "react";
 import Image from "next/image";
-import { Option } from "@/lib/constants/options";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import ICONS from "@/lib/constants/icons";
+import { Option } from "@/shared/constants/options";
+import { useFilterStore } from "@/client/stores/perfumeStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
+import ICONS from "@/shared/constants/icons";
 import FilterItemModal from "../modal/ItemModal";
 import FilterTriggerButton from "@/components/commons/dropdown/DropdownButton";
 import { getFilterOptionMeta } from "./filter.helper";
@@ -19,15 +19,14 @@ const FilterItem = ({
 }) => {
   const EMPTY_SET = new Set<string>();
   const committedFilters = useFilterStore((state) => state.committedFilters);
-  const handlePendingChange = useFilterStore(
-    (state) => state.handlePendingChange
-  );
+  const handlePendingChange = useFilterStore((state) => state.handlePendingChange);
+  const handlePendingSingleChange = useFilterStore((state) => state.handlePendingSingleChange);
 
   const filterSet = committedFilters[category] ?? EMPTY_SET;
 
   const { selectedOption, currentOption } = getFilterOptionMeta(
     filterSet,
-    label
+    label,
   );
 
   const [isSelected, setIsSelected] = useState(!!currentOption);
@@ -62,7 +61,11 @@ const FilterItem = ({
           options={options}
           currentOption={currentOption}
           handleChangeOption={(option: Option) => {
-            handlePendingChange(category, option.value);
+            if (category === "gender") {
+              handlePendingSingleChange(category, option.value);
+            } else {
+              handlePendingChange(category, option.value);
+            }
           }}
         />
       )}

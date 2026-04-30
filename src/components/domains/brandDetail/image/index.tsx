@@ -7,7 +7,7 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import Image from "next/image";
 import { useState } from "react";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 
 interface IBrandDetailImageProps {
   images: {
@@ -63,9 +63,6 @@ export const BrandDetailImage = ({ images }: IBrandDetailImageProps) => {
             className="rounded-xl"
           />
         </SwiperSlide>
-        {/* <SwiperSlide className="pc:px-0 px-5">
-          <BrandMap />
-        </SwiperSlide> */}
       </Swiper>
       <div
         className={`custom-prev absolute tablet:left-4 left-6 top-1/2 -translate-y-1/2 z-10 cursor-pointer transition-opacity ${

@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import ICONS from "@/lib/constants/icons";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import ICONS from "@/shared/constants/icons";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { TabItem } from "./tabs.type";
 
 interface MobileTabsAccordionProps {
@@ -18,7 +18,7 @@ export const MobileTabsAccordion = ({
   currentTab,
   children,
 }: MobileTabsAccordionProps) => {
-  const user = useUserStore((state) => state.user);
+  const { user } = useCurrentUser();
 
   const [isOpen, setIsOpen] = useState(true);
 

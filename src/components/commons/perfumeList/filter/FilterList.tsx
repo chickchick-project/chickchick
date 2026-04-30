@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import ICONS from "@/lib/constants/icons";
-import { Option } from "@/lib/constants/options";
+import { useFilterStore } from "@/client/stores/perfumeStore";
+import { useVisibilityStore } from "@/client/stores/uiStore";
+import ICONS from "@/shared/constants/icons";
+import { Option } from "@/shared/constants/options";
 import ListModal from "../modal/ListModal";
 
 type FilterOptions = {
@@ -12,7 +12,11 @@ type FilterOptions = {
   accords: Option[];
 };
 
-const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
+const FilterList = ({
+  filterOptions,
+}: {
+  filterOptions: FilterOptions;
+}) => {
   const committedFilters = useFilterStore((state) => state.committedFilters);
   const closeFilter = useFilterStore((state) => state.closeFilter);
   const resetFilters = useFilterStore((state) => state.resetFilters);
@@ -52,6 +56,7 @@ const FilterList = ({ filterOptions }: { filterOptions: FilterOptions }) => {
         filterOptions={filterOptions}
         closeFilter={closeFilter}
         resetFilters={resetFilters}
+
       />
     </>
   );

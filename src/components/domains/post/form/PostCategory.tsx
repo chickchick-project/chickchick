@@ -11,13 +11,18 @@ export default function PostCategory() {
       <Controller
         name="category"
         control={control}
-        render={({ field }) => (
-          <BoardDropdown
-            id="category"
-            ariaLabelledBy="community-category"
-            currentOption={field.value}
-            onChange={field.onChange}
-          />
+        render={({ field, fieldState }) => (
+          <div className="flex flex-col gap-1">
+            <BoardDropdown
+              id="category"
+              ariaLabelledBy="community-category"
+              currentOption={field.value}
+              onChange={field.onChange}
+            />
+            {fieldState.error && (
+              <p className="text-sm text-red">{fieldState.error.message}</p>
+            )}
+          </div>
         )}
       />
     </>

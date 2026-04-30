@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { PostCategory } from "@prisma/client";
-import { PerfumeForPostSchema } from "@/lib/hono/schemas/community.schema";
+import { PostCategory } from "@/server/hono/schemas/community.schema";
+import { PerfumeForPostSchema } from "@/server/hono/schemas/community.schema";
 
 export const CreatePostClientSchema = z.object({
   category: z.nativeEnum(PostCategory, {
@@ -10,7 +10,12 @@ export const CreatePostClientSchema = z.object({
     .string()
     .min(1, "제목을 입력해주세요.")
     .max(30, "제목 글자 수가 너무 많습니다."),
-  content: z.string().min(1, "내용을 입력해주세요."),
+  content: z
+    .string()
+    .refine(
+      (val) => val.replace(/<[^>]*>/g, "").trim().length > 0,
+      { message: "내용을 입력해주세요." },
+    ),
   contentText: z.string(),
   thumbnailUrl: z.string().nullable(),
   perfumeIds: z.array(z.string().uuid()).optional(),

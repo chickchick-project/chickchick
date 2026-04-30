@@ -1,5 +1,5 @@
-import { POST_CARD_TYPES, CATEGORY_TYPES } from "@/lib/constants/post";
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import { POST_CARD_TYPES, CATEGORY_TYPES } from "@/shared/constants/post";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
 
 export type PostCardType =
   (typeof POST_CARD_TYPES)[keyof typeof POST_CARD_TYPES];

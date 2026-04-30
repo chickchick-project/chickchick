@@ -1,4 +1,4 @@
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import Image from "next/image";
 import {
   PERFUME_CARD_STYLES,
@@ -45,12 +45,10 @@ export default function PerfumeCard({
 
       <figure className="relative aspect-square rounded-xl overflow-hidden shadow-card bg-white">
         <Image
-          src={perfumeImage ?? "/images/BlurShimmer.svg"}
+          src={perfumeImage ?? "/images/Logo_rectangle.svg"}
           alt={perfumeName || "Perfume Image"}
           fill
           sizes={getSizesForCardType(cardType)}
-          placeholder="blur"
-          blurDataURL="/images/BlurShimmer.svg"
           className="object-contain"
           priority={priority}
           fetchPriority={priority ? "high" : undefined}

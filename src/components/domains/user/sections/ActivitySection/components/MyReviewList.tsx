@@ -1,6 +1,6 @@
 import React from "react";
 import ReviewCard from "@/components/commons/card/reviewCard";
-import type { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import type { ApiReviewResponse } from "@/server/hono/schemas/review.schema";
 
 export const MyReviewList = ({ reviews }: { reviews: ApiReviewResponse[] }) => {
   return reviews.length > 0 ? (

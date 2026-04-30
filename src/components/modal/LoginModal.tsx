@@ -4,10 +4,10 @@ import {
   googleLogin,
   kakaoLogin,
   naverLogin,
-} from "@/lib/database/action/login";
+} from "@/server/database/action/login";
 import { ModalContainer } from "./ModalContainer";
 import Image from "next/image";
-import IMAGES from "@/lib/constants/images";
+import IMAGES from "@/shared/constants/images";
 import { SocialLogoContainer } from "../commons/socialLogo/SocialLogoContainer";
 import { usePathname, useSearchParams } from "next/navigation";
 
@@ -66,7 +66,7 @@ export const LoginModal = ({ closeModal }: ILoginModalProps) => {
             </button>
           </form>
 
-          {/* kakao: email 받아오는 권한 없음. 보류 */}
+          {/* kakao */}
           <form action={handleKakaoLogin}>
             <button>
               <SocialLogoContainer>

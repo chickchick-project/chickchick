@@ -1,6 +1,6 @@
 "use client";
 
-import { useInfiniteComments } from "@/lib/hooks/query/useCommentQuery";
+import { useInfiniteComments } from "@/client/hooks/query/useCommentQuery";
 
 import CommentForm from "./comment/CommentForm";
 import CommentList from "./comment/CommentList";

@@ -6,7 +6,7 @@ import SortDropdown, {
   ISortDropdownProps,
 } from "@/components/commons/dropdown/SortDropdown";
 import WriteButton from "./WriteButton";
-import { Option, TSortBy } from "@/lib/constants/options";
+import { Option, TSortBy } from "@/shared/constants/options";
 
 interface IHeaderProps
   extends IBoardTabBarProps,

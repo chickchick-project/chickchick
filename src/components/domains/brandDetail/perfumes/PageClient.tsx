@@ -1,16 +1,15 @@
 "use client";
 
 import { useMemo } from "react";
-import SortDropdown from "@/components/commons/dropdown/SortDropdown";
 import {
   usePerfumeNoteFilter,
   usePerfumeAccordFilter,
-} from "@/lib/hooks/query/useFilterQuery";
+} from "@/client/hooks/query/useFilterQuery";
 import { SearchHeader } from "../../../commons/perfumeList/search";
 import { PerfumeSection } from "../../../commons/perfumeList/section/PerfumeSection";
 import { getUniquePerfumes } from "@/components/commons/perfumeList/perfumes.helpers";
-import { useInfiniteScrollTrigger } from "@/lib/hooks/useInfiniteScrollTrigger";
-import { useInfinitePerfumes } from "@/lib/hooks/useInfinitePerfumes";
+import { useInfiniteScrollTrigger } from "@/client/hooks/useInfiniteScrollTrigger";
+import { useInfinitePerfumes } from "@/client/hooks/useInfinitePerfumes";
 
 export const PageClient = ({ brandName }: { brandName: string }) => {
   const { data: notes } = usePerfumeNoteFilter();
@@ -47,7 +46,7 @@ export const PageClient = ({ brandName }: { brandName: string }) => {
       />
       <main className="flex flex-col w-full max-w-[1200px] px-4">
         <div className="w-full flex justify-end items-center mb-5">
-          <SortDropdown type="perfume" onSortChange={() => {}} />
+          {/* <SortDropdown type="perfume" onSortChange={() => {}} /> */}
         </div>
         <PerfumeSection
           perfumes={uniquePerfumes}

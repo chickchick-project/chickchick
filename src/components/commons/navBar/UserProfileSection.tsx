@@ -1,15 +1,16 @@
 "use client";
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { useUserStore } from "@/lib/stores/useUserStore";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { NAV_LABELS } from "./navBar.constants";
-import ICONS from "@/lib/constants/icons";
+import { DEFAULT_PROFILE_IMAGE } from "@/components/commons/author/author.constants";
+import ICONS from "@/shared/constants/icons";
 import { NavDropdown } from "./Dropdown";
-import { useModalStore, MODAL_KEYS } from "@/lib/stores/useModalStore";
+import { useModalStore, MODAL_KEYS } from "@/client/stores/uiStore";
 
 const UserProfileSection = () => {
   const navBarRef = useRef<HTMLDivElement | null>(null);
-  const { user, isLoading } = useUserStore();
+  const { user, isLoading } = useCurrentUser();
   const { openModal } = useModalStore();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
@@ -35,13 +36,14 @@ const UserProfileSection = () => {
         <div className="flex items-center gap-2 h-full">
           <div className="w-[36px] h-[36px] flex-shrink-0">
             <Image
-              src={user.imageUrl || "/images/profile.svg"}
+              src={user.imageUrl ?? DEFAULT_PROFILE_IMAGE}
               className="rounded-full"
               width={36}
               height={36}
               alt="User"
               loading="eager"
               quality={85}
+
             />
           </div>
           <button

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
-import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
+import { useRecentPostsStore } from "@/client/stores/perfumeStore";
 import { useFooterPagination } from "./useFooterPagination";
-import type { ApiPostDetailResponse } from "@/lib/hono/schemas/community.schema";
+import type { ApiPostDetailResponse } from "@/server/hono/schemas/community.schema";
 
 interface PostForCard extends Omit<ApiPostDetailResponse, "userId"> {
   userId: string;

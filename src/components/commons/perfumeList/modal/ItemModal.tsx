@@ -1,11 +1,11 @@
 import { useEffect, useMemo } from "react";
-import { Option } from "@/lib/constants/options";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import { useFilterStore } from "@/lib/stores/useFilterStore";
+import { Option } from "@/shared/constants/options";
+import { useVisibilityStore } from "@/client/stores/uiStore";
+import { useFilterStore } from "@/client/stores/perfumeStore";
 import { ModalContainer } from "@/components/modal/ModalContainer";
 import { FilterModalLayout } from "./Layout";
 import { getLabel } from "../perfumes.helpers";
-import { useAvailableFilters } from "@/lib/hooks/query/useFilterQuery";
+import { useAvailableFilters } from "@/client/hooks/query/useFilterQuery";
 
 interface IFilterDropdownProps {
   id: string;
@@ -77,7 +77,7 @@ export default function FilterItemModal({
     // pending이 비어있으면 (아무것도 선택 안 함) 모든 옵션 활성화
     const hasPendingFilters = Object.keys(pendingFilters).length > 0;
 
-    const isBrandCategory = id === "brand";
+    const isAlwaysActiveCategory = id === "brand" || id === "gender";
 
     options.forEach((option) => {
       const isSelected = selectedSet.includes(option.value);
@@ -86,14 +86,12 @@ export default function FilterItemModal({
       if (isSelected) {
         selected.push(option);
       } else if (
-        isBrandCategory || // 브랜드는 항상 활성화
+        isAlwaysActiveCategory || // 브랜드·성별은 항상 활성화
         !hasPendingFilters ||
         isAvailable
       ) {
-        // pending이 없거나, 가능한 옵션이면 활성화
         available.push(option);
       } else {
-        // pending이 있는데 가능하지 않으면 비활성화
         disabled.push(option);
       }
     });
@@ -138,7 +136,9 @@ export default function FilterItemModal({
   };
 
   const handleReset = () => {
-    resetPending(); // pending 전체 초기화
+    resetPending();
+    commitFilters(id); // pending이 비었으므로 해당 카테고리 committed에서 제거
+    close(id);
   };
 
   return (

@@ -3,15 +3,16 @@
 import { useState, useCallback, useEffect } from "react";
 import { PersonalInfo } from "./components/PersonalInfo";
 import { ProfileImage } from "./components/ProfileImage";
-import { useUploadProfileImage, useUserProfile } from "@/lib/hooks/query/useUserQuery";
+import { useUploadProfileImage } from "@/client/hooks/query/useUserQuery";
+import { useCurrentUser } from "@/components/commons/Provider/CurrentUserProvider";
 import { ProfileSectionSkeleton } from "./components/ProfileSectionSkeleton";
-import { PROFILE_BUCKET_NAME } from "@/lib/constants/buckets";
+import { PROFILE_BUCKET_NAME } from "@/shared/constants/buckets";
 
 export const ProfileSection = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const { data: user, isLoading } = useUserProfile();
+  const { user, isLoading } = useCurrentUser();
   const uploadProfileImageMutation = useUploadProfileImage();
 
   const resetState = useCallback(() => {
@@ -27,7 +28,7 @@ export const ProfileSection = () => {
       }
       setPreviewUrl(URL.createObjectURL(file));
     },
-    [previewUrl]
+    [previewUrl],
   );
 
   const onCancel = () => {
@@ -42,7 +43,7 @@ export const ProfileSection = () => {
           onSuccess: () => {
             resetState();
           },
-        }
+        },
       );
     }
   };

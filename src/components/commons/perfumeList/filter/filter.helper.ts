@@ -1,5 +1,5 @@
 import { JsonValue } from "@prisma/client/runtime/library";
-import { Option } from "@/lib/constants/options";
+import { Option } from "@/shared/constants/options";
 
 interface LocalizedName {
   en: string;

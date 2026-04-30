@@ -3,7 +3,7 @@
 import UserHeader from "@/components/domains/user/sections/ProfileHeaderSection";
 import UserFooter from "@/components/domains/user/sections/RecentViewSection";
 import PageClient from "@/components/domains/user/PageClient";
-import { useUserProfileById } from "@/lib/hooks/query/useUserQuery";
+import { useUserProfileById } from "@/client/hooks/query/useUserQuery";
 import { notFound } from "next/navigation";
 
 interface UserLayoutClientProps {
@@ -17,10 +17,14 @@ export default function UserLayoutClient({
   pageOwnerId,
   isMe,
 }: UserLayoutClientProps) {
-  const { data: user, isError } = useUserProfileById(pageOwnerId);
+  const { data: user, isError, isSuccess } = useUserProfileById(pageOwnerId);
 
-  if (isError || !user) {
+  if (isError) {
     return notFound();
+  }
+
+  if (!isSuccess || !user) {
+    return null;
   }
 
   return (

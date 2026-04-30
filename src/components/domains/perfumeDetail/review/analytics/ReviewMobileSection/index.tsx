@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { countByCategory, type Counts } from "../analytics.helpers";
-import type { ReviewCategory } from "@/lib/types/review.types";
+import type { ReviewCategory } from "@/shared/types/review.types";
 
 export type BarDatum = { label: string; value: number };
 export type Block = {
@@ -140,7 +140,7 @@ function MobileBarChart({
           >
             <div
               className={`flex items-center justify-between w-[79px] text-label-3 font-medium whitespace-nowrap shrink-0
-                ${isWinner ? "text-black-100" : "text-gray-100"}`}
+                ${isWinner ? "text-black-100" : "text-black-300"}`}
             >
               {formatLabel(category, d.label)}
             </div>
@@ -158,7 +158,7 @@ function MobileBarChart({
               className={`tabular-nums text-label-3 w-[31px] text-right ${
                 isWinner
                   ? "font-semibold text-black-100"
-                  : "font-medium text-gray-100"
+                  : "font-medium text-black-300"
               }`}
             >
               {d.value}

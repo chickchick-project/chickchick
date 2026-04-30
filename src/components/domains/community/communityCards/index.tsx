@@ -2,15 +2,15 @@ import React from "react";
 import Link from "next/link";
 import { PostCard } from "@/components/commons/card/postCard";
 import { Spinner } from "@/components/commons/loading/Spinner";
-import { POST_CARD_TYPES } from "@/lib/constants/post";
-import type { ApiPostResponse } from "@/lib/hono/schemas/community.schema";
+import { POST_CARD_TYPES } from "@/shared/constants/post";
+import type { ApiPostResponse } from "@/server/hono/schemas/community.schema";
 
 interface ICommunityCardsProps {
   postData: ApiPostResponse[];
   selectedTab: string;
   isLoading?: boolean;
   isIdle?: boolean;
-  moreRef?: React.RefObject<HTMLDivElement>;
+  moreRef?: React.Ref<HTMLDivElement>;
 }
 export default function CommunityCards({
   postData,

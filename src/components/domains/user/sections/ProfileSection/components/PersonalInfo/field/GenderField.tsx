@@ -1,7 +1,7 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { ProfileRow } from "../common/ProfileRow";
 import Dropdown from "@/components/commons/dropdown/DropdownBase";
-import type { ApiMyProfileResponse } from "@/lib/hono/schemas/me.schema";
+import type { ApiMyProfileResponse } from "@/server/hono/schemas/me.schema";
 
 export const GenderField = () => {
   const { control } = useFormContext<ApiMyProfileResponse>();

@@ -51,7 +51,7 @@ export const DoughnutChart = ({ data, centerText }: DoughnutChartProps) => {
             <span className="text-black-100 text-label-2 font-medium">
               {item.label}
             </span>
-            <span className="text-gray-100 text-label-3 font-medium">
+            <span className="text-black-300 text-label-3 font-medium">
               {item.value}
             </span>
           </li>

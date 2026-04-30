@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import ModalPortal from "@/lib/portal/ModalPortal";
+import ModalPortal from "@/client/portal/ModalPortal";
 import { ModalContainer } from "../ModalContainer";
 import { PhotoDropzone } from "./PhotoDropzone";
 import { PerfumeTagger } from "./PerfumeTagger";
-import { fileApi } from "@/lib/utils/api/files.api";
-import type { ApiPerfumeSimpleResponse } from "@/lib/hono/schemas/perfume.schema";
-import { useCollectionMutation } from "@/lib/hooks/query/useCollectionQuery";
+import { fileApi } from "@/client/utils/api/files.api";
+import type { ApiPerfumeSimpleResponse } from "@/server/hono/schemas/perfume.schema";
+import { useCollectionMutation } from "@/client/hooks/query/useCollectionQuery";
 
 interface PhotoCollectionUploadModalProps {
   isOpen: boolean;

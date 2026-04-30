@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { REVIEW_OPTIONS } from "@/lib/constants/review";
+import { REVIEW_OPTIONS } from "@/shared/constants/review";
 import type { CreateReviewClientInput } from "./reviewSchema.client";
 
 type ReviewOptionKey = keyof typeof REVIEW_OPTIONS;

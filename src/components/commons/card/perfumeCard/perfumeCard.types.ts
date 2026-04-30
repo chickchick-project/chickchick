@@ -5,9 +5,9 @@ type PerfumeCardType =
 
 interface PerfumeCardProps {
   cardType?: PerfumeCardType;
-  perfumeImage: string | null;
-  brandName: string | null;
-  perfumeName: string | null;
+  perfumeImage?: string | null;
+  brandName?: string | null;
+  perfumeName?: string | null;
   onClick?: () => void;
   onClose?: () => void;
   className?: string;

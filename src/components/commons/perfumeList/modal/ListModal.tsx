@@ -3,8 +3,8 @@ import Image from "next/image";
 import { ModalContainer } from "@/components/modal/ModalContainer";
 import { FilterModalLayout } from "./Layout";
 import { getLabel } from "../perfumes.helpers";
-import ICONS from "@/lib/constants/icons";
-import { Option } from "@/lib/constants/options";
+import ICONS from "@/shared/constants/icons";
+import { Option } from "@/shared/constants/options";
 
 type FilterOptions = {
   gender: Option[];

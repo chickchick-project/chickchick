@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import PostContent from "./content";
 import PostDetailHeader from "./header";
-import { useLogRecentItem } from "@/lib/stores/useLogRecentItem";
-import { useRecentPostsStore } from "@/lib/stores/useRecentPostsStore";
+import { useLogRecentItem } from "@/client/stores/perfumeStore";
+import { useRecentPostsStore } from "@/client/stores/perfumeStore";
 import {
   PageSkeleton,
   CategoryPostListSectionSkeleton,
@@ -14,7 +14,7 @@ import {
   useCommunityPost,
   useCommunityPostCategoryPosts,
   useCommunityPostStatus,
-} from "@/lib/hooks/query/useCommunityQuery";
+} from "@/client/hooks/query/useCommunityQuery";
 
 const CommentSection = dynamic(() => import("./commentSection"), {
   ssr: false,

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
-import { MyComment } from "@/lib/hono/services/me.service";
+import { MyComment } from "@/server/hono/services/me";
 
 interface ReplyProps extends MyComment {
   isLast: boolean;

@@ -1,99 +1,36 @@
-import { Account, NextAuthConfig, User } from "next-auth";
-import { v4 as uuidv4 } from "uuid";
-import { prisma } from "./lib/prisma";
+// Edge Runtime 호환 config — middleware에서만 사용
+// DB fetch, Node API 절대 사용 금지
+import { DefaultSession, NextAuthConfig } from "next-auth";
 
-interface UserData {
-  name: string;
-  nickname: string;
-  email?: string;
-  imageUrl?: string;
-  provider: string;
+declare module "next-auth" {
+  interface User {
+    isNewUser?: boolean;
+  }
+  interface Session {
+    user: {
+      id: string;
+      isNewUser?: boolean;
+      nickname: string;
+      imageUrl: string | null;
+    } & DefaultSession["user"];
+  }
 }
-
-const findOrCreateUser = async (providerData: UserData) => {
-  const { name, nickname, email, imageUrl, provider } = providerData;
-  let dbUser;
-
-  if (email) {
-    dbUser = await prisma.user.findUnique({ where: { email } });
-    if (dbUser) {
-      return dbUser;
-    }
-  }
-
-  if (!dbUser && provider === "kakao" && name) {
-    dbUser = await prisma.user.findFirst({ where: { nickname: name } });
-    if (dbUser) {
-      console.log(
-        `${provider} OAuth: Existing user found by nickname:`,
-        dbUser
-      );
-      return dbUser;
-    }
-  }
-
-  const newUser = await prisma.user.create({
-    data: {
-      authId: uuidv4(),
-      name: name || "",
-      nickname: nickname || name || "",
-      email,
-      imageUrl,
-      totalPoints: 100,
-    },
-  });
-
-  return newUser;
-};
 
 export const authConfig = {
   secret: process.env.AUTH_SECRET,
+  pages: {
+    error: "/",
+  },
   callbacks: {
-    signIn: async ({
-      user,
-      account,
-    }: {
-      user: User;
-      account?: Account | null;
-    }) => {
-      if (!account) return false;
-
-      const providerData = {
-        name: user.name || "",
-        nickname: user.name || "",
-        email: user.email ?? undefined,
-        imageUrl: user.image ?? undefined,
-        provider: account.provider,
-      };
-
-      try {
-        const dbUser = await findOrCreateUser(providerData);
-        if (!dbUser) return false;
-        user.id = dbUser.id;
-        return true;
-      } catch (err) {
-        console.error(`${account.provider} OAuth error:`, err);
-        return false;
-      }
-    },
-
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.isNewUser = token.isNewUser as boolean;
+        session.user.nickname = token.nickname as string;
+        session.user.imageUrl = token.imageUrl as string | null;
       }
       return session;
     },
   },
-  providers: [
-    /**
-     * 초기 값 빈 배열
-     */
-  ],
+  providers: [],
 } satisfies NextAuthConfig;

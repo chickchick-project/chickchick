@@ -1,6 +1,6 @@
 import React from "react";
 import IconBadge from "../author/IconBadge";
-import ICONS from "@/lib/constants/icons";
+import ICONS from "@/shared/constants/icons";
 import { PostMetaItem } from "./author.types";
 
 interface PostMetaProps {

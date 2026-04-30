@@ -1,4 +1,4 @@
-import { NAV_BAR_ICONS } from "@/lib/constants/icons/navBar";
+import { NAV_BAR_ICONS } from "@/shared/constants/icons/navBar";
 
 export const BOTTOM_NAV_BAR_ICONS = (userId: string) => {
   return [

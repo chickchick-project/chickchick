@@ -3,8 +3,8 @@ import {
   toggleBookmarkedPostById,
   toggleLikedPostById,
 } from "../postDetail.helpers";
-import type { ApiPostStatusResponse } from "@/lib/hono/schemas/community.schema";
-import { queryKeys } from "@/lib/utils/queryKeys";
+import type { ApiPostStatusResponse } from "@/server/hono/schemas/community.schema";
+import { queryKeys } from "@/client/utils/queryKeys";
 
 export default function usePostInteractionMutation(postId: string) {
   const queryClient = useQueryClient();

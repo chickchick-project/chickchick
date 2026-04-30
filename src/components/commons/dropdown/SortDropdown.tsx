@@ -4,7 +4,7 @@ import {
   Option,
   SORT_BY_OPTIONS,
   TSortBy,
-} from "@/lib/constants/options";
+} from "@/shared/constants/options";
 import Dropdown from "./DropdownBase";
 
 export interface ISortDropdownProps {

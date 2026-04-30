@@ -5,11 +5,11 @@ import { ButtonFilledPrimaryLFit } from "@/components/commons/button/ButtonFille
 import PerfumeCard from "@/components/commons/card/perfumeCard";
 import { SearchResultsDropdown } from "@/components/commons/dropdown/SearchResultsDropdown";
 import InputBase from "@/components/commons/input";
-import type { PerfumeForPost } from "@/lib/hono/schemas/community.schema";
-import useDebounce from "@/lib/hooks/useDebounce";
-import useOnClickOutside from "@/lib/hooks/useOnClickOutside";
-import { useVisibilityStore } from "@/lib/stores/useVisibilityStore";
-import { searchApi } from "@/lib/utils/api/search.api";
+import type { PerfumeForPost } from "@/server/hono/schemas/community.schema";
+import useDebounce from "@/client/hooks/useDebounce";
+import useOnClickOutside from "@/client/hooks/useOnClickOutside";
+import { useVisibilityStore } from "@/client/stores/uiStore";
+import { searchApi } from "@/client/utils/api/search.api";
 
 import SubTitleLabel from "../element/SubTitleLabel";
 import PerfumeResultItem from "./PerfumeResultItem";
@@ -53,9 +53,17 @@ export default function PostRelatedPerfume({
     selectedPerfumesIds.length + tempSelectedPerfumeIds.length >=
     MAX_SELECTED_PERFUMES;
 
+  const isInitialSyncRef = useRef(true);
+
   useEffect(() => {
-    setValue("perfumeIds", selectedPerfumesIds);
-    setValue("perfumes", selectedPerfumes);
+    if (isInitialSyncRef.current) {
+      isInitialSyncRef.current = false;
+      setValue("perfumeIds", selectedPerfumesIds);
+      setValue("perfumes", selectedPerfumes);
+      return;
+    }
+    setValue("perfumeIds", selectedPerfumesIds, { shouldDirty: true });
+    setValue("perfumes", selectedPerfumes, { shouldDirty: true });
   }, [setValue, selectedPerfumesIds, selectedPerfumes]);
 
   useEffect(() => {

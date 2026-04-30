@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { ActionItem, Actions } from "@/components/commons/actions";
-import { usePostMutation } from "@/lib/hooks/query/useCommunityQuery";
+import { usePostMutation } from "@/client/hooks/query/useCommunityQuery";
 import {
   useDraftByType,
   useDeleteDraft,
-} from "@/lib/hooks/query/useDraftQuery";
-import { DraftType } from "@prisma/client";
+} from "@/client/hooks/query/useDraftQuery";
+import { DraftType } from "@/server/hono/schemas/draft.schema";
 import { DraftRestoreModal } from "@/components/modal/draftRestoreModal";
 
 interface PostActionsProps {

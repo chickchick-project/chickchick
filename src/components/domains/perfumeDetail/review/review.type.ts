@@ -1,10 +1,11 @@
 import { REVIEW_STATUSES } from "@/components/commons/author/author.constants";
-import type { ApiReviewResponse } from "@/lib/hono/schemas/review.schema";
+import type { ApiReviewResponse } from "@/server/hono/schemas/review.schema";
 
 export type ReviewStatus = keyof typeof REVIEW_STATUSES;
 
 export interface PerfumeReviewsProps {
   data: ApiReviewResponse[];
+  isLoading: boolean;
 }
 
 export interface ReviewListProps {

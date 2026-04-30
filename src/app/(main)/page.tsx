@@ -3,6 +3,8 @@ import { MainContent } from "@/components/domains/main/mainContent/MainContent";
 import { MainLogo } from "@/components/domains/main/MainLogo";
 import { MainSearchBar } from "@/components/domains/main/MainSearchBar";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>
